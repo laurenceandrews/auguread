@@ -1,7 +1,7 @@
 # Team Sick Legends
 SEG - Major Group Project
 
-# Team Members
+## Team Members
 The authors of the software are:
 - Laurence Andrews
 - Surya Brunton
