@@ -3,3 +3,4 @@ backports.zoneinfo==0.2.1
 Django==3.2.10
 libgravatar==1.0.0
 sqlparse==0.4.2
+django-widget-tweaks==1.4.12

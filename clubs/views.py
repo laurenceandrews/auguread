@@ -4,6 +4,9 @@ from django.conf import settings
 from django.contrib.auth import login, logout
 from clubs.forms import LogInForm
 from django.views import View
+from .forms import SignUpForm
+from .helpers import login_prohibited
+from django.contrib import messages
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
@@ -35,7 +38,7 @@ class LogInView(LoginProhibitedMixin, View):
     """View that handles log in."""
 
     http_method_names = ['get', 'post']
-    # redirect_when_logged_in_url = 'club_list'
+    redirect_when_logged_in_url = 'log_in'
 
     def get(self, request):
         """Display log in template."""
@@ -67,3 +70,19 @@ class LogInView(LoginProhibitedMixin, View):
 def log_out(request):
     logout(request)
     return redirect('home')
+
+@login_prohibited
+def sign_up(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = SignUpForm()
+    return render(request, 'sign_up.html', {'form': form})
+
+
+def home(request):
+    return render(request, 'home.html')
