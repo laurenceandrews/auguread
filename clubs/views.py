@@ -1,5 +1,6 @@
 from django.shortcuts import render
 
+
 from .forms import SignUpForm
 from .helpers import login_prohibited
 
@@ -15,3 +16,8 @@ def sign_up(request):
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
+
+
+def home(request):
+    return render(request, 'home.html')
+
