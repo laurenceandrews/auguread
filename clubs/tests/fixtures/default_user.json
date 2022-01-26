@@ -1,0 +1,15 @@
+[
+  {
+    "model": "clubs.user",
+    "pk": 1,
+    "fields": {
+      "first_name": "John",
+      "last_name": "Doe",
+      "username": "@johndoe",
+      "email": "johndoe@example.org",
+      "bio": "Hello, I am John Doe.",
+      "password": "pbkdf2_sha256$260000$og8RrU6qD2GxHLss1VQq3w$RLOOyMZzeFXr0FVjlxxYYSfn4x54dO5LgH9mJi6aQhs=",
+      "is_active": true
+    }
+  }
+]
