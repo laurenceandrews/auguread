@@ -127,4 +127,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'clubs.User'
 
 # URL where @login_prohibited redirects to
-REDIRECT_URL_WHEN_LOGGED_IN = 'log_in'
+AUTO_REDIRECT_URL = 'home'
