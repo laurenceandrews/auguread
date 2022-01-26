@@ -1,0 +1,28 @@
+{# {% extends 'base_content.html' %} #}
+{% block content %}
+<div class="container">
+  <div class="row content">
+    <div class="col-xs-12 col-lg-6 col-xl-4">
+      <h1>Chess Club | User Profile Page</h1>
+          <img src="{{ user.gravatar }}" alt="Gravatar of {{ user.username }}" class="rounded-circle profile-image" >
+          <div class="profile-text">
+            <h3 class="profile-title">{{ user.username }}</h3>
+            <h4>First Name:</h4>
+                <p>{{ user.first_name }}</p>
+            <h4>Last Name:</h4>
+                <p>{{ user.last_name }}</p>
+            <h4>Bio:</h4>
+                <p>{{ user.bio }}</p>
+            <h4>Chess Level:</h4>
+                <p>{{ user.chess_Level }}</p>
+            <h4>Email Address:</h4>
+                <p>{{ user.email }}</p>
+            <h4>Personal Statement:</h4>
+                <p>{{ user.personal_statement }}</p>
+            <h4>Status in this Club: {{ club.name }}</h4>
+                <p>{{ role.club_role }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
