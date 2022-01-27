@@ -1,5 +1,5 @@
 asgiref==3.5.0
-# cookiecutter==1.7.3
+cookiecutter==1.7.3
 Django==3.2.10
 django-tailwind==3.1.1
 libgravatar==1.0.0
