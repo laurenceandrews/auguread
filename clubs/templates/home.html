@@ -1,5 +1,4 @@
-{# {% extends 'base.html' %} #}
-{% block body %}
+{% extends 'base.html' %} {% block body %}
 <div id="cover-image">
   <div class="container vh-100">
     <div class="row h-100">
@@ -8,13 +7,15 @@
           <h1 class="cover-heading">Book Clubs</h1>
           <p class="cover-text">Join a book club</p>
           <p>
-            {# <a href='{% url 'sign_up' %}' class="btn btn-lg btn-secondary"> #}
-              Sign up
+            {#
+            <a href="{% url 'sign_up' %}" class="btn btn-lg btn-secondary">
+              #} Sign up
             </a>
           </p>
           <p>
-            {# <a href='{% url 'log_in' %}' class="btn btn-lg btn-secondary"> #}
-              Log in
+            {#
+            <a href="{% url 'log_in' %}" class="btn btn-lg btn-secondary">
+              #} Log in
             </a>
           </p>
         </div>
@@ -22,4 +23,4 @@
     </div>
   </div>
 </div>
-{% endblock %}
+{% endblock body %}
