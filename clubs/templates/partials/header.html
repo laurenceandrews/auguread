@@ -1,15 +1,15 @@
 {% load static %}
-<div class="relative bg-white">
+<div class="relative bg-white dark:bg-slate-800">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div
-      class="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10"
+      class="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10 dark:border-gray-700"
     >
       <div class="flex justify-start lg:w-0 lg:flex-1">
         <a href="#">
           <span class="sr-only">Workflow</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-10 w-10 text-indigo-600"
+            class="h-10 w-10 text-indigo-600 dark:text-indigo-500"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -23,19 +23,26 @@
           </svg>
         </a>
       </div>
-      <div class="flex space-x-10">
+      <div class="flex">
         <!-- Load image teamname.png-->
         <img
           src="{% static 'teamname.png' %}"
           alt="Team Name"
-          class="h-10 w-auto object-cover"
+          class="h-10 w-auto object-cover dark:hidden"
         />
+        <!-- Load image teamname.png-->
+        <img
+          src="{% static 'teamnamewhite.png' %}"
+          alt="Team Name"
+          class="h-10 w-auto object-cover hidden dark:flex"
+        />
+        
       </div>
       <!-- Sign in and Sign up-->
       <div class="flex items-center justify-end md:flex-1 lg:w-0">
         <a
           href="{% url 'log_in' %}"
-          class="whitespace-nowrap text-sm font-medium text-gray-500 hover:text-gray-900"
+          class="whitespace-nowrap text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-400"
         >
           Sign in
         </a>
