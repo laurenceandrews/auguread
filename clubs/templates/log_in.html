@@ -1,4 +1,5 @@
-{% extends 'base.html' %} {% block body %} {% load static %} {% load myfilters %}
+{% extends 'base.html' %} {% block body %} {% load static %} {% load widget_tweaks %}
+
 <!-- <div class="dark:bg-slate-800 h-full">
   <h1 class="">Log In</h1>
   {% for message in messages %}
@@ -20,7 +21,8 @@
   <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
     <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 dark:bg-slate-700 dark:shadow-lg dark:sm:shadow-slate-900 dark:border-y-slate-600/50 dark:border-y-2 dark:sm:border-0">
       <form class="space-y-6" action="#" method="POST">
-        <div>
+        
+		{% comment %} <div>
           <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-50"> Email address </label>
           <div class="mt-1">
             <input id="email" name="email" type="email" autocomplete="email" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-slate-100 dark:border-indigo-900" />
@@ -32,21 +34,23 @@
           <div class="mt-1">
             <input id="password" name="password" type="password" autocomplete="current-password" required class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-slate-100 dark:border-indigo-900" />
           </div>
-        </div>
+        </div> {% endcomment %}
 
         {% for field in form %}
         <div>
 			<!-- DO NOT FORGET TO RENAME FIELD TO Email Address-->
-          <label class="block text-sm font-medium text-gray-700">
-            {{ field.label_tag }}	
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-50">
+			{{ field.label_tag }}
           </label>
           <div class="mt-1">
-			{{ field|addclass:"appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"}}
+			{{ field|add_class:"appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"}}
           </div>
         </div>
         {% endfor %}
 
         <!--
+		Sample of a custom field
+		------------------------
 		{% for field in form %}
 		<div class="flex items-center justify-between">
 			<div class="flex items-center">
