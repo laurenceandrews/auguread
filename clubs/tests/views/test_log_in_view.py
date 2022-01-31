@@ -46,7 +46,7 @@ class LogInViewTestCase(TestCase, LogInTester):
     #     self.assertEqual(next, destination_url)
     #     messages_list = list(response.context['messages'])
     #     self.assertEqual(len(messages_list), 0)
-
+    #
     # def test_get_log_in_redirect_when_logged_in(self):
     #     self.client.login(username=self.user.username, password="Password123")
     #     response = self.client.get(self.url, follow=True)
@@ -112,7 +112,7 @@ class LogInViewTestCase(TestCase, LogInTester):
     #     self.assertTemplateUsed(response, 'user_list.html')
     #     messages_list = list(response.context['messages'])
     #     self.assertEqual(len(messages_list), 0)
-
+    
     # def test_post_log_in_redirect_when_logged_in(self):
     #     self.client.login(username=self.user.username, password="Password123")
     #     form_input = { 'username': '@wronguser', 'password': 'WrongPassword123'}
