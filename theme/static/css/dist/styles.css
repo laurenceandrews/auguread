@@ -821,6 +821,10 @@ select {
   height: 1rem;
 }
 
+.min-h-full {
+  min-height: 100%;
+}
+
 .w-full {
   width: 100%;
 }
@@ -869,6 +873,10 @@ select {
 
 .grid-cols-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.flex-col {
+  flex-direction: column;
 }
 
 .items-center {
