@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'clubs',
-	'tailwind',
-	'theme',
-	"django_browser_reload",
+    'tailwind',
+    'theme',
+    "django_browser_reload",
 ]
 
 MIDDLEWARE = [
@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-	"django_browser_reload.middleware.BrowserReloadMiddleware",
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 
 ]
 
@@ -144,4 +144,8 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+# Set up for windows, for mac/ubuntu change to r"/usr/local/bin/npm"
 NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+
+# URL where @login_prohibited redirects to
+REDIRECT_URL_WHEN_LOGGED_IN = 'home'
