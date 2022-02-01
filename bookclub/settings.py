@@ -137,6 +137,7 @@ LOGIN_URL = 'log_in'
 # URL where @login_prohibited redirects to
 AUTO_REDIRECT_URL = 'log_in'
 
+
 # Tailwind App Name
 TAILWIND_APP_NAME = 'theme'
 
@@ -145,3 +146,6 @@ INTERNAL_IPS = [
 ]
 
 NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+
+#URL where @login_prohibited redirects to
+REDIRECT_URL_WHEN_LOGGED_IN = 'home'
