@@ -1,9 +1,11 @@
 """Models in the clubs app."""
 
-from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
+from django.db import models
+from django_countries.fields import CountryField
 from libgravatar import Gravatar
+
 
 class User(AbstractUser):
     """User model used for authentication and authoring."""
@@ -20,6 +22,7 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank=False)
     bio = models.CharField(max_length=520, blank=True)
+    country = CountryField(blank_label='(select country)')
 
     class Meta:
         """Model options"""
@@ -53,6 +56,7 @@ class User(AbstractUser):
     def is_member(self, club):
         return self.membership_type(club) == 'Member'
 
+
 class Club(models.Model):
     name = models.CharField(max_length=50, blank=False, unique=True)
     location = models.CharField(max_length=500, blank=False)
@@ -73,9 +77,11 @@ class Club(models.Model):
         else:
             return False
 
+
 class MemberMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
+
 
 class Post(models.Model):
     """Posts by users."""
