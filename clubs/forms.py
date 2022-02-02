@@ -1,7 +1,7 @@
+from cities_light.models import City, Country
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
-from django_countries.fields import CountryField
 
 from .models import User
 
@@ -86,10 +86,18 @@ class PasswordForm(NewPasswordMixin):
 class SignUpForm(NewPasswordMixin, forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'bio', 'country']
+        fields = ['first_name',
+                  'last_name',
+                  'username',
+                  'email',
+                  'bio',
+                  'country',
+                  'city',
+                  ]
         widgets = {'bio': forms.Textarea()}
 
-    country = CountryField(blank_label='(Select country)').formfield()
+    country = Country()
+    city = City()
 
     new_password = forms.CharField(
         label='Password',
@@ -121,7 +129,7 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
             last_name=self.cleaned_data.get('last_name'),
             email=self.cleaned_data.get('email'),
             bio=self.cleaned_data.get('bio'),
-            country=self.cleaned_data.get('country'),
+            # country=self.cleaned_data.get('country'),
             password=self.cleaned_data.get('new_password'),
         )
         return user

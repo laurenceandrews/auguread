@@ -14,6 +14,7 @@ class UserAdmin(admin.ModelAdmin):
         'email',
         'bio',
         'country',
+        'city',
         'is_active',
     ]
 

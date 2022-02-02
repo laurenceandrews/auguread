@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'clubs',
     'widget_tweaks',
+    'cities_light'
 ]
 
 MIDDLEWARE = [
@@ -133,5 +134,9 @@ LOGIN_URL = 'log_in'
 # URL where @login_prohibited redirects to
 AUTO_REDIRECT_URL = 'log_in'
 
-#URL where @login_prohibited redirects to
+# URL where @login_prohibited redirects to
 REDIRECT_URL_WHEN_LOGGED_IN = 'home'
+
+
+# Configure cities-light
+CITIES_LIGHT_INCLUDE_COUNTRIES = ['GB', 'US']

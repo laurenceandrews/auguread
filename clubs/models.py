@@ -1,9 +1,10 @@
 """Models in the clubs app."""
 
+# from cities_light.models import Country
+from cities_light.models import City, Country
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
-from django_countries.fields import CountryField
 from libgravatar import Gravatar
 
 
@@ -22,7 +23,8 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank=False)
     bio = models.CharField(max_length=520, blank=True)
-    country = CountryField(blank_label='(select country)')
+    country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
 
     class Meta:
         """Model options"""
