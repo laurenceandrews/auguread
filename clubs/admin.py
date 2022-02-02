@@ -1,13 +1,22 @@
 from django.contrib import admin
-from .models import User, Post, Club
+
+from .models import Club, Post, User
+
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for users."""
 
     list_display = [
-        'username', 'first_name', 'last_name', 'email', 'is_active',
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+        'bio',
+        'country',
+        'is_active',
     ]
+
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
@@ -20,6 +29,7 @@ class PostAdmin(admin.ModelAdmin):
     def get_author(self, post):
         """Return the author of a given post."""
         return post.author.username
+
 
 @admin.register(Club)
 class ClubAdmin(admin.ModelAdmin):
