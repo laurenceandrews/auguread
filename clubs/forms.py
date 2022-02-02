@@ -116,3 +116,13 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
             password=self.cleaned_data.get('new_password'),
         )
         return user
+
+class UserForm(forms.ModelForm):
+    """Form to update user profiles."""
+
+    class Meta:
+        """Form options."""
+
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'email', 'bio']
+        widgets = { 'bio': forms.Textarea() }
