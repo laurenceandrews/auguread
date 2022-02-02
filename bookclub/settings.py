@@ -135,3 +135,6 @@ AUTO_REDIRECT_URL = 'log_in'
 
 #URL where @login_prohibited redirects to
 REDIRECT_URL_WHEN_LOGGED_IN = 'home'
+
+# Page lengths
+USERS_PER_PAGE = 10
