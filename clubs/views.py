@@ -90,7 +90,7 @@ def sign_up(request):
 def home(request):
     return render(request, 'home.html')
 
-class PasswordView(FormView):
+class PasswordView(LoginRequiredMixin, FormView):
     """View that handles password change requests."""
 
     template_name = 'password.html'

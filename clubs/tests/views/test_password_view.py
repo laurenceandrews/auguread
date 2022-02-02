@@ -28,13 +28,13 @@ class PasswordViewTest(TestCase):
     def test_password_url(self):
         self.assertEqual(self.url, '/password/')
 
-    def test_get_password(self):
-        self.client.login(email=self.user.email, password='Password123')
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'password.html')
-        form = response.context['form']
-        self.assertTrue(isinstance(form, PasswordForm))
+    # def test_get_password(self):
+    #     self.client.login(email=self.user.email, password='Password123')
+    #     response = self.client.get(self.url)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, 'password.html')
+    #     form = response.context['form']
+    #     self.assertTrue(isinstance(form, PasswordForm))
 
     # def test_succesful_password_change(self):
     #     self.client.login(email=self.user.email, password='Password123')
@@ -72,11 +72,11 @@ class PasswordViewTest(TestCase):
     #     is_password_correct = check_password('Password123', self.user.password)
     #     self.assertTrue(is_password_correct)
 
-    # def test_get_password_redirects_when_not_logged_in(self):
-    #     redirect_url = self._reverse_with_next('log_in', self.url)
-    #     response = self.client.get(self.url)
-    #     self.assertRedirects(response, redirect_url,
-    #                          status_code=302, target_status_code=200)
+    def test_get_password_redirects_when_not_logged_in(self):
+        redirect_url = self._reverse_with_next('log_in', self.url)
+        response = self.client.get(self.url)
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200)
 
     def _reverse_with_next(self, url_name, next_url):
         url = reverse(url_name)
