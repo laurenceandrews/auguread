@@ -1,7 +1,8 @@
+"""Forms for the book club app"""
 from django import forms
 from django.core.validators import RegexValidator
 from django.contrib.auth import authenticate
-from .models import User
+from .models import User, Post
 
 class LogInForm(forms.Form):
     """Form enabling registered users to log in."""
@@ -126,3 +127,18 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'username', 'email', 'bio']
         widgets = { 'bio': forms.Textarea() }
+
+class PostForm(forms.ModelForm):
+    """Form to ask user for post text.
+
+    The post author must be by the post creator.
+    """
+
+    class Meta:
+        """Form options."""
+
+        model = Post
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea()
+        }
