@@ -10,6 +10,11 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
+from django.http import Http404
+from django.views.generic import ListView
+from django.views.generic.detail import DetailView
+from django.views.generic.list import MultipleObjectMixin
+from clubs.models import Post, User
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
@@ -116,3 +121,11 @@ class PasswordView(LoginRequiredMixin, FormView):
         messages.add_message(
             self.request, messages.SUCCESS, "Password updated!")
         return reverse(settings.AUTO_REDIRECT_URL)
+
+class UserListView(LoginRequiredMixin, ListView):
+    """View that shows a list of all users."""
+
+    model = User
+    template_name = "user_list.html"
+    context_object_name = "users"
+    # paginate_by = settings.USERS_PER_PAGE
