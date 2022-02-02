@@ -122,6 +122,33 @@ class PasswordView(LoginRequiredMixin, FormView):
             self.request, messages.SUCCESS, "Password updated!")
         return reverse(settings.AUTO_REDIRECT_URL)
 
+class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
+    """View that shows individual user details."""
+
+    model = User
+    template_name = 'show_user.html'
+    paginate_by = settings.POSTS_PER_PAGE
+    pk_url_kwarg = 'user_id'
+
+    def get_context_data(self, **kwargs):
+        """Generate context data to be shown in the template."""
+        user = self.get_object()
+        posts = Post.objects.filter(author=user)
+        context = super().get_context_data(object_list=posts, **kwargs)
+        context['user'] = user
+        context['posts'] = context['object_list']
+        context['following'] = self.request.user.is_following(user)
+        context['followable'] = (self.request.user != user)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        """Handle get request, and redirect to user_list if user_id invalid."""
+
+        try:
+            return super().get(request, *args, **kwargs)
+        except Http404:
+            return redirect('user_list')
+
 class UserListView(LoginRequiredMixin, ListView):
     """View that shows a list of all users."""
 
