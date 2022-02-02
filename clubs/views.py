@@ -93,7 +93,7 @@ def home(request):
 class PasswordView(LoginRequiredMixin, FormView):
     """View that handles password change requests."""
 
-    template_name = 'change_password.html'
+    template_name = 'password.html'
     form_class = PasswordForm
 
     def get_form_kwargs(self, **kwargs):
