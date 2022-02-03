@@ -4,12 +4,14 @@ from django.conf import settings
 from django.contrib.auth import login, logout
 from clubs.forms import LogInForm, PasswordForm
 from django.views import View
-from .forms import SignUpForm
+from .forms import SignUpForm, PostForm
 from .helpers import login_prohibited
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
+from .models import Post, User
+from django.http import HttpResponseForbidden
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
@@ -116,3 +118,23 @@ class PasswordView(LoginRequiredMixin, FormView):
         messages.add_message(
             self.request, messages.SUCCESS, "Password updated!")
         return reverse(settings.AUTO_REDIRECT_URL)
+
+def feed(request):
+    form = PostForm()
+    return render(request, 'feed.html', {'form': form})
+
+def new_post(request):
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            current_user = request.user
+            form = PostForm(request.POST)
+            if form.is_valid():
+                text = form.cleaned_data.get('text')
+                post = Post.objects.create(author=current_user, text=text)
+                return redirect('feed')
+            else:
+                return render(request, 'feed.html', {'form': form})
+        else:
+            return redirect('log_in')
+    else:
+        return HttpResponseForbidden()

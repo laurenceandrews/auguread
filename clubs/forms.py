@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
 from django_countries.fields import CountryField
 
-from .models import User
+from .models import User, Post
 
 
 class LogInForm(forms.Form):
@@ -125,3 +125,18 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
             password=self.cleaned_data.get('new_password'),
         )
         return user
+
+class PostForm(forms.ModelForm):
+    """Form to ask user for post text.
+
+    The post author must be by the post creator.
+    """
+
+    class Meta:
+        """Form options."""
+
+        model = Post
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea()
+        }
