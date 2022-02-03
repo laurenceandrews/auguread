@@ -2,7 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from libgravatar import Gravatar
 
 class User(AbstractUser):
@@ -60,9 +60,20 @@ class Club(models.Model):
 
     # A foreign key is not required for the club owner
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
     members = models.ManyToManyField(
         User, through='MemberMembership', related_name='member', blank=True)
 
+    # measured in words per minute (average for all club members)
+    avg_reading_speed = models.IntegerField(
+        validators=[MinValueValidator(50), MaxValueValidator(500)],
+            blank=False,
+            default=200  #if reading speed test not completed
+    )
+
+    # favourite_books = models.ManyToManyField(
+    #
+    # )
     class Meta:
         """Model options"""
         ordering = ['name']
@@ -72,6 +83,15 @@ class Club(models.Model):
             return True
         else:
             return False
+
+
+class Book(models.Model):
+    ISBN = models.CharField(max_length = 10, blank = False)
+    title = models.CharField(max_length = 250, blank = False)
+    author = models.CharField(max_length = 300, blank = False)
+    publisher = models.CharField(max_length = 300, blank = False)
+    publication_year = models.IntegerField(max_length = 4, blank = False)
+
 
 class MemberMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
