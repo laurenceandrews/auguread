@@ -15,10 +15,7 @@ pytz==2021.3
 six==1.16.0
 sqlparse==0.4.2
 text-unidecode==1.3
-<<<<<<< HEAD
 django-bootstrap-pagination
 humanize
-=======
 django-countries==7.2.1
 pyuca==1.2
->>>>>>> 694d42664681613b1021890c59dc0237c9514785
