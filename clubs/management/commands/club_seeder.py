@@ -37,7 +37,7 @@ class Command(BaseCommand):
             self.create_club()
             # except (django.db.utils.IntegrityError):
             #     continue
-            club_count += 1
+            self.club_count += 1
         print('Club seeding complete')
 
     # took some code from our old seed.py file from grasshopper
@@ -52,8 +52,9 @@ class Command(BaseCommand):
             userId = self.get_random_user()
             first_name = self.faker.first_name(),
             last_name = self.faker.last_name(),
-            email = first_name + '.' + last_name + '@example.com',
-            username = '@' + first_name,
+            emailTuple = str(first_name) + "." + str(last_name) + "@example.com",
+            email = ''.join(emailTuple)
+            username = '@' + str(first_name),
             bio = self.faker.text(max_nb_chars=520)
 
             # create a user to be the owner of the club
