@@ -23,6 +23,10 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, blank=False)
     bio = models.CharField(max_length=520, blank=True)
     country = CountryField(blank_label='(select country)')
+    followers = models.ManyToManyField(
+        'self', symmetrical=False, related_name='followees'
+    )
+
 
     class Meta:
         """Model options"""
@@ -55,6 +59,27 @@ class User(AbstractUser):
 
     def is_member(self, club):
         return self.membership_type(club) == 'Member'
+
+    def _follow(self, user):
+        user.followers.add(self)
+
+    def _unfollow(self, user):
+        user.followers.remove(self)
+
+    def is_following(self, user):
+        """Returns whether self follows the given user."""
+
+        return user in self.followees.all()
+
+    def follower_count(self):
+        """Returns the number of followers of self."""
+
+        return self.followers.count()
+
+    def followee_count(self):
+        """Returns the number of followees of self."""
+
+        return self.followees.count()
 
 
 class Club(models.Model):

@@ -1,0 +1,32 @@
+<div class="row content">
+  <div class="col-12">
+    <img src="{{ user.gravatar }}" alt="Gravatar of {{ user.username }}" class="rounded-circle profile-image" >
+    <div class="profile-text">
+      <h3 class="profile-title">{{ user.full_name }}</h3>
+      <p class="profile-username">{{ user.username }}</p>
+    </div>
+  </div>
+</div>
+<div class="row content">
+  <div class="col-12">
+    <form action="{% url 'follow_toggle' user_id=user.id %}" method="get">
+      <p class="profile-bio">{{ user.bio }}</p>
+      <p class="profile-statistics">
+        <span>
+          <b>{{ user.followee_count }}</b> Following
+          &emsp;
+          <b>{{ user.follower_count }}</b> Followers
+        </span>
+        <span class="float-end">
+          {% if followable %}
+            {% if following %}
+              <button class="btn btn-secondary">Unfollow</button>
+            {% else %}
+              <button class="btn btn-primary">Follow</button>
+            {% endif %}
+          {% endif %}
+        </span>
+      </p>
+    </form>
+  </div>
+</div>
