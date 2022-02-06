@@ -156,3 +156,8 @@ class UserListView(LoginRequiredMixin, ListView):
     template_name = "user_list.html"
     context_object_name = "users"
     paginate_by = settings.USERS_PER_PAGE
+
+class RecommendationsView(LoginRequiredMixin, ListView):
+    """View that shows a list of all recommended books."""
+
+    template_name = "rec_page.html"
