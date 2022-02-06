@@ -15,6 +15,8 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import MultipleObjectMixin
 from clubs.models import Post, User, Club
+from django.contrib.auth.decorators import login_required
+
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
@@ -190,3 +192,8 @@ class ClubListView(LoginRequiredMixin, ListView):
     model = Club
     template_name = "club_list.html"
     context_object_name = "clubs"
+
+@login_required
+def enter(request, club_id):
+    user = request.user
+    return redirect('show_user', user_id=user.id, club_id=club_id)
