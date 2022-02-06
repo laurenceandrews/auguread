@@ -132,10 +132,10 @@ AUTH_USER_MODEL = 'clubs.User'
 LOGIN_URL = 'log_in'
 
 # URL where @login_prohibited redirects to
-AUTO_REDIRECT_URL = 'rec_page'
+AUTO_REDIRECT_URL = 'rec'
 
 #URL where @login_prohibited redirects to
-REDIRECT_URL_WHEN_LOGGED_IN = 'rec_page'
+REDIRECT_URL_WHEN_LOGGED_IN = 'rec'
 
 # Page lengths
 USERS_PER_PAGE = 10

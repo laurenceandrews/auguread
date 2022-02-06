@@ -46,7 +46,7 @@ class LogInView(LoginProhibitedMixin, View):
     """View that handles log in."""
 
     http_method_names = ['get', 'post']
-    redirect_when_logged_in_url = 'rec_page'
+    redirect_when_logged_in_url = 'rec'
 
     def get(self, request):
         """Display log in template."""
@@ -157,6 +157,8 @@ class UserListView(LoginRequiredMixin, ListView):
     context_object_name = "users"
     paginate_by = settings.USERS_PER_PAGE
 
+
+"""Add LoginRequiredMixin to rec-view once log in redirect is fixed"""
 def RecommendationsView(request):
     """View that shows a list of all recommended books."""
     return render(request, 'rec_page.html')

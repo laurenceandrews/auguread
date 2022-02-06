@@ -27,5 +27,5 @@ urlpatterns = [
     path('user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
     path('users/', views.UserListView.as_view(), name='user_list'),
     # path('rec/', views.RecommendationsView.as_view(), name='rec_page'),
-    path('rec/', views.RecommendationsView, name='rec_page'),
+    path('rec/', views.RecommendationsView, name='rec'),
 ]
