@@ -163,6 +163,26 @@ def RecommendationsView(request):
     """View that shows a list of all recommended books."""
     return render(request, 'rec_page.html')
 
+class NewClubView(LoginRequiredMixin, CreateView):
+    """Class-based generic view for new club handling."""
+
+    model = Club
+    template_name = 'new_club.html'
+    form_class = NewClubForm
+    http_method_names = ['post', 'get']
+
+    def form_valid(self, form):
+        """Process a valid form."""
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        return reverse('club_list')
+
+    def handle_no_permission(self):
+        return redirect('log_in')
+
 class ClubListView(LoginRequiredMixin, ListView):
     """View to display a list of available clubs."""
 
