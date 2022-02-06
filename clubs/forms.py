@@ -2,13 +2,10 @@
 from django import forms
 from django.contrib.auth import authenticate
 
-from .models import User, Post
+from .models import User, Post, Club
 
 from django.core.validators import RegexValidator
 from django_countries.fields import CountryField
-
-from .models import User
-
 
 
 class LogInForm(forms.Form):
@@ -155,3 +152,10 @@ class PostForm(forms.ModelForm):
         widgets = {
             'text': forms.Textarea()
         }
+
+class NewClubForm(forms.ModelForm):
+    """Form for creating a new book club."""
+
+    class Meta:
+        model = Club
+        fields = ['name', 'location', 'description']
