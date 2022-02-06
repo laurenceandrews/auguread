@@ -16,6 +16,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import MultipleObjectMixin
 from clubs.models import Post, User, Club
 from django.contrib.auth.decorators import login_required
+from clubs.helpers import member, owner
 
 
 class LoginProhibitedMixin:
@@ -194,6 +195,26 @@ class ClubListView(LoginRequiredMixin, ListView):
     context_object_name = "clubs"
 
 @login_required
+@member
 def enter(request, club_id):
     user = request.user
     return redirect('show_user', user_id=user.id, club_id=club_id)
+
+@login_required
+def apply(request, club_id):
+    user = request.user
+    club = Club.objects.get(id=club_id)
+    club.applied_by(user)
+    return redirect('club_list')
+
+@login_required
+@owner
+def approve(request, user_id, club_id):
+    club = Club.objects.get(id=club_id)
+    try:
+        user = User.objects.get(id=user_id)
+        club.accept(user)
+    except ObjectDoesNotExist:
+        return redirect('club_list', club_id=club_id)
+    else:
+        return redirect('show_user', user_id=user_id, club_id=club_id)
