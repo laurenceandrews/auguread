@@ -28,4 +28,6 @@ urlpatterns = [
     path('users/', views.UserListView.as_view(), name='user_list'),
     # path('rec/', views.RecommendationsView.as_view(), name='rec_page'),
     path('rec/', views.RecommendationsView, name='rec'),
+    path('clubs/', views.ClubListView.as_view(), name='club_list'),
+    path('new_club/', views.NewClubView.as_view(), name='new_club'),
 ]
