@@ -2,19 +2,19 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.conf import settings
 from django.contrib.auth import login, logout
-from clubs.forms import LogInForm, PasswordForm
+from clubs.forms import LogInForm, PasswordForm, NewClubForm
 from django.views import View
 from .forms import SignUpForm
 from .helpers import login_prohibited
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.edit import FormView, UpdateView, CreateView
 from django.urls import reverse
 from django.http import Http404
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import MultipleObjectMixin
-from clubs.models import Post, User
+from clubs.models import Post, User, Club
 
 class LoginProhibitedMixin:
     """Mixin that redirects when a user is logged in."""
@@ -162,3 +162,11 @@ class UserListView(LoginRequiredMixin, ListView):
 def RecommendationsView(request):
     """View that shows a list of all recommended books."""
     return render(request, 'rec_page.html')
+
+class ClubListView(LoginRequiredMixin, ListView):
+    """View to display a list of available clubs."""
+
+    paginate_by = settings.NUMBER_PER_PAGE
+    model = Club
+    template_name = "club_list.html"
+    context_object_name = "clubs"
