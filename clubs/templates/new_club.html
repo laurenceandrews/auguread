@@ -1,0 +1,20 @@
+{% extends 'base_content.html' %}
+{% block content %}
+<title>
+  {% block title %}
+  | Create Club
+  {% endblock %}
+</title>
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1>Create New Club</h1>
+      <form action="{% url 'new_club' %}" method="post">
+        {% csrf_token %}
+        {% include 'partials/bootstrap_form.html' with form=form %}
+        <input type="submit" value="Create club" class="btn btn-primary mb-3">
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
