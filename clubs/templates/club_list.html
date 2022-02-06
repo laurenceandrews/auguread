@@ -35,7 +35,7 @@
             </a>
         </div>
       {% else %}
-      {% include "partials/template_club_list.html" with clubs=clubs %}
+      {% include "partials/temp_club_list.html" with clubs=clubs %}
       <div class="row-12" style="text-align:center">
         <h3 class="text-center"> Don't want to join an existing club? Why not create a new club yourself!</h1>
           <a href='{% url 'new_club' %}' class="btn btn-lg btn-primary">
