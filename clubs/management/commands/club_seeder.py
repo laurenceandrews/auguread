@@ -16,14 +16,14 @@ class Command(BaseCommand):
 
     # get users from the database separated into columns (using pandas)
     def read_from_file(self):
-        columns = ["userId", "Location", "Age"]
+        columns = ["id", "Location", "Age"]
         user_data = pd.read_csv(
             r'clubs/dataset/BX-Users.csv',
             encoding='Latin-1',
             delimiter=';',
             names=columns,
             dtype={
-                "userId": "string",
+                "id": "string",
                 "Location": "string",
                 "Age": "string",
             }
@@ -51,7 +51,7 @@ class Command(BaseCommand):
         # Initialise a user that will be the owner
         owner_first_name = self.faker.first_name()
         owner_last_name = self.faker.last_name()
-        emailTuple = str(owner_first_name) + "." + str(owner_last_name) + "@example.com",
+        emailTuple = str(owner_first_name) + "." + str(owner_last_name) + "@example.com"
         owner_username = '@' + str(owner_first_name)
         owner_password = 'Password123'
         owner_bio = self.faker.text(max_nb_chars=520)
@@ -69,14 +69,14 @@ class Command(BaseCommand):
             club_description = self.faker.text(max_nb_chars=520)
             club_reading_speed = random.randint(50, 500)
             
-            # Get random userId
+            # Get random id
             ownerId = self.get_random_user()
             
-            # If a user with the above userId isn't already seeded
+            # If a user with the above id isn't already seeded
             if not User.objects.filter(id=ownerId).exists():
                 # Seed that user. This will be the owner
                 user = User.objects.create_user(
-                    userId = ownerId,
+                    id = ownerId,
                     first_name = owner_first_name,
                     last_name = owner_last_name,
                     email = ''.join(emailTuple),
@@ -101,8 +101,8 @@ class Command(BaseCommand):
 
     # get a random user id from the list of users in the dataset
     def get_random_user(self):
-        userIds = self.read_from_file().userId.to_list()
-        random.choice(userIds)
+        ids = self.read_from_file().id.to_list()
+        random.choice(ids)
 
     # generate a random location from a made-up list (can also do it with the user locations but we would have to format them first)
     def generate_random_location(self):
@@ -111,14 +111,20 @@ class Command(BaseCommand):
         return random.choice(locations)
 
     def seed_user_in_club(self):
+        user_first_name = self.faker.first_name()
+        user_last_name = self.faker.last_name()
+        emailTuple = str(user_first_name) + "." + str(user_last_name) + "@example.com"
+        user_username = '@' + str(user_first_name)
+        user_password = 'Password123'
+        user_bio = self.faker.text(max_nb_chars=520)
+
         # Seed a user using existing and randomly generated data
         user = User.objects.create_user(
-            userId = self.user_count,
+            id = self.user_count,
             first_name = self.faker.first_name(),
             last_name = self.faker.last_name(),
-            emailTuple = str(first_name) + "." + str(last_name) + "@example.com",
             email = ''.join(emailTuple),
-            username = '@' + str(first_name),
+            username = '@' + str(user_first_name),
             password='Password123',
             bio = self.faker.text(max_nb_chars=520)
         )

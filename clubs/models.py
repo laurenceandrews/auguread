@@ -9,12 +9,6 @@ from libgravatar import Gravatar
 class User(AbstractUser):
     """User model used for authentication and authoring."""
 
-    userId = models.AutoField(
-        primary_key=True,
-        blank=False,
-        default=0
-    )
-
     username = models.CharField(
         max_length=30,
         unique=True,
@@ -187,13 +181,15 @@ class Club_Users(models.Model):
     club_id = models.ForeignKey(
         Club,
         on_delete=models.CASCADE,
-        blank=False
+        blank=False,
+        default=0
     )
 
     user_id = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        blank=False
+        blank=False,
+        default=0
     )
 
     role_num = models.IntegerField(
@@ -206,11 +202,13 @@ class Club_Books(models.Model):
     club_id = models.ForeignKey(
         Club,
         on_delete=models.CASCADE,
-        blank=False
+        blank=False,
+        default=0
     )
 
     book_id = models.ForeignKey(
         Book,
         on_delete=models.CASCADE,
-        blank=False
+        blank=False,
+        default=0
     )
