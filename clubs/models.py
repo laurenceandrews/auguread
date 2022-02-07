@@ -1,5 +1,6 @@
 """Models in the clubs app."""
 
+from pickle import FALSE
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
@@ -53,22 +54,69 @@ class User(AbstractUser):
     def is_member(self, club):
         return self.membership_type(club) == 'Member'
 
+class Book(models.Model):
+    ISBN = models.CharField(max_length = 10, blank = False)
+    title = models.CharField(max_length = 250, blank = False)
+    author = models.CharField(max_length = 300, blank = False)
+    publisher = models.CharField(max_length = 300, blank = False)
+    publication_year = models.IntegerField(max_length = 4, blank = False)
+
+class Post(models.Model):
+    """Posts by users."""
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.CharField(max_length=280)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        """Model options."""
+        ordering = ['-created_at']
+
 class Club(models.Model):
-    name = models.CharField(max_length=50, blank=False, unique=True)
-    location = models.CharField(max_length=500, blank=False)
-    description = models.CharField(max_length=520, blank=False)
+    name = models.CharField(
+        max_length=50,
+        blank=False,
+        unique=True
+    )
+
+    location = models.CharField(
+        max_length=500,
+        blank=False
+    )
+
+    description = models.CharField(
+        max_length=520,
+        blank=False
+    )
 
     # A foreign key is not required for the club owner
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=FALSE
+    )
 
     members = models.ManyToManyField(
-        User, through='MemberMembership', related_name='member', blank=True)
+        User,
+        through='club_users',
+        related_name='member',
+        blank=True
+    )
+
+    books = models.ManyToManyField(
+        Book,
+        through='club_books',
+        related_name='book',
+        blank=True
+    )
 
     # measured in words per minute (average for all club members)
     avg_reading_speed = models.IntegerField(
-        validators=[MinValueValidator(50), MaxValueValidator(500)],
-            blank=False,
-            default=200  #if reading speed test not completed
+        validators=[
+            MinValueValidator(50),
+            MaxValueValidator(500)
+        ],
+        blank=False,
+        default=200  #if reading speed test not completed
     )
 
     # favourite_books = models.ManyToManyField(
@@ -84,25 +132,34 @@ class Club(models.Model):
         else:
             return False
 
+class Club_Users(models.Model):
+    club = models.ForeignKey(
+        Club,
+        on_delete=models.CASCADE,
+        blank=False
+    )
 
-class Book(models.Model):
-    ISBN = models.CharField(max_length = 10, blank = False)
-    title = models.CharField(max_length = 250, blank = False)
-    author = models.CharField(max_length = 300, blank = False)
-    publisher = models.CharField(max_length = 300, blank = False)
-    publication_year = models.IntegerField(max_length = 4, blank = False)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False
+    )
 
+    num = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(4)],
+        blank=False,
+        default=1
+    )
 
-class MemberMembership(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+class Club_Books(models.Model):
+    club = models.ForeignKey(
+        Club,
+        on_delete=models.CASCADE,
+        blank=False
+    )
 
-class Post(models.Model):
-    """Posts by users."""
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    text = models.CharField(max_length=280)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        """Model options."""
-        ordering = ['-created_at']
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False
+    )
