@@ -9,18 +9,42 @@ from libgravatar import Gravatar
 class User(AbstractUser):
     """User model used for authentication and authoring."""
 
+    userId = models.AutoField(
+        primary_key=True,
+        blank=False,
+        default=0
+    )
+
     username = models.CharField(
         max_length=30,
         unique=True,
-        validators=[RegexValidator(
-            regex=r'^@\w{3,}$',
-            message='Username must consist of @ followed by at least three alphanumericals'
-        )]
+        validators=[
+            RegexValidator(
+                regex=r'^@\w{3,}$',
+                message='Username must consist of @ followed by at least three alphanumericals'
+            )
+        ]
     )
-    first_name = models.CharField(max_length=50, blank=False)
-    last_name = models.CharField(max_length=50, blank=False)
-    email = models.EmailField(unique=True, blank=False)
-    bio = models.CharField(max_length=520, blank=True)
+
+    first_name = models.CharField(
+        max_length=50,
+        blank=False
+    )
+
+    last_name = models.CharField(
+        max_length=50,
+        blank=False
+    )
+
+    email = models.EmailField(
+        unique=True,
+        blank=False
+    )
+
+    bio = models.CharField(
+        max_length=520,
+        blank=True
+    )
 
     class Meta:
         """Model options"""
@@ -160,32 +184,32 @@ class Club(models.Model):
             return False
 
 class Club_Users(models.Model):
-    club = models.ForeignKey(
+    club_id = models.ForeignKey(
         Club,
         on_delete=models.CASCADE,
         blank=False
     )
 
-    user = models.ForeignKey(
+    user_id = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         blank=False
     )
 
-    num = models.IntegerField(
+    role_num = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(4)],
         blank=False,
         default=1
     )
 
 class Club_Books(models.Model):
-    club = models.ForeignKey(
+    club_id = models.ForeignKey(
         Club,
         on_delete=models.CASCADE,
         blank=False
     )
 
-    book = models.ForeignKey(
+    book_id = models.ForeignKey(
         Book,
         on_delete=models.CASCADE,
         blank=False
