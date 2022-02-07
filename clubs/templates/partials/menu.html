@@ -3,7 +3,7 @@
     <li class="nav-item">
       <a class="nav-link" href = "{% url 'club_list' %}">All Clubs</a>
     </li>
-    <li class="nav-item">
+    {# <li class="nav-item">
       <a class="nav-link" href="{% url 'my_clubs' %}">My Clubs</a>
     </li>
     <li class="nav-item">
@@ -11,34 +11,17 @@
     </li>
     <li class="nav-item">
       <a class="nav-link" href="{% url 'friends' %}">Friends</a>
-    </li>
+    </li> #}
   </ul>
-
   <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-    {% if club %}
-    <li class="nav-item dropdown">
-      <a class="nav-link" href="#" id="club-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <span>Switch club</span>
-      </a>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-account-dropdown">
-        {% for club_avaliable in user.clubs_attended %}
-          {% if club_avaliable != club %}
-           <li><a class="dropdown-item" href="{% url 'enter' club_avaliable.id %}">{{ club_avaliable.name }}</a></li>
-          {% endif %}
-        {% endfor %}
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="{% url 'club_list' %}">See detailed club list</a></li>
-      </ul>
-    </li>
-    {% endif %}
     <li class="nav-item dropdown">
       <a class="nav-link" href="#" id="user-account-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="bi-person-circle"></span>
       </a>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-account-dropdown">
-        <li><a class="dropdown-item" href="{% url 'profile' %}">Change profile</a></li>
-        <li><a class="dropdown-item" href="{% url 'change_password' %}">Change password</a></li>
-        <li><a class="dropdown-item" href="{% url 'settings' %}">Settings</a></li>
+        {# <li><a class="dropdown-item" href="{% url 'profile' %}">Change profile</a></li> #}
+        <li><a class="dropdown-item" href="{% url 'password' %}">Change password</a></li>
+        {# <li><a class="dropdown-item" href="{% url 'settings' %}">Settings</a></li> #}
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="{% url 'log_out' %}">Log out</a></li>
       </ul>
