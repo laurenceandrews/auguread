@@ -10,12 +10,24 @@ class Command(BaseCommand):
 
     HOW_MANY_CLUBS_TO_MAKE = 10
     HOW_MANY_USERS_TO_ADD = 100
+    USER_ID = 0
+    first_name = ""
+    last_name = ""
 
     # get users from the database separated into columns (using pandas)
     def read_from_file(self):
-        columns = ["UserID", "Location", "Age"]
+        columns = ["userId", "Location", "Age"]
         user_data = pd.read_csv(
-            r'clubs/dataset/BX-Users.csv', encoding='Latin-1', delimiter=';', names=columns)
+            r'clubs/dataset/BX-Users.csv',
+            encoding='Latin-1',
+            delimiter=';',
+            names=columns,
+            dtype={
+                "userId": "string",
+                "Location": "string",
+                "Age": "string",
+            }
+        )
         return user_data
 
     def __init__(self):
@@ -36,10 +48,17 @@ class Command(BaseCommand):
 
     # took some code from our old seed.py file from grasshopper
     def create_club(self):
-        # Generate a club name based on a random owner name
+        # Initialise a user that will be the owner
         owner_first_name = self.faker.first_name()
         owner_last_name = self.faker.last_name()
+        emailTuple = str(owner_first_name) + "." + str(owner_last_name) + "@example.com",
+        owner_username = '@' + str(owner_first_name)
+        owner_password = 'Password123'
+        owner_bio = self.faker.text(max_nb_chars=520)
+
+        # Generate a club name based on a random owner name
         club_name = owner_first_name + owner_last_name + "\'s Club"
+
         # Append the new club name to the file
         self.file1_append.write(club_name + "\n")
 
@@ -51,19 +70,19 @@ class Command(BaseCommand):
             club_reading_speed = random.randint(50, 500)
             
             # Get random userId
-            userId = self.get_random_user(),
+            ownerId = self.get_random_user()
             
             # If a user with the above userId isn't already seeded
-            if not User.objects.filter(userId=userId).exists():
+            if not User.objects.filter(id=ownerId).exists():
                 # Seed that user. This will be the owner
                 user = User.objects.create_user(
-                    userId = userId,
+                    userId = ownerId,
                     first_name = owner_first_name,
                     last_name = owner_last_name,
-                    email = self.first_name.lower() + '.' + self.last_name.lower() + '@example.org',  
-                    emailTuple = str(self.first_name) + "." + str(self.last_name) + "@example.com",
-                    password='Password123',
-                    bio = self.faker.text(max_nb_chars=520)
+                    email = ''.join(emailTuple),
+                    username = owner_username,
+                    password = owner_password,
+                    bio = owner_bio
                 )
                 user.save()
 
@@ -82,8 +101,8 @@ class Command(BaseCommand):
 
     # get a random user id from the list of users in the dataset
     def get_random_user(self):
-        user_ids = self.read_from_file().UserID.to_list()
-        random.choice(user_ids)
+        userIds = self.read_from_file().userId.to_list()
+        random.choice(userIds)
 
     # generate a random location from a made-up list (can also do it with the user locations but we would have to format them first)
     def generate_random_location(self):
@@ -91,15 +110,15 @@ class Command(BaseCommand):
                      "Brighton", "Bristol", "Online", "Glasgow", "USA"]
         return random.choice(locations)
 
-    
     def seed_user_in_club(self):
         # Seed a user using existing and randomly generated data
         user = User.objects.create_user(
             userId = self.user_count,
             first_name = self.faker.first_name(),
             last_name = self.faker.last_name(),
-            email = self.first_name.lower() + '.' + self.last_name.lower() + '@example.org',  
-            emailTuple = str(self.first_name) + "." + str(self.last_name) + "@example.com",
+            emailTuple = str(first_name) + "." + str(last_name) + "@example.com",
+            email = ''.join(emailTuple),
+            username = '@' + str(first_name),
             password='Password123',
             bio = self.faker.text(max_nb_chars=520)
         )
@@ -117,7 +136,7 @@ class Command(BaseCommand):
         )
         user_role.save()
 
-        self.how_many_users_made += 1
+        self.user_count += 1
 
     def handle(self, *args, **options):
         while self.club_count < self.HOW_MANY_CLUBS_TO_MAKE:
@@ -126,7 +145,7 @@ class Command(BaseCommand):
             self.club_count += 1
         print('Finished seeding clubs')
 
-        while self.how_many_users_added < self.HOW_MANY_USERS_TO_ADD:
+        while self.user_count < self.HOW_MANY_USERS_TO_ADD:
             print(f'Adding users to clubs...',  end='\r')
             self.seed_user_in_club()
             self.user_count += 1
