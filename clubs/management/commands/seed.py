@@ -1,10 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
-from clubs.models import User
+from clubs.models import User, Book
 
 class Command(BaseCommand):
     PASSWORD = "Password123"
     USER_COUNT = 100
+    BOOK_COUNT = 100
 
     def __init__(self):
         super().__init__()
@@ -20,6 +21,17 @@ class Command(BaseCommand):
                 continue
             user_count += 1
         print('User seeding complete')
+
+    def handle(self, *args, **options):
+        book_count = 0
+        while book_count < Command.BOOK_COUNT:
+            print(f'Seeding book {book_count}',  end='\r')
+            try:
+                self._create_book()
+            except (django.db.utils.IntegrityError):
+             continue
+            book_count += 1
+        print('Book seeding complete') 
 
     def _create_user(self):
         first_name = self.faker.first_name()
@@ -43,3 +55,17 @@ class Command(BaseCommand):
     def _username(self, first_name, last_name):
         username = f'@{first_name}{last_name}'
         return username
+
+    def _create_book(self):
+        ISBN = self.faker.isbn13()
+        title = self.faker.text(max_nb_chars=20)
+        author = self.faker.name()
+        publisher = self.faker.company()
+        publication_year = self.faker.year()
+        Book.objects.create(
+            ISBN = ISBN,
+            title = title,
+            author = author,
+            publisher = publisher,
+            publication_year = publication_year
+        )
