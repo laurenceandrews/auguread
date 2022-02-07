@@ -9,6 +9,7 @@ from random import randint
 class Command(BaseCommand):
 
     HOW_MANY_CLUBS_TO_MAKE = 10
+    HOW_MANY_USERS_TO_ADD = 100
 
     # get users from the database separated into columns (using pandas)
     def read_from_file(self):
@@ -26,7 +27,8 @@ class Command(BaseCommand):
 
         self.clubs_made = []
         self.club_count = 0
-        self.users_added = 0
+        self.users_made = []
+        self.user_count = 0
 
     def __del__(self):
         self.file1_append.close()

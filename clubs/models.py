@@ -55,17 +55,44 @@ class User(AbstractUser):
         return self.membership_type(club) == 'Member'
 
 class Book(models.Model):
-    ISBN = models.CharField(max_length = 10, blank = False)
-    title = models.CharField(max_length = 250, blank = False)
-    author = models.CharField(max_length = 300, blank = False)
-    publisher = models.CharField(max_length = 300, blank = False)
-    publication_year = models.IntegerField(max_length = 4, blank = False)
+    ISBN = models.CharField(
+        max_length = 10,
+        blank = False
+    )
+
+    title = models.CharField(
+        max_length = 250,
+        blank = False
+    )
+    
+    author = models.CharField(
+        max_length = 300,
+        blank = False
+    )
+    
+    publisher = models.CharField(
+        max_length = 300,
+        blank = False
+    )
+    
+    publication_year = models.IntegerField(
+        blank = False
+    )
 
 class Post(models.Model):
     """Posts by users."""
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    text = models.CharField(max_length=280)
-    created_at = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    text = models.CharField(
+        max_length=280
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
 
     class Meta:
         """Model options."""
