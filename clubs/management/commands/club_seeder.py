@@ -119,30 +119,31 @@ class Command(BaseCommand):
         user_bio = self.faker.text(max_nb_chars=520)
 
         # Seed a user using existing and randomly generated data
-        user = User.objects.create_user(
-            id = self.user_count,
-            first_name = self.faker.first_name(),
-            last_name = self.faker.last_name(),
-            email = ''.join(emailTuple),
-            username = '@' + str(user_first_name),
-            password='Password123',
-            bio = self.faker.text(max_nb_chars=520)
-        )
-        user.save()
+        if not User.objects.filter(username=user_username).exists():
+            user = User.objects.create_user(
+                id = self.user_count,
+                first_name = user_first_name,
+                last_name = user_last_name,
+                email = ''.join(emailTuple),
+                username = user_username,
+                password = user_password,
+                bio = self.faker.text(max_nb_chars=520)
+            )
+            user.save()
     
-        # Add the new user to a random club
-        random_int = randint(0, (len(self.clubs_made) - 1))
-        club_choice = self.clubs_made[random_int]
+            # Add the new user to a random club
+            random_int = randint(0, (len(self.clubs_made) - 1))
+            club_choice = self.clubs_made[random_int]
 
-        # Set user role in club
-        user_role = Club_Users.objects.create(
-            user=user,
-            club=club_choice,
-            num=randint(1, 3)
-        )
-        user_role.save()
+            # Set user role in club
+            user_role = Club_Users.objects.create(
+                user_id=user,
+                club_id=club_choice,
+                role_num=randint(1, 3)
+            )
+            user_role.save()
 
-        self.user_count += 1
+            self.user_count += 1
 
     def handle(self, *args, **options):
         while self.club_count < self.HOW_MANY_CLUBS_TO_MAKE:
