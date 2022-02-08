@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.conf import settings
 from django.contrib.auth import login, logout
-from clubs.forms import LogInForm, PasswordForm, NewClubForm
+from clubs.forms import LogInForm, PasswordForm, NewClubForm, PostForm
 from django.views import View
 from .forms import SignUpForm
 from .helpers import login_prohibited
@@ -219,3 +219,23 @@ def approve(request, user_id, club_id):
         return redirect('club_list', club_id=club_id)
     else:
         return redirect('show_user', user_id=user_id, club_id=club_id)
+
+class NewPostView(LoginRequiredMixin, CreateView):
+    """Class-based generic view for new post handling."""
+
+    model = Post
+    template_name = 'feed.html'
+    form_class = PostForm
+    http_method_names = ['post']
+
+    def form_valid(self, form):
+        """Process a valid form."""
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        return reverse('feed')
+
+    def handle_no_permission(self):
+        return redirect('log_in')
