@@ -14,7 +14,12 @@
   </head>
 
   <body class="bg-gray-50 dark:bg-slate-800 leading-normal tracking-normal h-full">
-    {% include 'partials/header.html' %} 
+    {% if user.is_authenticated %}
+      {% include 'partials/navbar.html' %}
+    {% else %}
+      {% include 'partials/navbar_guest.html' %}
+    {% endif %}
+    
     {% block body %} 
     {% endblock body %}
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>
