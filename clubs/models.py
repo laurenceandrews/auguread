@@ -1,13 +1,37 @@
 """Models in the clubs app."""
 
-from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
+from django.db import models
+from django_countries.fields import CountryField
 from libgravatar import Gravatar
+from django.contrib.auth.models import UserManager
+
+class UserManager(UserManager):
+    """ User Manager that knows how to create users via email instead of username """
+
+    def _create_user(self, email, password, **extra_fields):
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email=None, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_user(self, email=None, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
+        return self._create_user(email, password, **extra_fields)
 
 class User(AbstractUser):
     """User model used for authentication and authoring."""
-
+    objects = UserManager()
+    REQUIRED_FIELDS = []
+    USERNAME_FIELD = "email"
     username = models.CharField(
         max_length=30,
         unique=True,
@@ -20,6 +44,7 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank=False)
     bio = models.CharField(max_length=520, blank=True)
+    country = CountryField(blank_label='(select country)')
 
     class Meta:
         """Model options"""
@@ -53,6 +78,7 @@ class User(AbstractUser):
     def is_member(self, club):
         return self.membership_type(club) == 'Member'
 
+
 class Club(models.Model):
     name = models.CharField(max_length=50, blank=False, unique=True)
     location = models.CharField(max_length=500, blank=False)
@@ -73,9 +99,11 @@ class Club(models.Model):
         else:
             return False
 
+
 class MemberMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
+
 
 class Post(models.Model):
     """Posts by users."""
