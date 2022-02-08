@@ -161,10 +161,11 @@ class UserListView(LoginRequiredMixin, ListView):
     paginate_by = settings.USERS_PER_PAGE
 
 
-"""Add LoginRequiredMixin to rec-view once log in redirect is fixed"""
+@login_required
 def RecommendationsView(request):
     """View that shows a list of all recommended books."""
     return render(request, 'rec_page.html')
+
 
 class NewClubView(LoginRequiredMixin, CreateView):
     """Class-based generic view for new club handling."""
