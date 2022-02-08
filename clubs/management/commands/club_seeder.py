@@ -16,6 +16,13 @@ class Command(BaseCommand):
     first_name = ""
     last_name = ""
 
+    book_ISBN = []
+    book_title = []
+    book_author = []
+    book_publication_year = []
+    book_publisher = []
+    books = [book_ISBN, book_title, book_author, book_publication_year, book_publisher]
+
     # get users from the database separated into columns (using pandas)
     def read_users_from_file(self):
         columns = ["id", "Location", "Age"]
@@ -34,7 +41,7 @@ class Command(BaseCommand):
 
      # get books from the database separated into columns (using pandas)
     def read_books_from_file(self):
-        columns = ["ISBN", "Book-Title", "Book-Author", "Year-Of-Publication", "Publisher", "Image-URL-S", "Image-URL-M", "Image-URL-L"]
+        columns = ["ISBN", "Book_Title", "Book_Author", "Year_Of_Publication", "Publisher", "Image_URL_S", "Image_URL_M", "Image_URL_L"]
         book_data = pd.read_csv(
             r'clubs/dataset/BX-Books.csv',
             encoding='Latin-1',
@@ -42,13 +49,13 @@ class Command(BaseCommand):
             names=columns,
             dtype={
                 "ISBN": "string",
-                "Book-Title": "string",
-                "Book-Author": "string",
-                "Year-Of-Publication" : "string",
+                "Book_Title": "string",
+                "Book_Author": "string",
+                "Year_Of_Publication" : "string",
                 "Publisher" : "string",
-                "Image-URL-S" : "string",
-                "Image-URL-M" : "string",
-                "Image-URL-L" : "string",
+                "Image_URL_S" : "string",
+                "Image_URL_M" : "string",
+                "Image_URL_L" : "string",
             }
         )
         return book_data   
@@ -134,42 +141,6 @@ class Command(BaseCommand):
                 )
                 fav_book.save()
 
-
-    def create_book(self):
-        ISBN = self.faker.isbn13()
-        book = Book.objects.create(
-                ISBN = ISBN,
-                title = self.faker.text(max_nb_chars=20),
-                author = self.faker.name(),
-                publisher = self.faker.company(),
-                publication_year = self.faker.year()
-            )
-        book.save()
-
-        # Append the new book name to the file
-        self.file1_append.write(ISBN + "\n")
-
-        self.books_made.append(book)
-        self.book_count += 1
-
-    def seed_book(self):
-        book = self.get_random_books()
-        ISBN = book[0]
-
-        # Seed a user using existing and randomly generated data
-        if not Book.objects.filter(ISBN=ISBN).exists():   
-            book = Book.objects.create(
-                    ISBN = str(ISBN),
-                    title = str(self.book[1]),
-                    author = str(self.book[2]),
-                    pub_year = str(self.book[3]),
-                    publisher = str(self.book[4]),
-                    image_1 = str(self.book[5]),
-                    image_2 = str(self.book[6]),
-                    image_3 = str(self.book[7])
-                )
-            book.save()
-
     # seed users and add to clubs
     def seed_user_in_club(self):
         user_id = self.get_random_user()
@@ -216,10 +187,55 @@ class Command(BaseCommand):
 
             self.user_count += 1
 
+    def create_book(self):
+        ISBN = self.faker.isbn13()
+        book = Book.objects.create(
+                ISBN = ISBN,
+                title = self.faker.text(max_nb_chars=20),
+                author = self.faker.name(),
+                publication_year = self.faker.year(),
+                publisher = self.faker.company()
+            )
+        book.save()
+
+        # Append the new book name to the file
+        self.file1_append.write(ISBN + "\n")
+
+        self.books_made.append(book)
+        self.book_count += 1
+
+    def load_all_books(self):
+        self.books[0] = self.read_books_from_file().ISBN.to_list()
+        self.books[1] = self.read_books_from_file().Book_Title.to_list()
+        self.books[2] = self.read_books_from_file().Book_Author.to_list()
+        self.books[3] = self.read_books_from_file().Year_Of_Publication.to_list()
+        self.books[4] = self.read_books_from_file().Publisher.to_list()
+
+    def seed_book_from_csv(self):
+        book = self.get_random_book()
+        ISBN = book[0]
+
+        # Seed a user using existing and randomly generated data
+        if not Book.objects.filter(ISBN=ISBN).exists():   
+            book = Book.objects.create(
+                    ISBN = str(ISBN),
+                    title = str(book[1]),
+                    author = str(book[2]),
+                    publication_year = str(book[3]),
+                    publisher = str(book[4])
+                )
+            book.save()
+        
+        # Append the new book name to the file
+        self.file1_append.write(ISBN + "\n")
+
+        self.books_made.append(book)
+        self.book_count += 1
+
     # get random ISBNs from the list of books in the dataset (currently chooses 5)
-    def get_random_books(self):
-        books = self.read_books_from_file().ISBN.to_list()
-        return random.choice(books)    
+    def get_random_book(self):
+        #self.read_books_from_file().sample()
+        random.choice(self.books)
 
     # generate a random location from a made-up list (can also do it with the user locations but we would have to format them first)
     def get_random_location(self):
@@ -234,10 +250,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
+        print(f'Loading all books',  end='\r')
+        self.load_all_books()
+
         book_count = 1
-        while self.book_count < Command.HOW_MANY_BOOKS_TO_ADD:
+        while self.book_count < self.HOW_MANY_BOOKS_TO_ADD:
             print(f'Seeding book {book_count}',  end='\r')
-            self.create_book()
+            self.seed_book_from_csv()
             book_count += 1
         print('Finished seeding books')   
         
