@@ -2,6 +2,8 @@ from django.test import TestCase
 from django.urls import reverse
 from clubs.models import Post, User
 
+"""*****WILL UPDATE TESTS ONCE A FEED PAGE IS ESTABLISHED*****"""
+
 class NewPostTest(TestCase):
 
     fixtures = [
