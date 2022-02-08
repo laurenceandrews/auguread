@@ -1,3 +1,4 @@
+import csv
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
 from clubs.models import Club, User, Book, Club_Users, Club_Books, User_Books
@@ -11,17 +12,10 @@ class Command(BaseCommand):
 
     HOW_MANY_CLUBS_TO_MAKE = 5
     HOW_MANY_USERS_TO_ADD = 10
-    HOW_MANY_BOOKS_TO_ADD = 5
+    HOW_MANY_BOOKS_TO_ADD = 50
     USER_ID = 0
     first_name = ""
     last_name = ""
-
-    book_ISBN = []
-    book_title = []
-    book_author = []
-    book_publication_year = []
-    book_publisher = []
-    books = [book_ISBN, book_title, book_author, book_publication_year, book_publisher]
 
     # get users from the database separated into columns (using pandas)
     def read_users_from_file(self):
@@ -74,6 +68,8 @@ class Command(BaseCommand):
         self.user_count = 0
         self.books_made = []
         self.book_count = 0
+
+        self.books_from_file = self.read_books_from_file()
 
     def __del__(self):
         self.file1_append.close()
@@ -204,38 +200,30 @@ class Command(BaseCommand):
         self.books_made.append(book)
         self.book_count += 1
 
-    def load_all_books(self):
-        self.books[0] = self.read_books_from_file().ISBN.to_list()
-        self.books[1] = self.read_books_from_file().Book_Title.to_list()
-        self.books[2] = self.read_books_from_file().Book_Author.to_list()
-        self.books[3] = self.read_books_from_file().Year_Of_Publication.to_list()
-        self.books[4] = self.read_books_from_file().Publisher.to_list()
 
-    def seed_book_from_csv(self):
-        book = self.get_random_book()
-        ISBN = book[0]
+    def seed_book_from_csv(self): 
+            
+            rand_choice = self.get_random_book()
 
-        # Seed a user using existing and randomly generated data
-        if not Book.objects.filter(ISBN=ISBN).exists():   
-            book = Book.objects.create(
-                    ISBN = str(ISBN),
-                    title = str(book[1]),
-                    author = str(book[2]),
-                    publication_year = str(book[3]),
-                    publisher = str(book[4])
-                )
-            book.save()
-        
-        # Append the new book name to the file
-        self.file1_append.write(ISBN + "\n")
+            if not Book.objects.filter(ISBN=self.books_from_file['ISBN'][rand_choice]).exists():   
+                book = Book.objects.create(
+                    ISBN = self.books_from_file['ISBN'][rand_choice],
+                    title = self.books_from_file['Book_Title'][rand_choice],
+                    author = self.books_from_file['Book_Author'][rand_choice],
+                    publication_year = self.books_from_file['Year_Of_Publication'][rand_choice],
+                    publisher = self.books_from_file['Publisher'][rand_choice]
+                    )
+                book.save() 
+               
+                # Append the new book name to the file
+                self.file3_append.write(book.ISBN + "\n")
+                self.books_made.append(book)
+                self.book_count += 1
 
-        self.books_made.append(book)
-        self.book_count += 1
-
-    # get random ISBNs from the list of books in the dataset (currently chooses 5)
+    # get a random index from the list of books in the dataset
     def get_random_book(self):
-        #self.read_books_from_file().sample()
-        random.choice(self.books)
+        return random.choice(self.books_from_file.index)
+
 
     # generate a random location from a made-up list (can also do it with the user locations but we would have to format them first)
     def get_random_location(self):
@@ -249,9 +237,6 @@ class Command(BaseCommand):
         random.choice(ids)
 
     def handle(self, *args, **options):
-
-        print(f'Loading all books',  end='\r')
-        self.load_all_books()
 
         book_count = 1
         while self.book_count < self.HOW_MANY_BOOKS_TO_ADD:
