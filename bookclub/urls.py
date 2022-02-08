@@ -31,4 +31,5 @@ urlpatterns = [
     path('rec/', views.RecommendationsView, name='rec'),
     path('clubs/', views.ClubListView.as_view(), name='club_list'),
     path('new_club/', views.NewClubView.as_view(), name='new_club'),
+    path('new_post/', views.NewPostView.as_view(), name='new_post'),
 ]
