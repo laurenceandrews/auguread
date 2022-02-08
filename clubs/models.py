@@ -5,10 +5,17 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from libgravatar import Gravatar
+import uuid
 
 class User(AbstractUser):
     """User model used for authentication and authoring."""
 
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False
+    )
+    
     username = models.CharField(
         max_length=30,
         unique=True,
@@ -72,6 +79,7 @@ class User(AbstractUser):
     def is_member(self, club):
         return self.membership_type(club) == 'Member'
 
+
 class Book(models.Model):
     ISBN = models.CharField(
         max_length = 10,
@@ -96,6 +104,7 @@ class Book(models.Model):
     publication_year = models.IntegerField(
         blank = False
     )
+    
 
 class Post(models.Model):
     """Posts by users."""
@@ -178,14 +187,14 @@ class Club(models.Model):
             return False
 
 class Club_Users(models.Model):
-    club_id = models.ForeignKey(
+    club = models.ForeignKey(
         Club,
         on_delete=models.CASCADE,
         blank=False,
         default=0
     )
 
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         blank=False,
@@ -199,16 +208,38 @@ class Club_Users(models.Model):
     )
 
 class Club_Books(models.Model):
-    club_id = models.ForeignKey(
+    club = models.ForeignKey(
         Club,
         on_delete=models.CASCADE,
         blank=False,
         default=0
     )
 
-    book_id = models.ForeignKey(
+    book = models.ForeignKey(
         Book,
         on_delete=models.CASCADE,
         blank=False,
         default=0
+    )
+
+class User_Books(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+class MyUUIDModel(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False
     )

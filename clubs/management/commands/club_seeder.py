@@ -1,16 +1,17 @@
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
-from clubs.models import Club, User, Book, Club_Users, Club_Books
+from clubs.models import Club, User, Book, Club_Users, Club_Books, User_Books
 import pandas as pd
 import random
 from random import randint
+import uuid
 
 
 class Command(BaseCommand):
 
-    HOW_MANY_CLUBS_TO_MAKE = 10
-    HOW_MANY_USERS_TO_ADD = 100
-    HOW_MANY_BOOKS_TO_ADD = 100
+    HOW_MANY_CLUBS_TO_MAKE = 5
+    HOW_MANY_USERS_TO_ADD = 10
+    HOW_MANY_BOOKS_TO_ADD = 5
     USER_ID = 0
     first_name = ""
     last_name = ""
@@ -43,7 +44,7 @@ class Command(BaseCommand):
                 "ISBN": "string",
                 "Book-Title": "string",
                 "Book-Author": "string",
-                # "Year-Of-Publication" : "integer",
+                "Year-Of-Publication" : "string",
                 "Publisher" : "string",
                 "Image-URL-S" : "string",
                 "Image-URL-M" : "string",
@@ -76,10 +77,11 @@ class Command(BaseCommand):
     # took some code from our old seed.py file from grasshopper
     def create_club(self):
         # Initialise a user that will be the owner
+        owner_id = self.get_random_user()
         owner_first_name = self.faker.first_name()
         owner_last_name = self.faker.last_name()
-        emailTuple = str(owner_first_name) + "." + str(owner_last_name) + "@example.com"
-        owner_username = '@' + str(owner_first_name)
+        email_tuple = str(owner_first_name) + "." + str(owner_last_name) + str(owner_id) + "@example.com"
+        owner_username = '@' + str(owner_first_name) + str(owner_last_name) + str(owner_id)
         owner_password = 'Password123'
         owner_bio = self.faker.text(max_nb_chars=520)
 
@@ -95,18 +97,15 @@ class Command(BaseCommand):
             club_location = self.get_random_location()
             club_description = self.faker.text(max_nb_chars=520)
             club_reading_speed = random.randint(50, 500)
-            
-            # Get random id
-            ownerId = self.get_random_user()
-            
+                        
             # If a user with the above id isn't already seeded
-            if not User.objects.filter(id=ownerId).exists():
+            if not User.objects.filter(id=owner_id).exists():
                 # Seed that user. This will be the owner
                 user = User.objects.create_user(
-                    id = ownerId,
+                    id = owner_id,
                     first_name = owner_first_name,
                     last_name = owner_last_name,
-                    email = ''.join(emailTuple),
+                    email = ''.join(email_tuple),
                     username = owner_username,
                     password = owner_password,
                     bio = owner_bio
@@ -130,8 +129,8 @@ class Command(BaseCommand):
             fav_books = random.choices(Book.objects.all(), k = 5)
             for book in fav_books:
                 fav_book = Club_Books.objects.create(
-                    club_id = club,
-                    book_id = book
+                    club = club,
+                    book = book
                 )
                 fav_book.save()
 
@@ -153,74 +152,105 @@ class Command(BaseCommand):
         self.books_made.append(book)
         self.book_count += 1
 
-    # get a random user id from the list of users in the dataset
-    def get_random_user(self):
-        ids = self.read_users_from_file().id.to_list()
-        random.choice(ids)
+    def seed_book(self):
+        book = self.get_random_books()
+        ISBN = book[0]
 
-    # get random ISBNs from the list of books in the dataset (currently chooses 5)
-    def get_random_books(self):
-        books = self.read_books_from_file().ISBN.to_list()
-        random.choice(books)    
+        # Seed a user using existing and randomly generated data
+        if not Book.objects.filter(ISBN=ISBN).exists():   
+            book = Book.objects.create(
+                    ISBN = str(ISBN),
+                    title = str(self.book[1]),
+                    author = str(self.book[2]),
+                    pub_year = str(self.book[3]),
+                    publisher = str(self.book[4]),
+                    image_1 = str(self.book[5]),
+                    image_2 = str(self.book[6]),
+                    image_3 = str(self.book[7])
+                )
+            book.save()
 
-    # generate a random location from a made-up list (can also do it with the user locations but we would have to format them first)
-    def get_random_location(self):
-        locations = ["London", "Manchester", "Birmingham",
-                     "Brighton", "Bristol", "Online", "Glasgow", "USA"]
-        return random.choice(locations)   
-
+    # seed users and add to clubs
     def seed_user_in_club(self):
+        user_id = self.get_random_user()
         user_first_name = self.faker.first_name()
         user_last_name = self.faker.last_name()
-        emailTuple = str(user_first_name) + "." + str(user_last_name) + "@example.com"
-        user_username = '@' + str(user_first_name)
+        email_tuple = str(user_first_name) + "." + str(user_last_name) + str(user_id) + "@example.com"
+        user_username = '@' + str(user_first_name) + str(user_last_name) + str(user_id)
         user_password = 'Password123'
         user_bio = self.faker.text(max_nb_chars=520)
 
         # Seed a user using existing and randomly generated data
-        if not User.objects.filter(username=user_username).exists():
+        if not User.objects.filter(id=user_id).exists():            
             user = User.objects.create_user(
-                id = self.user_count,
+                id = user_id,
                 first_name = user_first_name,
                 last_name = user_last_name,
-                email = ''.join(emailTuple),
+                email = ''.join(email_tuple),
                 username = user_username,
                 password = user_password,
-                bio = self.faker.text(max_nb_chars=520)
+                bio = user_bio
             )
             user.save()
-    
+
+            # Assigning favourite books to user
+            fav_books = random.choices(Book.objects.all(), k = 5)
+            for book in fav_books:
+                fav_book = User_Books.objects.create(
+                    user = user,
+                    book = book
+                )
+                fav_book.save()
+        
             # Add the new user to a random club
             random_int = randint(0, (len(self.clubs_made) - 1))
             club_choice = self.clubs_made[random_int]
 
             # Set user role in club
             user_role = Club_Users.objects.create(
-                user_id=user,
-                club_id=club_choice,
+                user=user,
+                club=club_choice,
                 role_num=randint(1, 3)
             )
             user_role.save()
 
             self.user_count += 1
 
-          
+    # get random ISBNs from the list of books in the dataset (currently chooses 5)
+    def get_random_books(self):
+        books = self.read_books_from_file().ISBN.to_list()
+        return random.choice(books)    
+
+    # generate a random location from a made-up list (can also do it with the user locations but we would have to format them first)
+    def get_random_location(self):
+        locations = ["London", "Manchester", "Birmingham",
+                     "Brighton", "Bristol", "Online", "Glasgow", "USA"]
+        return random.choice(locations)
+
+     # get a random user id from the list of users in the dataset
+    def get_random_user(self):
+        ids = self.read_users_from_file().id.to_list()
+        random.choice(ids)
 
     def handle(self, *args, **options):
 
+        book_count = 1
         while self.book_count < Command.HOW_MANY_BOOKS_TO_ADD:
-            print(f'Seeding books...',  end='\r')
+            print(f'Seeding book {book_count}',  end='\r')
             self.create_book()
-        print('Finished adding books to clubs')   
-
+            book_count += 1
+        print('Finished seeding books')   
+        
+        club_count = 1
         while self.club_count < self.HOW_MANY_CLUBS_TO_MAKE:
-            print(f'Seeding clubs...',  end='\r')
+            print(f'Seeding club {club_count}',  end='\r')
             self.create_club()
-            self.club_count += 1
+            club_count += 1
         print('Finished seeding clubs')
 
+        user_count = 1
         while self.user_count < self.HOW_MANY_USERS_TO_ADD:
-            print(f'Adding users to clubs...',  end='\r')
+            print(f'Adding user {user_count}',  end='\r')
             self.seed_user_in_club()
-            self.user_count += 1
+            user_count += 1
         print('Finished adding users to clubs')
