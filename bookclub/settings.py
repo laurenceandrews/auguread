@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'bootstrap_pagination',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'clubs',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -130,7 +132,12 @@ AUTH_USER_MODEL = 'clubs.User'
 LOGIN_URL = 'log_in'
 
 # URL where @login_prohibited redirects to
-AUTO_REDIRECT_URL = 'log_in'
+AUTO_REDIRECT_URL = 'rec'
 
 #URL where @login_prohibited redirects to
 REDIRECT_URL_WHEN_LOGGED_IN = 'home'
+
+# Page lengths
+USERS_PER_PAGE = 10
+POSTS_PER_PAGE = 20
+NUMBER_PER_PAGE = 15

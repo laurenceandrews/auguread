@@ -23,4 +23,12 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('log_in/', views.LogInView.as_view(), name='log_in'),
     path('log_out/', views.log_out, name='log_out'),
+    path('password/', views.PasswordView.as_view(), name='password'),
+    path('user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
+    path('users/', views.UserListView.as_view(), name='user_list'),
+    # path('rec/', views.RecommendationsView.as_view(), name='rec_page'),
+    path('rec/', views.RecommendationsView, name='rec'),
+    path('clubs/', views.ClubListView.as_view(), name='club_list'),
+    path('new_club/', views.NewClubView.as_view(), name='new_club'),
+    path('new_post/', views.NewPostView.as_view(), name='new_post'),
 ]
