@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'clubs',
+    'tailwind',
+    'theme',
+    'django_browser_reload',
     'widget_tweaks',
 ]
 
@@ -50,6 +53,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
+
 ]
 
 ROOT_URLCONF = 'bookclub.urls'
@@ -134,7 +139,22 @@ LOGIN_URL = 'log_in'
 # URL where @login_prohibited redirects to
 AUTO_REDIRECT_URL = 'rec'
 
-#URL where @login_prohibited redirects to
+
+# Tailwind App Name
+TAILWIND_APP_NAME = 'theme'
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+# Set up for windows, for mac/ubuntu change to r"/usr/local/bin/npm"
+NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+
+
+# URL where @login_prohibited redirects to
+
+# URL where @login_prohibited redirects to
+
 REDIRECT_URL_WHEN_LOGGED_IN = 'home'
 
 # Page lengths
