@@ -62,11 +62,8 @@ class Command(BaseCommand):
         self.file2_append = open("seededUsers.txt", "a")
         self.file3_append = open("seededBooks.txt", "a")
 
-        self.clubs_made = []
         self.club_count = 0
-        self.users_made = []
         self.user_count = 0
-        self.books_made = []
         self.book_count = 0
 
         self.books_from_file = self.read_books_from_file()
@@ -133,8 +130,7 @@ class Command(BaseCommand):
                 fav_book.save()
         
             # Add the new user to a random club
-            random_int = randint(0, (len(self.clubs_made) - 1))
-            club_choice = self.clubs_made[random_int]
+            club_choice = random.choice(Club.objects.all())
 
             # Set user role in club
             user_role = Club_Users.objects.create(
