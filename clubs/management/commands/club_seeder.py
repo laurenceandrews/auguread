@@ -163,7 +163,8 @@ class Command(BaseCommand):
                     email = str(user_first_name) + "." + str(user_last_name) + str(user_id) + "@example.com",
                     username = '@' + str(user_first_name) + str(user_last_name) + str(user_id),
                     password = 'Password123',
-                    bio = self.faker.text(max_nb_chars=520)
+                    bio = self.faker.text(max_nb_chars=520),
+                    country = self.users_from_file['Location'][rand_choice]
                 )
                 user.save() 
                
