@@ -17,6 +17,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
         self.form_input = {
             'first_name': 'Jane',
             'last_name': 'Doe',
+            'age': '25',
             'username': '@janedoe',
             'email': 'janedoe@example.org',
             'bio': 'My bio',
@@ -70,6 +71,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
         user = User.objects.get(username='@janedoe')
         self.assertEqual(user.first_name, 'Jane')
         self.assertEqual(user.last_name, 'Doe')
+        self.assertEqual(user.age, 25)
         self.assertEqual(user.email, 'janedoe@example.org')
         self.assertEqual(user.bio, 'My bio')
         self.assertEqual(user.country, 'GB')
