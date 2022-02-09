@@ -10,10 +10,11 @@ import uuid
 class User(AbstractUser):
     """User model used for authentication and authoring."""
 
-    id = models.UUIDField(
+    id = models.CharField(
         primary_key=True,
-        default=uuid.uuid4,
-        editable=False
+        max_length=20
+       # default=uuid.uuid4,
+       # editable=False
     )
     
     username = models.CharField(
