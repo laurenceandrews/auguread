@@ -1,11 +1,13 @@
 """Models in the clubs app."""
 
-from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
+from pickle import FALSE
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import UserManager
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from django_countries.fields import CountryField
 from libgravatar import Gravatar
-from django.contrib.auth.models import UserManager
+import uuid
 
 class UserManager(UserManager):
     """ User Manager that knows how to create users via email instead of username """
@@ -35,16 +37,42 @@ class User(AbstractUser):
     username = models.CharField(
         max_length=30,
         unique=True,
-        validators=[RegexValidator(
-            regex=r'^@\w{3,}$',
-            message='Username must consist of @ followed by at least three alphanumericals'
-        )]
+        validators=[
+            RegexValidator(
+                regex=r'^@\w{3,}$',
+                message='Username must consist of @ followed by at least three alphanumericals'
+            )
+        ]
     )
-    first_name = models.CharField(max_length=50, blank=False)
-    last_name = models.CharField(max_length=50, blank=False)
-    email = models.EmailField(unique=True, blank=False)
-    bio = models.CharField(max_length=520, blank=True)
-    country = CountryField(blank_label='(select country)')
+  
+    id = models.CharField(
+        primary_key=True,
+        max_length=20
+    )
+
+    first_name = models.CharField(
+        max_length=50,
+        blank=False
+    )
+
+    last_name = models.CharField(
+        max_length=50,
+        blank=False
+    )
+
+    email = models.EmailField(
+        unique=True,
+        blank=False
+    )
+
+    bio = models.CharField(
+        max_length=520,
+        blank=True
+    )
+
+    country = CountryField(
+        blank_label='(select country)'
+    )
 
     class Meta:
         """Model options"""
@@ -79,16 +107,102 @@ class User(AbstractUser):
         return self.membership_type(club) == 'Member'
 
 
+class Book(models.Model):
+    ISBN = models.CharField(
+        max_length = 10,
+        blank = False
+    )
+
+    title = models.CharField(
+        max_length = 250,
+        blank = False
+    )
+    
+    author = models.CharField(
+        max_length = 300,
+        blank = False
+    )
+    
+    publisher = models.CharField(
+        max_length = 300,
+        blank = False
+    )
+    
+    publication_year = models.IntegerField(
+        blank = False
+    )
+    
+
+class Post(models.Model):
+    """Posts by users."""
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    text = models.CharField(
+        max_length=280
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        """Model options."""
+        ordering = ['-created_at']
+
 class Club(models.Model):
-    name = models.CharField(max_length=50, blank=False, unique=True)
-    location = models.CharField(max_length=500, blank=False)
-    description = models.CharField(max_length=520, blank=False)
+    name = models.CharField(
+        max_length=50,
+        blank=False,
+        unique=True
+    )
+
+    location = models.CharField(
+        max_length=500,
+        blank=False
+    )
+
+    description = models.CharField(
+        max_length=520,
+        blank=False
+    )
 
     # A foreign key is not required for the club owner
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    members = models.ManyToManyField(
-        User, through='MemberMembership', related_name='member', blank=True)
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=FALSE
+    )
 
+    members = models.ManyToManyField(
+        User,
+        through='club_users',
+        related_name='member',
+        blank=True
+    )
+
+    books = models.ManyToManyField(
+        Book,
+        through='club_books',
+        related_name='book',
+        blank=True
+    )
+
+    # measured in words per minute (average for all club members)
+    avg_reading_speed = models.IntegerField(
+        validators=[
+            MinValueValidator(50),
+            MaxValueValidator(500)
+        ],
+        blank=False,
+        default=200  #if reading speed test not completed
+    )
+
+    # favourite_books = models.ManyToManyField(
+    #
+    # )
     class Meta:
         """Model options"""
         ordering = ['name']
@@ -99,18 +213,60 @@ class Club(models.Model):
         else:
             return False
 
+class Club_Users(models.Model):
+    club = models.ForeignKey(
+        Club,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
 
-class MemberMembership(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
 
+    role_num = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(4)],
+        blank=False,
+        default=1
+    )
 
-class Post(models.Model):
-    """Posts by users."""
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    text = models.CharField(max_length=280)
-    created_at = models.DateTimeField(auto_now_add=True)
+class Club_Books(models.Model):
+    club = models.ForeignKey(
+        Club,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
 
-    class Meta:
-        """Model options."""
-        ordering = ['-created_at']
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+class User_Books(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+class MyUUIDModel(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False
+    )

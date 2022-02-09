@@ -322,5 +322,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/python,django,virtualenv,linux,macos,windows
+
 # Allow
 !theme/static/css/dist/
+node_modules/

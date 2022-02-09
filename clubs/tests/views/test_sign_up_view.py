@@ -41,7 +41,8 @@ class SignUpViewTestCase(TestCase, LogInTester):
         self.client.login(username=self.user.email, password="Password123")
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('home')
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'home.html')
 
     def test_unsuccesful_sign_up(self):
@@ -63,7 +64,8 @@ class SignUpViewTestCase(TestCase, LogInTester):
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count + 1)
         response_url = reverse('home')
-        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertRedirects(response, response_url,
+                             status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'home.html')
         user = User.objects.get(username='@janedoe')
         self.assertEqual(user.first_name, 'Jane')
@@ -82,5 +84,6 @@ class SignUpViewTestCase(TestCase, LogInTester):
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count)
         redirect_url = reverse('home')
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'home.html')

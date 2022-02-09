@@ -21,6 +21,7 @@ class Command(BaseCommand):
             user_count += 1
         print('User seeding complete')
 
+
     def _create_user(self):
         first_name = self.faker.first_name()
         last_name = self.faker.last_name()
