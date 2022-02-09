@@ -1,11 +1,10 @@
 """Forms for the book club app"""
 from django import forms
 from django.contrib.auth import authenticate
-
-from .models import User, Post, Club
-
 from django.core.validators import RegexValidator
 from django_countries.fields import CountryField
+
+from .models import Club, Post, User
 
 
 class LogInForm(forms.Form):
@@ -88,7 +87,7 @@ class PasswordForm(NewPasswordMixin):
 class SignUpForm(NewPasswordMixin, forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'bio', 'country']
+        fields = ['first_name', 'last_name', 'age', 'username', 'email', 'bio', 'country']
         widgets = {'bio': forms.Textarea()}
 
     country = CountryField(blank_label='(Select country)').formfield()
@@ -118,15 +117,17 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
     def save(self):
         super().save(commit=False)
         user = User.objects.create_user(
-            username = self.cleaned_data.get('username'),
+            username=self.cleaned_data.get('username'),
             first_name=self.cleaned_data.get('first_name'),
             last_name=self.cleaned_data.get('last_name'),
+            age=self.cleaned_data.get('age'),
             email=self.cleaned_data.get('email'),
             bio=self.cleaned_data.get('bio'),
             country=self.cleaned_data.get('country'),
             password=self.cleaned_data.get('new_password'),
         )
         return user
+
 
 class UserForm(forms.ModelForm):
     """Form to update user profiles."""
@@ -136,7 +137,8 @@ class UserForm(forms.ModelForm):
 
         model = User
         fields = ['first_name', 'last_name', 'username', 'email', 'bio']
-        widgets = { 'bio': forms.Textarea() }
+        widgets = {'bio': forms.Textarea()}
+
 
 class PostForm(forms.ModelForm):
     """Form to ask user for post text.
@@ -152,6 +154,7 @@ class PostForm(forms.ModelForm):
         widgets = {
             'text': forms.Textarea()
         }
+
 
 class NewClubForm(forms.ModelForm):
     """Form for creating a new book club."""
