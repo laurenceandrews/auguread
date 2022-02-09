@@ -5,13 +5,12 @@ from clubs.models import Club, User, Book, Club_Users, Club_Books, User_Books
 import pandas as pd
 import random
 from random import randint
-import uuid
 
 
 class Command(BaseCommand):
 
-    HOW_MANY_CLUBS_TO_MAKE = 5
-    HOW_MANY_USERS_TO_ADD = 10
+    HOW_MANY_CLUBS_TO_MAKE = 10
+    HOW_MANY_USERS_TO_ADD = 50
     HOW_MANY_BOOKS_TO_ADD = 50
     USER_ID = 0
     first_name = ""
@@ -68,6 +67,11 @@ class Command(BaseCommand):
         self.user_count = 0
         self.books_made = []
         self.book_count = 0
+        
+        # To update display when seeding
+        self.books_seeded = 1
+        self.users_seeded = 1
+        self.clubs_seeded = 1
 
         self.books_from_file = self.read_books_from_file()
         self.users_from_file = self.read_users_from_file()
@@ -108,6 +112,7 @@ class Command(BaseCommand):
 
             self.clubs_made.append(club)
             self.club_count += 1
+            self.clubs_seeded += 1
 
             # Assigning favourite books to club
             fav_books = random.choices(Book.objects.all(), k = 5)
@@ -135,6 +140,11 @@ class Command(BaseCommand):
             # Add the new user to a random club
             random_int = randint(0, (len(self.clubs_made) - 1))
             club_choice = self.clubs_made[random_int]
+            
+            # Ensures that the user isn't made a member of a club that they own
+            while(club_choice.owner.id == user.id):
+                random_int = randint(0, (len(self.clubs_made) - 1))
+                club_choice = self.clubs_made[random_int]
 
             # Set user role in club
             user_role = Club_Users.objects.create(
@@ -172,6 +182,7 @@ class Command(BaseCommand):
                 self.file2_append.write(user.id + "\n")
                 self.users_made.append(user)
                 self.user_count += 1        
+                self.users_seeded +=1
 
 
     def seed_book_from_csv(self): 
@@ -192,6 +203,7 @@ class Command(BaseCommand):
                 self.file3_append.write(book.ISBN + "\n")
                 self.books_made.append(book)
                 self.book_count += 1
+                self.books_seeded +=1
 
 
     # get a random index from the list of books in the dataset
@@ -212,31 +224,26 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        book_count = 1
         while self.book_count < self.HOW_MANY_BOOKS_TO_ADD:
-            print(f'Seeding book {book_count}',  end='\r')
+            print(f'Seeding book {self.books_seeded}',  end='\r')
             self.seed_book_from_csv()
-            book_count += 1
         print('Finished seeding books')   
         
-        user_count = 1
         while self.user_count < self.HOW_MANY_USERS_TO_ADD:
-            print(f'Seeding user {user_count}',  end='\r')
+            print(f'Seeding user {self.users_seeded}',  end='\r')
             self.seed_user_from_csv()
-            user_count += 1
         print('Finished seeding users') 
         self.user_count = 0
 
-        club_count = 1
         while self.club_count < self.HOW_MANY_CLUBS_TO_MAKE:
-            print(f'Seeding club {club_count}',  end='\r')
+            print(f'Seeding club {self.clubs_seeded}',  end='\r')
             self.create_club()
-            club_count += 1
+            self.clubs_seeded += 1
         print('Finished seeding clubs')
 
-        user_count = 1
+        self.users_seeded = 1
         while self.user_count < self.HOW_MANY_USERS_TO_ADD:
-            print(f'Adding user {user_count}',  end='\r')
+            print(f'Adding user {self.users_seeded}',  end='\r')
             self.seed_user_in_club()
-            user_count += 1
+            self.users_seeded += 1
         print('Finished adding users to clubs')
