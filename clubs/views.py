@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.conf import settings
 from django.contrib.auth import login, logout
-from clubs.forms import LogInForm, PasswordForm, NewClubForm, PostForm
+from clubs.forms import LogInForm, PasswordForm, NewClubForm, PostForm, UserForm
 from django.views import View
 from .forms import SignUpForm
 from .helpers import login_prohibited
@@ -219,6 +219,25 @@ def approve(request, user_id, club_id):
         return redirect('club_list', club_id=club_id)
     else:
         return redirect('show_user', user_id=user_id, club_id=club_id)
+
+class EditUserView(LoginRequiredMixin, UpdateView):
+    """View to update logged-in user's profile."""
+
+    model = UserForm
+    template_name = "profile.html"
+    form_class = UserForm
+
+    def get_object(self):
+        """Return the object (user) to be updated."""
+        user = self.request.user
+        return user
+
+    def get_success_url(self):
+        """Return redirect URL after successful update."""
+        messages.add_message(
+            self.request, messages.SUCCESS, "Profile updated!")
+        return reverse(settings.AUTO_REDIRECT_URL)
+
 
 class NewPostView(LoginRequiredMixin, CreateView):
     """Class-based generic view for new post handling."""
