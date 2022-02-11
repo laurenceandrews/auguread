@@ -162,3 +162,10 @@ class NewClubForm(forms.ModelForm):
     class Meta:
         model = Club
         fields = ['name', 'location', 'description']
+
+class EditProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'username', 'email', 'bio']
+        widgets = {'bio': forms.Textarea()}
+        email = forms.CharField(label = 'Email')
