@@ -107,7 +107,7 @@ class Command(BaseCommand):
             )
             club.save()
 
-            self.clubs_made.append(club)
+            # self.clubs_made.append(club)
             self.club_count += 1
             self.clubs_seeded += 1
 
@@ -175,7 +175,7 @@ class Command(BaseCommand):
                
                 # Append the new user id to the file
                 self.file2_append.write(user.id + "\n")
-                self.users_made.append(user)
+                # self.users_made.append(user)
                 self.user_count += 1        
                 self.users_seeded +=1
 
@@ -196,7 +196,7 @@ class Command(BaseCommand):
                
                 # Append the new book ISBN to the file
                 self.file3_append.write(book.ISBN + "\n")
-                self.books_made.append(book)
+                # self.books_made.append(book)
                 self.book_count += 1
                 self.books_seeded +=1
 
