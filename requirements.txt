@@ -26,3 +26,4 @@ django-bootstrap-pagination
 humanize
 django-countries==7.2.1
 pyuca==1.2
+django-scheduler==0.9.5
