@@ -14,8 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from clubs import views
+from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,4 +34,7 @@ urlpatterns = [
     path('clubs/', views.ClubListView.as_view(), name='club_list'),
     path('new_club/', views.NewClubView.as_view(), name='new_club'),
     path('new_post/', views.NewPostView.as_view(), name='new_post'),
+    # sample scheduler
+    url(r'^homepage/', TemplateView.as_view(template_name="homepage.html"), name='homepage'),
+    url(r'^fullcalendar/', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),
 ]
