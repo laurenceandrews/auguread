@@ -1,22 +1,22 @@
-from django.shortcuts import render
-from django.shortcuts import redirect
+from clubs.forms import LogInForm, NewClubForm, PasswordForm, PostForm
+from clubs.helpers import member, owner
+from clubs.models import Club, Post, User
 from django.conf import settings
-from django.contrib.auth import login, logout
-from clubs.forms import LogInForm, PasswordForm, NewClubForm, PostForm
-from django.views import View
-from .forms import SignUpForm
-from .helpers import login_prohibited
 from django.contrib import messages
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import FormView, UpdateView, CreateView
-from django.urls import reverse
 from django.http import Http404
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.views import View
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, FormView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
-from clubs.models import Post, User, Club
-from django.contrib.auth.decorators import login_required
-from clubs.helpers import member, owner
+
+from .forms import SignUpForm
+from .helpers import login_prohibited
 
 
 class LoginProhibitedMixin:
@@ -44,6 +44,7 @@ class LoginProhibitedMixin:
             )
         else:
             return self.redirect_when_logged_in_url
+
 
 class LogInView(LoginProhibitedMixin, View):
     """View that handles log in."""
@@ -82,6 +83,7 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
+
 @login_prohibited
 def sign_up(request):
     if request.method == 'POST':
@@ -97,6 +99,7 @@ def sign_up(request):
 
 def home(request):
     return render(request, 'home.html')
+
 
 class PasswordView(LoginRequiredMixin, FormView):
     """View that handles password change requests."""
@@ -125,6 +128,7 @@ class PasswordView(LoginRequiredMixin, FormView):
             self.request, messages.SUCCESS, "Password updated!")
         return reverse(settings.AUTO_REDIRECT_URL)
 
+
 class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
     """View that shows individual user details."""
 
@@ -151,6 +155,7 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
             return super().get(request, *args, **kwargs)
         except Http404:
             return redirect('user_list')
+
 
 class UserListView(LoginRequiredMixin, ListView):
     """View that shows a list of all users."""
@@ -187,6 +192,7 @@ class NewClubView(LoginRequiredMixin, CreateView):
     def handle_no_permission(self):
         return redirect('log_in')
 
+
 class ClubListView(LoginRequiredMixin, ListView):
     """View to display a list of available clubs."""
 
@@ -195,11 +201,13 @@ class ClubListView(LoginRequiredMixin, ListView):
     template_name = "club_list.html"
     context_object_name = "clubs"
 
+
 @login_required
 @member
 def enter(request, club_id):
     user = request.user
     return redirect('show_user', user_id=user.id, club_id=club_id)
+
 
 @login_required
 def apply(request, club_id):
@@ -207,6 +215,7 @@ def apply(request, club_id):
     club = Club.objects.get(id=club_id)
     club.applied_by(user)
     return redirect('club_list')
+
 
 @login_required
 @owner
@@ -219,6 +228,7 @@ def approve(request, user_id, club_id):
         return redirect('club_list', club_id=club_id)
     else:
         return redirect('show_user', user_id=user_id, club_id=club_id)
+
 
 class NewPostView(LoginRequiredMixin, CreateView):
     """Class-based generic view for new post handling."""
