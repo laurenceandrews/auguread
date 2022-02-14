@@ -1,8 +1,11 @@
 """Forms for the book club app"""
+import datetime
+
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
 from django_countries.fields import CountryField
+from schedule.models import Calendar, Event, Rule
 
 from .models import Club, Post, User
 
@@ -162,3 +165,27 @@ class NewClubForm(forms.ModelForm):
     class Meta:
         model = Club
         fields = ['name', 'location', 'description']
+
+
+class CreateEventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = ['title', 'start', 'end', 'end_recurring_period', 'rule', 'calendar']
+
+    start = forms.SplitDateTimeField(
+        widget=forms.SplitDateTimeWidget(),
+        initial=datetime.datetime.now
+    )
+    end = forms.SplitDateTimeField(
+        widget=forms.SplitDateTimeWidget(),
+        initial=datetime.datetime.now
+    )
+    end_recurring_period = forms.SplitDateTimeField(
+        widget=forms.SplitDateTimeWidget(),
+        initial=datetime.datetime.now
+    )
+
+    def clean(self):
+        super().clean()
+        if self.cleaned_data['end'] <= self.cleaned_data['start']:
+            self.add_error('end', 'The end time must be later than start time.')

@@ -12,10 +12,11 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, FormView, UpdateView
+from django.views.generic.edit import CreateView, FormView
 from django.views.generic.list import MultipleObjectMixin
+from schedule.models import Calendar, Event, Rule
 
-from .forms import SignUpForm
+from .forms import CreateEventForm, SignUpForm
 from .helpers import login_prohibited
 
 
@@ -249,3 +250,30 @@ class NewPostView(LoginRequiredMixin, CreateView):
 
     def handle_no_permission(self):
         return redirect('log_in')
+
+
+def create_event(request):
+    if request.method == "POST":
+        current_user = request.user
+        form = CreateEventForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data.get('title')
+            start = form.cleaned_data.get('start')
+            end = form.cleaned_data.get('end')
+            end_recurring_period = form.cleaned_data.get('end_recurring_period')
+            rule = form.cleaned_data.get('rule')
+            calendar = form.cleaned_data.get('calendar')
+
+            event = Event.objects.create(
+                title=title,
+                start=start,
+                end=end,
+                end_recurring_period=end_recurring_period,
+                rule=rule,
+                calendar=calendar,
+            )
+            return redirect('fullcalendar')
+        else:
+            return render(request, "event_create_form.html", {"form": form})
+    else:
+        return render(request, "event_create_form.html", {"form": CreateEventForm})

@@ -37,4 +37,5 @@ urlpatterns = [
     # sample scheduler
     url(r'^schedule/', include('schedule.urls')),
     url(r'^fullcalendar/', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),
+    path('create_event/', views.create_event, name='create_event'),
 ]
