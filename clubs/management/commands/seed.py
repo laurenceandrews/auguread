@@ -83,6 +83,20 @@ class Command(BaseCommand):
 
     # took some code from our old seed.py file from grasshopper
 
+    # create rules for calendars
+
+    rule = Rule(frequency="YEARLY", name="Yearly", description="will recur once every Year")
+    rule.save()
+    print("YEARLY recurrence created")
+    rule = Rule(frequency="MONTHLY", name="Monthly", description="will recur once every Month")
+    rule.save()
+    print("Monthly recurrence created")
+    rule = Rule(frequency="WEEKLY", name="Weekly", description="will recur once every Week")
+    rule.save()
+    print("Weekly recurrence created")
+    rule = Rule(frequency="DAILY", name="Daily", description="will recur once every Day")
+    rule.save()
+
     def create_club(self):
         # Initialise a user that will be the owner
         user = random.choice(User.objects.all())
