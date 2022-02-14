@@ -164,3 +164,10 @@ class NewClubForm(forms.ModelForm):
     class Meta:
         model = Club
         fields = ['name', 'location', 'description']
+
+    calendar_name = forms.CharField(
+        label='Calendar name',
+        widget=forms.Textarea(
+            attrs={'placeholder': "It's a good idea to make it simple: easy to say and easy to remember."}
+        )
+    )
