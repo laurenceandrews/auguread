@@ -35,7 +35,6 @@ urlpatterns = [
     path('new_club/', views.NewClubView.as_view(), name='new_club'),
     path('new_post/', views.NewPostView.as_view(), name='new_post'),
     # sample scheduler
-    url(r'^homepage/', TemplateView.as_view(template_name="homepage.html"), name='homepage'),
     url(r'^schedule/', include('schedule.urls')),
     url(r'^fullcalendar/', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),
 ]
