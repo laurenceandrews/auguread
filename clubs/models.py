@@ -9,6 +9,7 @@ from django.core.validators import (MaxValueValidator, MinValueValidator,
 from django.db import models
 from django_countries.fields import CountryField
 from libgravatar import Gravatar
+from schedule.models import Calendar, Event, Rule
 
 
 class UserManager(UserManager):
@@ -179,6 +180,11 @@ class Club(models.Model):
     description = models.CharField(
         max_length=520,
         blank=False
+    )
+
+    calendar = models.OneToOneField(
+        Calendar,
+        on_delete=models.CASCADE
     )
 
     # A foreign key is not required for the club owner
