@@ -5,12 +5,25 @@
 {% block tab_id %}id="home_tab"{% endblock %}
 {% block extra_head %}
   <script type='text/javascript' src="{% static 'jquery/dist/jquery.js' %}"></script>
+  <script type='text/javascript' src="{% static 'jquery-ui/jquery-ui.js' %}"></script>
+  <link rel='stylesheet' type='text/css' href="{% static 'jquery-ui/themes/ui-darkness/jquery-ui.css' %}" />
   <link rel='stylesheet' type='text/css' href="{% static 'fullcalendar/dist/fullcalendar.css' %}" />
   <script type='text/javascript' src="{% static 'moment/moment.js' %}"></script>
   <script type='text/javascript' src="{% static 'fullcalendar/dist/fullcalendar.js' %}"></script>
 {% endblock %}
 
 {% block content %}
+
+<div id="temporary-schedule-menu">
+  <ul>
+    <li>
+       <a href='{%url 'calendar_create_event' calendar_slug='Elainecalendar' %}' class="btn btn-lg btn-secondary">Create new event</a>
+    </li>
+    <li>
+      <a href='{%url 'calendar_list' %}' class="btn btn-lg btn-secondary">List of all calendars</a>
+    </li>
+  </ul>
+</div>
 
 <div id="calendar"></div>
 <script type='text/javascript'>
