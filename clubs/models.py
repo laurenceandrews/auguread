@@ -64,7 +64,7 @@ class User(AbstractUser):
     )
 
     age = models.PositiveIntegerField(
-        default=1,
+        default=18,
         validators=[
             MaxValueValidator(150),
             MinValueValidator(1)

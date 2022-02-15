@@ -9,9 +9,9 @@ from random import randint
 
 class Command(BaseCommand):
 
-    HOW_MANY_CLUBS_TO_MAKE = 500
-    HOW_MANY_USERS_TO_ADD = 50000
-    HOW_MANY_BOOKS_TO_ADD = 50000
+    HOW_MANY_CLUBS_TO_MAKE = 10
+    HOW_MANY_USERS_TO_ADD = 500
+    HOW_MANY_BOOKS_TO_ADD = 500
     USER_ID = 0
     first_name = ""
     last_name = ""
@@ -168,7 +168,8 @@ class Command(BaseCommand):
                     email = str(user_first_name) + "." + str(user_last_name) + str(user_id) + "@example.com",
                     username = '@' + str(user_first_name) + str(user_last_name) + str(user_id),
                     password = 'Password123',
-                    bio = self.faker.text(max_nb_chars=520),
+                    age = random.randint(1, 150),
+                    bio = self.faker.text(max_nb_chars=10),
                     country = self.users_from_file['Location'][rand_choice]
                 )
                 user.save() 
