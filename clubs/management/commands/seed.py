@@ -6,6 +6,7 @@ from random import randint
 import pandas as pd
 from clubs.models import Book, Club, Club_Books, Club_Users, User, User_Books
 from django.core.management.base import BaseCommand, CommandError
+from django.template.defaultfilters import slugify
 from faker import Faker
 from schedule.models import Calendar, Event, Rule
 
@@ -115,7 +116,7 @@ class Command(BaseCommand):
             club_reading_speed = random.randint(50, 500)
 
             calendar_name = club_name + "\'s Calendar"
-            calendar_slug = user.first_name + "calendar"
+            calendar_slug = slugify(calendar_name)
             cal = Calendar(name=calendar_name, slug=calendar_slug)
             cal.save()
 
