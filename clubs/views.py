@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
@@ -16,7 +16,7 @@ from django.views.generic.edit import CreateView, FormView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
-from .forms import SignUpForm
+from .forms import CalendarPickerForm, SignUpForm
 from .helpers import login_prohibited
 
 
@@ -250,3 +250,14 @@ class NewPostView(LoginRequiredMixin, CreateView):
 
     def handle_no_permission(self):
         return redirect('log_in')
+
+
+def calendar_picker(request):
+    if request.method == 'POST':
+        form = CalendarPickerForm(request.POST)
+        if form.is_valid():
+            calendar = form.cleaned_data.get('calendar')
+            return render(request, 'fullcalendar.html', {'calendar': calendar})
+    else:
+        form = CalendarPickerForm()
+    return render(request, 'calendar_picker.html', {'form': form})

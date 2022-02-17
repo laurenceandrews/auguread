@@ -36,5 +36,6 @@ urlpatterns = [
     path('new_post/', views.NewPostView.as_view(), name='new_post'),
     # sample scheduler
     url(r'^schedule/', include('schedule.urls')),
-    # url(r'^fullcalendar/', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),
+    # url(r'^fullcalendar', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),
+    path('calendar_picker/', views.calendar_picker, name='calendar_picker'),
 ]

@@ -5,6 +5,7 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
 from django_countries.fields import CountryField
+from schedule.models import Calendar, Event, Rule
 
 from .models import Club, Post, User
 
@@ -171,3 +172,7 @@ class NewClubForm(forms.ModelForm):
             attrs={'placeholder': "It's a good idea to make it simple: easy to say and easy to remember."}
         )
     )
+
+
+class CalendarPickerForm(forms.Form):
+    calendar = forms.ModelChoiceField(queryset=Calendar.objects.all().order_by('name'))
