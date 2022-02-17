@@ -261,3 +261,13 @@ def calendar_picker(request):
     else:
         form = CalendarPickerForm()
     return render(request, 'calendar_picker.html', {'form': form})
+
+
+def events_list(request, calendar_id):
+    calendar = Calendar.objects.get(id=calendar_id)
+    events = calendar.event_set.all()
+    return render(request, "events_list.html",
+                  {
+                      'calendar': calendar,
+                      'events': events,
+                  })

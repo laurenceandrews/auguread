@@ -1,0 +1,16 @@
+{% extends 'base_content.html' %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1>Events for calendar: {{calendar.name}}</h1>
+      <div>
+        <p class="lead">These are the current events. You can edit or delete at the click of a button.</p>
+        <p>This page is still in progress. Check back soon!</p>
+      </div>
+      Number of events: {{events.count}}
+      {# {% include 'partials/events_as_table.html' with events=events %} #}
+    </div>
+  </div>
+</div>
+{% endblock %}
