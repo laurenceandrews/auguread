@@ -1,7 +1,5 @@
 """Tests of the log in view."""
 
-"""*****WILL UPDATE LOGIN TESTS THAT ARE COMMENTED OUT WHEN A FEED PAGE IS ESTABLISHED*****"""
-
 from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
@@ -16,7 +14,6 @@ class LogInViewTestCase(TestCase, LogInTester):
 
     def setUp(self):
         self.url = reverse('log_in')
-        # self.user = User.objects.get(username='@johndoe')
         self.user = User.objects.get(email='johndoe@example.org')
 
     def test_log_in_url(self):
@@ -48,12 +45,12 @@ class LogInViewTestCase(TestCase, LogInTester):
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
 
-    # def test_get_log_in_redirect_when_logged_in(self):
-    #     self.client.login(username=self.user.username, password="Password123")
-    #     response = self.client.get(self.url, follow=True)
-    #     redirect_url = reverse('feed')
-    #     self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-    #     self.assertTemplateUsed(response, 'feed.html')
+    def test_get_log_in_redirect_when_logged_in(self):
+        self.client.login(email=self.user.email, password="Password123")
+        response = self.client.get(self.url, follow=True)
+        redirect_url = reverse('rec')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'rec_page.html')
 
     def test_unsuccesful_log_in(self):
         form_input = { 'email': 'johndoe@example.org', 'password': 'WrongPassword123' }
@@ -94,33 +91,33 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
 
-    # def test_succesful_log_in(self):
-    #     form_input = { 'username': '@johndoe', 'password': 'Password123' }
-    #     response = self.client.post(self.url, form_input, follow=True)
-    #     self.assertTrue(self._is_logged_in())
-    #     response_url = reverse('feed')
-    #     self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-    #     self.assertTemplateUsed(response, 'feed.html')
-    #     messages_list = list(response.context['messages'])
-    #     self.assertEqual(len(messages_list), 0)
+    def test_succesful_log_in(self):
+        form_input = { 'email': 'johndoe@example.org', 'password': 'Password123' }
+        response = self.client.post(self.url, form_input, follow=True)
+        self.assertTrue(self._is_logged_in())
+        response_url = reverse('rec')
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'rec_page.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
 
-    # def test_succesful_log_in_with_redirect(self):
-    #     redirect_url = reverse('user_list')
-    #     form_input = { 'email': 'johndoe@example.org', 'password': 'Password123', 'next': redirect_url}
-    #     response = self.client.post(self.url, form_input, follow=True)
-    #     self.assertTrue(self._is_logged_in())
-    #     self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-    #     self.assertTemplateUsed(response, 'user_list.html')
-    #     messages_list = list(response.context['messages'])
-    #     self.assertEqual(len(messages_list), 0)
+    def test_succesful_log_in_with_redirect(self):
+        redirect_url = reverse('user_list')
+        form_input = { 'email': 'johndoe@example.org', 'password': 'Password123', 'next': redirect_url}
+        response = self.client.post(self.url, form_input, follow=True)
+        self.assertTrue(self._is_logged_in())
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'user_list.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
 
-    # def test_post_log_in_redirect_when_logged_in(self):
-    #     self.client.login(username=self.user.username, password="Password123")
-    #     form_input = { 'username': '@wronguser', 'password': 'WrongPassword123'}
-    #     response = self.client.post(self.url, form_input, follow=True)
-    #     redirect_url = reverse('feed')
-    #     self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-    #     self.assertTemplateUsed(response, 'feed.html')
+    def test_post_log_in_redirect_when_logged_in(self):
+        self.client.login(email=self.user.email, password="Password123")
+        form_input = { 'email': 'wronguser@example.org', 'password': 'WrongPassword123'}
+        response = self.client.post(self.url, form_input, follow=True)
+        redirect_url = reverse('rec')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'rec_page.html')
 
     def test_valid_log_in_by_inactive_user(self):
         self.user.is_active = False
