@@ -206,12 +206,20 @@ class Command(BaseCommand):
     def get_random_book(self):
         return random.choice(self.books_from_file.index)
 
-
-    # generate a random location from a made-up list (can also do it with the user locations but we would have to format them first)
+    # generate a random city and country from a made-up list (can also do it with the user locations but we would have to format them first)
     def get_random_location(self):
-        locations = ["London", "Manchester", "Birmingham",
-                     "Brighton", "Bristol", "Online", "Glasgow", "USA"]
-        return random.choice(locations)
+        city = [
+            "London, UK", "Manchester, UK,", "Birmingham, UK", "Brighton, UK", "Bristol, UK",
+            "Berlin, Germany", "Hamburg, Germany", "Munich, Germany", "Cologne, Germany", "Frankfurt, Germany",
+            "Mumbai, India", "Delhi, India", "Bangalore, India", "Kolkata, India", "Chennai, India",
+            "Sydney, Australia", "Melbourn, Australia", "Brisbane, Australia", "Perth, Australia", "Adelaide, Australia",
+            "Toronto, Canada", "Montreal, Canada", "Calgary, Canada", "Ottawa, Canada", "Edmonton, Canada",
+            "Rio de Janeiro, Brazil", "Sao Paulo, Brazil", "Belo Horizonte, Brazil", "Salvador, Brazil", "Manaus, Brazil",
+            "Tokyo, Japan", "Yokohama, Japan", "Osaka, Japan", "Nagoya, Japan", "Sapporo, Japan",
+            "Lagos, Nigeria", "Kano, Nigeria", "Ibadan, Nigeria", "Kaduna, Nigeria", "Port Harcourt, Nigeria",
+            "Cairo, Egypt", "Aswan, Egypt", "Luxor, Egypt", "Alexandria, Egypt", "Sharm El Sheikh, Egypt"
+        ]
+        return random.choice(city)
 
     # get a random index from the list of users in the dataset
     def get_random_user(self):
