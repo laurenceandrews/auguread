@@ -10,8 +10,8 @@ from random import randint
 class Command(BaseCommand):
 
     HOW_MANY_CLUBS_TO_MAKE = 10
-    HOW_MANY_USERS_TO_ADD = 50
-    HOW_MANY_BOOKS_TO_ADD = 50
+    HOW_MANY_USERS_TO_ADD = 500
+    HOW_MANY_BOOKS_TO_ADD = 500
     USER_ID = 0
     first_name = ""
     last_name = ""
@@ -85,7 +85,7 @@ class Command(BaseCommand):
         user = random.choice(User.objects.all())
 
         # Generate a club name based on a random owner name
-        club_name = user.first_name + user.last_name + "\'s Club"
+        club_name = user.first_name + " " + user.last_name + "\'s Club"
 
         # Append the new club name to the file
         self.file1_append.write(club_name + "\n")
@@ -168,7 +168,8 @@ class Command(BaseCommand):
                     email = str(user_first_name) + "." + str(user_last_name) + str(user_id) + "@example.com",
                     username = '@' + str(user_first_name) + str(user_last_name) + str(user_id),
                     password = 'Password123',
-                    bio = self.faker.text(max_nb_chars=520),
+                    age = random.randint(1, 150),
+                    bio = self.faker.text(max_nb_chars=10),
                     country = self.users_from_file['Location'][rand_choice]
                 )
                 user.save() 
@@ -205,12 +206,20 @@ class Command(BaseCommand):
     def get_random_book(self):
         return random.choice(self.books_from_file.index)
 
-
-    # generate a random location from a made-up list (can also do it with the user locations but we would have to format them first)
+    # generate a random city and country from a made-up list (can also do it with the user locations but we would have to format them first)
     def get_random_location(self):
-        locations = ["London", "Manchester", "Birmingham",
-                     "Brighton", "Bristol", "Online", "Glasgow", "USA"]
-        return random.choice(locations)
+        city = [
+            "London, UK", "Manchester, UK,", "Birmingham, UK", "Brighton, UK", "Bristol, UK",
+            "Berlin, Germany", "Hamburg, Germany", "Munich, Germany", "Cologne, Germany", "Frankfurt, Germany",
+            "Mumbai, India", "Delhi, India", "Bangalore, India", "Kolkata, India", "Chennai, India",
+            "Sydney, Australia", "Melbourn, Australia", "Brisbane, Australia", "Perth, Australia", "Adelaide, Australia",
+            "Toronto, Canada", "Montreal, Canada", "Calgary, Canada", "Ottawa, Canada", "Edmonton, Canada",
+            "Rio de Janeiro, Brazil", "Sao Paulo, Brazil", "Belo Horizonte, Brazil", "Salvador, Brazil", "Manaus, Brazil",
+            "Tokyo, Japan", "Yokohama, Japan", "Osaka, Japan", "Nagoya, Japan", "Sapporo, Japan",
+            "Lagos, Nigeria", "Kano, Nigeria", "Ibadan, Nigeria", "Kaduna, Nigeria", "Port Harcourt, Nigeria",
+            "Cairo, Egypt", "Aswan, Egypt", "Luxor, Egypt", "Alexandria, Egypt", "Sharm El Sheikh, Egypt"
+        ]
+        return random.choice(city)
 
     # get a random index from the list of users in the dataset
     def get_random_user(self):
