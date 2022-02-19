@@ -158,7 +158,7 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
 
     model = User
     template_name = 'show_user.html'
-    paginate_by = settings.POSTS_PER_PAGE
+    paginate_by = settings.NUMBER_PER_PAGE
     pk_url_kwarg = 'user_id'
 
     def get_context_data(self, **kwargs):
@@ -171,9 +171,10 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
         is_owner = target_type == 'Owner'
         user_type = user.membership_type(club)
         posts = Post.objects.filter(author=user)
-        context = super().get_context_data(object_list=posts, **kwargs)
+        context = super().get_context_data(object_list=users, **kwargs)
         context['can_approve'] = ((user != target) and (user_type == 'Owner'
                                                         or user == club.owner) and target_type == 'Applicant')
+        context['is_owner'] = target_type == 'Owner'
         context['type'] = target_type
         context['user'] = user
         context['posts'] = context['object_list']
