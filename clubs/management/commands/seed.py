@@ -85,7 +85,7 @@ class Command(BaseCommand):
         user = random.choice(User.objects.all())
 
         # Generate a club name based on a random owner name
-        club_name = user.first_name + user.last_name + "\'s Club"
+        club_name = user.first_name + " " + user.last_name + "\'s Club"
 
         # Append the new club name to the file
         self.file1_append.write(club_name + "\n")
