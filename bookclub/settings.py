@@ -171,7 +171,7 @@ PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
 STATIC_ROOT = os.path.join(PROJECT_PATH, 'assets')
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
