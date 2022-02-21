@@ -4,7 +4,7 @@ from django.conf import settings
 from django.contrib.auth import login, logout
 from clubs.forms import LogInForm, PasswordForm, NewClubForm, PostForm, UserForm
 from django.views import View
-from .forms import SignUpForm
+from .forms import SignUpForm, PostForm
 from .helpers import login_prohibited
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
