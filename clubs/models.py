@@ -113,7 +113,7 @@ class User(AbstractUser):
 
     def membership_type(self, club):
         """Type of membership the user has"""
-        if self == club.owner:
+        if self == club.owners.all():
             return 'Owner'
         elif self in club.members.all():
             return 'Member'
@@ -200,6 +200,11 @@ class Club(models.Model):
         User, through='ApplicantMembership', related_name='applicant', blank=True)
 
     members = models.ManyToManyField(
+        User, through='MemberMembership', related_name='member', blank=True)
+    owners = models.ManyToManyField(
+        User, through='OwnerMembership', related_name='owner', blank=True)
+
+    members = models.ManyToManyField(
         User,
         through='club_users',
         related_name='member',
@@ -253,6 +258,10 @@ class Club(models.Model):
             return False
 
 class ApplicantMembership(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+
+class OwnerMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
 
