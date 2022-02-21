@@ -21,9 +21,9 @@ class PasswordFormTestCase(TestCase):
         self.assertIn('new_password', form.fields)
         self.assertIn('password_confirmation', form.fields)
 
-    # def test_valid_form(self):
-    #     form = PasswordForm(user=self.user, data=self.form_input)
-    #     self.assertTrue(form.is_valid())
+    def test_valid_form(self):
+        form = PasswordForm(user=self.user, data=self.form_input)
+        self.assertTrue(form.is_valid())
 
     def test_password_must_contain_uppercase_character(self):
         self.form_input['new_password'] = 'password123'
