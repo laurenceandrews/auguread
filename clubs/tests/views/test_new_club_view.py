@@ -93,7 +93,7 @@ class NewClubTest(TestCase):
         self.client.login(email="johndoe@example.org",
                           password='Password123')
         other_user = User.objects.get(email="janedoe@example.org",)
-        self.data['owner'] = other_user.id
+        self.data['owner'] = other_user.username
         club_count_before = Club.objects.count()
         response = self.client.post(self.url, self.data, follow=True)
         club_count_after = Club.objects.count()

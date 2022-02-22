@@ -17,6 +17,7 @@ class SignUpFormTestCase(TestCase):
             'username': '@janedoe',
             'email': 'janedoe@example.org',
             'bio': 'My bio',
+            'city': 'London',
             'country': 'GB',
             'new_password': 'Password123',
             'password_confirmation': 'Password123'
@@ -36,6 +37,7 @@ class SignUpFormTestCase(TestCase):
         email_field = form.fields['email']
         self.assertTrue(isinstance(email_field, forms.EmailField))
         self.assertIn('bio', form.fields)
+        self.assertIn('city', form.fields)
         self.assertIn('country', form.fields)
         self.assertIn('new_password', form.fields)
         new_password_widget = form.fields['new_password'].widget
@@ -84,6 +86,7 @@ class SignUpFormTestCase(TestCase):
         self.assertEqual(user.age, 25)
         self.assertEqual(user.email, 'janedoe@example.org')
         self.assertEqual(user.bio, 'My bio')
+        self.assertEqual(user.city, 'London')
         self.assertEqual(user.country, 'GB')
         is_password_correct = check_password('Password123', user.password)
         self.assertTrue(is_password_correct)
