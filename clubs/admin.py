@@ -1,17 +1,20 @@
 from django.contrib import admin
-from .models import User, Post, Club, Book
+
+from .models import Book, Club, Post, User
+
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for users."""
 
     list_display = [
+        'id',
         'username',
         'first_name',
         'last_name',
         'email',
         'bio',
-        'country',
+        'location',
         'is_active',
     ]
 
@@ -42,7 +45,7 @@ class ClubAdmin(admin.ModelAdmin):
 
     def member_list(self, Club):
         return "\n".join([member.first_name for member in Club.members.all()])
-        
+
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
