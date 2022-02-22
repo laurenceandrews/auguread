@@ -39,7 +39,7 @@ urlpatterns = [
 
     path('enter/<int:club_id>', views.enter, name='enter'),
     path('apply/<int:club_id>', views.apply, name='apply'),
-    path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
+    path('<int:club_id>/approve/<str:user_username>', views.approve, name='approve'),
 
     path('<int:club_id>/applicants', views.ApplicantListView.as_view(), name='applicant_list'),
 

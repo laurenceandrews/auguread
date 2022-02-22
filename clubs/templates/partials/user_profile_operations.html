@@ -1,5 +1,5 @@
 <span>
-  <form action="{% url 'approve' user_id=target.id club_id=club.id %}" method="get">
+  <form action="{% url 'approve' user_username=target.username club_id=club.id %}" method="get">
     <span class="float-end">
       {% if can_approve %}
         <button class="btn btn-primary">Accept as a Member</button>

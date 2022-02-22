@@ -265,15 +265,15 @@ def apply(request, club_id):
 
 @login_required
 @owner
-def approve(request, user_id, club_id):
+def approve(request, user_username, club_id):
     club = Club.objects.get(id=club_id)
     try:
-        user = User.objects.get(id=user_id)
+        user = User.objects.get(username=user_username)
         club.accept(user)
     except ObjectDoesNotExist:
         return redirect('applicant_list', club_id=club_id)
     else:
-        return redirect('show_user', user_id=user_id, club_id=club_id)
+        return redirect('show_user', user_username=user.username, club_id=club_id)
 
 
 class NewPostView(LoginRequiredMixin, CreateView):

@@ -38,6 +38,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     USERNAME_FIELD = "email"
     username = models.CharField(
+        primary_key=True,
         max_length=30,
         unique=True,
         validators=[
@@ -49,7 +50,7 @@ class User(AbstractUser):
     )
 
     id = models.CharField(
-        primary_key=True,
+        unique=True,
         max_length=20
     )
 
@@ -257,13 +258,16 @@ class Club(models.Model):
         else:
             return False
 
+
 class ApplicantMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
 
+
 class OwnerMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
+
 
 class Club_Users(models.Model):
     club = models.ForeignKey(
