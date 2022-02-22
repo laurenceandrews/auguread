@@ -1,0 +1,10 @@
+[
+  {
+    "model": "schedule.Calendar",
+    "pk": 5,
+    "fields": {
+      "name": "Fun Club's Calendar",
+      "slug": "fun-clubs-calendar"
+    }
+  }
+]
