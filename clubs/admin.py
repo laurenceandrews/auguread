@@ -46,12 +46,9 @@ class ClubAdmin(admin.ModelAdmin):
     def member_list(self, Club):
         return "\n".join([member.first_name for member in Club.members.all()])
 
-<<<<<<< HEAD
     def applicant_list(self, Club):
         return "\n".join([applicant.first_name for applicant in Club.applicants.all()])
 
-=======
->>>>>>> 5c6101ae97766b05c4f6a6ea2909bad13d093d5d
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
