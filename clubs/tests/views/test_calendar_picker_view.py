@@ -48,5 +48,6 @@ class CalendarPickerViewTestCase(TestCase, LogInTester):
 
     def test_succesful_calendar_picker(self):
         response = self.client.post(self.url, self.form_input, follow=True)
-        expected_page_content = "<h1>You're viewing: " + self.calendar.name + "</h1>"
+        self.assertTemplateUsed(response, 'fullcalendar.html')
+        expected_page_content = self.calendar.name
         self.assertContains(response, expected_page_content)
