@@ -9,9 +9,9 @@ from random import randint
 
 class Command(BaseCommand):
 
-    HOW_MANY_CLUBS_TO_MAKE = 10
-    HOW_MANY_USERS_TO_ADD = 500
-    HOW_MANY_BOOKS_TO_ADD = 500
+    HOW_MANY_CLUBS_TO_MAKE = 200
+    HOW_MANY_USERS_TO_ADD = 10000
+    HOW_MANY_BOOKS_TO_ADD = 10000
     USER_ID = 0
     first_name = ""
     last_name = ""
