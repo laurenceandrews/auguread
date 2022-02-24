@@ -14,8 +14,8 @@ from schedule.models import Calendar, Event, Rule
 class Command(BaseCommand):
 
     HOW_MANY_CLUBS_TO_MAKE = 10
-    HOW_MANY_USERS_TO_ADD = 50
-    HOW_MANY_BOOKS_TO_ADD = 50
+    HOW_MANY_USERS_TO_ADD = 500
+    HOW_MANY_BOOKS_TO_ADD = 500
     USER_ID = 0
     first_name = ""
     last_name = ""
@@ -81,11 +81,8 @@ class Command(BaseCommand):
         self.file1_append.close()
         self.file2_append.close()
         self.file3_append.close()
-
-    # took some code from our old seed.py file from grasshopper
-
+        
     # create rules for calendars
-
     rule = Rule(frequency="YEARLY", name="Yearly", description="will recur once every Year")
     rule.save()
     print("YEARLY recurrence created")
@@ -97,13 +94,15 @@ class Command(BaseCommand):
     print("Weekly recurrence created")
     rule = Rule(frequency="DAILY", name="Daily", description="will recur once every Day")
     rule.save()
+    print("Daily recurrence created")
 
+    # took some code from our old seed.py file from grasshopper
     def create_club(self):
         # Initialise a user that will be the owner
         user = random.choice(User.objects.all())
 
         # Generate a club name based on a random owner name
-        club_name = user.first_name + user.last_name + "\'s Club"
+        club_name = user.first_name + " " + user.last_name + "\'s Club"
 
         # Append the new club name to the file
         self.file1_append.write(club_name + "\n")
@@ -114,7 +113,7 @@ class Command(BaseCommand):
             club_location = self.get_random_location()
             club_description = self.faker.text(max_nb_chars=520)
             club_reading_speed = random.randint(50, 500)
-
+            
             calendar_name = club_name + "\'s Calendar"
             calendar_slug = slugify(calendar_name)
             cal = Calendar(name=calendar_name, slug=calendar_slug)
@@ -136,119 +135,131 @@ class Command(BaseCommand):
             self.clubs_seeded += 1
 
             # Assigning favourite books to club
-            fav_books = random.choices(Book.objects.all(), k=5)
+            fav_books = random.choices(Book.objects.all(), k = 5)
             for book in fav_books:
                 fav_book = Club_Books.objects.create(
-                    club=club,
-                    book=book
+                    club = club,
+                    book = book
                 )
                 fav_book.save()
 
     # seed users and add to clubs
     def seed_user_in_club(self):
 
-        user = random.choice(User.objects.all())
+            user = random.choice(User.objects.all())
 
-        # Assigning favourite books to user
-        fav_books = random.choices(Book.objects.all(), k=5)
-        for book in fav_books:
-            fav_book = User_Books.objects.create(
-                user=user,
-                book=book
-            )
-            fav_book.save()
-
-        # Add the new user to a random club
-        club_choice = random.choice(Club.objects.all())
-
-        # Ensures that the user isn't made a member of a club that they own
-        while(club_choice.owner.id == user.id):
+            # Assigning favourite books to user
+            fav_books = random.choices(Book.objects.all(), k = 5)
+            for book in fav_books:
+                fav_book = User_Books.objects.create(
+                    user = user,
+                    book = book
+                )
+                fav_book.save()
+        
+            # Add the new user to a random club
             club_choice = random.choice(Club.objects.all())
+            
+            # Ensures that the user isn't made a member of a club that they own
+            while(club_choice.owner.id == user.id):
+                club_choice = random.choice(Club.objects.all())
 
-        # Set user role in club
-        user_role = Club_Users.objects.create(
-            user=user,
-            club=club_choice,
-            role_num=randint(1, 3)
-        )
-        user_role.save()
-
-        self.user_count += 1
-
-    def seed_user_from_csv(self):
-
-        rand_choice = self.get_random_user()
-
-        user_id = self.users_from_file['id'][rand_choice]
-        user_first_name = self.faker.first_name()
-        user_last_name = self.faker.last_name()
-
-        if not User.objects.filter(id=user_id).exists():
-            user = User.objects.create(
-                id=user_id,
-                first_name=user_first_name,
-                last_name=user_last_name,
-                email=str(user_first_name) + "." + str(user_last_name) + str(user_id) + "@example.com",
-                username='@' + str(user_first_name) + str(user_last_name) + str(user_id),
-                password='Password123',
-                bio=self.faker.text(max_nb_chars=520),
-                country=self.users_from_file['Location'][rand_choice]
+            # Set user role in club
+            user_role = Club_Users.objects.create(
+                user=user,
+                club=club_choice,
+                role_num=randint(1, 3)
             )
-            user.save()
+            user_role.save()
 
-            # Append the new user id to the file
-            self.file2_append.write(user.id + "\n")
-            # self.users_made.append(user)
             self.user_count += 1
-            self.users_seeded += 1
 
-    def seed_book_from_csv(self):
 
-        rand_choice = self.get_random_book()
+    def seed_user_from_csv(self): 
+            
+            rand_choice = self.get_random_user()
 
-        if not Book.objects.filter(ISBN=self.books_from_file['ISBN'][rand_choice]).exists():
-            book = Book.objects.create(
-                ISBN=self.books_from_file['ISBN'][rand_choice],
-                title=self.books_from_file['Book_Title'][rand_choice],
-                author=self.books_from_file['Book_Author'][rand_choice],
-                publication_year=self.books_from_file['Year_Of_Publication'][rand_choice],
-                publisher=self.books_from_file['Publisher'][rand_choice]
-            )
-            book.save()
+            user_id = self.users_from_file['id'][rand_choice]
+            user_first_name = self.faker.first_name()
+            user_last_name = self.faker.last_name()
 
-            # Append the new book ISBN to the file
-            self.file3_append.write(book.ISBN + "\n")
-            # self.books_made.append(book)
-            self.book_count += 1
-            self.books_seeded += 1
+            if not User.objects.filter(id=user_id).exists():   
+                user = User.objects.create(
+                    id = user_id,
+                    first_name = user_first_name,
+                    last_name = user_last_name,
+                    email = str(user_first_name) + "." + str(user_last_name) + str(user_id) + "@example.com",
+                    username = '@' + str(user_first_name) + str(user_last_name) + str(user_id),
+                    password = 'Password123',
+                    age = random.randint(1, 150),
+                    bio = self.faker.text(max_nb_chars=10),
+                    country = self.users_from_file['Location'][rand_choice]
+                )
+                user.save() 
+               
+                # Append the new user id to the file
+                self.file2_append.write(user.id + "\n")
+                # self.users_made.append(user)
+                self.user_count += 1        
+                self.users_seeded +=1
+
+
+    def seed_book_from_csv(self): 
+            
+            rand_choice = self.get_random_book()
+
+            if not Book.objects.filter(ISBN=self.books_from_file['ISBN'][rand_choice]).exists():   
+                book = Book.objects.create(
+                    ISBN = self.books_from_file['ISBN'][rand_choice],
+                    title = self.books_from_file['Book_Title'][rand_choice],
+                    author = self.books_from_file['Book_Author'][rand_choice],
+                    publication_year = self.books_from_file['Year_Of_Publication'][rand_choice],
+                    publisher = self.books_from_file['Publisher'][rand_choice]
+                    )
+                book.save() 
+               
+                # Append the new book ISBN to the file
+                self.file3_append.write(book.ISBN + "\n")
+                # self.books_made.append(book)
+                self.book_count += 1
+                self.books_seeded +=1
+
 
     # get a random index from the list of books in the dataset
-
     def get_random_book(self):
         return random.choice(self.books_from_file.index)
 
-    # generate a random location from a made-up list (can also do it with the user locations but we would have to format them first)
-
+    # generate a random city and country from a made-up list (can also do it with the user locations but we would have to format them first)
     def get_random_location(self):
-        locations = ["London", "Manchester", "Birmingham",
-                     "Brighton", "Bristol", "Online", "Glasgow", "USA"]
-        return random.choice(locations)
+        city = [
+            "London, UK", "Manchester, UK,", "Birmingham, UK", "Brighton, UK", "Bristol, UK",
+            "Berlin, Germany", "Hamburg, Germany", "Munich, Germany", "Cologne, Germany", "Frankfurt, Germany",
+            "Mumbai, India", "Delhi, India", "Bangalore, India", "Kolkata, India", "Chennai, India",
+            "Sydney, Australia", "Melbourn, Australia", "Brisbane, Australia", "Perth, Australia", "Adelaide, Australia",
+            "Toronto, Canada", "Montreal, Canada", "Calgary, Canada", "Ottawa, Canada", "Edmonton, Canada",
+            "Rio de Janeiro, Brazil", "Sao Paulo, Brazil", "Belo Horizonte, Brazil", "Salvador, Brazil", "Manaus, Brazil",
+            "Tokyo, Japan", "Yokohama, Japan", "Osaka, Japan", "Nagoya, Japan", "Sapporo, Japan",
+            "Lagos, Nigeria", "Kano, Nigeria", "Ibadan, Nigeria", "Kaduna, Nigeria", "Port Harcourt, Nigeria",
+            "Cairo, Egypt", "Aswan, Egypt", "Luxor, Egypt", "Alexandria, Egypt", "Sharm El Sheikh, Egypt"
+        ]
+        return random.choice(city)
 
     # get a random index from the list of users in the dataset
     def get_random_user(self):
         return random.choice(self.users_from_file.index)
+
 
     def handle(self, *args, **options):
 
         while self.book_count < self.HOW_MANY_BOOKS_TO_ADD:
             print(f'Seeding book {self.books_seeded}',  end='\r')
             self.seed_book_from_csv()
-        print('Finished seeding books')
-
+        print('Finished seeding books')   
+        
         while self.user_count < self.HOW_MANY_USERS_TO_ADD:
             print(f'Seeding user {self.users_seeded}',  end='\r')
             self.seed_user_from_csv()
-        print('Finished seeding users')
+        print('Finished seeding users') 
         self.user_count = 0
 
         while self.club_count < self.HOW_MANY_CLUBS_TO_MAKE:
