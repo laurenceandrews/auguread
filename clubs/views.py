@@ -6,26 +6,18 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-
-from django.http import Http404, HttpResponse, HttpResponseRedirect
-
 from django.core.paginator import Paginator
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
-
-
+from django.views.generic.edit import CreateView, FormView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
 from .forms import CalendarPickerForm, SignUpForm
-
-from django.views.generic.edit import CreateView, FormView, UpdateView
-from django.views.generic.list import MultipleObjectMixin
-
-
 from .helpers import login_prohibited
 
 
@@ -393,7 +385,8 @@ class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
             user = User.objects.get(email=email)
             club.demote(user)
         return redirect('owner_list', club_id=club.id)
-      
+
+
 def calendar_picker(request):
     if request.method == 'POST':
         form = CalendarPickerForm(request.POST)

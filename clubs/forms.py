@@ -4,12 +4,9 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
-from django_countries.fields import CountryField
-
-from schedule.models import Calendar, Event, Rule
-
-
 from django.utils.translation import ugettext_lazy as _
+from django_countries.fields import CountryField
+from schedule.models import Calendar, Event, Rule
 
 from .models import Club, Post, User
 
