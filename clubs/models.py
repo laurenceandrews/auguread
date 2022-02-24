@@ -66,8 +66,8 @@ class User(AbstractUser):
     age = models.PositiveIntegerField(
         default=18,
         validators=[
-            MaxValueValidator(150),
-            MinValueValidator(1)
+            MaxValueValidator(105),
+            MinValueValidator(5)
         ]
     )
 
@@ -79,6 +79,11 @@ class User(AbstractUser):
     bio = models.CharField(
         max_length=520,
         blank=True
+    )
+
+    city = models.CharField(
+        max_length=50,
+        blank=False
     )
 
     country = CountryField(
@@ -95,6 +100,9 @@ class User(AbstractUser):
 
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
+
+    def location(self):
+        return f'{self.city}, {self.country}'
 
     def gravatar(self, size=120):
         """Return a URL to the user's gravatar."""

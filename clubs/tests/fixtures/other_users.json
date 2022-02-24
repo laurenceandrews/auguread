@@ -8,6 +8,7 @@
       "username": "@janedoe",
       "email": "janedoe@example.org",
       "bio": "The quick brown fox jumps over the lazy dog.",
+      "city": "London",
       "country": "GB",
       "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
       "is_active": true
@@ -22,6 +23,7 @@
       "username": "@petrapickles",
       "email": "petrapickles@example.org",
       "bio": "The quick brown fox jumps over the lazy dog.",
+      "city": "London",
       "country": "GB",
       "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
       "is_active": true
@@ -36,6 +38,7 @@
       "username": "@peterpickles",
       "email": "peterpickles@example.org",
       "bio": "The quick brown fox jumps over the lazy dog.",
+      "city": "London",
       "country": "GB",
       "password": "pbkdf2_sha256$260000$4BNvFuAWoTT1XVU8D6hCay$KqDCG+bHl8TwYcvA60SGhOMluAheVOnF1PMz0wClilc=",
       "is_active": true
