@@ -135,6 +135,15 @@ class UserModelTestCase(TestCase):
         self.user.bio = 'x' * 521
         self._assert_user_is_invalid()
 
+    def test_city_cannot_be_blank(self):
+        self.user.city = ''
+        self._assert_user_is_invalid()
+
+    def test_country_need_not_be_unique(self):
+        second_user = User.objects.get(username='@janedoe')
+        self.user.city = second_user.city
+        self._assert_user_is_valid()
+
     def test_country_cannot_be_blank(self):
         self.user.country = ''
         self._assert_user_is_invalid()
