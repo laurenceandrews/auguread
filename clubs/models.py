@@ -84,6 +84,10 @@ class User(AbstractUser):
     country = CountryField(
         blank_label='(select country)'
     )
+    
+    followers = models.ManyToManyField(
+        'self', symmetrical=False, related_name='followees'
+    )
 
     class Meta:
         """Model options"""
@@ -116,6 +120,16 @@ class User(AbstractUser):
 
     def is_member(self, club):
         return self.membership_type(club) == 'Member'
+
+    def toggle_follow(self, followee):
+        """Toggles whether self follows the given followee."""
+
+        if followee==self:
+            return
+        if self.is_following(followee):
+            self._unfollow(followee)
+        else:
+            self._follow(followee)
 
     def _follow(self, user):
         user.followers.add(self)

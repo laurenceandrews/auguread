@@ -38,4 +38,5 @@ urlpatterns = [
     path('apply/<int:club_id>', views.apply, name='apply'),
     path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
     path('feed/', views.FeedView.as_view(), name='feed'),
+    path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
 ]
