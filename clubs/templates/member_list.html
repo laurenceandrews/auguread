@@ -1,0 +1,33 @@
+{% extends "manage_list_template.html" %}
+{% load bootstrap_pagination %}
+{% block title %}
+ | Member Manage
+{% endblock %}
+{% block head %}
+  Manage Members
+{% endblock %}
+{% block form %}
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      {% if not users %}
+        <pre>
+
+
+
+        </pre>
+        <h1 style="text-align:center">
+          No members found yet!
+        </h1>
+
+      {% else %}
+        {% bootstrap_paginate page_obj range=10 show_first_last="true"%}
+        <form action="{% url 'member_list' club.id %}" method="post">
+          {% csrf_token %}
+          {% include "partials/manage_list.html" with users=users applicants=False club=club %}
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

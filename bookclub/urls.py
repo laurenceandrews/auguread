@@ -19,8 +19,9 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('sign_up/', views.sign_up, name='sign_up'),
     path('', views.home, name='home'),
+
+    path('sign_up/', views.sign_up, name='sign_up'),
     path('log_in/', views.LogInView.as_view(), name='log_in'),
     path('log_out/', views.log_out, name='log_out'),
     path("__reload__/", include("django_browser_reload.urls")),
@@ -30,7 +31,13 @@ urlpatterns = [
     path('users/', views.UserListView.as_view(), name='user_list'),
     # path('rec/', views.RecommendationsView.as_view(), name='rec_page'),
     path('rec/', views.RecommendationsView, name='rec'),
-    path('clubs/', views.ClubListView.as_view(), name='club_list'),
+    # path('rec/', views.RecommendationsView.as_view(), name='rec_page'),
+
+    # path('users/', views.UserListView.as_view(), name='user_list'),
+    path('<int:club_id>/user/<str:user_username>', views.ShowUserView.as_view(), name='show_user'),
+    path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
+
+    path('clubs/', views.club_list, name='club_list'),
     path('new_club/', views.NewClubView.as_view(), name='new_club'),
     path('new_post/', views.NewPostView.as_view(), name='new_post'),
 

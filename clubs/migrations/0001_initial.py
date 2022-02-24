@@ -28,8 +28,8 @@ class Migration(migrations.Migration):
                 ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
                 ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
                 ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
-                ('username', models.CharField(max_length=30, unique=True, validators=[django.core.validators.RegexValidator(message='Username must consist of @ followed by at least three alphanumericals', regex='^@\\w{3,}$')])),
-                ('id', models.CharField(max_length=20, primary_key=True, serialize=False)),
+                ('username', models.CharField(max_length=30, primary_key=True, serialize=False, unique=True, validators=[django.core.validators.RegexValidator(message='Username must consist of @ followed by at least three alphanumericals', regex='^@\\w{3,}$')])),
+                ('id', models.CharField(max_length=20, unique=True)),
                 ('first_name', models.CharField(max_length=50)),
                 ('last_name', models.CharField(max_length=50)),
                 ('age', models.PositiveIntegerField(default=18, validators=[django.core.validators.MaxValueValidator(105), django.core.validators.MinValueValidator(5)])),
@@ -46,6 +46,12 @@ class Migration(migrations.Migration):
             },
             managers=[
                 ('objects', clubs.models.UserManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ApplicantMembership',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
             ],
         ),
         migrations.CreateModel(
@@ -67,6 +73,7 @@ class Migration(migrations.Migration):
                 ('location', models.CharField(max_length=500)),
                 ('description', models.CharField(max_length=520)),
                 ('avg_reading_speed', models.IntegerField(default=200, validators=[django.core.validators.MinValueValidator(50), django.core.validators.MaxValueValidator(500)])),
+                ('applicants', models.ManyToManyField(blank=True, related_name='applicant', through='clubs.ApplicantMembership', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'ordering': ['name'],
@@ -99,6 +106,14 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='OwnerMembership',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('club', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='clubs.club')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
             name='Club_Users',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -129,5 +144,20 @@ class Migration(migrations.Migration):
             model_name='club',
             name='owner',
             field=models.ForeignKey(blank=b'I00\n', on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='club',
+            name='owners',
+            field=models.ManyToManyField(blank=True, related_name='owner', through='clubs.OwnerMembership', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='applicantmembership',
+            name='club',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='clubs.club'),
+        ),
+        migrations.AddField(
+            model_name='applicantmembership',
+            name='user',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
         ),
     ]

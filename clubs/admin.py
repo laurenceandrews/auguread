@@ -37,14 +37,17 @@ class ClubAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for users."""
 
     list_display = [
-        'name', 'owner_name', 'location', 'description', 'member_list',
+        'name', 'owner_name', 'location', 'description', 'applicant_list', 'member_list', 'owner_list'
     ]
 
     def owner_name(self, Club):
-        return Club.owner.first_name + ' ' + Club.owner.last_name
+        return "\n".join([owner.first_name for owner in Club.owners.all()])
 
     def member_list(self, Club):
         return "\n".join([member.first_name for member in Club.members.all()])
+
+    def applicant_list(self, Club):
+        return "\n".join([applicant.first_name for applicant in Club.applicants.all()])
 
 
 @admin.register(Book)

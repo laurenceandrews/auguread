@@ -1,0 +1,17 @@
+{% extends "./template_list.html" %}
+{% block colhead %}
+  <th class="text-center">Experience</th>
+  <th class="text-center">Bio</th>
+{% endblock %}
+{% block col %}
+  <td class="text-center">{{ target.full_name }}</td>
+  <td class="text-center"><a href="{% url 'show_user' club.id target.id %}">{{ target.email }}</a></td>
+  <td class="text-center">{{ target.experience }}</td>
+    {% if not target.bio %}
+      <td class="text-center">No bio.</td>
+    {% else %}
+      <td class="text-center">{{ target.bio }}</td>
+  {% endif %}
+
+  <td class="text-center"><input type='checkbox' name="check[]" value='{{ target.email }}'></td>
+{% endblock %}
