@@ -45,9 +45,3 @@ class CalendarPickerViewTestCase(TestCase, LogInTester):
         form = response.context['form']
         self.assertTrue(isinstance(form, CalendarPickerForm))
         self.assertTrue(form.is_bound)
-
-    def test_succesful_calendar_picker(self):
-        response = self.client.post(self.url, self.form_input, follow=True)
-        self.assertTemplateUsed(response, 'fullcalendar.html')
-        expected_page_content = self.calendar.name
-        self.assertContains(response, expected_page_content)
