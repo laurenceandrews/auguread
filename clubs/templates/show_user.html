@@ -1,14 +1,14 @@
-{% extends 'base_content.html' %}
+{% extends "base_content.html" %}
 {% block content %}
+<title>
+  {% block title %}
+  | Show User
+  {% endblock %}
+</title>
 <div class="container">
   <div class="row content">
-    {# <div class="col-xs-12 col-lg-6 col-xl-4">
-      {% include 'partials/user_profile.html' with following=following followable=followable %}
-    </div> #}
-    <div class="col-xs-12 col-lg-6 col-xl-8">
-      {% include 'partials/post_pager.html' with page_obj=page_obj%}
-      {% include 'partials/posts_as_table.html' with posts=posts %}
-      {% include 'partials/post_pager.html' with page_obj=page_obj%}
+    <div class="col-xs-12 col-lg-6 col-xl-12">
+      {% include 'partials/user_profile.html' with target=target user=user club=club %}
     </div>
   </div>
 </div>

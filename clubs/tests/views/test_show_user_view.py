@@ -15,10 +15,10 @@ class ShowUserTest(TestCase, AssertHTMLMixin):
     def setUp(self):
         self.user = User.objects.get(email='johndoe@example.org')
         self.target_user = User.objects.get(email='janedoe@example.org')
-        self.url = reverse('show_user', kwargs={'user_id': self.target_user.id})
+        self.url = reverse('show_user', kwargs={'user_username': self.target_user.username})
 
     def test_show_user_url(self):
-        self.assertEqual(self.url,f'/user/{self.target_user.id}')
+        self.assertEqual(self.url,f'/user/{self.target_user.username}')
 
     # def test_get_show_user_with_valid_id(self):
     #     self.client.login(email=self.user.email, password='Password123')

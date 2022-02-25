@@ -1,0 +1,22 @@
+{% extends "base_content.html" %}
+{% load bootstrap_pagination %}
+{% block content %}
+<title>
+  {% block title %}
+  {% endblock %}
+</title>
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1 style="text-align:center">
+        {% block head %}
+        {% endblock %}
+      </h1>
+    </div>
+  </div>
+</div>
+{% block form %}
+{% endblock %}
+{% endblock %}

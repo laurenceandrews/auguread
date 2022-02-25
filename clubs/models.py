@@ -9,6 +9,7 @@ from django.core.validators import (MaxValueValidator, MinValueValidator,
 from django.db import models
 from django_countries.fields import CountryField
 from libgravatar import Gravatar
+from schedule.models import Calendar, Event, Rule
 
 
 class UserManager(UserManager):
@@ -38,6 +39,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     USERNAME_FIELD = "email"
     username = models.CharField(
+        primary_key=True,
         max_length=30,
         unique=True,
         validators=[
@@ -49,7 +51,7 @@ class User(AbstractUser):
     )
 
     id = models.CharField(
-        primary_key=True,
+        unique=True,
         max_length=20
     )
 
@@ -110,20 +112,28 @@ class User(AbstractUser):
         """Return a URL to a miniature version of the user's gravatar."""
         return self.gravatar(size=60)
 
-    def membership_type(self, club):
-        """Type of membership the user has"""
-        if self == club.owner:
-            return 'Owner'
-        elif self in club.members.all():
-            return 'Member'
-        else:
-            return 'User'
+    def is_applicant(self, club):
+        return self.membership_type(club) == 'Applicant'
 
     def is_owner(self, club):
         return self.membership_type(club) == 'Owner'
 
     def is_member(self, club):
         return self.membership_type(club) == 'Member'
+
+    def membership_type(self, club):
+        """Type of membership the user has"""
+        if self == club.owners.all():
+            return 'Owner'
+        elif self in club.members.all():
+            return 'Member'
+        elif self in club.applicants.all():
+            return 'Applicant'
+        else:
+            return 'User'
+
+    def clubs_attended(self):
+        return list(self.member.all()) + list(self.owner.all()) + list(Club.objects.filter(owner=self))
 
 
 class Book(models.Model):
@@ -189,12 +199,25 @@ class Club(models.Model):
         blank=False
     )
 
+    calendar = models.OneToOneField(
+        Calendar,
+        on_delete=models.CASCADE
+    )
+
     # A foreign key is not required for the club owner
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         blank=FALSE
     )
+
+    applicants = models.ManyToManyField(
+        User, through='ApplicantMembership', related_name='applicant', blank=True)
+
+    members = models.ManyToManyField(
+        User, through='MemberMembership', related_name='member', blank=True)
+    owners = models.ManyToManyField(
+        User, through='OwnerMembership', related_name='owner', blank=True)
 
     members = models.ManyToManyField(
         User,
@@ -227,11 +250,37 @@ class Club(models.Model):
         """Model options"""
         ordering = ['name']
 
+    def member_list(self):
+        return self.members.all()
+
+    def applicant_list(self):
+        return self.applicants.all()
+
+    def owner_list(self):
+        return self.owners.all()
+
+    def accept(self, user):
+        self.members.add(user)
+        self.applicants.remove(user)
+
+    def applied_by(self, user):
+        self.applicants.add(user)
+
     def in_club(self, user):
-        if user in self.members.all() or user == self.owner:
+        if user in self.members.all() or user in self.owners.all() or user in self.applicants.all() or user == self.owner:
             return True
         else:
             return False
+
+
+class ApplicantMembership(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+
+
+class OwnerMembership(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
 
 
 class Club_Users(models.Model):
