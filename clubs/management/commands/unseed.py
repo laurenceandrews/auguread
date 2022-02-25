@@ -1,11 +1,23 @@
+from clubs.models import Club, Post, User
 from django.core.management.base import BaseCommand, CommandError
+from schedule.models import Calendar, Event, Rule
 
-from clubs.models import User
-from clubs.models import Post
 
 class Command(BaseCommand):
     help = 'Seeds the database with sample data'
 
     def handle(self, *args, **options):
-        User.objects.filter(is_staff=False).delete()
+        non_admin_users = User.objects.filter(is_staff=False)
+        for i in non_admin_users:
+            i.delete()
+        print("Successfully deleted all non-admin users.")
+
         Post.objects.all().delete()
+
+        Club.objects.all().delete()
+        print("Successfully deleted all clubs.")
+
+        Calendar.objects.all().delete()
+        Event.objects.all().delete()
+        Rule.objects.all().delete()
+        print("Successfully deleted all calendars, events and rules.")
