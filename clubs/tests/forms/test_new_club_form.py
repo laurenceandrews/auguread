@@ -14,10 +14,14 @@ class NewClubTestCase(TestCase):
     def setUp(self):
         super(TestCase, self).setUp()
         self.user = User.objects.get(email="johndoe@example.org")
-        self.existid_calendar = Calendar.objects.get(pk=5)
+        self.existing_calendar = Calendar.objects.get(pk=5)
+        self.club_city = 'London'
+        self.club_country = 'GB'
+        self.club_location = self.club_city + ", " + self.club_country
         self.form_input = {
             'name': 'Fun Reading Club',
-            'location': 'London, GB',
+            'city': self.club_city,
+            'country': self.club_country,
             'description': 'A book club that is fun.',
             'avg_reading_speed': 200,
             'calendar_name': 'Fun Reading Clubs Calendar'
@@ -30,7 +34,8 @@ class NewClubTestCase(TestCase):
     def test_form_has_necessary_fields(self):
         form = NewClubForm()
         self.assertIn('name', form.fields)
-        self.assertIn('location', form.fields)
+        self.assertIn('city', form.fields)
+        self.assertIn('country', form.fields)
         self.assertIn('description', form.fields)
         self.assertIn('avg_reading_speed', form.fields)
         self.assertIn('calendar_name', form.fields)
@@ -40,13 +45,13 @@ class NewClubTestCase(TestCase):
         form = NewClubForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
-    def test_location_cannot_exceed_500_characters(self):
-        self.form_input['location'] = 'y' * 501
+    def test_city_cannot_exceed_250_characters(self):
+        self.form_input['name'] = 'y' * 251
         form = NewClubForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
     def test_description_cannot_exceed_520_characters(self):
-        self.form_input['location'] = 'z' * 521
+        self.form_input['description'] = 'z' * 521
         form = NewClubForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 

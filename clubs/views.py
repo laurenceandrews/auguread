@@ -219,10 +219,13 @@ def new_club(request):
         form = NewClubForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data.get("name")
-            location = form.cleaned_data.get("location")
+            city = form.cleaned_data.get("city")
+            country = form.cleaned_data.get("country")
             description = form.cleaned_data.get("description")
             avg_reading_speed = form.cleaned_data.get("avg_reading_speed")
             calendar_name = form.cleaned_data.get("calendar_name")
+
+            location = city + ", " + country
 
             calendar_slug = slugify(calendar_name)
             cal = Calendar(name=calendar_name, slug=calendar_slug)
