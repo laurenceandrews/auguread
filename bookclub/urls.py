@@ -36,7 +36,7 @@ urlpatterns = [
     path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
 
     path('clubs/', views.club_list, name='club_list'),
-    path('new_club/', views.NewClubView.as_view(), name='new_club'),
+    path('new_club/', views.new_club, name='new_club'),
     path('new_post/', views.NewPostView.as_view(), name='new_post'),
 
     path('enter/<int:club_id>', views.enter, name='enter'),
@@ -48,7 +48,7 @@ urlpatterns = [
     path('<int:club_id>/officers', views.OwnerListView.as_view(), name='owner_list'),
 
     path('user_detail/', views.user_detail, name='user_detail'),
-  
+
     # sample scheduler
     url(r'^schedule/', include('schedule.urls')),
     # url(r'^fullcalendar', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),

@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
+from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView
@@ -211,25 +212,35 @@ def RecommendationsView(request):
     return render(request, 'rec_page.html')
 
 
-class NewClubView(LoginRequiredMixin, CreateView):
-    """Class-based generic view for new club handling."""
+@login_required()
+def new_club(request):
+    if request.method == "POST":
+        current_user = request.user
+        form = NewClubForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data.get("name")
+            location = form.cleaned_data.get("location")
+            description = form.cleaned_data.get("description")
+            avg_reading_speed = form.cleaned_data.get("avg_reading_speed")
+            calendar_name = form.cleaned_data.get("calendar_name")
 
-    model = Club
-    template_name = 'new_club.html'
-    form_class = NewClubForm
-    http_method_names = ['post', 'get']
+            calendar_slug = slugify(calendar_name)
+            cal = Calendar(name=calendar_name, slug=calendar_slug)
+            cal.save()
 
-    def form_valid(self, form):
-        """Process a valid form."""
-        form.instance.owner = self.request.user
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        """Return URL to redirect the user too after valid form handling."""
-        return reverse('club_list')
-
-    def handle_no_permission(self):
-        return redirect('log_in')
+            club = Club.objects.create(
+                name=name,
+                location=location,
+                description=description,
+                avg_reading_speed=avg_reading_speed,
+                owner=current_user,
+                calendar=cal
+            )
+            return redirect("club_list")
+        else:
+            return render(request, "new_club.html", {"form": form})
+    else:
+        return render(request, "new_club.html", {"form": NewClubForm})
 
 
 @login_required
