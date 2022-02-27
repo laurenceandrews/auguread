@@ -3,6 +3,7 @@ from django.test import TestCase
 from clubs.models import Club
 from django.urls import reverse
 
+"""WILL BE UPDATED"""
 
 class ApplicantListViewTestCase(TestCase):
     """Unit tests for the Applicant list."""

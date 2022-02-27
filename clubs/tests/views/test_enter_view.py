@@ -1,6 +1,8 @@
+"""Unit test for the enter view"""
 from clubs.models import Club, User
 from django.urls import reverse
 from django.conf import settings
+from django.test import TestCase
 
 
 
