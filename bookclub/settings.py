@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,6 +44,8 @@ INSTALLED_APPS = [
     'theme',
     'django_browser_reload',
     'widget_tweaks',
+    'schedule',
+    'djangobower',
 ]
 
 MIDDLEWARE = [
@@ -150,14 +153,31 @@ INTERNAL_IPS = [
 # Set up for windows, for mac/ubuntu change to r"/usr/local/bin/npm"
 NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 
-
 # URL where @login_prohibited redirects to
-
-# URL where @login_prohibited redirects to
-
 REDIRECT_URL_WHEN_LOGGED_IN = 'home'
 
 # Page lengths
 USERS_PER_PAGE = 10
 POSTS_PER_PAGE = 20
 NUMBER_PER_PAGE = 15
+
+# Set up djangobower
+
+PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
+
+STATIC_ROOT = os.path.join(PROJECT_PATH, 'assets')
+
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
+)
+
+BOWER_INSTALLED_APPS = (
+    'jquery',
+    'jquery-ui',
+    'bootstrap',
+    'fullcalendar#3.8.2'
+)

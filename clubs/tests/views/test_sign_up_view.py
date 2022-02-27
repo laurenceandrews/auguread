@@ -21,6 +21,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
             'username': '@janedoe',
             'email': 'janedoe@example.org',
             'bio': 'My bio',
+            'city': 'London',
             'country': 'GB',
             'new_password': 'Password123',
             'password_confirmation': 'Password123'
@@ -74,6 +75,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
         self.assertEqual(user.age, 25)
         self.assertEqual(user.email, 'janedoe@example.org')
         self.assertEqual(user.bio, 'My bio')
+        self.assertEqual(user.city, 'London')
         self.assertEqual(user.country, 'GB')
         is_password_correct = check_password('Password123', user.password)
         self.assertTrue(is_password_correct)

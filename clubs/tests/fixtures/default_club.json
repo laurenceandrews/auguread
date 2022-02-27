@@ -1,0 +1,14 @@
+[
+  {
+    "model": "clubs.club",
+    "pk": 6,
+    "fields": {
+      "name": "Fun Club",
+      "location": "London, GB",
+      "description": "A club that reads lots of fun books.",
+      "avg_reading_speed": "200",
+      "owner": 1,
+      "calendar": 5
+    }
+  }
+]

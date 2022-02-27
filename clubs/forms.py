@@ -1,8 +1,12 @@
 """Forms for the book club app"""
+
+
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
+from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
+from schedule.models import Calendar, Event, Rule
 
 from .models import Club, Post, User
 
@@ -87,7 +91,7 @@ class PasswordForm(NewPasswordMixin):
 class SignUpForm(NewPasswordMixin, forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'age', 'username', 'email', 'bio', 'country']
+        fields = ['first_name', 'last_name', 'age', 'username', 'email', 'bio', 'city', 'country']
         widgets = {'bio': forms.Textarea()}
 
     country = CountryField(blank_label='(Select country)').formfield()
@@ -123,6 +127,7 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
             age=self.cleaned_data.get('age'),
             email=self.cleaned_data.get('email'),
             bio=self.cleaned_data.get('bio'),
+            city=self.cleaned_data.get('city'),
             country=self.cleaned_data.get('country'),
             password=self.cleaned_data.get('new_password'),
         )
@@ -162,3 +167,14 @@ class NewClubForm(forms.ModelForm):
     class Meta:
         model = Club
         fields = ['name', 'location', 'description']
+
+    calendar_name = forms.CharField(
+        label='Calendar name',
+        widget=forms.Textarea(
+            attrs={'placeholder': "It's a good idea to make it simple: easy to say and easy to remember."}
+        )
+    )
+
+
+class CalendarPickerForm(forms.Form):
+    calendar = forms.ModelChoiceField(queryset=Calendar.objects.all().order_by('name'))

@@ -1,17 +1,21 @@
 import csv
-from django.core.management.base import BaseCommand, CommandError
-from faker import Faker
-from clubs.models import Club, User, Book, Club_Users, Club_Books, User_Books
-import pandas as pd
+import datetime
 import random
 from random import randint
+
+import pandas as pd
+from clubs.models import Book, Club, Club_Books, Club_Users, User, User_Books
+from django.core.management.base import BaseCommand, CommandError
+from django.template.defaultfilters import slugify
+from faker import Faker
+from schedule.models import Calendar, Event, Rule
 
 
 class Command(BaseCommand):
 
     HOW_MANY_CLUBS_TO_MAKE = 10
-    HOW_MANY_USERS_TO_ADD = 50
-    HOW_MANY_BOOKS_TO_ADD = 50
+    HOW_MANY_USERS_TO_ADD = 500
+    HOW_MANY_BOOKS_TO_ADD = 500
     USER_ID = 0
     first_name = ""
     last_name = ""
@@ -44,14 +48,14 @@ class Command(BaseCommand):
                 "ISBN": "string",
                 "Book_Title": "string",
                 "Book_Author": "string",
-                "Year_Of_Publication" : "string",
-                "Publisher" : "string",
-                "Image_URL_S" : "string",
-                "Image_URL_M" : "string",
-                "Image_URL_L" : "string",
+                "Year_Of_Publication": "string",
+                "Publisher": "string",
+                "Image_URL_S": "string",
+                "Image_URL_M": "string",
+                "Image_URL_L": "string",
             }
         )
-        return book_data   
+        return book_data
 
     def __init__(self):
         super().__init__()
@@ -64,7 +68,7 @@ class Command(BaseCommand):
         self.club_count = 0
         self.user_count = 0
         self.book_count = 0
-        
+
         # To update display when seeding
         self.books_seeded = 1
         self.users_seeded = 1
@@ -77,7 +81,20 @@ class Command(BaseCommand):
         self.file1_append.close()
         self.file2_append.close()
         self.file3_append.close()
-
+        
+    # create rules for calendars
+    rule = Rule(frequency="YEARLY", name="Yearly", description="will recur once every Year")
+    rule.save()
+    print("YEARLY recurrence created")
+    rule = Rule(frequency="MONTHLY", name="Monthly", description="will recur once every Month")
+    rule.save()
+    print("Monthly recurrence created")
+    rule = Rule(frequency="WEEKLY", name="Weekly", description="will recur once every Week")
+    rule.save()
+    print("Weekly recurrence created")
+    rule = Rule(frequency="DAILY", name="Daily", description="will recur once every Day")
+    rule.save()
+    print("Daily recurrence created")
 
     # took some code from our old seed.py file from grasshopper
     def create_club(self):
@@ -85,7 +102,7 @@ class Command(BaseCommand):
         user = random.choice(User.objects.all())
 
         # Generate a club name based on a random owner name
-        club_name = user.first_name + user.last_name + "\'s Club"
+        club_name = user.first_name + " " + user.last_name + "\'s Club"
 
         # Append the new club name to the file
         self.file1_append.write(club_name + "\n")
@@ -96,6 +113,11 @@ class Command(BaseCommand):
             club_location = self.get_random_location()
             club_description = self.faker.text(max_nb_chars=520)
             club_reading_speed = random.randint(50, 500)
+            
+            calendar_name = club_name + "\'s Calendar"
+            calendar_slug = slugify(calendar_name)
+            cal = Calendar(name=calendar_name, slug=calendar_slug)
+            cal.save()
 
             # Create the club
             club = Club.objects.create(
@@ -103,7 +125,8 @@ class Command(BaseCommand):
                 location=club_location,
                 description=club_description,
                 avg_reading_speed=club_reading_speed,
-                owner=user
+                owner=user,
+                calendar=cal
             )
             club.save()
 
@@ -168,7 +191,8 @@ class Command(BaseCommand):
                     email = str(user_first_name) + "." + str(user_last_name) + str(user_id) + "@example.com",
                     username = '@' + str(user_first_name) + str(user_last_name) + str(user_id),
                     password = 'Password123',
-                    bio = self.faker.text(max_nb_chars=520),
+                    age = random.randint(1, 150),
+                    bio = self.faker.text(max_nb_chars=10),
                     country = self.users_from_file['Location'][rand_choice]
                 )
                 user.save() 
@@ -205,12 +229,20 @@ class Command(BaseCommand):
     def get_random_book(self):
         return random.choice(self.books_from_file.index)
 
-
-    # generate a random location from a made-up list (can also do it with the user locations but we would have to format them first)
+    # generate a random city and country from a made-up list (can also do it with the user locations but we would have to format them first)
     def get_random_location(self):
-        locations = ["London", "Manchester", "Birmingham",
-                     "Brighton", "Bristol", "Online", "Glasgow", "USA"]
-        return random.choice(locations)
+        city = [
+            "London, UK", "Manchester, UK,", "Birmingham, UK", "Brighton, UK", "Bristol, UK",
+            "Berlin, Germany", "Hamburg, Germany", "Munich, Germany", "Cologne, Germany", "Frankfurt, Germany",
+            "Mumbai, India", "Delhi, India", "Bangalore, India", "Kolkata, India", "Chennai, India",
+            "Sydney, Australia", "Melbourn, Australia", "Brisbane, Australia", "Perth, Australia", "Adelaide, Australia",
+            "Toronto, Canada", "Montreal, Canada", "Calgary, Canada", "Ottawa, Canada", "Edmonton, Canada",
+            "Rio de Janeiro, Brazil", "Sao Paulo, Brazil", "Belo Horizonte, Brazil", "Salvador, Brazil", "Manaus, Brazil",
+            "Tokyo, Japan", "Yokohama, Japan", "Osaka, Japan", "Nagoya, Japan", "Sapporo, Japan",
+            "Lagos, Nigeria", "Kano, Nigeria", "Ibadan, Nigeria", "Kaduna, Nigeria", "Port Harcourt, Nigeria",
+            "Cairo, Egypt", "Aswan, Egypt", "Luxor, Egypt", "Alexandria, Egypt", "Sharm El Sheikh, Egypt"
+        ]
+        return random.choice(city)
 
     # get a random index from the list of users in the dataset
     def get_random_user(self):
