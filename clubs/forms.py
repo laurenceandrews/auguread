@@ -169,7 +169,14 @@ class NewClubForm(forms.ModelForm):
 
     class Meta:
         model = Club
-        fields = ['name', 'location', 'description', 'avg_reading_speed']
+        fields = ['name', 'description', 'avg_reading_speed']
+
+    city = forms.CharField(
+        label="City",
+        max_length=250
+    )
+
+    country = CountryField(blank_label='(Select country)').formfield()
 
     calendar_name = forms.CharField(
         label='Calendar name',
