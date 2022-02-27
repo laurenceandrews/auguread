@@ -4,12 +4,10 @@
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
-from django_countries.fields import CountryField
-
-from schedule.models import Calendar, Event, Rule
-
-
+from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
+from django_countries.fields import CountryField
+from schedule.models import Calendar, Event, Rule
 
 from .models import Club, Post, User
 
@@ -169,7 +167,7 @@ class NewClubForm(forms.ModelForm):
 
     class Meta:
         model = Club
-        fields = ['name', 'location', 'description']
+        fields = ['name', 'location', 'description', 'avg_reading_speed']
 
     calendar_name = forms.CharField(
         label='Calendar name',
@@ -177,6 +175,17 @@ class NewClubForm(forms.ModelForm):
             attrs={'placeholder': "It's a good idea to make it simple: easy to say and easy to remember."}
         )
     )
+
+    def clean(self):
+        """ Ensure that calendar name is unique."""
+
+        super().clean()
+        calendar_name = self.cleaned_data.get('calendar_name')
+        calendar_slug = slugify(calendar_name)
+        calendar_with_same_name = Calendar.objects.filter(slug=calendar_slug)
+        if calendar_with_same_name.exists():
+            self.add_error('calendar_name',
+                           'Calendar name is already taken.')
 
 
 class CalendarPickerForm(forms.Form):
