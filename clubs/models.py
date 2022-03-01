@@ -204,6 +204,28 @@ class Club(models.Model):
         on_delete=models.CASCADE
     )
 
+    ONLINE = 'ONL'
+    IN_PERSON = 'INP'
+    MEETING_TYPE_CHOICES = [
+        (ONLINE, 'Online'),
+        (IN_PERSON, 'In-person')
+    ]
+    meeting_type = models.CharField(
+        max_length=3,
+        choices=MEETING_TYPE_CHOICES,
+        default=IN_PERSON,
+        blank=False
+    )
+
+    meeting_link = models.URLField(
+        blank=True
+    )
+
+    meeting_location = models.CharField(
+        max_length=500,
+        blank=True
+    )
+
     # A foreign key is not required for the club owner
     owner = models.ForeignKey(
         User,
