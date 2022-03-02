@@ -1,0 +1,34 @@
+<!-- <div>
+  <div>
+    <p>{{event.title}}</p>
+    <p>{{event.start}}</p>
+    <p>{{event.end}}</p>
+    <p>{{event.end_recurring_period}}</p>
+    <p>{{event.rule}}</p>
+    <p>{{event.calendar}}</p>
+  </div>
+</div> -->
+
+<!-- same as above, but with labels -->
+<div>
+  <div>
+    <p>Title: {{event.title}}</p>
+    <p>Start: {{event.start}}</p>
+    <p>End: {{event.end}}</p>
+    <p>End of recurring period: {{event.end_recurring_period}}</p>
+    <p>Rule: {{event.rule}}</p>
+    <p>calendar: {{event.calendar}}</p>
+  </div>
+</div>
+
+<div onclick="location.href='{%url 'event' event_id=event.id %}';" style="cursor: pointer;">
+  <p>More options... (you can view, edit or delete this event here)</p>
+</div>
+
+<div onclick="location.href='{%url 'edit_event' calendar_slug=event.calendar.slug event_id=event.id %}';" style="cursor: pointer;">
+  <p>Edit event</p>
+</div>
+
+<div onclick="location.href='{%url 'delete_event' event_id=event.id %}';" style="cursor: pointer;">
+  <p>Delete event</p>
+</div>

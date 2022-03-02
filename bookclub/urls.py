@@ -14,8 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from clubs import views
+from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include, path
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,11 +40,24 @@ urlpatterns = [
     path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
 
     path('clubs/', views.club_list, name='club_list'),
-    path('new_club/', views.NewClubView.as_view(), name='new_club'),
+    path('new_club/', views.new_club, name='new_club'),
     path('new_post/', views.NewPostView.as_view(), name='new_post'),
 
     path('enter/<int:club_id>', views.enter, name='enter'),
     path('apply/<int:club_id>', views.apply, name='apply'),
+    path('<int:club_id>/approve/<str:user_username>', views.approve, name='approve'),
+
+    path('<int:club_id>/applicants', views.ApplicantListView.as_view(), name='applicant_list'),
+    path('<int:club_id>/members', views.MemberListView.as_view(), name='member_list'),
+    path('<int:club_id>/officers', views.OwnerListView.as_view(), name='owner_list'),
+
+    path('user_detail/', views.user_detail, name='user_detail'),
+
+    # sample scheduler
+    url(r'^schedule/', include('schedule.urls')),
+    # url(r'^fullcalendar', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),
+    path('calendar_picker/', views.calendar_picker, name='calendar_picker'),
+    path('events_list/<int:calendar_id>', views.events_list, name='events_list'),
     path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
     path('feed/', views.FeedView.as_view(), name='feed'),
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),

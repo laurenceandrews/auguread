@@ -12,16 +12,18 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.http import Http404
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
+from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
+from schedule.models import Calendar, Event, Rule
 
-from .forms import SignUpForm
+from .forms import CalendarPickerForm, SignUpForm
 from .helpers import login_prohibited
 
 
@@ -215,25 +217,38 @@ def RecommendationsView(request):
     return render(request, 'rec_page.html')
 
 
-class NewClubView(LoginRequiredMixin, CreateView):
-    """Class-based generic view for new club handling."""
+@login_required()
+def new_club(request):
+    if request.method == "POST":
+        current_user = request.user
+        form = NewClubForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data.get("name")
+            city = form.cleaned_data.get("city")
+            country = form.cleaned_data.get("country")
+            description = form.cleaned_data.get("description")
+            avg_reading_speed = form.cleaned_data.get("avg_reading_speed")
+            calendar_name = form.cleaned_data.get("calendar_name")
 
-    model = Club
-    template_name = 'new_club.html'
-    form_class = NewClubForm
-    http_method_names = ['post', 'get']
+            location = city + ", " + country
 
-    def form_valid(self, form):
-        """Process a valid form."""
-        form.instance.owner = self.request.user
-        return super().form_valid(form)
+            calendar_slug = slugify(calendar_name)
+            cal = Calendar(name=calendar_name, slug=calendar_slug)
+            cal.save()
 
-    def get_success_url(self):
-        """Return URL to redirect the user too after valid form handling."""
-        return reverse('club_list')
-
-    def handle_no_permission(self):
-        return redirect('log_in')
+            club = Club.objects.create(
+                name=name,
+                location=location,
+                description=description,
+                avg_reading_speed=avg_reading_speed,
+                owner=current_user,
+                calendar=cal
+            )
+            return redirect("club_list")
+        else:
+            return render(request, "new_club.html", {"form": form})
+    else:
+        return render(request, "new_club.html", {"form": NewClubForm})
 
 
 @login_required
@@ -441,3 +456,24 @@ class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
             user = User.objects.get(email=email)
             club.demote(user)
         return redirect('owner_list', club_id=club.id)
+
+
+def calendar_picker(request):
+    if request.method == 'POST':
+        form = CalendarPickerForm(request.POST)
+        if form.is_valid():
+            calendar = form.cleaned_data.get('calendar')
+            return render(request, 'fullcalendar.html', {'calendar': calendar})
+    else:
+        form = CalendarPickerForm()
+    return render(request, 'calendar_picker.html', {'form': form})
+
+
+def events_list(request, calendar_id):
+    calendar = Calendar.objects.get(id=calendar_id)
+    events = calendar.event_set.all()
+    return render(request, "events_list.html",
+                  {
+                      'calendar': calendar,
+                      'events': events,
+                  })

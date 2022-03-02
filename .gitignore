@@ -326,3 +326,6 @@ $RECYCLE.BIN/
 # Allow
 !theme/static/css/dist/
 node_modules/
+seededBooks.txt
+seededClubs.txt
+seededUsers.txt

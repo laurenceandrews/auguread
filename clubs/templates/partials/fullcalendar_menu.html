@@ -1,0 +1,15 @@
+<h1>You're viewing: {{calendar.name}}</h1>
+<a href='{%url 'calendar_picker' %}' class="btn btn-lg btn-secondary">Pick a different calendar to view</a>
+<div id="temporary-schedule-menu">
+  <ul>
+    <li>
+      <a href='{%url 'calendar_create_event' calendar_slug=calendar.slug %}' class="btn btn-lg btn-secondary">Create new event</a>
+    </li>
+    <li>
+      <a href='{%url 'events_list' calendar_id=calendar.id %}' class="btn btn-lg btn-secondary">View all events (you can edit or delete events here)</a>
+    </li>
+    <li>
+      <a href='{%url 'calendar_list' %}' class="btn btn-lg btn-secondary">List of all calendars</a>
+    </li>
+  </ul>
+</div>
