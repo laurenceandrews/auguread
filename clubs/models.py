@@ -212,11 +212,13 @@ class MeetingAddress(models.Model):
     address2 = models.CharField(
         "Address line 2",
         max_length=1024,
+        blank=True
     )
 
     zip_code = models.CharField(
         "ZIP / Postal code",
         max_length=12,
+        blank=True
     )
 
     city = models.CharField(

@@ -61,7 +61,6 @@ urlpatterns = [
     path('full_calendar/<str:calendar_slug>', views.full_calendar, name='full_calendar'),
     path('calendar_picker/', views.calendar_picker, name='calendar_picker'),
     path('events_list/<int:calendar_id>', views.events_list, name='events_list'),
-    # path('create_event/<int:calendar_id>', views.create_event, name='create_event'),
     path('event/<int:event_id>/link', views.create_event_link, name='create_event_link'),
     path('event/<int:event_id>/address', views.create_event_address, name='create_event_address'),
     # keep this at the end of the list to allow overwriting of unwanted urls
