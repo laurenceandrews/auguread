@@ -234,9 +234,13 @@ class CreateEventForm(forms.ModelForm):
         widget=forms.SplitDateTimeWidget(),
         initial=meeting_end)
 
+    # end_recurring_period = forms.DateTimeField(help_text=_("This date is ignored for one time only events."), required=False)
+
     end_recurring_period = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
-        initial=datetime.datetime.now
+        initial=datetime.datetime.now,
+        help_text=_("This date is ignored for one time only events."),
+        required=False
     )
 
     def clean(self):
