@@ -225,10 +225,15 @@ class CreateEventForm(forms.ModelForm):
         widget=forms.SplitDateTimeWidget(),
         initial=datetime.datetime.now
     )
+
+    default_meeting_start = datetime.datetime.now()
+    default_meeting_lenth_in_hours = 1
+    default_meeting_lenth_delta = datetime.timedelta(hours=default_meeting_lenth_in_hours)
+    meeting_end = default_meeting_start + default_meeting_lenth_delta
     end = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
-        initial=datetime.datetime.now
-    )
+        initial=meeting_end)
+
     end_recurring_period = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
         initial=datetime.datetime.now
