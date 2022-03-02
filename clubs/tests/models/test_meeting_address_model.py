@@ -58,6 +58,14 @@ class MeetingAddressModelTestCase(TestCase):
     def test_valid_meeting_address(self):
         self._assert_meeting_address_is_valid()
 
+    def test_event_cannot_be_blank(self):
+        self.meeting_address.event = None
+        self._assert_meeting_address_is_invalid()
+
+    def test_event_must_be_unique(self):
+        self.meeting_address.event = self.second_meeting_address.event
+        self._assert_meeting_address_is_invalid()
+
     def test_name_cannot_be_blank(self):
         self.meeting_address.name = ''
         self._assert_meeting_address_is_invalid()

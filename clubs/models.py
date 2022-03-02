@@ -189,7 +189,7 @@ class MeetingLink(models.Model):
     )
 
     meeting_link = models.URLField(
-        blank=True
+        blank=False
     )
 
 
