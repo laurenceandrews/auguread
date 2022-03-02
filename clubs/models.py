@@ -232,6 +232,9 @@ class MeetingAddress(models.Model):
         verbose_name = "Meeting Address"
         # verbose_name_plural = "Meeting Addresses"
 
+    def full_address(self):
+        return f'{self.name}. {self.zip_code}, {self.address1}, {self.address2}. {self.city}, {self.country}. '
+
 
 class Club(models.Model):
     name = models.CharField(

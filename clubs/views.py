@@ -234,39 +234,15 @@ def new_club(request):
 
             meeting_type = form.cleaned_data.get("meeting_type")
 
-            if meeting_type == "ONL":
-                meeting_link = form.cleaned_data.get("meeting_link")
-                club = Club.objects.create(
-                    name=name,
-                    location=location,
-                    description=description,
-                    avg_reading_speed=avg_reading_speed,
-                    owner=current_user,
-                    calendar=cal,
-                    meeting_type=meeting_type,
-                    meeting_link=meeting_link
-                )
-
-            if meeting_link == "INP":
-                meeting_address_name = form.cleaned_data.get("meeting_address_name")
-                meeting_address_address1 = form.cleaned_data.get("meeting_address_address1")
-                meeting_address_address2 = form.cleaned_data.get("meeting_address_address2")
-                meeting_address_zip_code = form.cleaned_data.get("meeting_address_zip_code")
-                meeting_address_city = form.cleaned_data.get("meeting_address_city")
-                meeting_address_country = form.cleaned_data.get("meeting_address_country")
-
-                meeting_address = meeting_address_name + ", " + meeting_address_address1 + ", " + meeting_address_address2 + ", " + meeting_address_zip_code + ", " + meeting_address_city + ", " + meeting_address_country
-
-                club = Club.objects.create(
-                    name=name,
-                    location=location,
-                    description=description,
-                    avg_reading_speed=avg_reading_speed,
-                    owner=current_user,
-                    calendar=cal,
-                    meeting_type=meeting_type,
-                    meeting_address=meeting_address
-                )
+            club = Club.objects.create(
+                name=name,
+                location=location,
+                description=description,
+                avg_reading_speed=avg_reading_speed,
+                owner=current_user,
+                calendar=cal,
+                meeting_type=meeting_type
+            )
             return redirect("club_list")
         else:
             return render(request, "new_club.html", {"form": form})
@@ -440,6 +416,11 @@ def calendar_picker(request):
     return render(request, 'calendar_picker.html', {'form': form})
 
 
+def full_calendar(request, calendar_slug):
+    calendar = Calendar.objects.get(slug=calendar_slug)
+    return render(request, 'fullcalendar.html', {'calendar': calendar})
+
+
 def events_list(request, calendar_id):
     calendar = Calendar.objects.get(id=calendar_id)
     events = calendar.event_set.all()
@@ -450,7 +431,8 @@ def events_list(request, calendar_id):
                   })
 
 
-def create_event(request):
+def create_event(request, calendar_id):
+    calendar = Calendar.objects.get(id=calendar_id)
     if request.method == "POST":
         current_user = request.user
         form = CreateEventForm(request.POST)
@@ -460,7 +442,6 @@ def create_event(request):
             end = form.cleaned_data.get('end')
             end_recurring_period = form.cleaned_data.get('end_recurring_period')
             rule = form.cleaned_data.get('rule')
-            calendar = form.cleaned_data.get('calendar')
 
             event = Event.objects.create(
                 title=title,
@@ -486,9 +467,9 @@ def create_event(request):
 
             return render(request, 'fullcalendar.html', {'calendar': calendar})
         else:
-            return render(request, "event_create_form.html", {"form": form})
+            return render(request, "event_create_form.html", {"form": form, "calendar_id": calendar.id, "calendar_name": calendar.name})
     else:
-        return render(request, "event_create_form.html", {"form": CreateEventForm})
+        return render(request, "event_create_form.html", {"form": CreateEventForm, "calendar_id": calendar.id, "calendar_name": calendar.name})
 
 
 def create_event_link(request, event_id):

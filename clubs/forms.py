@@ -219,7 +219,7 @@ class MeetingLinkForm(forms.ModelForm):
 class CreateEventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['title', 'start', 'end', 'end_recurring_period', 'rule', 'calendar']
+        fields = ['title', 'start', 'end', 'end_recurring_period', 'rule']
 
     start = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),

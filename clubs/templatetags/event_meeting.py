@@ -18,7 +18,7 @@ def event_meeting(event):
     meeting_address = MeetingAddress.objects.filter(event=event)
     if meeting_address.exists():
         meeting_address = MeetingAddress.objects.get(event=event)
-        event_meeting = meeting_address.name
+        event_meeting = meeting_address.full_address
     else:
         meeting_link = MeetingLink.objects.filter(event=event)
         if meeting_link.exists():
