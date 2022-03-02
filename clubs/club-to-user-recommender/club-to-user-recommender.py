@@ -11,13 +11,13 @@ from fuzzywuzzy import process
 pd.options.mode.chained_assignment = None  # default='warn'
 
 # Junction tables must be filled when new user signed up!
-
-book_df = pd.read_csv('./clubs_book.csv', encoding = "Latin1", sep = ",")
-user_df = pd.read_csv('./clubs_user.csv', encoding = "Latin1", sep = ",")
-club_df = pd.read_csv('./clubs_club.csv', encoding = "Latin1", sep = ",")
-club_book_df = pd.read_csv('./clubs_club_books.csv', encoding = "Latin1", sep = ",")
-club_user_df = pd.read_csv('./clubs_club_users.csv', encoding = "Latin1", sep = ",")
-user_book_df = pd.read_csv('./clubs_user_books.csv', encoding = 'Latin1', sep = ',')
+path = './clubs/club-to-user-recommender/'
+book_df = pd.read_csv(path + 'clubs_book.csv', encoding = 'Latin1', sep = ',', delimiter=None, index_col=0)
+user_df = pd.read_csv(path + 'clubs_user.csv', encoding = 'Latin1', sep = ',')
+club_df = pd.read_csv(path + 'clubs_club.csv', encoding = 'Latin1', sep = ',')
+club_book_df = pd.read_csv(path + 'clubs_club_books.csv', encoding = 'Latin1', sep = ',')
+club_user_df = pd.read_csv(path + 'clubs_club_users.csv', encoding = 'Latin1', sep = ',')
+user_book_df = pd.read_csv(path + 'clubs_user_books.csv', encoding = 'Latin1', sep = ',')
 
 # Merge club_user junction table with user table to get ages of all users
 def get_user_age_df():
@@ -269,11 +269,11 @@ def get_best_clubs_df():
 
 # TO DO: Find a way to convert location to distance
 def get_best_clubs_in_person():
-    best_clubs_df = best_clubs_df.sort_values(["location_fuzzy_score", "book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, False, True, False])
-    #return best_clubs_df
-    print(best_clubs_df)
+    best_clubs_df = get_best_clubs_df().sort_values(["location_fuzzy_score", "book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, False, True, False])
+    return best_clubs_df
+    # print(best_clubs_df)
 
 # Order if online only
 def get_best_clubs_online():
-    best_clubs_df = best_clubs_df.sort_values(["book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, True, False])
+    best_clubs_df = get_best_clubs_df().sort_values(["book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, True, False])
     return best_clubs_df
