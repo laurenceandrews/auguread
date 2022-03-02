@@ -25,6 +25,10 @@ def get_user_age_df():
     club_user_age_df = club_user_age_df[['id_x', 'club_id', 'user_id', 'age']]
     club_user_age_df = club_user_age_df.rename(columns={'id_x':'club_user_id'}).sort_values('club_user_id', ascending=True)
     return club_user_age_df
+# -- comment the return statment and uncomment the next 2 lines to test whether it returns the correct DataFrame
+    #print(club_user_age_df)
+#get_user_age_df()
+
 
 
 # Merge club_user junction table with club table to get locations of all clubs
@@ -33,6 +37,9 @@ def get_club_locations_df():
     club_user_location_df = club_user_location_df[['id_x', 'club_id', 'user_id', 'location']]
     club_user_location_df = club_user_location_df.rename(columns={'id_x':'club_user_id'}).sort_values('club_user_id', ascending=True)
     return club_user_location_df
+# -- comment the return statment and uncomment the next 2 lines to test whether it returns the correct DataFrame
+#     print(club_user_location_df)
+# get_club_locations_df()
 
 
 # Merge the club_user_age and club_user_location tables to have all in one table
@@ -41,13 +48,18 @@ def merge_age_and_location():
     club_user_age_location_df = club_user_age_location_df[['club_user_id', 'club_id_x', 'user_id_x', 'age', 'location']]
     club_user_age_location_df = club_user_age_location_df.rename(columns={'user_id_x':'user_id', 'club_id_x':'club_id'})
     return club_user_age_location_df
+# -- comment the return statment and uncomment the next 2 lines to test whether it returns the correct DataFrame
+#     print(club_user_age_location_df)
+# merge_age_and_location()
 
 
 # Get location and average age of each club
 def get_average_club_age():
     average_club_age_df = pd.merge(get_user_age_df(), club_df, left_on='club_id', right_on='id').groupby(['club_id', 'name', 'location'])['age'].mean().reset_index(name = 'average_age')
     return average_club_age_df
-
+# -- comment the return statment and uncomment the next 2 lines to test whether it returns the correct DataFrame
+#     print(average_club_age_df)
+# get_average_club_age()
 
 # Add column for age difference and return clubs in ascending order of difference from my age
 def get_age_difference_df():
@@ -56,23 +68,38 @@ def get_age_difference_df():
     average_club_age_df['age_difference'] = pd.DataFrame(abs(average_club_age_df['average_age'] - my_age))
     average_club_age_difference_df = average_club_age_df.sort_values('age_difference', ascending=True)
     return average_club_age_difference_df
+# -- comment the return statment and uncomment the next 2 lines to test whether it returns the correct DataFrame
+#     print(average_club_age_difference_df)
+# get_age_difference_df()
 
 # Return top 10 closest aged club IDs
 def get_top_10_by_closest_age():
     average_club_age_difference_df = get_age_difference_df()
     closest_age_clubs_df = average_club_age_difference_df['club_id'].iloc[0:5]
     return closest_age_clubs_df
+# -- comment the return statment and uncomment the next 2 lines to test whether it returns the correct DataFrame
+#     print(closest_age_clubs_df)
+# get_top_10_by_closest_age()
+
 
 # Merge closest aged club IDs with clubs CSV to get all details
 def get_closest_age_clubs_df():
     closest_age_clubs_df = get_top_10_by_closest_age().reset_index().rename(columns={'club_id':'id'})
-    closest_age_clubs_df = pd.merge(get_top_10_by_closest_age(), club_df, on = 'id')
+    closest_age_clubs_df = pd.merge(get_top_10_by_closest_age(), club_df, left_on = 'club_id', right_on = 'id')
     return closest_age_clubs_df
+# -- comment the return statment and uncomment the next 2 lines to test whether it returns the correct DataFrame
+#     print(closest_age_clubs_df)
+# get_closest_age_clubs_df()
+
 
 # Get user count of each club
 def get_user_count_per_club():
     club_user_count_df = pd.merge(get_user_age_df(), club_df, left_on='club_id', right_on='id').groupby(['club_id', 'name'])['user_id'].count().reset_index(name = 'user_count')
     return club_user_count_df
+# -- comment the return statment and uncomment the next 2 lines to test whether it returns the correct DataFrame
+#     print(club_user_count_df)
+# get_user_count_per_club()
+
 
 # Return clubs with matching location (exact)
 def get_clubs_with_exact_location():
@@ -81,21 +108,34 @@ def get_clubs_with_exact_location():
     location_match = club_df['location'] == my_location
     closest_location_clubs_df = club_df[location_match]
     return closest_location_clubs_df
+# -- comment the return statment and uncomment the next 2 lines to test whether it returns the correct DataFrame
+#     print(closest_location_clubs_df)
+# get_clubs_with_exact_location()
+
 
 # need to figure out how to get my_location
-def get_ratio(row):
-    club_location = row['location']
-    my_location = 'Adelaide, Australia'
-    return fuzz.token_sort_ratio(club_location, my_location)
+# def get_ratio(row):
+#     club_location = row['location']
+#     my_location = 'Adelaide, Australia'
+#     return fuzz.token_sort_ratio(club_location, my_location)
 
 # Return clubs with matching location (using fuzzy search)
-def get_clubs_with_matching_loc_fuzzy():
+def get_clubs_with_matching_loc_fuzzy(row):
+    club_location = row['location']
+    my_location = 'Adelaide, Australia'
+    ratio = fuzz.token_sort_ratio(club_location, my_location)
+
     my_location = 'AdelAustralia'
-    closest_club_location_fuzzy_df = club_df[club_df.apply(get_ratio(), axis=1) > 80]
-    closest_club_location_fuzzy_df['location_fuzzy_score'] = club_df.apply(get_ratio(), axis=1)
+    closest_club_location_fuzzy_df = club_df[club_df.apply(ratio, axis=1) > 80]
+    closest_club_location_fuzzy_df['location_fuzzy_score'] = club_df.apply(ratio, axis=1)
     closest_club_location_fuzzy_df = closest_club_location_fuzzy_df.sort_values('location_fuzzy_score', ascending=False)
 
     return closest_club_location_fuzzy_df
+# -- comment the return statment and uncomment the next 2 lines to test whether it returns the correct DataFrame
+    #print(closest_club_location_fuzzy_df)
+
+
+
 
 # Perform a many-to-many merge to get the favourite books of each club
 def get_club_favourite_books():
