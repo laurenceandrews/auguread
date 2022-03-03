@@ -1,11 +1,11 @@
 .pagination {
-  display: flex;
+  display: inline-flex;
   @include list-unstyled();
 }
 
 .page-link {
   position: relative;
-  display: block;
+  display: inline-flex;
   color: $pagination-color;
   text-decoration: if($link-decoration == none, null, none);
   background-color: $pagination-bg;
