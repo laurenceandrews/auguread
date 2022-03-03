@@ -67,6 +67,5 @@ urlpatterns = [
     url(r'^schedule/', include('schedule.urls')),
     path('club_recommender/', views.club_recommender, name='club_recommender'),
 
-    path('book_preferences/', views.book_preferences, name='book_preferences')
-    # path('book_preferences/', views.book_preferences, include('star_ratings.urls'), name='book_preferences')
+    path('book_preferences/', views.book_preferences, name='book_preferences'),
 ]
