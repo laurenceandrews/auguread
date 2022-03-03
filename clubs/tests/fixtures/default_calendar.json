@@ -6,5 +6,13 @@
       "name": "Fun Club's Calendar",
       "slug": "fun-clubs-calendar"
     }
+  },
+  {
+    "model": "schedule.Calendar",
+    "pk": 13,
+    "fields": {
+      "name": "Blue Club's Calendar",
+      "slug": "blue-clubs-calendar"
+    }
   }
 ]

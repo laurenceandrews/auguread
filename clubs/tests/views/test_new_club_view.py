@@ -15,12 +15,17 @@ class NewClubTest(TestCase):
         super(TestCase, self).setUp()
         self.user = User.objects.get(username='@johndoe')
         self.url = reverse('new_club')
+        self.club_city = 'London'
+        self.club_country = 'GB'
+        self.club_location = self.club_city + ", " + self.club_country
         self.data = {
             'name': 'Fun Reading Club',
-            'location': 'London, GB',
+            'city': self.club_city,
+            'country': self.club_country,
             'description': 'A book club that is fun.',
             'avg_reading_speed': 200,
-            'calendar_name': 'Fun Reading Clubs Calendar'
+            'calendar_name': 'Fun Reading Clubs Calendar',
+            'meeting_type': 'ONL'
         }
 
     def test_new_club_url(self):
@@ -44,10 +49,11 @@ class NewClubTest(TestCase):
         self.assertEqual(clubs_count_after, clubs_count_before + 1)
         new_club = Club.objects.get(name=self.data['name'])
         self.assertEqual(self.data['name'], new_club.name)
-        self.assertEqual(self.data['location'], new_club.location)
+        self.assertEqual(self.club_location, new_club.location)
         self.assertEqual(self.data['description'], new_club.description)
         self.assertEqual(self.data['avg_reading_speed'], new_club.avg_reading_speed)
         self.assertEqual(self.data['calendar_name'], new_club.calendar.name)
+        self.assertEqual(self.data['meeting_type'], new_club.meeting_type)
         response_url = reverse('club_list')
         self.assertRedirects(
             response, response_url,
