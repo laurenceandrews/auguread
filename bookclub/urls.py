@@ -56,4 +56,7 @@ urlpatterns = [
     path('events_list/<int:calendar_id>', views.events_list, name='events_list'),
     
     path('club_recommender/', views.club_recommender, name='club_recommender'),
+
+    path('book_preferences/', views.book_preferences, name='book_preferences'),
+    path('ratings/', include('star_ratings.urls', namespace='ratings')),
 ]

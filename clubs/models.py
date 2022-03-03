@@ -161,6 +161,10 @@ class Book(models.Model):
         blank=False
     )
 
+    thumbnail = models.ImageField(
+        blank=False
+    )
+
 
 class Post(models.Model):
     """Posts by users."""

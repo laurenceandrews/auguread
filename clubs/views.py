@@ -1,6 +1,6 @@
 from clubs.forms import LogInForm, NewClubForm, PasswordForm, PostForm
 from clubs.helpers import member, owner
-from clubs.models import Club, Post, User
+from clubs.models import Club, Post, User, Book
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -424,3 +424,14 @@ def events_list(request, calendar_id):
 def club_recommender(request):
     """View that shows a list of all recommended clubs."""
     return render(request, 'club_recommender.html')
+
+
+def book_preferences(request):
+    """View that allows the user to view all books and rate them."""
+    books_queryset = Book.objects.all()
+
+    paginator = Paginator(books_queryset, settings.BOOKS_PER_PAGE)
+    page_number = request.GET.get('page')
+    books_paginated = paginator.get_page(page_number)
+
+    return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated})
