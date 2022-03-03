@@ -32,7 +32,7 @@ urlpatterns = [
     # path('rec/', views.RecommendationsView.as_view(), name='rec_page'),
 
     # path('users/', views.UserListView.as_view(), name='user_list'),
-    path('<int:club_id>/user/<str:user_username>', views.ShowUserView.as_view(), name='show_user'),
+    path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
     path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
 
     path('clubs/', views.club_list, name='club_list'),
@@ -41,7 +41,7 @@ urlpatterns = [
 
     path('enter/<int:club_id>', views.enter, name='enter'),
     path('apply/<int:club_id>', views.apply, name='apply'),
-    path('<int:club_id>/approve/<str:user_username>', views.approve, name='approve'),
+    path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
 
     path('<int:club_id>/applicants', views.ApplicantListView.as_view(), name='applicant_list'),
     path('<int:club_id>/members', views.MemberListView.as_view(), name='member_list'),

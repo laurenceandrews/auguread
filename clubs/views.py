@@ -167,7 +167,7 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
     model = User
     template_name = 'show_user.html'
     paginate_by = settings.NUMBER_PER_PAGE
-    pk_url_kwarg = 'user_username'
+    pk_url_kwarg = 'user_id'
 
     def get_context_data(self, **kwargs):
         """Generate context data to be shown in the template."""
@@ -264,7 +264,7 @@ def club_list(request):
 @member
 def enter(request, club_id):
     user = request.user
-    return redirect('show_user', user_username=user.username, club_id=club_id)
+    return redirect('show_user', user_id=user.id, club_id=club_id)
 
 
 @login_required
@@ -277,15 +277,15 @@ def apply(request, club_id):
 
 @login_required
 @owner
-def approve(request, user_username, club_id):
+def approve(request, user_id, club_id):
     club = Club.objects.get(id=club_id)
     try:
-        user = User.objects.get(username=user_username)
+        user = User.objects.get(id=user_id)
         club.accept(user)
     except ObjectDoesNotExist:
         return redirect('applicant_list', club_id=club_id)
     else:
-        return redirect('show_user', user_username=user.username, club_id=club_id)
+        return redirect('show_user', user_id=user.id, club_id=club_id)
 
 
 class NewPostView(LoginRequiredMixin, CreateView):
