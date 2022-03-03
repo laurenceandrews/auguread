@@ -431,10 +431,10 @@ def events_list(request, calendar_id):
                   })
 
 
+@login_required
 def create_event(request, calendar_id):
     calendar = Calendar.objects.get(id=calendar_id)
     if request.method == "POST":
-        current_user = request.user
         form = CreateEventForm(request.POST)
         if form.is_valid():
             title = form.cleaned_data.get('title')
@@ -454,17 +454,14 @@ def create_event(request, calendar_id):
 
             club = Club.objects.get(calendar=event.calendar)
 
-            context = {
-                "event": event,
-                "club": club
-            }
-
             if club.meeting_type == 'ONL':
                 return redirect('create_event_link', event_id=event.id)
 
             if club.meeting_type == 'INP':
                 return redirect('create_event_address', event_id=event.id)
 
+            messages.add_message(request, messages.ERROR,
+                                 "Meeting type invalid! Please ensure you have selected either online or in-person.")
             return render(request, 'fullcalendar.html', {'calendar': calendar})
         else:
             return render(request, "event_create_form.html", {"form": form, "calendar_id": calendar.id, "calendar_name": calendar.name})
