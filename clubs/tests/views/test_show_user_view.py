@@ -1,24 +1,27 @@
+from clubs.models import Club, Post, User
+from clubs.tests.helpers import create_posts, reverse_with_next
 from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
-from clubs.models import User, Post
-from clubs.tests.helpers import create_posts, reverse_with_next
 from with_asserts.mixin import AssertHTMLMixin
+
 
 class ShowUserTest(TestCase, AssertHTMLMixin):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/other_users.json'
+        'clubs/tests/fixtures/default_calendar.json',
+        'clubs/tests/fixtures/default_club.json'
     ]
 
     def setUp(self):
-        self.user = User.objects.get(email='johndoe@example.org')
-        self.target_user = User.objects.get(email='janedoe@example.org')
-        self.url = reverse('show_user', kwargs={'user_username': self.target_user.username})
+        self.club = Club.objects.get(id=6)
+        self.user = Club.objects.get(id=6).owner
+        self.target_user = Club.objects.get(id=6).owner
+        self.url = reverse('show_user', kwargs={'user_id': self.target_user.id, 'club_id': self.club.id})
 
     def test_show_user_url(self):
-        self.assertEqual(self.url,f'/user/{self.target_user.username}')
+        self.assertEqual(self.url, f'/{self.club.id}/user/{self.target_user.id}')
 
     # def test_get_show_user_with_valid_id(self):
     #     self.client.login(email=self.user.email, password='Password123')
