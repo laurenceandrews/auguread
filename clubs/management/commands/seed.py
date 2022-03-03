@@ -205,53 +205,53 @@ class Command(BaseCommand):
 
             def seed_user_from_csv(self): 
             
-            rand_choice = self.get_random_user()
+                rand_choice = self.get_random_user()
 
-            user_id = self.users_from_file['id'][rand_choice]
-            user_first_name = self.faker.first_name()
-            user_last_name = self.faker.last_name()
+                user_id = self.users_from_file['id'][rand_choice]
+                user_first_name = self.faker.first_name()
+                user_last_name = self.faker.last_name()
 
-            if not User.objects.filter(id=user_id).exists():   
-                user = User.objects.create(
-                    id = user_id,
-                    first_name = user_first_name,
-                    last_name = user_last_name,
-                    email = str(user_first_name) + "." + str(user_last_name) + str(user_id) + "@example.com",
-                    username = '@' + str(user_first_name) + str(user_last_name) + str(user_id),
-                    password = 'Password123',
-                    age = random.randint(1, 150),
-                    bio = self.faker.text(max_nb_chars=10),
-                    country = self.users_from_file['Location'][rand_choice]
-                )
-                user.save() 
-               
-                # Append the new user id to the file
-                self.file2_append.write(user.id + "\n")
-                # self.users_made.append(user)
-                self.user_count += 1        
-                self.users_seeded +=1
+                if not User.objects.filter(id=user_id).exists():   
+                    user = User.objects.create(
+                        id = user_id,
+                        first_name = user_first_name,
+                        last_name = user_last_name,
+                        email = str(user_first_name) + "." + str(user_last_name) + str(user_id) + "@example.com",
+                        username = '@' + str(user_first_name) + str(user_last_name) + str(user_id),
+                        password = 'Password123',
+                        age = random.randint(1, 150),
+                        bio = self.faker.text(max_nb_chars=10),
+                        country = self.users_from_file['Location'][rand_choice]
+                    )
+                    user.save() 
+                
+                    # Append the new user id to the file
+                    self.file2_append.write(user.id + "\n")
+                    # self.users_made.append(user)
+                    self.user_count += 1        
+                    self.users_seeded +=1
 
 
     def seed_book_from_csv(self): 
             
-            rand_choice = self.get_random_book()
+        rand_choice = self.get_random_book()
 
-            if not Book.objects.filter(ISBN=self.books_from_file['ISBN'][rand_choice]).exists():   
-                book = Book.objects.create(
-                    ISBN = self.books_from_file['ISBN'][rand_choice],
-                    title = self.books_from_file['Book_Title'][rand_choice],
-                    author = self.books_from_file['Book_Author'][rand_choice],
-                    publication_year = self.books_from_file['Year_Of_Publication'][rand_choice],
-                    publisher = self.books_from_file['Publisher'][rand_choice],
-                    image_small = self.books_from_file['Image_URL_S'][rand_choice]
-                    )
-                book.save() 
-               
-                # Append the new book ISBN to the file
-                self.file3_append.write(book.ISBN + "\n")
-                # self.books_made.append(book)
-                self.book_count += 1
-                self.books_seeded +=1
+        if not Book.objects.filter(ISBN=self.books_from_file['ISBN'][rand_choice]).exists():   
+            book = Book.objects.create(
+                ISBN = self.books_from_file['ISBN'][rand_choice],
+                title = self.books_from_file['Book_Title'][rand_choice],
+                author = self.books_from_file['Book_Author'][rand_choice],
+                publication_year = self.books_from_file['Year_Of_Publication'][rand_choice],
+                publisher = self.books_from_file['Publisher'][rand_choice],
+                image_small = self.books_from_file['Image_URL_S'][rand_choice]
+                )
+            book.save() 
+            
+            # Append the new book ISBN to the file
+            self.file3_append.write(book.ISBN + "\n")
+            # self.books_made.append(book)
+            self.book_count += 1
+            self.books_seeded +=1
         rand_choice = self.get_random_book()
 
         if not Book.objects.filter(ISBN=self.books_from_file['ISBN'][rand_choice]).exists():
