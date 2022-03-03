@@ -66,4 +66,7 @@ urlpatterns = [
     # keep this at the end of the list to allow overwriting of unwanted urls
     url(r'^schedule/', include('schedule.urls')),
     path('club_recommender/', views.club_recommender, name='club_recommender'),
+
+    path('book_preferences/', views.book_preferences, name='book_preferences'),
+    path('ratings/', include('star_ratings.urls', namespace='ratings')),
 ]
