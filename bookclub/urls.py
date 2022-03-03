@@ -13,11 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import schedule
 from clubs import views
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import TemplateView
+from schedule import views as schedule_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -50,10 +52,18 @@ urlpatterns = [
     path('user_detail/', views.user_detail, name='user_detail'),
 
     # sample scheduler
-    url(r'^schedule/', include('schedule.urls')),
     # url(r'^fullcalendar', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),
+
+
+    url(r'^event/create/(?P<calendar_id>[-\w]+)/$',
+        views.create_event,
+        name='create_event'),
+    path('full_calendar/<str:calendar_slug>', views.full_calendar, name='full_calendar'),
     path('calendar_picker/', views.calendar_picker, name='calendar_picker'),
     path('events_list/<int:calendar_id>', views.events_list, name='events_list'),
-    
+    path('event/<int:event_id>/link', views.create_event_link, name='create_event_link'),
+    path('event/<int:event_id>/address', views.create_event_address, name='create_event_address'),
+    # keep this at the end of the list to allow overwriting of unwanted urls
+    url(r'^schedule/', include('schedule.urls')),
     path('club_recommender/', views.club_recommender, name='club_recommender'),
 ]

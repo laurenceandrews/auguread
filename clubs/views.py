@@ -1,6 +1,6 @@
 from clubs.forms import LogInForm, NewClubForm, PasswordForm, PostForm
 from clubs.helpers import member, owner
-from clubs.models import Club, Post, User
+from clubs.models import Club, MeetingAddress, MeetingLink, Post, User
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -18,7 +18,8 @@ from django.views.generic.edit import CreateView, FormView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
-from .forms import CalendarPickerForm, SignUpForm
+from .forms import (CalendarPickerForm, CreateEventForm, MeetingAddressForm,
+                    MeetingLinkForm, SignUpForm)
 from .helpers import login_prohibited
 
 
@@ -231,13 +232,16 @@ def new_club(request):
             cal = Calendar(name=calendar_name, slug=calendar_slug)
             cal.save()
 
+            meeting_type = form.cleaned_data.get("meeting_type")
+
             club = Club.objects.create(
                 name=name,
                 location=location,
                 description=description,
                 avg_reading_speed=avg_reading_speed,
                 owner=current_user,
-                calendar=cal
+                calendar=cal,
+                meeting_type=meeting_type
             )
             return redirect("club_list")
         else:
@@ -412,6 +416,11 @@ def calendar_picker(request):
     return render(request, 'calendar_picker.html', {'form': form})
 
 
+def full_calendar(request, calendar_slug):
+    calendar = Calendar.objects.get(slug=calendar_slug)
+    return render(request, 'fullcalendar.html', {'calendar': calendar})
+
+
 def events_list(request, calendar_id):
     calendar = Calendar.objects.get(id=calendar_id)
     events = calendar.event_set.all()
@@ -421,6 +430,103 @@ def events_list(request, calendar_id):
                       'events': events,
                   })
 
-def club_recommender(request):
+
+def create_event(request, calendar_id):
+    calendar = Calendar.objects.get(id=calendar_id)
+    if request.method == "POST":
+        current_user = request.user
+        form = CreateEventForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data.get('title')
+            start = form.cleaned_data.get('start')
+            end = form.cleaned_data.get('end')
+            end_recurring_period = form.cleaned_data.get('end_recurring_period')
+            rule = form.cleaned_data.get('rule')
+
+            event = Event.objects.create(
+                title=title,
+                start=start,
+                end=end,
+                end_recurring_period=end_recurring_period,
+                rule=rule,
+                calendar=calendar
+            )
+
+            club = Club.objects.get(calendar=event.calendar)
+
+            context = {
+                "event": event,
+                "club": club
+            }
+
+            if club.meeting_type == 'ONL':
+                return redirect('create_event_link', event_id=event.id)
+
+            if club.meeting_type == 'INP':
+                return redirect('create_event_address', event_id=event.id)
+
+            return render(request, 'fullcalendar.html', {'calendar': calendar})
+        else:
+            return render(request, "event_create_form.html", {"form": form, "calendar_id": calendar.id, "calendar_name": calendar.name})
+    else:
+        return render(request, "event_create_form.html", {"form": CreateEventForm, "calendar_id": calendar.id, "calendar_name": calendar.name})
+
+
+def create_event_link(request, event_id):
+    event = Event.objects.get(id=event_id)
+    if request.method == "POST":
+        current_user = request.user
+        form = MeetingLinkForm(request.POST)
+        if form.is_valid():
+            meeting_link = form.cleaned_data.get('meeting_link')
+
+            meeting_link_object = MeetingLink.objects.create(
+                event=event,
+                meeting_link=meeting_link
+            )
+            return render(request, 'fullcalendar.html', {'calendar': event.calendar})
+        else:
+            return render(request, "event_link_form.html", {"form": form, "event": event})
+    else:
+        return render(request, "event_link_form.html", {"form": MeetingLinkForm, "event": event})
+
+
+def create_event_address(request, event_id):
+    event = Event.objects.get(id=event_id)
+    if request.method == "POST":
+        current_user = request.user
+        form = MeetingAddressForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data.get('name')
+            address1 = form.cleaned_data.get('address1')
+            address2 = form.cleaned_data.get('address2')
+            zip_code = form.cleaned_data.get('zip_code')
+            city = form.cleaned_data.get('city')
+            country = form.cleaned_data.get('country')
+
+            meeting_address_object = MeetingAddress.objects.create(
+                event=event,
+                name=name,
+                address1=address1,
+                address2=address2,
+                zip_code=zip_code,
+                city=city,
+                country=country
+            )
+            return render(request, 'fullcalendar.html', {'calendar': event.calendar})
+        else:
+            return render(request, "event_address_form.html",
+                          {
+                              "form": form,
+                              "event": event
+                          }
+                          )
+    else:
+        return render(request, "event_address_form.html", {
+            "form": MeetingAddressForm,
+            "event": event
+        })
+
+  def club_recommender(request):
     """View that shows a list of all recommended clubs."""
     return render(request, 'club_recommender.html')
