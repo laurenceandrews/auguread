@@ -527,6 +527,6 @@ def create_event_address(request, event_id):
             "event": event
         })
 
-  def club_recommender(request):
+def club_recommender(request):
     """View that shows a list of all recommended clubs."""
     return render(request, 'club_recommender.html')
