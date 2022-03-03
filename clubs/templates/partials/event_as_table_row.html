@@ -1,3 +1,4 @@
+{% load event_meeting %}
 <!-- <div>
   <div>
     <p>{{event.title}}</p>
@@ -18,6 +19,8 @@
     <p>End of recurring period: {{event.end_recurring_period}}</p>
     <p>Rule: {{event.rule}}</p>
     <p>calendar: {{event.calendar}}</p>
+    <p>Event meeting at: {% event_meeting event %}</p>
+
   </div>
 </div>
 
