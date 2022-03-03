@@ -65,6 +65,5 @@ urlpatterns = [
     path('event/<int:event_id>/address', views.create_event_address, name='create_event_address'),
     # keep this at the end of the list to allow overwriting of unwanted urls
     url(r'^schedule/', include('schedule.urls')),
-
-
+    path('club_recommender/', views.club_recommender, name='club_recommender'),
 ]
