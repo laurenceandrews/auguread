@@ -54,7 +54,7 @@ class LogInView(LoginProhibitedMixin, View):
     """View that handles log in."""
 
     http_method_names = ['get', 'post']
-    redirect_when_logged_in_url = 'rec'
+    redirect_when_logged_in_url = 'book_preferences'
 
     def get(self, request):
         """Display log in template."""
@@ -95,7 +95,7 @@ def sign_up(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')
+            return redirect('book_preferences')
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})

@@ -161,8 +161,9 @@ class Book(models.Model):
         blank=False
     )
 
-    thumbnail = models.ImageField(
-        blank=False
+    image_small = models.ImageField(
+        blank=False,
+        default='https://media2.fdncms.com/stranger/imager/u/large/43820816/1591119073-screen_shot_2020-06-02_at_10.30.13_am.png'
     )
 
 

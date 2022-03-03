@@ -214,7 +214,8 @@ class Command(BaseCommand):
                     title = self.books_from_file['Book_Title'][rand_choice],
                     author = self.books_from_file['Book_Author'][rand_choice],
                     publication_year = self.books_from_file['Year_Of_Publication'][rand_choice],
-                    publisher = self.books_from_file['Publisher'][rand_choice]
+                    publisher = self.books_from_file['Publisher'][rand_choice],
+                    image_small = self.books_from_file['Image_URL_S'][rand_choice]
                     )
                 book.save() 
                

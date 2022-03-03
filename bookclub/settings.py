@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'schedule',
     'djangobower',
-    'star_ratings',
+    # 'star_ratings',
     
 ]
 
@@ -75,7 +75,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.core.context_processors.request',
             ],
         },
     },
