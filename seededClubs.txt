@@ -7213,6 +7213,7 @@ Angela Daly's Club
 Christine Taylor's Club
 Lydia Mason's Club
 Mathew White's Club
+<<<<<<< HEAD
 George Johnson's Club
 Edward Carter's Club
 Paula Watson's Club
@@ -7224,3 +7225,15 @@ Kirsty White's Club
 Bethany Smith's Club
 Kenneth Richards's Club
 Roger Walker's Club
+=======
+Abigail Scott's Club
+Tina Roberts's Club
+Simon Patterson's Club
+Duncan Jennings's Club
+Leon Jarvis's Club
+Gerard Simpson's Club
+Jonathan Leach's Club
+Christian Taylor's Club
+Leigh Cooper's Club
+Alex Barrett's Club
+>>>>>>> 232f741b60129ae21ad351bf6abc94e24985640f
