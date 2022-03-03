@@ -54,4 +54,6 @@ urlpatterns = [
     # url(r'^fullcalendar', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),
     path('calendar_picker/', views.calendar_picker, name='calendar_picker'),
     path('events_list/<int:calendar_id>', views.events_list, name='events_list'),
+    
+    path('club_recommender/', views.club_recommender, name='club_recommender'),
 ]
