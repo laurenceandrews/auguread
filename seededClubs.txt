@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 89333cfd1cfa84963cb46efdf7e37f579c685966
 Abdul Davies's club
 Ian Webb's club
 Joshua Wilson's club
@@ -7215,6 +7218,7 @@ Christine Taylor's Club
 Lydia Mason's Club
 Mathew White's Club
 <<<<<<< HEAD
+<<<<<<< HEAD
 George Johnson's Club
 Edward Carter's Club
 Paula Watson's Club
@@ -7227,6 +7231,8 @@ Bethany Smith's Club
 Kenneth Richards's Club
 Roger Walker's Club
 =======
+=======
+>>>>>>> 89333cfd1cfa84963cb46efdf7e37f579c685966
 Abigail Scott's Club
 Tina Roberts's Club
 Simon Patterson's Club
@@ -7237,6 +7243,19 @@ Jonathan Leach's Club
 Christian Taylor's Club
 Leigh Cooper's Club
 Alex Barrett's Club
+<<<<<<< HEAD
 >>>>>>> 232f741b60129ae21ad351bf6abc94e24985640f
 =======
 >>>>>>> 2325ec518a84c76ce6cf5d11ae561b5a49c1c758
+=======
+Bethan Rowley's Club
+Beverley Iqbal's Club
+Julian French's Club
+Nigel Rose's Club
+Jane Smith's Club
+John Butler's Club
+Billy Page's Club
+Teresa Dunn's Club
+Jemma Evans's Club
+Graeme McDonald's Club
+>>>>>>> 89333cfd1cfa84963cb46efdf7e37f579c685966
