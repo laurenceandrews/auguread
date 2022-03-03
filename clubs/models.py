@@ -39,7 +39,6 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     USERNAME_FIELD = "email"
     username = models.CharField(
-        primary_key=True,
         max_length=30,
         unique=True,
         validators=[
@@ -50,10 +49,7 @@ class User(AbstractUser):
         ]
     )
 
-    id = models.CharField(
-        unique=True,
-        max_length=20
-    )
+    id = models.AutoField(primary_key=True)
 
     first_name = models.CharField(
         max_length=50,

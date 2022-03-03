@@ -1,17 +1,20 @@
 """Unit tests for the user detail."""
-from django.test import TestCase
 from clubs.models import Club
+from django.test import TestCase
 from django.urls import reverse
+from schedule.models import Calendar, Event, Rule
 
 
 class UserDetailViewTestCase(TestCase):
     fixtures = [
-        'clubs/tests/fixtures/club.json'
+        'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/default_calendar.json',
+        'clubs/tests/fixtures/default_club.json'
     ]
 
     def setUp(self):
-        self.club = Club.objects.get(id=1)
-        self.user = Club.objects.get(id=1).owner
+        self.club = Club.objects.get(id=6)
+        self.user = Club.objects.get(id=6).owner
         self.url = reverse('user_detail')
 
     def test_user_detail(self):
