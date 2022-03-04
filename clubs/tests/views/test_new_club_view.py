@@ -24,7 +24,8 @@ class NewClubTest(TestCase):
             'country': self.club_country,
             'description': 'A book club that is fun.',
             'avg_reading_speed': 200,
-            'calendar_name': 'Fun Reading Clubs Calendar'
+            'calendar_name': 'Fun Reading Clubs Calendar',
+            'meeting_type': 'ONL'
         }
 
     def test_new_club_url(self):
@@ -52,6 +53,7 @@ class NewClubTest(TestCase):
         self.assertEqual(self.data['description'], new_club.description)
         self.assertEqual(self.data['avg_reading_speed'], new_club.avg_reading_speed)
         self.assertEqual(self.data['calendar_name'], new_club.calendar.name)
+        self.assertEqual(self.data['meeting_type'], new_club.meeting_type)
         response_url = reverse('club_list')
         self.assertRedirects(
             response, response_url,

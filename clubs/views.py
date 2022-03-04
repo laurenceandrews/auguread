@@ -1,6 +1,6 @@
 from clubs.forms import LogInForm, NewClubForm, PasswordForm, PostForm
 from clubs.helpers import member, owner
-from clubs.models import Club, Post, User
+from clubs.models import Club, MeetingAddress, MeetingLink, Post, User, Book
 from django.conf import settings
 from django.contrib.auth import login, logout
 from clubs.forms import LogInForm, PasswordForm, NewClubForm, PostForm, UserForm
@@ -23,7 +23,8 @@ from django.views.generic.edit import CreateView, FormView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
-from .forms import CalendarPickerForm, SignUpForm
+from .forms import (CalendarPickerForm, CreateEventForm, MeetingAddressForm,
+                    MeetingLinkForm, SignUpForm)
 from .helpers import login_prohibited
 
 
@@ -58,7 +59,7 @@ class LogInView(LoginProhibitedMixin, View):
     """View that handles log in."""
 
     http_method_names = ['get', 'post']
-    redirect_when_logged_in_url = 'rec'
+    redirect_when_logged_in_url = 'book_preferences'
 
     def get(self, request):
         """Display log in template."""
@@ -99,7 +100,7 @@ def sign_up(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')
+            return redirect('book_preferences')
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
@@ -172,7 +173,7 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
     model = User
     template_name = 'show_user.html'
     paginate_by = settings.NUMBER_PER_PAGE
-    pk_url_kwarg = 'user_username'
+    pk_url_kwarg = 'user_id'
 
     def get_context_data(self, **kwargs):
         """Generate context data to be shown in the template."""
@@ -236,13 +237,16 @@ def new_club(request):
             cal = Calendar(name=calendar_name, slug=calendar_slug)
             cal.save()
 
+            meeting_type = form.cleaned_data.get("meeting_type")
+
             club = Club.objects.create(
                 name=name,
                 location=location,
                 description=description,
                 avg_reading_speed=avg_reading_speed,
                 owner=current_user,
-                calendar=cal
+                calendar=cal,
+                meeting_type=meeting_type
             )
             return redirect("club_list")
         else:
@@ -272,7 +276,7 @@ def club_list(request):
 @member
 def enter(request, club_id):
     user = request.user
-    return redirect('show_user', user_username=user.username, club_id=club_id)
+    return redirect('show_user', user_id=user.id, club_id=club_id)
 
 
 @login_required
@@ -285,15 +289,15 @@ def apply(request, club_id):
 
 @login_required
 @owner
-def approve(request, user_username, club_id):
+def approve(request, user_id, club_id):
     club = Club.objects.get(id=club_id)
     try:
-        user = User.objects.get(username=user_username)
+        user = User.objects.get(id=user_id)
         club.accept(user)
     except ObjectDoesNotExist:
         return redirect('applicant_list', club_id=club_id)
     else:
-        return redirect('show_user', user_username=user.username, club_id=club_id)
+        return redirect('show_user', user_id=user.id, club_id=club_id)
 
 
 class EditUserView(LoginRequiredMixin, UpdateView):
@@ -469,6 +473,11 @@ def calendar_picker(request):
     return render(request, 'calendar_picker.html', {'form': form})
 
 
+def full_calendar(request, calendar_slug):
+    calendar = Calendar.objects.get(slug=calendar_slug)
+    return render(request, 'fullcalendar.html', {'calendar': calendar})
+
+
 def events_list(request, calendar_id):
     calendar = Calendar.objects.get(id=calendar_id)
     events = calendar.event_set.all()
@@ -477,3 +486,112 @@ def events_list(request, calendar_id):
                       'calendar': calendar,
                       'events': events,
                   })
+
+
+@login_required
+def create_event(request, calendar_id):
+    calendar = Calendar.objects.get(id=calendar_id)
+    if request.method == "POST":
+        form = CreateEventForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data.get('title')
+            start = form.cleaned_data.get('start')
+            end = form.cleaned_data.get('end')
+            end_recurring_period = form.cleaned_data.get('end_recurring_period')
+            rule = form.cleaned_data.get('rule')
+
+            event = Event.objects.create(
+                title=title,
+                start=start,
+                end=end,
+                end_recurring_period=end_recurring_period,
+                rule=rule,
+                calendar=calendar
+            )
+
+            club = Club.objects.get(calendar=event.calendar)
+
+            if club.meeting_type == 'ONL':
+                return redirect('create_event_link', event_id=event.id)
+
+            if club.meeting_type == 'INP':
+                return redirect('create_event_address', event_id=event.id)
+
+            messages.add_message(request, messages.ERROR,
+                                 "Meeting type invalid! Please ensure you have selected either online or in-person.")
+            return render(request, 'fullcalendar.html', {'calendar': calendar})
+        else:
+            return render(request, "event_create_form.html", {"form": form, "calendar_id": calendar.id, "calendar_name": calendar.name})
+    else:
+        return render(request, "event_create_form.html", {"form": CreateEventForm, "calendar_id": calendar.id, "calendar_name": calendar.name})
+
+
+def create_event_link(request, event_id):
+    event = Event.objects.get(id=event_id)
+    if request.method == "POST":
+        current_user = request.user
+        form = MeetingLinkForm(request.POST)
+        if form.is_valid():
+            meeting_link = form.cleaned_data.get('meeting_link')
+
+            meeting_link_object = MeetingLink.objects.create(
+                event=event,
+                meeting_link=meeting_link
+            )
+            return render(request, 'fullcalendar.html', {'calendar': event.calendar})
+        else:
+            return render(request, "event_link_form.html", {"form": form, "event": event})
+    else:
+        return render(request, "event_link_form.html", {"form": MeetingLinkForm, "event": event})
+
+
+def create_event_address(request, event_id):
+    event = Event.objects.get(id=event_id)
+    if request.method == "POST":
+        current_user = request.user
+        form = MeetingAddressForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data.get('name')
+            address1 = form.cleaned_data.get('address1')
+            address2 = form.cleaned_data.get('address2')
+            zip_code = form.cleaned_data.get('zip_code')
+            city = form.cleaned_data.get('city')
+            country = form.cleaned_data.get('country')
+
+            meeting_address_object = MeetingAddress.objects.create(
+                event=event,
+                name=name,
+                address1=address1,
+                address2=address2,
+                zip_code=zip_code,
+                city=city,
+                country=country
+            )
+            return render(request, 'fullcalendar.html', {'calendar': event.calendar})
+        else:
+            return render(request, "event_address_form.html",
+                          {
+                              "form": form,
+                              "event": event
+                          }
+                          )
+    else:
+        return render(request, "event_address_form.html", {
+            "form": MeetingAddressForm,
+            "event": event
+        })
+
+def club_recommender(request):
+    """View that shows a list of all recommended clubs."""
+    return render(request, 'club_recommender.html')
+
+  
+def book_preferences(request):
+    """View that allows the user to view all books and rate them."""
+    books_queryset = Book.objects.all()
+
+    paginator = Paginator(books_queryset, settings.BOOKS_PER_PAGE)
+    page_number = request.GET.get('page')
+    books_paginated = paginator.get_page(page_number)
+
+    return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated})

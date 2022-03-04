@@ -39,7 +39,6 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     USERNAME_FIELD = "email"
     username = models.CharField(
-        primary_key=True,
         max_length=30,
         unique=True,
         validators=[
@@ -50,10 +49,7 @@ class User(AbstractUser):
         ]
     )
 
-    id = models.CharField(
-        unique=True,
-        max_length=20
-    )
+    id = models.AutoField(primary_key=True)
 
     first_name = models.CharField(
         max_length=50,
@@ -196,6 +192,11 @@ class Book(models.Model):
         blank=False
     )
 
+    image_small = models.ImageField(
+        blank=False,
+        default='https://media2.fdncms.com/stranger/imager/u/large/43820816/1591119073-screen_shot_2020-06-02_at_10.30.13_am.png'
+    )
+
 
 class Post(models.Model):
     """Posts by users."""
@@ -215,6 +216,62 @@ class Post(models.Model):
     class Meta:
         """Model options."""
         ordering = ['-created_at']
+
+
+class MeetingLink(models.Model):
+    event = models.OneToOneField(
+        Event,
+        on_delete=models.CASCADE
+    )
+
+    meeting_link = models.URLField(
+        blank=False
+    )
+
+
+class MeetingAddress(models.Model):
+    event = models.OneToOneField(
+        Event,
+        on_delete=models.CASCADE
+    )
+
+    name = models.CharField(
+        "Full name",
+        max_length=1024,
+    )
+
+    address1 = models.CharField(
+        "Address line 1",
+        max_length=1024,
+    )
+
+    address2 = models.CharField(
+        "Address line 2",
+        max_length=1024,
+        blank=True
+    )
+
+    zip_code = models.CharField(
+        "ZIP / Postal code",
+        max_length=12,
+        blank=True
+    )
+
+    city = models.CharField(
+        "City",
+        max_length=1024,
+    )
+
+    country = CountryField(
+        blank_label='(select country)'
+    )
+
+    class Meta:
+        verbose_name = "Meeting Address"
+        # verbose_name_plural = "Meeting Addresses"
+
+    def full_address(self):
+        return f'{self.name}. {self.zip_code}, {self.address1}, {self.address2}. {self.city}, {self.country}.'
 
 
 class Club(models.Model):
@@ -237,6 +294,19 @@ class Club(models.Model):
     calendar = models.OneToOneField(
         Calendar,
         on_delete=models.CASCADE
+    )
+
+    ONLINE = 'ONL'
+    IN_PERSON = 'INP'
+    MEETING_TYPE_CHOICES = [
+        (ONLINE, 'Online'),
+        (IN_PERSON, 'In-person')
+    ]
+    meeting_type = models.CharField(
+        max_length=3,
+        choices=MEETING_TYPE_CHOICES,
+        default=IN_PERSON,
+        blank=False
     )
 
     # A foreign key is not required for the club owner
