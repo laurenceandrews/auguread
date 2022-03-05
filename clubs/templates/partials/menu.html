@@ -1,21 +1,63 @@
 <div class="collapse navbar-collapse" id="navbarSupportedContent">
   <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-    <li class="nav-item">
-      <a class="nav-link" href = "{% url 'club_list' %}">All Clubs</a>
-    </li>
+    {% if club %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'show_user' club.id user.id %}">User detail</a>
+      </li>
+    {% else %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'user_detail' %}">User detail</a>
+      </li>
+    {% endif %}
+    {% if user in club.member_list or user in club.owner_list or user == club.owner %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'user_list' club.id %}">Member Room</a>
+      </li>
+    {% endif %}
+    {% if user in club.owner_list or user == club.owner %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'applicant_list' club.id %}">Manage Applicants</a>
+      </li>
+    {% endif %}
+    {% if user == club.owner %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'member_list' club.id %}">Manage Members</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'owner_list' club.id %}">Manage Owners</a>
+      </li>
+    {% endif %}
+
   </ul>
   <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+    {# {% if club %} #}
+    <li class="nav-item dropdown">
+      <a class="nav-link" href="#" id="club-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <span>Switch club</span>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-account-dropdown">
+        {% for club_avaliable in user.clubs_attended %}
+          {% if club_avaliable != club %}
+           <li><a class="dropdown-item" href="{% url 'enter' club_avaliable.id %}">{{ club_avaliable.name }}</a></li>
+          {% endif %}
+        {% endfor %}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{% url 'club_list' %}">See club list</a></li>
+      </ul>
+    </li>
+    {# {% endif %} #}
     <li class="nav-item dropdown">
       <a class="nav-link" href="#" id="user-account-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="bi-person-circle"></span>
       </a>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-account-dropdown">
-        {# <li><a class="dropdown-item" href="{% url 'profile' %}">Change profile</a></li> #}
+        <li><a class="dropdown-item">Change profile</a></li>
+        <li><a class="dropdown-item">Settings</a></li>
         <li><a class="dropdown-item" href="{% url 'password' %}">Change password</a></li>
-        {# <li><a class="dropdown-item" href="{% url 'settings' %}">Settings</a></li> #}
         <li><hr class="dropdown-divider"></li>
         <li><a class="dropdown-item" href="{% url 'log_out' %}">Log out</a></li>
       </ul>
     </li>
+
   </ul>
 </div>
