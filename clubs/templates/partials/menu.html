@@ -2,11 +2,11 @@
   <ul class="navbar-nav me-auto mb-2 mb-lg-0">
     {% if club %}
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'show_user' club.id user.id %}">User detail</a>
+        <a class="nav-link" href="{% url 'show_user' club.id user.id %}">User details</a>
       </li>
     {% else %}
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'user_detail' %}">User detail</a>
+        <a class="nav-link" href="{% url 'user_detail' %}">User details</a>
       </li>
     {% endif %}
     {% if user in club.member_list or user in club.owner_list or user == club.owner %}
@@ -30,10 +30,10 @@
 
   </ul>
   <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-    {# {% if club %} #}
+    {% if club %}
     <li class="nav-item dropdown">
       <a class="nav-link" href="#" id="club-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <span>Switch club</span>
+        <span>Switch Club</span>
       </a>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="user-account-dropdown">
         {% for club_avaliable in user.clubs_attended %}
@@ -45,7 +45,7 @@
         <li><a class="dropdown-item" href="{% url 'club_list' %}">View Club List</a></li>
       </ul>
     </li>
-    {# {% endif %} #}
+    {% endif %}
     <li class="nav-item dropdown">
       <a class="nav-link" href="#" id="user-account-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         <span class="bi-person-circle"></span>
