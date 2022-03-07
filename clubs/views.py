@@ -386,7 +386,7 @@ class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
 
     def get_queryset(self):
         club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.officers.all())
+        users = list(club.owners.all())
         return users
 
     def get_context_data(self, **kwargs):
@@ -528,7 +528,7 @@ def club_recommender(request):
     """View that shows a list of all recommended clubs."""
     return render(request, 'club_recommender.html')
 
-  
+
 def book_preferences(request):
     """View that allows the user to view all books and rate them."""
     books_queryset = Book.objects.all()
