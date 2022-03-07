@@ -13,13 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-import schedule
+
 from clubs import views
 from django.conf.urls import url
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.views.generic import TemplateView
-from schedule import views as schedule_views
+from schedule.views import (DeleteEventView, EditEventView, EventView,
+                            api_move_or_resize_by_code, api_occurrences,
+                            api_select_create)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -63,7 +65,19 @@ urlpatterns = [
     path('events_list/<int:calendar_id>', views.events_list, name='events_list'),
     path('event/<int:event_id>/link', views.create_event_link, name='create_event_link'),
     path('event/<int:event_id>/address', views.create_event_address, name='create_event_address'),
+    re_path(
+        r"^event/edit/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
+        EditEventView.as_view(),
+        name="edit_event",
+    ),
+    re_path(r"^event/(?P<event_id>\d+)/$", EventView.as_view(), name="event"),
+    re_path(
+        r"^event/delete/(?P<event_id>\d+)/$",
+        DeleteEventView.as_view(),
+        name="delete_event",
+    ),
+    re_path(r"^schedule/api/occurrences", api_occurrences, name="api_occurrences"),
     # keep this at the end of the list to allow overwriting of unwanted urls
-    url(r'^schedule/', include('schedule.urls')),
+    # url(r'^schedule/', include('schedule.urls')),
     path('club_recommender/', views.club_recommender, name='club_recommender'),
 ]
