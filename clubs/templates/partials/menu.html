@@ -11,7 +11,7 @@
     {% endif %}
     {% if user in club.member_list or user in club.owner_list or user == club.owner %}
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'user_list' club.id %}">Member Room</a>
+        <a class="nav-link" href="{% url 'user_list' club.id %}">Members Room</a>
       </li>
     {% endif %}
     {% if user in club.owner_list or user == club.owner %}
