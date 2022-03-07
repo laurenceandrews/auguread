@@ -304,7 +304,7 @@ class EditUserView(LoginRequiredMixin, UpdateView):
     """View to update logged-in user's profile."""
 
     model = UserForm
-    template_name = "profile.html"
+    template_name = "edit_user.html"
     form_class = UserForm
 
     def get_object(self):
@@ -371,7 +371,7 @@ def follow_toggle(request, user_id):
         return redirect('user_list')
     else:
         return redirect('show_user', user_id=user_id)
-        
+
 
 class ApplicantListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
     """View that shows a list of all the applicants."""
@@ -585,7 +585,7 @@ def club_recommender(request):
     """View that shows a list of all recommended clubs."""
     return render(request, 'club_recommender.html')
 
-  
+
 def book_preferences(request):
     """View that allows the user to view all books and rate them."""
     books_queryset = Book.objects.all()
