@@ -11,14 +11,12 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpRespons
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import slugify
 from django.urls import reverse
-
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
-
 from .forms import (CalendarPickerForm, CreateEventForm, MeetingAddressForm,
                     MeetingLinkForm, SignUpForm)
 from .helpers import login_prohibited
@@ -180,26 +178,6 @@ class FeedView(LoginRequiredMixin, ListView):
         context['form'] = PostForm()
         return context
 
-# def feed(request):
-#     form = PostForm()
-#     return render(request, 'feed.html', {'form': form})
-
-# def new_post(request):
-#     if request.method == 'POST':
-#         if request.user.is_authenticated:
-#             current_user = request.user
-#             form = PostForm(request.POST)
-#             if form.is_valid():
-#                 text = form.cleaned_data.get('text')
-#                 post = Post.objects.create(author=current_user, text=text)
-#                 return redirect('feed')
-#             else:
-#                 return render(request, 'feed.html', {'form': form})
-#         else:
-#             return redirect('log_in')
-#     else:
-#         return HttpResponseForbidden()
-
 @login_required
 def follow_toggle(request, user_id):
     current_user = request.user
@@ -257,8 +235,8 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, Applican
         context['type'] = target_type
         context['user'] = user
         context['posts'] = context['object_list']
-        # context['following'] = self.request.user.is_following(user)
-        # context['followable'] = (self.request.user != user)
+        context['following'] = self.request.user.is_following(user)
+        context['followable'] = (self.request.user != user)
         context['target'] = target
         context['club'] = club
         return context
