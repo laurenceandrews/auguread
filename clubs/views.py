@@ -156,7 +156,7 @@ class PasswordView(LoginRequiredMixin, FormView):
             self.request, messages.SUCCESS, "Password updated!")
         return reverse(settings.AUTO_REDIRECT_URL)
 
-class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
+class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
     """View that shows a list of all users"""
     model = User
     template_name = "user_list.html"
@@ -177,7 +177,7 @@ class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
         return context
 
 
-class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
+class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, ApplicantProhibitedMixin):
     """View that shows individual user details."""
 
     model = User
@@ -361,7 +361,7 @@ class ApplicantListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
         return redirect('applicant_list', club_id=club.id)
 
 
-class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
+class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
     """View that shows a list of all the members."""
 
     model = User
