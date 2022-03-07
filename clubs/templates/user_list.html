@@ -1,0 +1,35 @@
+{% extends "base_content.html" %}
+{% load bootstrap_pagination %}
+
+{% block content %}
+<title>
+  {% block title %}
+  | User List
+  {% endblock %}
+</title>
+
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1 style="text-align:center">
+        Members in {{club.name}}
+      </h1>
+      {% bootstrap_paginate page_obj range=10 show_first_last="true"%}
+    </div>
+  </div>
+</div>
+
+<form action="{% url 'applicant_list' club.id %}" method="post">
+  {% csrf_token %}
+  {% include "partials/manage_list.html" with users=users club=club%}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        {% bootstrap_paginate page_obj range=10 show_first_last="true"%}
+      </div>
+    </div>
+  </div>
+
+</form>
+{% endblock %}

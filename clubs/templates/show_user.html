@@ -1,0 +1,15 @@
+{% extends "base_content.html" %}
+{% block content %}
+<title>
+  {% block title %}
+  | Show User
+  {% endblock %}
+</title>
+<div class="container">
+  <div class="row content">
+    <div class="col-xs-12 col-lg-6 col-xl-12">
+      {% include 'partials/user_profile.html' with target=target user=user club=club %}
+    </div>
+  </div>
+</div>
+{% endblock %}

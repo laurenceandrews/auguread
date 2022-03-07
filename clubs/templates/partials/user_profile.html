@@ -1,5 +1,6 @@
 <div class="row content">
   <div class="col-12">
+
     <img src="{{ user.gravatar }}" alt="Gravatar of {{ user.username }}" class="rounded-circle profile-image" >
     <div class="profile-text">
       <h3 class="profile-title">{{ user.full_name }}</h3>
@@ -28,5 +29,36 @@
         </span>
       </p>
     </form>
+
+    <img src="{{ target.gravatar }}" alt="Gravatar of {{ target.email }}" class="rounded-circle profile-image" >
+    <div class="profile-text">
+      <h3 class="profile-title">{{ target.full_name }}</h3>
+      <p class="profile-username">{{ target.email }}</p>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      {% if club %}
+      <p class="type"><h5>Club name: </h5>{{ club.name }}</p>
+      <p><h5>Membership Type: </h5>{{ type }}</p>
+      {% endif %}
+
+      {% if target.is_applicant %}
+        <p class="profile-bio"><h5>Bio: </h5>{{ target.bio }}</p>
+      {% endif %}
+
+      {% if user in club.owner_list or user == club.owner %}
+        <div class="col">
+          <p><h5>Email address:</h5>{{target.email}}</p>
+          <p><h5>Bio:</h5>{{target.bio}}</p>
+        </div>
+      {% endif %}
+      {% if club %}
+        {% include "partials/user_profile_operations.html" with club=club target=target %}
+      {% endif %}
+    </div>
+    
   </div>
 </div>

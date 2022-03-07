@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from clubs.models import Post, User
+
 from django_countries.fields import CountryField
 
 class PostTest(TestCase):
@@ -15,6 +16,16 @@ class PostTest(TestCase):
             bio='The quick brown fox jumps over the lazy dog.'
             #country = Country(code = 'NZ')
         )
+
+
+# class PostTest(TestCase):
+#
+#     fixtures = ['clubs/tests/fixtures/default_user.json']
+#
+#     def setUp(self):
+#         super(TestCase, self).setUp()
+#         self.user = User.objects.get(username='@johndoe')
+
         self.post = Post(
             author=self.user,
             text="The quick brown fox jumps over the lazy dog."

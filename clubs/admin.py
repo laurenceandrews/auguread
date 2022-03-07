@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Club, Post, User
+from .models import Book, Club, MeetingAddress, MeetingLink, Post, User
 
 
 @admin.register(User)
@@ -8,12 +8,13 @@ class UserAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for users."""
 
     list_display = [
+        'id',
         'username',
         'first_name',
         'last_name',
         'email',
         'bio',
-        'country',
+        'location',
         'is_active',
     ]
 
@@ -36,11 +37,41 @@ class ClubAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for users."""
 
     list_display = [
-        'name', 'owner_name', 'location', 'description', 'member_list',
+        'name', 'owner_name', 'location', 'description', 'applicant_list', 'member_list', 'owner_list'
     ]
 
     def owner_name(self, Club):
-        return Club.owner.first_name + ' ' + Club.owner.last_name
+        return "\n".join([owner.first_name for owner in Club.owners.all()])
 
     def member_list(self, Club):
         return "\n".join([member.first_name for member in Club.members.all()])
+
+    def applicant_list(self, Club):
+        return "\n".join([applicant.first_name for applicant in Club.applicants.all()])
+
+
+@admin.register(Book)
+class BookAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for books."""
+
+    list_display = [
+        'ISBN', 'title', 'author', 'publication_year'
+    ]
+
+
+@admin.register(MeetingAddress)
+class MeetingAddressAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for meeting addresses."""
+
+    list_display = [
+        'event', 'name'
+    ]
+
+
+@admin.register(MeetingLink)
+class MeetingLinkAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for meeting links."""
+
+    list_display = [
+        'event', 'meeting_link'
+    ]

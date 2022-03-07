@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -31,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'bootstrap_pagination',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,7 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'clubs',
+    'tailwind',
+    'theme',
+    'django_browser_reload',
     'widget_tweaks',
+    'schedule',
+    'djangobower',
+    # 'star_ratings',
+    
 ]
 
 MIDDLEWARE = [
@@ -49,6 +58,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
+
 ]
 
 ROOT_URLCONF = 'bookclub.urls'
@@ -131,7 +142,49 @@ AUTH_USER_MODEL = 'clubs.User'
 LOGIN_URL = 'log_in'
 
 # URL where @login_prohibited redirects to
-AUTO_REDIRECT_URL = 'log_in'
+AUTO_REDIRECT_URL = 'rec'
 
-#URL where @login_prohibited redirects to
+
+# Tailwind App Name
+TAILWIND_APP_NAME = 'theme'
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+# Set up for windows, for mac/ubuntu change to r"/usr/local/bin/npm"
+NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+
+# URL where @login_prohibited redirects to
 REDIRECT_URL_WHEN_LOGGED_IN = 'home'
+
+# Page lengths
+USERS_PER_PAGE = 10
+POSTS_PER_PAGE = 20
+NUMBER_PER_PAGE = 15
+BOOKS_PER_PAGE = 10
+
+# Set up djangobower
+
+PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
+
+STATIC_ROOT = os.path.join(PROJECT_PATH, 'assets')
+
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
+)
+
+BOWER_INSTALLED_APPS = (
+    'jquery',
+    'jquery-ui',
+    'bootstrap',
+    'fullcalendar#3.8.2'
+)
+
+STAR_RATINGS_RERATE_SAME_DELETE = True
+STAR_RATINGS_RANGE = 10
+STAR_RATINGS_STAR_HEIGHT = 20

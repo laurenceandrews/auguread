@@ -1,0 +1,47 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+        <table class="table table-vcenter table-condensed table-bordered">
+          <thead>
+            <tr>
+              <th>&nbsp</th>
+              <th class="text-center">Club Name</th>
+              <th class="text-center">Owner Name</th>
+              <th class="text-center">Owner Bio</th>
+              <th class="text-center">Location</th>
+              <th class="text-center">Description</th>
+              <th class="text-center">Operation</th>
+            </tr>
+          </thead>
+
+          {% for club in clubs %}
+            <tr>
+              <td class="text-center">
+                <img src="{{ club.owner.mini_gravatar }}" alt="Gravatar of {{ club.owner }}" class="rounded-circle">
+              </td>
+              <td class="text-center">{{ club.name }} </td>
+              <td class="text-center">{{ club.owner.first_name }} {{ club.owner.last_name }}</td>
+              <td class="text-center">{{ club.owner.bio }} </td>
+              <td class="text-center">{{ club.location }} </td>
+              <td class="text-center">{{ club.description }} </td>
+              {% if user == club.owner or user in club.member_list %}
+                <form action="{% url 'enter' club_id=club.id %}" method="post">
+                  {% csrf_token %}
+                  <td class="text-center">
+                    <input type="submit" name="enter" value="Enter" class="btn btn btn-primary">
+                  </td>
+                </form>
+              {% else %}
+                <form action="{% url 'apply' club_id=club.id %}" method="post">
+                  {% csrf_token %}
+                  <td class="text-center">
+                    <input type="submit" name="apply" value="Apply For the Club" class="btn btn btn-primary">
+                  </td>
+                </form>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </table>
+    </div>
+  </div>
+</div>
