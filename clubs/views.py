@@ -49,6 +49,18 @@ class LoginProhibitedMixin:
         else:
             return self.redirect_when_logged_in_url
 
+class ApplicantProhibitedMixin:
+    """Redirects to club_list if user is an applicant and dispatches as normal otherwise."""
+
+    def dispatch(self, *args, **kwargs):
+        """Checks the membership type of the user of the club."""
+
+        club = Club.objects.get(id=kwargs['club_id'])
+        if (self.request.user in club.members.all()
+                or self.request.user in club.owners.all() or club.owner == self.request.user):
+            return super().dispatch(*args, **kwargs)
+        else:
+            return redirect(settings.AUTO_REDIRECT_URL)
 
 class LogInView(LoginProhibitedMixin, View):
     """View that handles log in."""
