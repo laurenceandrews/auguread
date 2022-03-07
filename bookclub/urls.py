@@ -31,7 +31,7 @@ urlpatterns = [
     path("__reload__/", include("django_browser_reload.urls")),
     path('password/', views.PasswordView.as_view(), name='password'),
 
-    path('feed/', views.feed, name='feed'),
+    path('feed/', views.FeedView.as_view(), name='feed'),
     # path('new_post/', views.new_post, name='new_post'),
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
 

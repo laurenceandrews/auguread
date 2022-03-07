@@ -158,9 +158,31 @@ class PasswordView(LoginRequiredMixin, FormView):
         return reverse(settings.AUTO_REDIRECT_URL)
 
 
-def feed(request):
-    form = PostForm()
-    return render(request, 'feed.html', {'form': form})
+class FeedView(LoginRequiredMixin, ListView):
+    """Class-based generic view for displaying a view."""
+
+    model = Post
+    template_name = "feed.html"
+    context_object_name = 'posts'
+    paginate_by = settings.POSTS_PER_PAGE
+
+    def get_queryset(self):
+        """Return the user's feed."""
+        current_user = self.request.user
+        authors = list(current_user.followees.all()) + [current_user]
+        posts = Post.objects.filter(author__in=authors)
+        return posts
+
+    def get_context_data(self, **kwargs):
+        """Return context data, including new post form."""
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['form'] = PostForm()
+        return context
+
+# def feed(request):
+#     form = PostForm()
+#     return render(request, 'feed.html', {'form': form})
 
 # def new_post(request):
 #     if request.method == 'POST':
@@ -178,7 +200,7 @@ def feed(request):
 #     else:
 #         return HttpResponseForbidden()
 
-#@login_required
+@login_required
 def follow_toggle(request, user_id):
     current_user = request.user
     try:

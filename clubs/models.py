@@ -136,6 +136,34 @@ class User(AbstractUser):
     def clubs_attended(self):
         return list(self.member.all()) + list(self.owner.all()) + list(Club.objects.filter(owner=self))
 
+    def toggle_follow(self, followee):
+        """Toggles whether self follows the given followee."""
+
+        if followee==self:
+            return
+        if self.is_following(followee):
+            self._unfollow(followee)
+        else:
+            self._follow(followee)
+
+    def _follow(self, user):
+        user.followers.add(self)
+
+    def _unfollow(self, user):
+        user.followers.remove(self)
+
+    def is_following(self, user):
+        """Returns whether self follows the given user."""
+        return user in self.followees.all()
+
+    def follower_count(self):
+        """Returns the number of followers of self."""
+        return self.followers.count()
+
+    def followee_count(self):
+        """Returns the number of followees of self."""
+        return self.followees.count()
+
 
 class Book(models.Model):
     ISBN = models.CharField(
