@@ -36,7 +36,6 @@ urlpatterns = [
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
 
     path('rec/', views.RecommendationsView, name='rec'),
-    # path('rec/', views.RecommendationsView.as_view(), name='rec_page'),
 
     # path('users/', views.UserListView.as_view(), name='user_list'),
     path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
