@@ -396,6 +396,14 @@ class Club(models.Model):
         else:
             return False
 
+    def transfer(self, user):
+        owner = self.owner
+        if user in self.owners.all():
+            self.owners.add(owner)
+            self.owner = user
+            self.owners.remove(user)
+            self.save()
+
 
 class ApplicantMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

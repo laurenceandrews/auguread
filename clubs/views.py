@@ -586,3 +586,15 @@ def book_preferences(request):
     books_paginated = paginator.get_page(page_number)
 
     return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated})
+
+@login_required
+@owner
+def transfer(request, user_id, club_id):
+    club = Club.objects.get(id=club_id)
+    try:
+        target = User.objects.get(id=user_id)
+        club.transfer(target)
+    except ObjectDoesNotExist:
+        return redirect('owner_list', club_id=club_id)
+    else:
+        return redirect('show_user', user_id=user_id, club_id=club_id)
