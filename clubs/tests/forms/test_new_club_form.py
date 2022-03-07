@@ -27,8 +27,12 @@ class NewClubTestCase(TestCase):
             'calendar_name': 'Fun Reading Clubs Calendar'
         }
 
+    # def test_valid_new_club(self):
+    #     form = NewClubForm(data=self.form_input)
+    #     self.assertTrue(form.is_valid())
+
     def test_valid_new_club(self):
-        form = NewClubForm(data=self.form_input)
+        form = NewClubForm(data=input)
         self.assertTrue(form.is_valid())
 
     def test_form_has_necessary_fields(self):
