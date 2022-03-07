@@ -30,30 +30,28 @@ urlpatterns = [
     path('log_out/', views.log_out, name='log_out'),
     path("__reload__/", include("django_browser_reload.urls")),
     path('password/', views.PasswordView.as_view(), name='password'),
-
-    path('feed/', views.FeedView.as_view(), name='feed'),
-    # path('new_post/', views.new_post, name='new_post'),
-    path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
-
     path('rec/', views.RecommendationsView, name='rec'),
 
-    # path('users/', views.UserListView.as_view(), name='user_list'),
+    path('feed/', views.FeedView.as_view(), name='feed'),
+    path('new_post/', views.NewPostView.as_view(), name='new_post'),
+    path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
+
     path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
     path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
+    path('user_detail/', views.user_detail, name='user_detail'),
 
     path('clubs/', views.club_list, name='club_list'),
     path('new_club/', views.new_club, name='new_club'),
-    path('new_post/', views.NewPostView.as_view(), name='new_post'),
 
     path('enter/<int:club_id>', views.enter, name='enter'),
     path('apply/<int:club_id>', views.apply, name='apply'),
     path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
+    path('<int:club_id>/transfer/<int:user_id>', views.transfer, name='transfer'),
 
     path('<int:club_id>/applicants', views.ApplicantListView.as_view(), name='applicant_list'),
     path('<int:club_id>/members', views.MemberListView.as_view(), name='member_list'),
     path('<int:club_id>/officers', views.OwnerListView.as_view(), name='owner_list'),
 
-    path('user_detail/', views.user_detail, name='user_detail'),
 
     # sample scheduler
     # url(r'^fullcalendar', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),

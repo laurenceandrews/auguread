@@ -3,6 +3,7 @@ from clubs.helpers import member, owner
 from clubs.models import Club, MeetingAddress, MeetingLink, Post, User, Book
 from django.conf import settings
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -232,6 +233,8 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, Applican
         context['can_approve'] = ((user != target) and (user_type == 'Owner'
                                                         or user == club.owner) and target_type == 'Applicant')
         context['is_owner'] = target_type == 'Owner'
+        context['can_transfer'] = ((user != target) and user == club.owner
+                                   and is_owner)
         context['type'] = target_type
         context['user'] = user
         context['posts'] = context['object_list']
@@ -588,7 +591,7 @@ def book_preferences(request):
     return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated})
 
 @login_required
-@owner
+# @owner
 def transfer(request, user_id, club_id):
     club = Club.objects.get(id=club_id)
     try:
