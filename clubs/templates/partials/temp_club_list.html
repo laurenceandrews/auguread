@@ -10,7 +10,6 @@
               <th class="text-center">Owner Bio</th>
               <th class="text-center">Location</th>
               <th class="text-center">Description</th>
-              <th class="text-center">User number</th>
               <th class="text-center">Operation</th>
             </tr>
           </thead>
@@ -25,7 +24,6 @@
               <td class="text-center">{{ club.owner.bio }} </td>
               <td class="text-center">{{ club.location }} </td>
               <td class="text-center">{{ club.description }} </td>
-              <td class="text-center">{{ club.user_count }}</td>
               {% if user == club.owner or user in club.member_list %}
                 <form action="{% url 'enter' club_id=club.id %}" method="post">
                   {% csrf_token %}
