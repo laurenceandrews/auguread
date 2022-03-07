@@ -4,7 +4,7 @@
       <a class="navbar-brand" href="{% url 'show_user' club.id user.id %}">
         <span class="icon-strategy"></span>&nbsp;{{ club.name }}
     {% else %}
-    <a class="navbar-brand" href="{% url 'home' %}">
+    <a class="navbar-brand" href="{% url 'rec' %}">
         <span class="icon-strategy"></span>&nbsp;Book Club
       {% endif %}
     </a>
