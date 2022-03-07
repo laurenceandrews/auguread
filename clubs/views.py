@@ -132,15 +132,6 @@ class PasswordView(LoginRequiredMixin, FormView):
             self.request, messages.SUCCESS, "Password updated!")
         return reverse(settings.AUTO_REDIRECT_URL)
 
-# class UserListView(LoginRequiredMixin, ListView):
-#     """View that shows a list of all users."""
-#
-#     model = User
-#     template_name = "user_list.html"
-#     context_object_name = "users"
-#     paginate_by = settings.USERS_PER_PAGE
-
-
 class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
     """View that shows a list of all users"""
     model = User
