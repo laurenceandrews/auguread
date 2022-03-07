@@ -49,6 +49,30 @@ class LoginProhibitedMixin:
         else:
             return self.redirect_when_logged_in_url
 
+class ApplicantProhibitedMixin:
+    """Redirects to club_list if user is an applicant and dispatches as normal otherwise."""
+
+    def dispatch(self, *args, **kwargs):
+        """Checks the membership type of the user of the club."""
+
+        club = Club.objects.get(id=kwargs['club_id'])
+        if (self.request.user in club.members.all()
+                or self.request.user in club.owners.all() or club.owner == self.request.user):
+            return super().dispatch(*args, **kwargs)
+        else:
+            return redirect(settings.AUTO_REDIRECT_URL)
+
+class MemberProhibitedMixin:
+    """Redirects to club_list if user is an applicant or a member and dispatches as normal otherwise."""
+
+    def dispatch(self, *args, **kwargs):
+        """Checks the membership type of the user of the club with the given club id."""
+
+        club = Club.objects.get(id=kwargs['club_id'])
+        if self.request.user in club.owners.all() or club.owner == self.request.user:
+            return super().dispatch(*args, **kwargs)
+        else:
+            return redirect(settings.AUTO_REDIRECT_URL)
 
 class LogInView(LoginProhibitedMixin, View):
     """View that handles log in."""
@@ -132,16 +156,7 @@ class PasswordView(LoginRequiredMixin, FormView):
             self.request, messages.SUCCESS, "Password updated!")
         return reverse(settings.AUTO_REDIRECT_URL)
 
-# class UserListView(LoginRequiredMixin, ListView):
-#     """View that shows a list of all users."""
-#
-#     model = User
-#     template_name = "user_list.html"
-#     context_object_name = "users"
-#     paginate_by = settings.USERS_PER_PAGE
-
-
-class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
+class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
     """View that shows a list of all users"""
     model = User
     template_name = "user_list.html"
@@ -162,7 +177,7 @@ class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
         return context
 
 
-class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
+class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, ApplicantProhibitedMixin):
     """View that shows individual user details."""
 
     model = User
@@ -346,7 +361,7 @@ class ApplicantListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
         return redirect('applicant_list', club_id=club.id)
 
 
-class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
+class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
     """View that shows a list of all the members."""
 
     model = User
