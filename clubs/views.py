@@ -162,21 +162,21 @@ def feed(request):
     form = PostForm()
     return render(request, 'feed.html', {'form': form})
 
-def new_post(request):
-    if request.method == 'POST':
-        if request.user.is_authenticated:
-            current_user = request.user
-            form = PostForm(request.POST)
-            if form.is_valid():
-                text = form.cleaned_data.get('text')
-                post = Post.objects.create(author=current_user, text=text)
-                return redirect('feed')
-            else:
-                return render(request, 'feed.html', {'form': form})
-        else:
-            return redirect('log_in')
-    else:
-        return HttpResponseForbidden()
+# def new_post(request):
+#     if request.method == 'POST':
+#         if request.user.is_authenticated:
+#             current_user = request.user
+#             form = PostForm(request.POST)
+#             if form.is_valid():
+#                 text = form.cleaned_data.get('text')
+#                 post = Post.objects.create(author=current_user, text=text)
+#                 return redirect('feed')
+#             else:
+#                 return render(request, 'feed.html', {'form': form})
+#         else:
+#             return redirect('log_in')
+#     else:
+#         return HttpResponseForbidden()
 
 #@login_required
 def follow_toggle(request, user_id):

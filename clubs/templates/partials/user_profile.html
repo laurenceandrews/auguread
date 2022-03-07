@@ -1,9 +1,11 @@
 <div class="row content">
   <div class="col-12">
 
-    <img src="{{ user.gravatar }}" alt="Gravatar of {{ user.username }}" class="rounded-circle profile-image" >
+    {# <img src="{{ user.gravatar }}" alt="Gravatar of {{ user.username }}" class="rounded-circle profile-image" > #}
+    <img src="{{ target.gravatar }}" alt="Gravatar of {{ target.email }}" class="rounded-circle profile-image" >
     <div class="profile-text">
-      <h3 class="profile-title">{{ user.full_name }}</h3>
+      <h3 class="profile-title">{{ user.full_name }}</h3> Full Name:
+      <h5>Username: </h5>
       <p class="profile-username">{{ user.username }}</p>
     </div>
   </div>
@@ -11,7 +13,6 @@
 <div class="row content">
   <div class="col-12">
     <form action="{% url 'follow_toggle' user_id=user.id %}" method="get">
-      <p class="profile-bio">{{ user.bio }}</p>
       <p class="profile-statistics">
         <span>
           <b>{{ user.followee_count }}</b> Following
@@ -30,9 +31,8 @@
       </p>
     </form>
 
-    <img src="{{ target.gravatar }}" alt="Gravatar of {{ target.email }}" class="rounded-circle profile-image" >
     <div class="profile-text">
-      <h3 class="profile-title">{{ target.full_name }}</h3>
+      <h5>Email: </h5>
       <p class="profile-username">{{ target.email }}</p>
     </div>
   </div>
@@ -51,7 +51,6 @@
 
       {% if user in club.owner_list or user == club.owner %}
         <div class="col">
-          <p><h5>Email address:</h5>{{target.email}}</p>
           <p><h5>Bio:</h5>{{target.bio}}</p>
         </div>
       {% endif %}
@@ -59,6 +58,6 @@
         {% include "partials/user_profile_operations.html" with club=club target=target %}
       {% endif %}
     </div>
-    
+
   </div>
 </div>
