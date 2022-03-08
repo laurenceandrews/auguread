@@ -8,13 +8,11 @@
       <form action="{% url 'create_event' calendar_id=calendar_id %}" method="post">
         {% csrf_token %}
         <table>
-    {{ form.as_table }}
-  </table>
-  <br>
-  <input type="submit" value="{% trans "Save and continue" %}">
-  <a href="{{ view.get_success_url }}" class="btn btn-default">Cancel</a>
-
-
+          {{ form.as_table }}
+        </table>
+        <br>
+        <input type="submit" value="{% trans "Save and continue" %}">
+        <a href="{{ view.get_success_url }}" class="btn btn-default">Cancel</a>
       </form>
     </div>
   </div>

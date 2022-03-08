@@ -1,3 +1,5 @@
+import datetime
+
 from clubs.forms import LogInForm, NewClubForm, PasswordForm, PostForm
 from clubs.helpers import member, owner
 from clubs.models import Club, MeetingAddress, MeetingLink, Post, User
@@ -14,7 +16,8 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, FormView, UpdateView
+from django.views.generic.edit import (CreateView, DeleteView, FormView,
+                                       UpdateView)
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
@@ -435,9 +438,8 @@ class CreateEventView(CreateView):
     """Class-based generic view for new post handling."""
 
     model = Event
-    template_name = 'event_create_form.html'
+    template_name = 'create_event.html'
     form_class = CreateEventForm
-    # http_method_names = ['post']
 
     def form_valid(self, form):
         """Process a valid form."""
@@ -536,6 +538,61 @@ def create_event_address(request, event_id):
             "form": MeetingAddressForm,
             "event": event
         })
+
+
+class EditEventView(UpdateView):
+    model = Event
+    template_name = 'update_event.html'
+    form_class = CreateEventForm
+    pk_url_kwarg = "event_id"
+
+    def form_valid(self, form):
+        event = form.save(commit=False)
+
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        club = Club.objects.get(calendar=event.calendar)
+
+        if club.meeting_type == 'ONL':
+            return redirect('create_event_link', event_id=event.id)
+
+        if club.meeting_type == 'INP':
+            return redirect('create_event_address', event_id=event.id)
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        return reverse('full_calendar', kwargs={'calendar_slug': self.kwargs['calendar_slug']})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        context['calendar'] = calendar
+        context['calendar_id'] = calendar.id
+        context['calendar_name'] = calendar.name
+        context['user'] = self.request.user
+
+        return context
+
+
+class DeleteEventView(DeleteView):
+    model = Event
+    template_name = 'delete_event.html'
+    form_class = CreateEventForm
+    pk_url_kwarg = "event_id"
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        context['calendar'] = calendar
+        context['calendar_id'] = calendar.id
+        context['calendar_name'] = calendar.name
+        context['user'] = self.request.user
+
+        return context
 
 
 def club_recommender(request):
