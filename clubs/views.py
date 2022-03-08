@@ -479,42 +479,55 @@ def events_list(request, calendar_id):
                   })
 
 
-@login_required
-def create_event(request, calendar_id):
-    calendar = Calendar.objects.get(id=calendar_id)
-    if request.method == "POST":
-        form = CreateEventForm(request.POST)
-        if form.is_valid():
-            title = form.cleaned_data.get('title')
-            start = form.cleaned_data.get('start')
-            end = form.cleaned_data.get('end')
-            end_recurring_period = form.cleaned_data.get('end_recurring_period')
-            rule = form.cleaned_data.get('rule')
+class CreateEventView(CreateView):
+    """Class-based generic view for new post handling."""
 
-            event = Event.objects.create(
-                title=title,
-                start=start,
-                end=end,
-                end_recurring_period=end_recurring_period,
-                rule=rule,
-                calendar=calendar
-            )
+    model = Event
+    template_name = 'event_create_form.html'
+    form_class = CreateEventForm
+    # http_method_names = ['post']
 
-            club = Club.objects.get(calendar=event.calendar)
+    def form_valid(self, form):
+        """Process a valid form."""
+        calendar = Calendar.objects.get(id=self.kwargs['calendar_id'])
 
-            if club.meeting_type == 'ONL':
-                return redirect('create_event_link', event_id=event.id)
+        title = form.cleaned_data.get('title')
+        start = form.cleaned_data.get('start')
+        end = form.cleaned_data.get('end')
+        end_recurring_period = form.cleaned_data.get('end_recurring_period')
+        rule = form.cleaned_data.get('rule')
 
-            if club.meeting_type == 'INP':
-                return redirect('create_event_address', event_id=event.id)
+        event = Event.objects.create(
+            title=title,
+            start=start,
+            end=end,
+            end_recurring_period=end_recurring_period,
+            rule=rule,
+            calendar=calendar
+        )
 
-            messages.add_message(request, messages.ERROR,
-                                 "Meeting type invalid! Please ensure you have selected either online or in-person.")
-            return render(request, 'fullcalendar.html', {'calendar': calendar})
-        else:
-            return render(request, "event_create_form.html", {"form": form, "calendar_id": calendar.id, "calendar_name": calendar.name})
-    else:
-        return render(request, "event_create_form.html", {"form": CreateEventForm, "calendar_id": calendar.id, "calendar_name": calendar.name})
+        club = Club.objects.get(calendar=event.calendar)
+
+        if club.meeting_type == 'ONL':
+            return redirect('create_event_link', event_id=event.id)
+
+        if club.meeting_type == 'INP':
+            return redirect('create_event_address', event_id=event.id)
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        calendar = Calendar.objects.get(id=self.kwargs['calendar_id'])
+        return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        calendar = Calendar.objects.get(id=self.kwargs['calendar_id'])
+        context['calendar'] = calendar
+        context['calendar_id'] = calendar.id
+        context['calendar_name'] = calendar.name
+        context['user'] = self.request.user
+
+        return context
 
 
 def create_event_link(request, event_id):
@@ -571,6 +584,7 @@ def create_event_address(request, event_id):
             "form": MeetingAddressForm,
             "event": event
         })
+
 
 def club_recommender(request):
     """View that shows a list of all recommended clubs."""
