@@ -57,32 +57,33 @@ urlpatterns = [
 
     path('user_detail/', views.user_detail, name='user_detail'),
 
-    # sample scheduler
-    # url(r'^fullcalendar', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),
-
-
+    # scheduler
+    re_path(r"^schedule/api/occurrences", api_occurrences, name="api_occurrences"),
+    path('calendar_picker/', views.calendar_picker, name='calendar_picker'),
+    path('full_calendar/<str:calendar_slug>', views.full_calendar, name='full_calendar'),
+    path('events_list/<int:calendar_id>', views.events_list, name='events_list'),
     url(r'^event/create/(?P<calendar_id>[-\w]+)/$',
         views.CreateEventView.as_view(),
         name='create_event'),
-    path('full_calendar/<str:calendar_slug>', views.full_calendar, name='full_calendar'),
-    path('calendar_picker/', views.calendar_picker, name='calendar_picker'),
-    path('events_list/<int:calendar_id>', views.events_list, name='events_list'),
-    path('event/<int:event_id>/link', views.create_event_link, name='create_event_link'),
     path('event/<int:event_id>/address', views.create_event_address, name='create_event_address'),
-    re_path(
-        r"^event/edit/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
-        EditEventView.as_view(),
-        name="edit_event",
-    ),
+    url(r"^event/link/edit/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
+        views.CreateEventLinkView.as_view(),
+        name='create_event_link'),
+    url(r"^event/edit/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
+        views.EditEventView.as_view(),
+        name='edit_event'),
+    # re_path(
+    #     r"^event/edit/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
+    #     views.EditEventView.as_view(),
+    #     name="edit_event",
+    # ),
     re_path(r"^event/(?P<event_id>\d+)/$", EventView.as_view(), name="event"),
     re_path(
-        r"^event/delete/(?P<event_id>\d+)/$",
-        DeleteEventView.as_view(),
+        r"^event/delete/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
+        views.DeleteEventView.as_view(),
         name="delete_event",
     ),
-    re_path(r"^schedule/api/occurrences", api_occurrences, name="api_occurrences"),
-    # keep this at the end of the list to allow overwriting of unwanted urls
-    # url(r'^schedule/', include('schedule.urls')),
+
     path('club_recommender/', views.club_recommender, name='club_recommender'),
 
     path('book_preferences/', views.book_preferences, name='book_preferences')
