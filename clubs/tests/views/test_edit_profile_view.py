@@ -15,7 +15,7 @@ class UserViewTestCase(TestCase , MenuTesterMixin):
 
     def setUp(self):
         self.user = User.objects.get(email='johndoe@example.org')
-        self.url = reverse("edit_profile")
+        self.url = reverse("edit_user")
         self.form_input = {
             "first_name": "John2",
             "last_name": "Doe2",
@@ -24,13 +24,13 @@ class UserViewTestCase(TestCase , MenuTesterMixin):
         }
 
     def test_profile_url(self):
-        self.assertEqual(self.url, '/edit_profile/' )
+        self.assertEqual(self.url, 'editprofile/' )
 
     def test_get_profile(self):
         self.client.login(username=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'edit_profile.html')
+        self.assertTemplateUsed(response, 'edit_user.html')
         form = response.context['form']
         self.assertTrue(isinstance(form, EditProfileForm))
         self.assertEqual(form.instance, self.user)
@@ -50,7 +50,7 @@ class UserViewTestCase(TestCase , MenuTesterMixin):
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "edit_profile.html")
+        self.assertTemplateUsed(response, "edit_user.html")
         form = response.context["form"]
         self.assertTrue(isinstance(form, EditProfileForm))
         self.assertTrue(form.is_bound)
@@ -73,7 +73,7 @@ class UserViewTestCase(TestCase , MenuTesterMixin):
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "edit_profile.html")
+        self.assertTemplateUsed(response, "edit_user.html")
         form = response.context["form"]
         self.assertTrue(isinstance(form, EditProfileForm))
         self.assertTrue(form.is_bound)
