@@ -3,6 +3,7 @@ from clubs.helpers import member, owner
 from clubs.models import Club, MeetingAddress, MeetingLink, Post, User, Book
 from django.conf import settings
 
+from .helpers import login_prohibited
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -351,7 +352,7 @@ class EditUserView(LoginRequiredMixin, UpdateView):
     """View to update logged-in user's profile."""
 
     model = UserForm
-    template_name = "profile.html"
+    template_name = "edit_user.html"
     form_class = UserForm
 
     def get_object(self):
