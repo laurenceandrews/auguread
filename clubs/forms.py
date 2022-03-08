@@ -10,7 +10,8 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
-from .models import Club, MeetingAddress, MeetingLink, Post, User
+
+from .models import Address, Club, MeetingAddress, MeetingLink, Post, User
 
 
 class LogInForm(forms.Form):
@@ -146,6 +147,7 @@ class UserForm(forms.ModelForm):
         fields = ['first_name', 'last_name', 'username', 'email', 'bio']
         widgets = {'bio': forms.Textarea()}
 
+
 class PostForm(forms.ModelForm):
     """Form to ask user for post text.
 
@@ -203,6 +205,12 @@ class NewClubForm(forms.ModelForm):
 class MeetingAddressForm(forms.ModelForm):
     class Meta:
         model = MeetingAddress
+        fields = ['address']
+
+
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
         fields = ['name', 'address1', 'address2', 'zip_code', 'city']
 
     country = CountryField(blank_label='(Select country)').formfield()

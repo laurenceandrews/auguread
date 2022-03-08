@@ -9,6 +9,8 @@
           {% csrf_token %}
           {% include 'partials/bootstrap_form.html' with form=form %}
           <input type="submit" value="Confirm event address" class="btn btn-primary" />
+          <a href="{{ view.get_success_url }}" class="btn btn-default">Create new event address</a>
+          <a href="{{ view.get_success_url }}" class="btn btn-default">Cancel</a>
         </form>
       </div>
     </div>
