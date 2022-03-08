@@ -1,11 +1,12 @@
 """Tests of the log in view."""
 
-from django.contrib import messages
-from django.test import TestCase
-from django.urls import reverse
 from clubs.forms import LogInForm
 from clubs.models import User
 from clubs.tests.helpers import LogInTester, reverse_with_next
+from django.contrib import messages
+from django.test import TestCase
+from django.urls import reverse
+
 
 class LogInViewTestCase(TestCase, LogInTester):
     """Tests of the log in view."""
@@ -17,7 +18,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.user = User.objects.get(email='johndoe@example.org')
 
     def test_log_in_url(self):
-        self.assertEqual(self.url,'/log_in/')
+        self.assertEqual(self.url, '/log_in/')
 
     def test_get_log_in(self):
         response = self.client.get(self.url)
@@ -32,7 +33,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertEqual(len(messages_list), 0)
 
     def test_get_log_in_with_redirect(self):
-        destination_url = reverse('user_list')
+        destination_url = reverse('rec')
         self.url = reverse_with_next('log_in', destination_url)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -48,12 +49,12 @@ class LogInViewTestCase(TestCase, LogInTester):
     def test_get_log_in_redirect_when_logged_in(self):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url, follow=True)
-        redirect_url = reverse('rec')
+        redirect_url = reverse('book_preferences')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'rec_page.html')
+        self.assertTemplateUsed(response, 'book_preferences.html')
 
     def test_unsuccesful_log_in(self):
-        form_input = { 'email': 'johndoe@example.org', 'password': 'WrongPassword123' }
+        form_input = {'email': 'johndoe@example.org', 'password': 'WrongPassword123'}
         response = self.client.post(self.url, form_input)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'log_in.html')
@@ -66,7 +67,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertEqual(messages_list[0].level, messages.ERROR)
 
     def test_log_in_with_blank_email(self):
-        form_input = { 'email': '', 'password': 'Password123' }
+        form_input = {'email': '', 'password': 'Password123'}
         response = self.client.post(self.url, form_input)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'log_in.html')
@@ -79,7 +80,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertEqual(messages_list[0].level, messages.ERROR)
 
     def test_log_in_with_blank_password(self):
-        form_input = { 'email': 'johndoe@example.org', 'password': '' }
+        form_input = {'email': 'johndoe@example.org', 'password': ''}
         response = self.client.post(self.url, form_input)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'log_in.html')
@@ -92,7 +93,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertEqual(messages_list[0].level, messages.ERROR)
 
     def test_succesful_log_in(self):
-        form_input = { 'email': 'johndoe@example.org', 'password': 'Password123' }
+        form_input = {'email': 'johndoe@example.org', 'password': 'Password123'}
         response = self.client.post(self.url, form_input, follow=True)
         self.assertTrue(self._is_logged_in())
         response_url = reverse('rec')
@@ -102,27 +103,27 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertEqual(len(messages_list), 0)
 
     def test_succesful_log_in_with_redirect(self):
-        redirect_url = reverse('user_list')
-        form_input = { 'email': 'johndoe@example.org', 'password': 'Password123', 'next': redirect_url}
+        redirect_url = reverse('rec')
+        form_input = {'email': 'johndoe@example.org', 'password': 'Password123', 'next': redirect_url}
         response = self.client.post(self.url, form_input, follow=True)
         self.assertTrue(self._is_logged_in())
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'user_list.html')
+        self.assertTemplateUsed(response, 'rec_page.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
 
     def test_post_log_in_redirect_when_logged_in(self):
         self.client.login(email=self.user.email, password="Password123")
-        form_input = { 'email': 'wronguser@example.org', 'password': 'WrongPassword123'}
+        form_input = {'email': 'wronguser@example.org', 'password': 'WrongPassword123'}
         response = self.client.post(self.url, form_input, follow=True)
-        redirect_url = reverse('rec')
+        redirect_url = reverse('book_preferences')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'rec_page.html')
+        self.assertTemplateUsed(response, 'book_preferences.html')
 
     def test_valid_log_in_by_inactive_user(self):
         self.user.is_active = False
         self.user.save()
-        form_input = { 'email': 'johndoe@example.org', 'password': 'Password123' }
+        form_input = {'email': 'johndoe@example.org', 'password': 'Password123'}
         response = self.client.post(self.url, form_input, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'log_in.html')
@@ -135,8 +136,8 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertEqual(messages_list[0].level, messages.ERROR)
 
     def test_post_log_in_with_incorrect_credentials_and_redirect(self):
-        redirect_url = reverse('user_list')
-        form_input = { 'email': 'johndoe@example.org', 'password': 'WrongPassword123', 'next': redirect_url }
+        redirect_url = reverse('rec')
+        form_input = {'email': 'johndoe@example.org', 'password': 'WrongPassword123', 'next': redirect_url}
         response = self.client.post(self.url, form_input)
         next = response.context['next']
         self.assertEqual(next, redirect_url)

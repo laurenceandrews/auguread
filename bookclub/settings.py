@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.humanize',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -46,6 +47,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'schedule',
     'djangobower',
+    # 'star_ratings',
+
 ]
 
 MIDDLEWARE = [
@@ -160,6 +163,7 @@ REDIRECT_URL_WHEN_LOGGED_IN = 'home'
 USERS_PER_PAGE = 10
 POSTS_PER_PAGE = 20
 NUMBER_PER_PAGE = 15
+BOOKS_PER_PAGE = 10
 
 # Set up djangobower
 
@@ -181,3 +185,7 @@ BOWER_INSTALLED_APPS = (
     'bootstrap',
     'fullcalendar#3.8.2'
 )
+
+STAR_RATINGS_RERATE_SAME_DELETE = True
+STAR_RATINGS_RANGE = 10
+STAR_RATINGS_STAR_HEIGHT = 20

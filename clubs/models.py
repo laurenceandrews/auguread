@@ -39,7 +39,6 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     USERNAME_FIELD = "email"
     username = models.CharField(
-        primary_key=True,
         max_length=30,
         unique=True,
         validators=[
@@ -50,10 +49,7 @@ class User(AbstractUser):
         ]
     )
 
-    id = models.CharField(
-        unique=True,
-        max_length=20
-    )
+    id = models.AutoField(primary_key=True)
 
     first_name = models.CharField(
         max_length=50,
@@ -91,6 +87,11 @@ class User(AbstractUser):
     country = CountryField(
         blank_label='(select country)'
     )
+
+    followers = models.ManyToManyField(
+        'self', symmetrical=False, related_name='followees'
+    )
+
 
     class Meta:
         """Model options"""
@@ -135,6 +136,34 @@ class User(AbstractUser):
     def clubs_attended(self):
         return list(self.member.all()) + list(self.owner.all()) + list(Club.objects.filter(owner=self))
 
+    def toggle_follow(self, followee):
+        """Toggles whether self follows the given followee."""
+
+        if followee==self:
+            return
+        if self.is_following(followee):
+            self._unfollow(followee)
+        else:
+            self._follow(followee)
+
+    def _follow(self, user):
+        user.followers.add(self)
+
+    def _unfollow(self, user):
+        user.followers.remove(self)
+
+    def is_following(self, user):
+        """Returns whether self follows the given user."""
+        return user in self.followees.all()
+
+    def follower_count(self):
+        """Returns the number of followers of self."""
+        return self.followers.count()
+
+    def followee_count(self):
+        """Returns the number of followees of self."""
+        return self.followees.count()
+
 
 class Book(models.Model):
     ISBN = models.CharField(
@@ -159,6 +188,11 @@ class Book(models.Model):
 
     publication_year = models.IntegerField(
         blank=False
+    )
+
+    image_small = models.ImageField(
+        blank=False,
+        default='https://media2.fdncms.com/stranger/imager/u/large/43820816/1591119073-screen_shot_2020-06-02_at_10.30.13_am.png'
     )
 
 
@@ -236,6 +270,27 @@ class MeetingAddress(models.Model):
 
     def full_address(self):
         return f'{self.name}. {self.zip_code}, {self.address1}, {self.address2}. {self.city}, {self.country}.'
+
+    def _follow(self, user):
+        user.followers.add(self)
+
+    def _unfollow(self, user):
+        user.followers.remove(self)
+
+    def is_following(self, user):
+        """Returns whether self follows the given user."""
+
+        return user in self.followees.all()
+
+    def follower_count(self):
+        """Returns the number of followers of self."""
+
+        return self.followers.count()
+
+    def followee_count(self):
+        """Returns the number of followees of self."""
+
+        return self.followees.count()
 
 
 class Club(models.Model):
