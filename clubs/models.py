@@ -87,10 +87,11 @@ class User(AbstractUser):
     country = CountryField(
         blank_label='(select country)'
     )
-    
+
     followers = models.ManyToManyField(
         'self', symmetrical=False, related_name='followees'
     )
+
 
     class Meta:
         """Model options"""
@@ -153,17 +154,14 @@ class User(AbstractUser):
 
     def is_following(self, user):
         """Returns whether self follows the given user."""
-
         return user in self.followees.all()
 
     def follower_count(self):
         """Returns the number of followers of self."""
-
         return self.followers.count()
 
     def followee_count(self):
         """Returns the number of followees of self."""
-
         return self.followees.count()
 
 

@@ -49,9 +49,9 @@ class LogInViewTestCase(TestCase, LogInTester):
     def test_get_log_in_redirect_when_logged_in(self):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url, follow=True)
-        redirect_url = reverse('rec')
+        redirect_url = reverse('book_preferences')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'rec_page.html')
+        self.assertTemplateUsed(response, 'book_preferences.html')
 
     def test_unsuccesful_log_in(self):
         form_input = {'email': 'johndoe@example.org', 'password': 'WrongPassword123'}
@@ -116,9 +116,9 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.user.email, password="Password123")
         form_input = {'email': 'wronguser@example.org', 'password': 'WrongPassword123'}
         response = self.client.post(self.url, form_input, follow=True)
-        redirect_url = reverse('rec')
+        redirect_url = reverse('book_preferences')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'rec_page.html')
+        self.assertTemplateUsed(response, 'book_preferences.html')
 
     def test_valid_log_in_by_inactive_user(self):
         self.user.is_active = False
