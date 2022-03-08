@@ -58,7 +58,7 @@ urlpatterns = [
 
 
     url(r'^event/create/(?P<calendar_id>[-\w]+)/$',
-        views.create_event,
+        views.CreateEventView.as_view(),
         name='create_event'),
     path('full_calendar/<str:calendar_slug>', views.full_calendar, name='full_calendar'),
     path('calendar_picker/', views.calendar_picker, name='calendar_picker'),

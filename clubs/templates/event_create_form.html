@@ -7,11 +7,14 @@
       <h1>Create Event for {{calendar_name}}</h1>
       <form action="{% url 'create_event' calendar_id=calendar_id %}" method="post">
         {% csrf_token %}
-        {# {% include 'partials/bootstrap_form.html' with form=form %} #}
+        <table>
+    {{ form.as_table }}
+  </table>
+  <br>
+  <input type="submit" value="{% trans "Save and continue" %}">
+  <a href="{{ view.get_success_url }}" class="btn btn-default">Cancel</a>
 
-          {{ form.as_p }}
 
-        <input type="submit" value="Confirm and continue" class="btn btn-primary"/>
       </form>
     </div>
   </div>
