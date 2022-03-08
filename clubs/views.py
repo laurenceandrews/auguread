@@ -517,7 +517,7 @@ class CreateEventView(CreateView):
         club = Club.objects.get(calendar=event.calendar)
 
         if club.meeting_type == 'ONL':
-            return redirect('create_event_link', event_id=event.id)
+            return redirect('create_event_link', calendar_slug=calendar.slug, event_id=event.id)
 
         if club.meeting_type == 'INP':
             return redirect('create_event_address', event_id=event.id)
@@ -538,23 +538,36 @@ class CreateEventView(CreateView):
         return context
 
 
-def create_event_link(request, event_id):
-    event = Event.objects.get(id=event_id)
-    if request.method == "POST":
-        current_user = request.user
-        form = MeetingLinkForm(request.POST)
-        if form.is_valid():
-            meeting_link = form.cleaned_data.get('meeting_link')
+class CreateEventLinkView(CreateView):
+    """Class-based generic view for new post handling."""
 
-            meeting_link_object = MeetingLink.objects.create(
-                event=event,
-                meeting_link=meeting_link
-            )
-            return render(request, 'fullcalendar.html', {'calendar': event.calendar})
-        else:
-            return render(request, "event_link_form.html", {"form": form, "event": event})
-    else:
-        return render(request, "event_link_form.html", {"form": MeetingLinkForm, "event": event})
+    model = MeetingLink
+    template_name = 'event_link_form.html'
+    form_class = MeetingLinkForm
+
+    def form_valid(self, form):
+        """Process a valid form."""
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+
+        meeting_link = form.cleaned_data.get('meeting_link')
+
+        meeting_link_object = MeetingLink.objects.create(
+            event=event,
+            meeting_link=meeting_link
+        )
+        return render(request, 'fullcalendar.html', {'calendar': event.calendar})
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        event = Event.objects.get(id=self.kwargs['event_id'])
+        context['event'] = event
+
+        return context
 
 
 def create_event_address(request, event_id):
@@ -607,7 +620,7 @@ class EditEventView(UpdateView):
         club = Club.objects.get(calendar=event.calendar)
 
         if club.meeting_type == 'ONL':
-            return redirect('create_event_link', event_id=event.id)
+            return redirect('create_event_link', calendar_slug=calendar.slug, event_id=event.id)
 
         if club.meeting_type == 'INP':
             return redirect('create_event_address', event_id=event.id)
