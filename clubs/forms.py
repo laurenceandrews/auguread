@@ -10,7 +10,6 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
-
 from .models import Club, MeetingAddress, MeetingLink, Post, User
 
 
@@ -146,7 +145,6 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'last_name', 'username', 'email', 'bio']
         widgets = {'bio': forms.Textarea()}
-
 
 class PostForm(forms.ModelForm):
     """Form to ask user for post text.

@@ -69,7 +69,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_valid()
 
     def test_first_name_must_not_contain_more_than_50_characters(self):
-        self.user.first_name = 'x' * 51
+        self.user.first_name = 'x' * 55
         self._assert_user_is_invalid()
 
     def test_last_name_must_not_be_blank(self):
@@ -86,7 +86,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_valid()
 
     def test_last_name_must_not_contain_more_than_50_characters(self):
-        self.user.last_name = 'x' * 51
+        self.user.last_name = 'x' * 55
         self._assert_user_is_invalid()
 
     def test_email_must_not_be_blank(self):
@@ -132,7 +132,7 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_valid()
 
     def test_bio_must_not_contain_more_than_520_characters(self):
-        self.user.bio = 'x' * 521
+        self.user.bio = 'x' * 525
         self._assert_user_is_invalid()
 
     def test_city_cannot_be_blank(self):
@@ -162,20 +162,20 @@ class UserModelTestCase(TestCase):
         self.user.age = second_user.age
         self._assert_user_is_valid()
 
-    def test_age_may_not_be_less_than_1(self):
+    def test_age_may_not_be_less_than_5(self):
         self.user.age = 0
         self._assert_user_is_invalid()
 
-    def test_age_may_not_be_more_than_150(self):
-        self.user.age = 151
+    def test_age_may_not_be_more_than_105(self):
+        self.user.age = 555
         self._assert_user_is_invalid()
 
-    def test_age_may_be_1(self):
-        self.user.age = 1
+    def test_age_may_be_5(self):
+        self.user.age = 5
         self._assert_user_is_valid()
 
-    def test_age_may_be_150(self):
-        self.user.age = 150
+    def test_age_may_be_105(self):
+        self.user.age = 105
         self._assert_user_is_valid()
 
     def _assert_user_is_valid(self):

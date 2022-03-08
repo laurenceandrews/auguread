@@ -1,13 +1,13 @@
-from clubs.forms import LogInForm, NewClubForm, PasswordForm, PostForm
+from clubs.forms import LogInForm, NewClubForm, PasswordForm, PostForm, SignUpForm
 from clubs.helpers import member, owner
-from clubs.models import Club, MeetingAddress, MeetingLink, Post, User
+from clubs.models import Club, MeetingAddress, MeetingLink, Post, User, Book
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import slugify
 from django.urls import reverse
@@ -17,7 +17,6 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
-
 from .forms import (CalendarPickerForm, CreateEventForm, MeetingAddressForm,
                     MeetingLinkForm, SignUpForm)
 from .helpers import login_prohibited
@@ -49,12 +48,36 @@ class LoginProhibitedMixin:
         else:
             return self.redirect_when_logged_in_url
 
+class ApplicantProhibitedMixin:
+    """Redirects to club_list if user is an applicant and dispatches as normal otherwise."""
+
+    def dispatch(self, *args, **kwargs):
+        """Checks the membership type of the user of the club."""
+
+        club = Club.objects.get(id=kwargs['club_id'])
+        if (self.request.user in club.members.all()
+                or self.request.user in club.owners.all() or club.owner == self.request.user):
+            return super().dispatch(*args, **kwargs)
+        else:
+            return redirect(settings.AUTO_REDIRECT_URL)
+
+class MemberProhibitedMixin:
+    """Redirects to club_list if user is an applicant or a member and dispatches as normal otherwise."""
+
+    def dispatch(self, *args, **kwargs):
+        """Checks the membership type of the user of the club with the given club id."""
+
+        club = Club.objects.get(id=kwargs['club_id'])
+        if self.request.user in club.owners.all() or club.owner == self.request.user:
+            return super().dispatch(*args, **kwargs)
+        else:
+            return redirect(settings.AUTO_REDIRECT_URL)
 
 class LogInView(LoginProhibitedMixin, View):
     """View that handles log in."""
 
     http_method_names = ['get', 'post']
-    redirect_when_logged_in_url = 'rec'
+    redirect_when_logged_in_url = 'book_preferences'
 
     def get(self, request):
         """Display log in template."""
@@ -95,7 +118,7 @@ def sign_up(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')
+            return redirect('book_preferences')
     else:
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
@@ -132,16 +155,41 @@ class PasswordView(LoginRequiredMixin, FormView):
             self.request, messages.SUCCESS, "Password updated!")
         return reverse(settings.AUTO_REDIRECT_URL)
 
-# class UserListView(LoginRequiredMixin, ListView):
-#     """View that shows a list of all users."""
-#
-#     model = User
-#     template_name = "user_list.html"
-#     context_object_name = "users"
-#     paginate_by = settings.USERS_PER_PAGE
 
+class FeedView(LoginRequiredMixin, ListView):
+    """Class-based generic view for displaying a view."""
 
-class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
+    model = Post
+    template_name = "feed.html"
+    context_object_name = 'posts'
+    paginate_by = settings.POSTS_PER_PAGE
+
+    def get_queryset(self):
+        """Return the user's feed."""
+        current_user = self.request.user
+        authors = list(current_user.followees.all()) + [current_user]
+        posts = Post.objects.filter(author__in=authors)
+        return posts
+
+    def get_context_data(self, **kwargs):
+        """Return context data, including new post form."""
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['form'] = PostForm()
+        return context
+
+@login_required
+def follow_toggle(request, user_id):
+    current_user = request.user
+    try:
+        followee = User.objects.get(id=user_id)
+        current_user.toggle_follow(followee)
+    except ObjectDoesNotExist:
+        return redirect('user_list')
+    else:
+        return redirect('show_user', user_id=user_id)
+
+class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
     """View that shows a list of all users"""
     model = User
     template_name = "user_list.html"
@@ -162,13 +210,13 @@ class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
         return context
 
 
-class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
+class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, ApplicantProhibitedMixin):
     """View that shows individual user details."""
 
     model = User
     template_name = 'show_user.html'
     paginate_by = settings.NUMBER_PER_PAGE
-    pk_url_kwarg = 'user_username'
+    pk_url_kwarg = 'user_id'
 
     def get_context_data(self, **kwargs):
         """Generate context data to be shown in the template."""
@@ -187,8 +235,8 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
         context['type'] = target_type
         context['user'] = user
         context['posts'] = context['object_list']
-        # context['following'] = self.request.user.is_following(user)
-        # context['followable'] = (self.request.user != user)
+        context['following'] = self.request.user.is_following(user)
+        context['followable'] = (self.request.user != user)
         context['target'] = target
         context['club'] = club
         return context
@@ -271,7 +319,7 @@ def club_list(request):
 @member
 def enter(request, club_id):
     user = request.user
-    return redirect('show_user', user_username=user.username, club_id=club_id)
+    return redirect('show_user', user_id=user.id, club_id=club_id)
 
 
 @login_required
@@ -284,15 +332,15 @@ def apply(request, club_id):
 
 @login_required
 @owner
-def approve(request, user_username, club_id):
+def approve(request, user_id, club_id):
     club = Club.objects.get(id=club_id)
     try:
-        user = User.objects.get(username=user_username)
+        user = User.objects.get(id=user_id)
         club.accept(user)
     except ObjectDoesNotExist:
         return redirect('applicant_list', club_id=club_id)
     else:
-        return redirect('show_user', user_username=user.username, club_id=club_id)
+        return redirect('show_user', user_id=user.id, club_id=club_id)
 
 
 class NewPostView(LoginRequiredMixin, CreateView):
@@ -346,7 +394,7 @@ class ApplicantListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
         return redirect('applicant_list', club_id=club.id)
 
 
-class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
+class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
     """View that shows a list of all the members."""
 
     model = User
@@ -386,7 +434,7 @@ class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
 
     def get_queryset(self):
         club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.officers.all())
+        users = list(club.owners.all())
         return users
 
     def get_context_data(self, **kwargs):
@@ -541,3 +589,14 @@ def create_event_address(request, event_id):
 def club_recommender(request):
     """View that shows a list of all recommended clubs."""
     return render(request, 'club_recommender.html')
+
+
+def book_preferences(request):
+    """View that allows the user to view all books and rate them."""
+    books_queryset = Book.objects.all()
+
+    paginator = Paginator(books_queryset, settings.BOOKS_PER_PAGE)
+    page_number = request.GET.get('page')
+    books_paginated = paginator.get_page(page_number)
+
+    return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated})

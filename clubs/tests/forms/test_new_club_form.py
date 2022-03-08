@@ -24,6 +24,7 @@ class NewClubTestCase(TestCase):
             'country': self.club_country,
             'description': 'A book club that is fun.',
             'avg_reading_speed': 200,
+            # 'meeting_type': 'online',
             'calendar_name': 'Fun Reading Clubs Calendar'
         }
 
@@ -38,6 +39,7 @@ class NewClubTestCase(TestCase):
         self.assertIn('country', form.fields)
         self.assertIn('description', form.fields)
         self.assertIn('avg_reading_speed', form.fields)
+        # self.assertIn('meeting_type', form.fields)
         self.assertIn('calendar_name', form.fields)
 
     def test_name_cannot_exceed_50_characters(self):
