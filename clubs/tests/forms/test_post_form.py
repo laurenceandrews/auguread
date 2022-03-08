@@ -2,15 +2,20 @@ from django.test import TestCase
 from clubs.models import User, Post
 from clubs.forms import PostForm
 
+
 class PostFormTestCase(TestCase):
 
     fixtures = ['clubs/tests/fixtures/default_user.json']
 
     def setUp(self):
         self.user = User.objects.get(username='@johndoe')
+
 from django_countries.fields import CountryField
 
 class PostFormTestCase(TestCase):
+
+    fixtures = ['clubs/tests/fixtures/default_user.json']
+
     def setUp(self):
         super(TestCase, self).setUp()
         self.user = User.objects.create_user(
@@ -22,6 +27,7 @@ class PostFormTestCase(TestCase):
             bio='The quick brown fox jumps over the lazy dog.'
             #country = Country(code = 'NZ')
         )
+
 
     def test_valid_post_form(self):
         input = {'text': 'x'*200 }

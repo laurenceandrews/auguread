@@ -87,10 +87,11 @@ class User(AbstractUser):
     country = CountryField(
         blank_label='(select country)'
     )
-    
+
     followers = models.ManyToManyField(
         'self', symmetrical=False, related_name='followees'
     )
+
 
     class Meta:
         """Model options"""

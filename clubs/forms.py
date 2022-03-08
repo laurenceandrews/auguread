@@ -252,6 +252,7 @@ class CreateEventForm(forms.ModelForm):
 class CalendarPickerForm(forms.Form):
     calendar = forms.ModelChoiceField(queryset=Calendar.objects.all().order_by('name'))
 
+
     fields = ['name', 'location', 'description']
 
 class EditProfileForm(forms.ModelForm):

@@ -3,7 +3,7 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-12 col-lg-6 col-xl-4">
-      {% include 'partials/user_profile.html' with following=False followable=False %}
+      {% include 'partials/user_profile_and_club.html' with following=False followable=False %}
       <form action="{% url 'new_post' %}" method="post">
         {% csrf_token %}
         {% include 'partials/bootstrap_form.html' with form=form %}

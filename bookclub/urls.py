@@ -30,12 +30,19 @@ urlpatterns = [
     path('log_out/', views.log_out, name='log_out'),
     path("__reload__/", include("django_browser_reload.urls")),
     path('password/', views.PasswordView.as_view(), name='password'),
+
     path('user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
     path('editprofile/<int:user_id>', views.EditUserView.as_view(), name='edit_user'),
     path('users/', views.UserListView.as_view(), name='user_list'),
     # path('rec/', views.RecommendationsView.as_view(), name='rec_page'),
+
+
+    path('feed/', views.FeedView.as_view(), name='feed'),
+    # path('new_post/', views.new_post, name='new_post'),
+    path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
+
+
     path('rec/', views.RecommendationsView, name='rec'),
-    # path('rec/', views.RecommendationsView.as_view(), name='rec_page'),
 
     # path('users/', views.UserListView.as_view(), name='user_list'),
     path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
@@ -76,4 +83,5 @@ urlpatterns = [
 
     path('book_preferences/', views.book_preferences, name='book_preferences')
     # path('book_preferences/', views.book_preferences, include('star_ratings.urls'), name='book_preferences')
+
 ]
