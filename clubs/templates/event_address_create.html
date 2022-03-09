@@ -1,14 +1,15 @@
-{% extends 'create_event.html' %}
+{% extends 'event_create.html' %}
 {% block content%}
 <div class="container">
   <div class="row">
     <div class="col-12">
-      <div class="meeting-link">
+      <div class="meeting-address">
         <h2>Meeting Address for Event: {{ event.title }}</h2>
-        <form action="{% url 'create_address' calendar_slug=event.calendar.slug event_id=event.id %}" method="post">
+        <form action="{% url 'create_event_address' calendar_slug=event.calendar.slug event_id=event.id %}" method="post">
           {% csrf_token %}
           {% include 'partials/bootstrap_form.html' with form=form %}
           <input type="submit" value="Confirm event address" class="btn btn-primary" />
+          <a href="{{ view.get_create_address_url }}" class="btn btn-default">Create new event address</a>
           <a href="{{ view.get_success_url }}" class="btn btn-default">Cancel</a>
         </form>
       </div>

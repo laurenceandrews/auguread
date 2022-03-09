@@ -209,12 +209,14 @@ class MeetingAddressForm(forms.ModelForm):
         fields = ['address']
 
     def __init__(self, *args, **kwargs):
+        """Give user option of all addresses used for events for this calendar"""
         calendar_slug = kwargs.pop('calendar_slug')
         super(MeetingAddressForm, self).__init__(*args, **kwargs)
         calendar = Calendar.objects.get(slug=calendar_slug)
         events = Event.objects.filter(calendar=calendar)
         meeting_addresses = MeetingAddress.objects.filter(event__in=events)
-        addresses = Address.objects.filter(id__in=meeting_addresses)
+        address_ids = meeting_addresses.values_list('address_id', flat=True)
+        addresses = Address.objects.filter(id__in=address_ids)
         self.fields['address'].queryset = addresses.order_by('name')
 
 
@@ -249,8 +251,6 @@ class CreateEventForm(forms.ModelForm):
     end = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
         initial=meeting_end)
-
-    # end_recurring_period = forms.DateTimeField(help_text=_("This date is ignored for one time only events."), required=False)
 
     end_recurring_period = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
