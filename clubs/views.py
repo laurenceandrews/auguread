@@ -1,7 +1,8 @@
-from clubs.forms import (LogInForm, NewClubForm, PasswordForm, PostForm,
-                         SignUpForm)
+from clubs.forms import (ClubBookForm, LogInForm, NewClubForm, PasswordForm,
+                         PostForm, SignUpForm)
 from clubs.helpers import member, owner
-from clubs.models import Book, Club, MeetingAddress, MeetingLink, Post, User, BookRatingForm
+from clubs.models import (Book, BookRatingForm, Club, Club_Books,
+                          MeetingAddress, MeetingLink, Post, User)
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -702,7 +703,7 @@ class BookPreferencesView(LoginRequiredMixin, View):
 
         form = BookRatingForm(request.POST)
         self.next = request.POST.get('next') or settings.AUTO_REDIRECT_URL
-        
+
         return self.render()
 
     def render(self):
@@ -710,3 +711,32 @@ class BookPreferencesView(LoginRequiredMixin, View):
 
         form = BookRatingForm()
         return render(self.request, 'book_preferences.html', {'form': form, 'next': self.next})
+
+
+class ClubBookSelectionView(CreateView):
+    """Class-based generic view for new post handling."""
+
+    model = Club_Books
+    template_name = 'club_book_select.html'
+    form_class = ClubBookForm
+
+    def get_form_kwargs(self):
+        kwargs = super(ClubBookSelectionView, self).get_form_kwargs()
+        kwargs['club_id'] = self.kwargs['club_id']
+        return kwargs
+
+    def form_valid(self, form):
+        """Process a valid form."""
+        club = Club.objects.get(id=self.kwargs['club_id'])
+
+        book = form.cleaned_data.get('book')
+
+        club_book = Club_Books.objects.create(
+            club=club,
+            book=book
+        )
+        return render(self.request, 'home.html')
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        return redirect('home')

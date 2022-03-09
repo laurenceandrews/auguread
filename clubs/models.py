@@ -3,6 +3,7 @@
 import uuid
 from pickle import FALSE
 
+from django import forms
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     RegexValidator)
@@ -10,8 +11,6 @@ from django.db import models
 from django_countries.fields import CountryField
 from libgravatar import Gravatar
 from schedule.models import Calendar, Event, Rule
-
-from django import forms
 
 
 class UserManager(UserManager):
@@ -94,7 +93,6 @@ class User(AbstractUser):
         'self', symmetrical=False, related_name='followees'
     )
 
-
     class Meta:
         """Model options"""
         ordering = ['first_name', 'last_name']
@@ -141,7 +139,7 @@ class User(AbstractUser):
     def toggle_follow(self, followee):
         """Toggles whether self follows the given followee."""
 
-        if followee==self:
+        if followee == self:
             return
         if self.is_following(followee):
             self._unfollow(followee)
@@ -201,7 +199,7 @@ class Book(models.Model):
         blank=False,
         default='/static/default_book.png/'
     )
-    
+
     image_large = models.ImageField(
         blank=False,
         default='/static/default_book.png/'
@@ -211,6 +209,9 @@ class Book(models.Model):
         blank=False,
         default=0
     )
+
+    def __str__(self):
+        return self.title
 
 
 class Post(models.Model):
@@ -485,13 +486,14 @@ class MyUUIDModel(models.Model):
         editable=False
     )
 
+
 class BookRatingForm(forms.Form):
-    user = models.ForeignKey(User, on_delete=models.CASCADE) 
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     previous_rating = Book.rating
     rating = forms.ChoiceField(
-        required = False,
-        label = 'Rate book',
-        initial = 'previous_rating',
-        error_messages = {},
+        required=False,
+        label='Rate book',
+        initial='previous_rating',
+        error_messages={},
         choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
     )

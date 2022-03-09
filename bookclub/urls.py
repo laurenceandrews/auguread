@@ -89,4 +89,8 @@ urlpatterns = [
     path('book_preferences/', views.book_preferences, name='book_preferences'),
     #path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
 
+
+    url(r"^club/book/edit/(?P<club_id>\d+)/$",
+        views.ClubBookSelectionView.as_view(),
+        name='club_book_select'),
 ]
