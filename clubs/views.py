@@ -1,20 +1,23 @@
-from clubs.forms import LogInForm, NewClubForm, PasswordForm, PostForm
+from clubs.forms import (LogInForm, NewClubForm, PasswordForm, PostForm,
+                         SignUpForm)
 from clubs.helpers import member, owner
-from clubs.models import Club, MeetingAddress, MeetingLink, Post, User, Book
+from clubs.models import Book, Club, MeetingAddress, MeetingLink, Post, User
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import (Http404, HttpResponse, HttpResponseForbidden,
+                         HttpResponseRedirect)
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, FormView, UpdateView
+from django.views.generic.edit import (CreateView, DeleteView, FormView,
+                                       UpdateView)
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
@@ -48,6 +51,33 @@ class LoginProhibitedMixin:
             )
         else:
             return self.redirect_when_logged_in_url
+
+
+class ApplicantProhibitedMixin:
+    """Redirects to club_list if user is an applicant and dispatches as normal otherwise."""
+
+    def dispatch(self, *args, **kwargs):
+        """Checks the membership type of the user of the club."""
+
+        club = Club.objects.get(id=kwargs['club_id'])
+        if (self.request.user in club.members.all()
+                or self.request.user in club.owners.all() or club.owner == self.request.user):
+            return super().dispatch(*args, **kwargs)
+        else:
+            return redirect(settings.AUTO_REDIRECT_URL)
+
+
+class MemberProhibitedMixin:
+    """Redirects to club_list if user is an applicant or a member and dispatches as normal otherwise."""
+
+    def dispatch(self, *args, **kwargs):
+        """Checks the membership type of the user of the club with the given club id."""
+
+        club = Club.objects.get(id=kwargs['club_id'])
+        if self.request.user in club.owners.all() or club.owner == self.request.user:
+            return super().dispatch(*args, **kwargs)
+        else:
+            return redirect(settings.AUTO_REDIRECT_URL)
 
 
 class LogInView(LoginProhibitedMixin, View):
@@ -132,16 +162,43 @@ class PasswordView(LoginRequiredMixin, FormView):
             self.request, messages.SUCCESS, "Password updated!")
         return reverse(settings.AUTO_REDIRECT_URL)
 
-# class UserListView(LoginRequiredMixin, ListView):
-#     """View that shows a list of all users."""
-#
-#     model = User
-#     template_name = "user_list.html"
-#     context_object_name = "users"
-#     paginate_by = settings.USERS_PER_PAGE
+
+class FeedView(LoginRequiredMixin, ListView):
+    """Class-based generic view for displaying a view."""
+
+    model = Post
+    template_name = "feed.html"
+    context_object_name = 'posts'
+    paginate_by = settings.POSTS_PER_PAGE
+
+    def get_queryset(self):
+        """Return the user's feed."""
+        current_user = self.request.user
+        authors = list(current_user.followees.all()) + [current_user]
+        posts = Post.objects.filter(author__in=authors)
+        return posts
+
+    def get_context_data(self, **kwargs):
+        """Return context data, including new post form."""
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['form'] = PostForm()
+        return context
 
 
-class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
+@login_required
+def follow_toggle(request, user_id):
+    current_user = request.user
+    try:
+        followee = User.objects.get(id=user_id)
+        current_user.toggle_follow(followee)
+    except ObjectDoesNotExist:
+        return redirect('user_list')
+    else:
+        return redirect('show_user', user_id=user_id)
+
+
+class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
     """View that shows a list of all users"""
     model = User
     template_name = "user_list.html"
@@ -162,7 +219,7 @@ class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
         return context
 
 
-class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
+class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, ApplicantProhibitedMixin):
     """View that shows individual user details."""
 
     model = User
@@ -187,8 +244,8 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
         context['type'] = target_type
         context['user'] = user
         context['posts'] = context['object_list']
-        # context['following'] = self.request.user.is_following(user)
-        # context['followable'] = (self.request.user != user)
+        context['following'] = self.request.user.is_following(user)
+        context['followable'] = (self.request.user != user)
         context['target'] = target
         context['club'] = club
         return context
@@ -346,7 +403,7 @@ class ApplicantListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
         return redirect('applicant_list', club_id=club.id)
 
 
-class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
+class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
     """View that shows a list of all the members."""
 
     model = User
@@ -386,7 +443,7 @@ class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
 
     def get_queryset(self):
         club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.officers.all())
+        users = list(club.owners.all())
         return users
 
     def get_context_data(self, **kwargs):
@@ -431,61 +488,86 @@ def events_list(request, calendar_id):
                   })
 
 
-@login_required
-def create_event(request, calendar_id):
-    calendar = Calendar.objects.get(id=calendar_id)
-    if request.method == "POST":
-        form = CreateEventForm(request.POST)
-        if form.is_valid():
-            title = form.cleaned_data.get('title')
-            start = form.cleaned_data.get('start')
-            end = form.cleaned_data.get('end')
-            end_recurring_period = form.cleaned_data.get('end_recurring_period')
-            rule = form.cleaned_data.get('rule')
+class CreateEventView(CreateView):
+    """Class-based generic view for new post handling."""
 
-            event = Event.objects.create(
-                title=title,
-                start=start,
-                end=end,
-                end_recurring_period=end_recurring_period,
-                rule=rule,
-                calendar=calendar
-            )
+    model = Event
+    template_name = 'create_event.html'
+    form_class = CreateEventForm
 
-            club = Club.objects.get(calendar=event.calendar)
+    def form_valid(self, form):
+        """Process a valid form."""
+        calendar = Calendar.objects.get(id=self.kwargs['calendar_id'])
 
-            if club.meeting_type == 'ONL':
-                return redirect('create_event_link', event_id=event.id)
+        title = form.cleaned_data.get('title')
+        start = form.cleaned_data.get('start')
+        end = form.cleaned_data.get('end')
+        end_recurring_period = form.cleaned_data.get('end_recurring_period')
+        rule = form.cleaned_data.get('rule')
 
-            if club.meeting_type == 'INP':
-                return redirect('create_event_address', event_id=event.id)
+        event = Event.objects.create(
+            title=title,
+            start=start,
+            end=end,
+            end_recurring_period=end_recurring_period,
+            rule=rule,
+            calendar=calendar
+        )
 
-            messages.add_message(request, messages.ERROR,
-                                 "Meeting type invalid! Please ensure you have selected either online or in-person.")
-            return render(request, 'fullcalendar.html', {'calendar': calendar})
-        else:
-            return render(request, "event_create_form.html", {"form": form, "calendar_id": calendar.id, "calendar_name": calendar.name})
-    else:
-        return render(request, "event_create_form.html", {"form": CreateEventForm, "calendar_id": calendar.id, "calendar_name": calendar.name})
+        club = Club.objects.get(calendar=event.calendar)
+
+        if club.meeting_type == 'ONL':
+            return redirect('create_event_link', calendar_slug=calendar.slug, event_id=event.id)
+
+        if club.meeting_type == 'INP':
+            return redirect('create_event_address', event_id=event.id)
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        calendar = Calendar.objects.get(id=self.kwargs['calendar_id'])
+        return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        calendar = Calendar.objects.get(id=self.kwargs['calendar_id'])
+        context['calendar'] = calendar
+        context['calendar_id'] = calendar.id
+        context['calendar_name'] = calendar.name
+        context['user'] = self.request.user
+
+        return context
 
 
-def create_event_link(request, event_id):
-    event = Event.objects.get(id=event_id)
-    if request.method == "POST":
-        current_user = request.user
-        form = MeetingLinkForm(request.POST)
-        if form.is_valid():
-            meeting_link = form.cleaned_data.get('meeting_link')
+class CreateEventLinkView(CreateView):
+    """Class-based generic view for new post handling."""
 
-            meeting_link_object = MeetingLink.objects.create(
-                event=event,
-                meeting_link=meeting_link
-            )
-            return render(request, 'fullcalendar.html', {'calendar': event.calendar})
-        else:
-            return render(request, "event_link_form.html", {"form": form, "event": event})
-    else:
-        return render(request, "event_link_form.html", {"form": MeetingLinkForm, "event": event})
+    model = MeetingLink
+    template_name = 'event_link_form.html'
+    form_class = MeetingLinkForm
+
+    def form_valid(self, form):
+        """Process a valid form."""
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+
+        meeting_link = form.cleaned_data.get('meeting_link')
+
+        meeting_link_object = MeetingLink.objects.create(
+            event=event,
+            meeting_link=meeting_link
+        )
+        return render(request, 'fullcalendar.html', {'calendar': event.calendar})
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        event = Event.objects.get(id=self.kwargs['event_id'])
+        context['event'] = event
+
+        return context
 
 
 def create_event_address(request, event_id):
@@ -524,11 +606,67 @@ def create_event_address(request, event_id):
             "event": event
         })
 
+
+class EditEventView(UpdateView):
+    model = Event
+    template_name = 'update_event.html'
+    form_class = CreateEventForm
+    pk_url_kwarg = "event_id"
+
+    def form_valid(self, form):
+        event = form.save(commit=False)
+
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        club = Club.objects.get(calendar=event.calendar)
+
+        if club.meeting_type == 'ONL':
+            return redirect('create_event_link', calendar_slug=calendar.slug, event_id=event.id)
+
+        if club.meeting_type == 'INP':
+            return redirect('create_event_address', event_id=event.id)
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        return reverse('full_calendar', kwargs={'calendar_slug': self.kwargs['calendar_slug']})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        context['calendar'] = calendar
+        context['calendar_id'] = calendar.id
+        context['calendar_name'] = calendar.name
+        context['user'] = self.request.user
+
+        return context
+
+
+class DeleteEventView(DeleteView):
+    model = Event
+    template_name = 'delete_event.html'
+    form_class = CreateEventForm
+    pk_url_kwarg = "event_id"
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        context['calendar'] = calendar
+        context['calendar_id'] = calendar.id
+        context['calendar_name'] = calendar.name
+        context['user'] = self.request.user
+
+        return context
+
+
 def club_recommender(request):
     """View that shows a list of all recommended clubs."""
     return render(request, 'club_recommender.html')
 
-  
+
 def book_preferences(request):
     """View that allows the user to view all books and rate them."""
     books_queryset = Book.objects.all()

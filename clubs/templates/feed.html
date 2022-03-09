@@ -1,0 +1,20 @@
+{% extends 'base_content.html' %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-lg-6 col-xl-4">
+      {% include 'partials/user_profile_and_club.html' with following=False followable=False %}
+      <form action="{% url 'new_post' %}" method="post">
+        {% csrf_token %}
+        {% include 'partials/bootstrap_form.html' with form=form %}
+        <button type="submit" class="btn btn-primary">Post</button>
+      </form>
+    </div>
+    <div class="col-xs-12 col-lg-6 col-xl-8">
+      {% include 'partials/post_pager.html' with page_obj=page_obj%}
+      {% include 'partials/posts_as_table.html' with posts=posts %}
+      {% include 'partials/post_pager.html' with page_obj=page_obj%}
+    </div>
+  </div>
+</div>
+{% endblock %}

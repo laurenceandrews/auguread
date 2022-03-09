@@ -32,6 +32,6 @@
   <p>Edit event</p>
 </div>
 
-<div onclick="location.href='{%url 'delete_event' event_id=event.id %}';" style="cursor: pointer;">
+<div onclick="location.href='{%url 'delete_event' calendar_slug=event.calendar.slug event_id=event.id %}';" style="cursor: pointer;">
   <p>Delete event</p>
 </div>
