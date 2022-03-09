@@ -11,6 +11,8 @@ from django_countries.fields import CountryField
 from libgravatar import Gravatar
 from schedule.models import Calendar, Event, Rule
 
+from django import forms
+
 
 class UserManager(UserManager):
     """ User Manager that knows how to create users via email instead of username """
@@ -191,7 +193,22 @@ class Book(models.Model):
 
     image_small = models.ImageField(
         blank=False,
-        default='https://media2.fdncms.com/stranger/imager/u/large/43820816/1591119073-screen_shot_2020-06-02_at_10.30.13_am.png'
+        default='/static/default_book.png/'
+    )
+
+    image_medium = models.ImageField(
+        blank=False,
+        default='/static/default_book.png/'
+    )
+    
+    image_large = models.ImageField(
+        blank=False,
+        default='/static/default_book.png/'
+    )
+
+    rating = models.IntegerField(
+        blank=False,
+        default=0
     )
 
 
@@ -455,4 +472,15 @@ class MyUUIDModel(models.Model):
         primary_key=True,
         default=uuid.uuid4,
         editable=False
+    )
+
+class BookRatingForm(forms.Form):
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
+    previous_rating = Book.rating
+    rating = forms.ChoiceField(
+        required = False,
+        label = 'Rate book',
+        initial = 'previous_rating',
+        error_messages = {},
+        choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
     )
