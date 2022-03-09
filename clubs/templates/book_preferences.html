@@ -4,12 +4,8 @@
 
 <style>
   ul.pagination {
-    display: inline-flex;
+    display: inline-block;
     margin-bottom: 20px;
-  }
-
-  ul.pagination li {
-    padding: 5px;
   }
 
   .row {
@@ -71,6 +67,70 @@
     background: rgb(56, 49, 185);
     border-radius: 0px 0px 5px 5px;
   }
+
+  ul.pagination li {
+    border: solid 1px #352fa9;
+    border-radius: 2px;
+    color: #352fa9;
+    height: 40px;
+    width: 50px;
+    vertical-align: middle;
+    background-color: #fff;
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    display: inline-block;
+  }
+
+  li.page-item.disabled li {
+    border: solid 1px #352fa9;
+    border-radius: 2px;
+    height: 40px;
+    width: 50px;
+    vertical-align: middle;
+    background-color: #fff;
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    display: inline-block;
+  }
+
+  ul.pagination li a {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+  }
+
+  li.page-item.disabled span.page-link {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+  }
+
+  li.page-item.active span.page-link {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+  }
+
+  ul.pagination li:hover {
+    color: #fff;
+    background-color: #352fa9;
+  }
+
+  li.page-item.active {
+    color: #fff;
+    background-color: #352fa9;
+  }
+
 </style>
 
 <div class="lg:flex h-full">
@@ -84,8 +144,8 @@
       
       <div class="mt-8 lg:mr-50">
 
-        <div class="inline-flex">
-            {% bootstrap_paginate books_paginated previous_label="Prev" next_label="Next" show_first_last="true" %}
+        <div class="inline-block">
+           {% bootstrap_paginate books_paginated previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
         </div>
 
           {% for book in books_paginated %}
