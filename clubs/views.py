@@ -1,5 +1,5 @@
-from clubs.forms import (LogInForm, NewClubForm, PasswordForm, PostForm,
-                         SignUpForm)
+from clubs.forms import (AddressForm, LogInForm, NewClubForm, PasswordForm,
+                         PostForm, SignUpForm)
 from clubs.helpers import member, owner
 from clubs.models import (Address, Book, Club, MeetingAddress, MeetingLink,
                           Post, User)
@@ -553,7 +553,7 @@ class CreateEventLinkView(CreateView):
             event=event,
             meeting_link=meeting_link
         )
-        return render(request, 'fullcalendar.html', {'calendar': event.calendar})
+        return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
 
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
@@ -584,7 +584,19 @@ class CreateEventAddressView(CreateView):
             event=event,
             address=address
         )
-        return render(request, 'fullcalendar.html', {'calendar': event.calendar})
+        return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
+
+    def get_queryset(self):
+        """Show all addresses created for events for this calendar"""
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        events = Event.objects.filter(calendar=calendar)
+        meeting_addresses = MeetingAddress.objects.filter(event__in=Subquery(events.values('id')))
+        # return meeting_addresses.values('address')
+        return MeetingAddress.objects.get(id=1).values('address')
+
+    def get_create_address_url(self):
+        """Return URl to redirect the user to if selected to create a new address"""
+        return reverse('create_address', kwargs={'calendar_slug': self.kwargs['calendar_slug'], 'event_id': self.kwargs['event_id']})
 
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
@@ -605,11 +617,12 @@ class CreateEventAddressView(CreateView):
 class CreateAddressView(CreateView):
     model = Address
     template_name = 'create_address.html'
-    form_class = Address
+    form_class = AddressForm
 
     def form_valid(self, form):
         """Process a valid form."""
         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        event = Event.objects.get(id=self.kwargs['event_id'])
 
         name = form.cleaned_data.get('name')
         address1 = form.cleaned_data.get('address1')
@@ -626,12 +639,16 @@ class CreateAddressView(CreateView):
             city=city,
             country=country
         )
-        return render(request, 'event_address_form.html', {'calendar': event.calendar})
+
+        meeting_address_object = MeetingAddress.objects.create(
+            event=event,
+            address=address
+        )
+        return redirect('full_calendar', calendar_slug=calendar.slug)
 
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
-        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
-        return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+        return reverse('full_calendar', kwargs={'calendar_slug': self.kwargs['calendar_slug']})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -642,43 +659,6 @@ class CreateAddressView(CreateView):
         context['event'] = event
 
         return context
-
-
-# def create_event_address(request, event_id):
-#     event = Event.objects.get(id=event_id)
-#     if request.method == "POST":
-#         current_user = request.user
-#         form = MeetingAddressForm(request.POST)
-#         if form.is_valid():
-#             name = form.cleaned_data.get('name')
-#             address1 = form.cleaned_data.get('address1')
-#             address2 = form.cleaned_data.get('address2')
-#             zip_code = form.cleaned_data.get('zip_code')
-#             city = form.cleaned_data.get('city')
-#             country = form.cleaned_data.get('country')
-#
-#             meeting_address_object = MeetingAddress.objects.create(
-#                 event=event,
-#                 name=name,
-#                 address1=address1,
-#                 address2=address2,
-#                 zip_code=zip_code,
-#                 city=city,
-#                 country=country
-#             )
-#             return render(request, 'fullcalendar.html', {'calendar': event.calendar})
-#         else:
-#             return render(request, "event_address_form.html",
-#                           {
-#                               "form": form,
-#                               "event": event
-#                           }
-#                           )
-#     else:
-#         return render(request, "event_address_form.html", {
-#             "form": MeetingAddressForm,
-#             "event": event
-#         })
 
 
 class EditEventView(UpdateView):
