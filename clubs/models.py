@@ -94,7 +94,6 @@ class User(AbstractUser):
         'self', symmetrical=False, related_name='followees'
     )
 
-
     class Meta:
         """Model options"""
         ordering = ['first_name', 'last_name']
@@ -141,7 +140,7 @@ class User(AbstractUser):
     def toggle_follow(self, followee):
         """Toggles whether self follows the given followee."""
 
-        if followee==self:
+        if followee == self:
             return
         if self.is_following(followee):
             self._unfollow(followee)
@@ -244,12 +243,7 @@ class MeetingLink(models.Model):
     )
 
 
-class MeetingAddress(models.Model):
-    event = models.OneToOneField(
-        Event,
-        on_delete=models.CASCADE
-    )
-
+class Address(models.Model):
     name = models.CharField(
         "Full name",
         max_length=1024,
@@ -281,33 +275,28 @@ class MeetingAddress(models.Model):
         blank_label='(select country)'
     )
 
-    class Meta:
-        verbose_name = "Meeting Address"
-        # verbose_name_plural = "Meeting Addresses"
+    def __str__(self):
+        return self.name
 
     def full_address(self):
         return f'{self.name}. {self.zip_code}, {self.address1}, {self.address2}. {self.city}, {self.country}.'
 
-    def _follow(self, user):
-        user.followers.add(self)
 
-    def _unfollow(self, user):
-        user.followers.remove(self)
+class MeetingAddress(models.Model):
+    event = models.OneToOneField(
+        Event,
+        on_delete=models.CASCADE
+    )
 
-    def is_following(self, user):
-        """Returns whether self follows the given user."""
+    address = models.ForeignKey(
+        Address,
+        on_delete=models.CASCADE,
+        blank=FALSE
+    )
 
-        return user in self.followees.all()
-
-    def follower_count(self):
-        """Returns the number of followers of self."""
-
-        return self.followers.count()
-
-    def followee_count(self):
-        """Returns the number of followees of self."""
-
-        return self.followees.count()
+    class Meta:
+        verbose_name = "Meeting Address"
+        # verbose_name_plural = "Meeting Addresses"
 
 
 class Club(models.Model):
