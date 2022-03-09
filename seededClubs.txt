@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 89333cfd1cfa84963cb46efdf7e37f579c685966
 Abdul Davies's club
 Ian Webb's club
 Joshua Wilson's club
@@ -7217,8 +7213,6 @@ Angela Daly's Club
 Christine Taylor's Club
 Lydia Mason's Club
 Mathew White's Club
-<<<<<<< HEAD
-<<<<<<< HEAD
 George Johnson's Club
 Edward Carter's Club
 Paula Watson's Club
@@ -7230,9 +7224,6 @@ Kirsty White's Club
 Bethany Smith's Club
 Kenneth Richards's Club
 Roger Walker's Club
-=======
-=======
->>>>>>> 89333cfd1cfa84963cb46efdf7e37f579c685966
 Abigail Scott's Club
 Tina Roberts's Club
 Simon Patterson's Club
@@ -7243,11 +7234,6 @@ Jonathan Leach's Club
 Christian Taylor's Club
 Leigh Cooper's Club
 Alex Barrett's Club
-<<<<<<< HEAD
->>>>>>> 232f741b60129ae21ad351bf6abc94e24985640f
-=======
->>>>>>> 2325ec518a84c76ce6cf5d11ae561b5a49c1c758
-=======
 Bethan Rowley's Club
 Beverley Iqbal's Club
 Julian French's Club
@@ -7258,4 +7244,73 @@ Billy Page's Club
 Teresa Dunn's Club
 Jemma Evans's Club
 Graeme McDonald's Club
->>>>>>> 89333cfd1cfa84963cb46efdf7e37f579c685966
+Garry Mitchell's Club
+Katie Foster's Club
+Pamela Jones's Club
+Martin Atkins's Club
+Kayleigh Green's Club
+Owen Turner's Club
+Edward Lloyd's Club
+Russell Brookes's Club
+Gillian Baker's Club
+Ben Bailey's Club
+Hannah Smith's Club
+Elizabeth Quinn's Club
+Jane Daly's Club
+Jayne Hall's Club
+Russell Walker's Club
+Guy Ali's Club
+Laura Griffiths's Club
+Grace Morris's Club
+Geraldine Walker's Club
+Allan Burns's Club
+Samantha Bird's Club
+Jamie Patel's Club
+Dorothy Patel's Club
+Christian Duffy's Club
+Michelle Smith's Club
+Kevin Taylor's Club
+Scott Fox's Club
+Robert Lee's Club
+Tracy Blake's Club
+Zoe Brown's Club
+Gillian Norris's Club
+Richard Francis's Club
+Oliver Richardson's Club
+Reece Blake's Club
+Peter Cooke's Club
+Leon Wood's Club
+Owen Howells's Club
+Alice Baxter's Club
+Alexander Howard's Club
+Janice Blackburn's Club
+Joyce Williams's Club
+Gordon Hammond's Club
+Tina Jones's Club
+Alice Daniels's Club
+Rosie McDonald's Club
+Owen Jackson's Club
+Kelly Ross's Club
+Lewis Bell's Club
+Craig Fox's Club
+Christine Turner's Club
+Andrea Davis's Club
+Sally Hayes's Club
+Rosie Lee's Club
+Antony Lewis's Club
+Paige Williams's Club
+Mary Barber's Club
+Annette Parry's Club
+Sally Thomas's Club
+Daniel Holt's Club
+Mandy Hunt's Club
+Mary Parkin's Club
+Sophie Mills's Club
+Howard Bartlett's Club
+Hugh Freeman's Club
+Amber Shah's Club
+Frances Lamb's Club
+Jack Jones's Club
+Gordon Charlton's Club
+Hazel Wilson's Club
+Debra Watkins's Club
