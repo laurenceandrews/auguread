@@ -3,6 +3,8 @@
 
 import datetime
 
+from clubs.book_to_club_recommender.book_to_club_recommender_age import \
+    ClubBookRecommender
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
@@ -260,8 +262,8 @@ class ClubBookForm(forms.ModelForm):
         fields = ['book']
 
     def __init__(self, *args, **kwargs):
-        """Give user option of all addresses used for events for this calendar"""
+        """Give user option of books from the book-to-club-recommender-age recommender."""
         club_id = kwargs.pop('club_id')
         super(ClubBookForm, self).__init__(*args, **kwargs)
-        books = Book.objects.all()
+        books = ClubBookRecommender(club_id).get_recommended_books()
         self.fields['book'].queryset = books.order_by('title')
