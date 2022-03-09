@@ -1,7 +1,7 @@
 from clubs.forms import (LogInForm, NewClubForm, PasswordForm, PostForm,
                          SignUpForm)
 from clubs.helpers import member, owner
-from clubs.models import Book, Club, MeetingAddress, MeetingLink, Post, User
+from clubs.models import Book, Club, MeetingAddress, MeetingLink, Post, User, BookRatingForm
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -675,4 +675,38 @@ def book_preferences(request):
     page_number = request.GET.get('page')
     books_paginated = paginator.get_page(page_number)
 
-    return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated})
+    form = BookRatingForm()
+    return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated, 'form': form})
+
+
+class BookPreferencesView(LoginRequiredMixin, View):
+    """View that handles book preferences."""
+
+    http_method_names = ['get', 'post']
+    redirect_when_logged_in_url = 'book_preferences'
+
+    books_queryset = Book.objects.all()
+    paginator = Paginator(books_queryset, settings.BOOKS_PER_PAGE)
+
+    def get(self, request):
+        """Display log in template."""
+
+        page_number = request.GET.get('page')
+        books_paginated = self.paginator.get_page(page_number)
+
+        self.next = request.GET.get('next') or ''
+        return self.render()
+
+    def post(self, request):
+        """Handles submit attempt."""
+
+        form = BookRatingForm(request.POST)
+        self.next = request.POST.get('next') or settings.AUTO_REDIRECT_URL
+        
+        return self.render()
+
+    def render(self):
+        """Render template with blank form."""
+
+        form = BookRatingForm()
+        return render(self.request, 'book_preferences.html', {'form': form, 'next': self.next})
