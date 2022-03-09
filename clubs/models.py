@@ -258,6 +258,9 @@ class Address(models.Model):
         blank_label='(select country)'
     )
 
+    def __str__(self):
+        return self.name
+
     def full_address(self):
         return f'{self.name}. {self.zip_code}, {self.address1}, {self.address2}. {self.city}, {self.country}.'
 

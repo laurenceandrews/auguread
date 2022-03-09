@@ -586,13 +586,18 @@ class CreateEventAddressView(CreateView):
         )
         return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
 
-    def get_queryset(self):
-        """Show all addresses created for events for this calendar"""
-        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
-        events = Event.objects.filter(calendar=calendar)
-        meeting_addresses = MeetingAddress.objects.filter(event__in=Subquery(events.values('id')))
-        # return meeting_addresses.values('address')
-        return MeetingAddress.objects.get(id=1).values('address')
+    def get_form_kwargs(self):
+        kwargs = super(CreateEventAddressView, self).get_form_kwargs()
+        kwargs['calendar_slug'] = self.kwargs['calendar_slug']
+        return kwargs
+
+    # def get_queryset(self):
+    #     """Show all addresses created for events for this calendar"""
+    #     calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+    #     events = Event.objects.filter(calendar=calendar)
+    #     meeting_addresses = MeetingAddress.objects.filter(event__in=Subquery(events.values('id')))
+    #     return meeting_addresses.values('address')
+    #     # return MeetingAddress.objects.get(id=1).values('address')
 
     def get_create_address_url(self):
         """Return URl to redirect the user to if selected to create a new address"""

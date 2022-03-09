@@ -6,6 +6,7 @@ import datetime
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
+from django.db.models import Subquery
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
@@ -206,6 +207,15 @@ class MeetingAddressForm(forms.ModelForm):
     class Meta:
         model = MeetingAddress
         fields = ['address']
+
+    def __init__(self, *args, **kwargs):
+        calendar_slug = kwargs.pop('calendar_slug')
+        super(MeetingAddressForm, self).__init__(*args, **kwargs)
+        calendar = Calendar.objects.get(slug=calendar_slug)
+        events = Event.objects.filter(calendar=calendar)
+        meeting_addresses = MeetingAddress.objects.filter(event__in=events)
+        addresses = Address.objects.filter(id__in=meeting_addresses)
+        self.fields['address'].queryset = addresses.order_by('name')
 
 
 class AddressForm(forms.ModelForm):
