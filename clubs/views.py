@@ -807,6 +807,26 @@ class DeleteEventView(DeleteView):
         return context
 
 
+class EventDetailView(DetailView):
+
+    model = Event
+    template_name = 'event_detail.html'
+    pk_url_kwarg = "event_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        event = Event.objects.get(id=self.kwargs['event_id'])
+        context['calendar'] = calendar
+        context['calendar_id'] = calendar.id
+        context['calendar_slug'] = calendar.slug
+        context['calendar_name'] = calendar.name
+        context['event_name'] = event.title
+        context['user'] = self.request.user
+
+        return context
+
+
 def club_recommender(request):
     """View that shows a list of all recommended clubs."""
     return render(request, 'club_recommender.html')
