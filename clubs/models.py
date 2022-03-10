@@ -206,10 +206,7 @@ class Book(models.Model):
         default='/static/default_book.png/'
     )
 
-    rating = models.IntegerField(
-        blank=False,
-        default=0
-    )
+
 
 
 class Post(models.Model):
@@ -402,6 +399,14 @@ class Club(models.Model):
         else:
             return False
 
+    def transfer(self, user):
+        owner = self.owner
+        if user in self.owners.all():
+            self.owners.add(owner)
+            self.owner = user
+            self.owners.remove(user)
+            self.save()
+
 
 class ApplicantMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -474,13 +479,36 @@ class MyUUIDModel(models.Model):
         editable=False
     )
 
+
+class Book_Rating(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )    
+
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        blank=False,
+        default=1
+    )    
+
+
 class BookRatingForm(forms.Form):
     user = models.ForeignKey(User, on_delete=models.CASCADE) 
-    previous_rating = Book.rating
+   # previous_rating = Book.rating
     rating = forms.ChoiceField(
         required = False,
         label = 'Rate book',
-        initial = 'previous_rating',
+   #     initial = 'previous_rating',
         error_messages = {},
         choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
     )

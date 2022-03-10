@@ -24,6 +24,7 @@ from schedule.views import (DeleteEventView, EditEventView, EventView,
                             api_select_create)
 
 urlpatterns = [
+    # Admin urls
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
 
@@ -32,32 +33,33 @@ urlpatterns = [
     path('log_out/', views.log_out, name='log_out'),
     path("__reload__/", include("django_browser_reload.urls")),
     path('password/', views.PasswordView.as_view(), name='password'),
-
-    path('feed/', views.FeedView.as_view(), name='feed'),
-    # path('new_post/', views.new_post, name='new_post'),
-    path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
-
     path('rec/', views.RecommendationsView, name='rec'),
 
-    # path('users/', views.UserListView.as_view(), name='user_list'),
+    # User urls
     path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
     path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
+    path('user_detail/', views.user_detail, name='user_detail'),
 
+    # Feed urls
+    path('feed/', views.FeedView.as_view(), name='feed'),
+    path('new_post/', views.NewPostView.as_view(), name='new_post'),
+    path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
+
+    # Club urls
     path('clubs/', views.club_list, name='club_list'),
     path('new_club/', views.new_club, name='new_club'),
-    path('new_post/', views.NewPostView.as_view(), name='new_post'),
 
     path('enter/<int:club_id>', views.enter, name='enter'),
     path('apply/<int:club_id>', views.apply, name='apply'),
     path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
+    path('<int:club_id>/transfer/<int:user_id>', views.transfer, name='transfer'),
 
     path('<int:club_id>/applicants', views.ApplicantListView.as_view(), name='applicant_list'),
     path('<int:club_id>/members', views.MemberListView.as_view(), name='member_list'),
     path('<int:club_id>/officers', views.OwnerListView.as_view(), name='owner_list'),
+    
 
-    path('user_detail/', views.user_detail, name='user_detail'),
-
-    # scheduler
+    # Meeting scheduler urls
     re_path(r"^schedule/api/occurrences", api_occurrences, name="api_occurrences"),
     path('calendar_picker/', views.calendar_picker, name='calendar_picker'),
     url(r"^fullcalendar/(?P<calendar_slug>[-\w]+)/$",
@@ -95,6 +97,7 @@ urlpatterns = [
         name="delete_event",
     ),
 
+    # Book recommender urls
     path('club_recommender/', views.club_recommender, name='club_recommender'),
 
     path('book_preferences/', views.book_preferences, name='book_preferences'),

@@ -4,6 +4,7 @@ from clubs.helpers import member, owner
 from clubs.models import Book, Club, MeetingAddress, MeetingLink, Post, User, BookRatingForm, Address
 from django.conf import settings
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -241,6 +242,8 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, Applican
         context['can_approve'] = ((user != target) and (user_type == 'Owner'
                                                         or user == club.owner) and target_type == 'Applicant')
         context['is_owner'] = target_type == 'Owner'
+        context['can_transfer'] = ((user != target) and user == club.owner
+                                   and is_owner)
         context['type'] = target_type
         context['user'] = user
         context['posts'] = context['object_list']
@@ -839,6 +842,21 @@ def book_preferences(request):
     page_number = request.GET.get('page')
     books_paginated = paginator.get_page(page_number)
 
+
+    return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated})
+
+@login_required
+@owner
+def transfer(request, user_id, club_id):
+    club = Club.objects.get(id=club_id)
+    try:
+        target = User.objects.get(id=user_id)
+        club.transfer(target)
+    except ObjectDoesNotExist:
+        return redirect('owner_list', club_id=club_id)
+    else:
+        return redirect('show_user', user_id=user_id, club_id=club_id)
+
     form = BookRatingForm()
     return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated, 'form': form})
 
@@ -866,7 +884,7 @@ class BookPreferencesView(LoginRequiredMixin, View):
 
         form = BookRatingForm(request.POST)
         self.next = request.POST.get('next') or settings.AUTO_REDIRECT_URL
-        
+
         return self.render()
 
     def render(self):
