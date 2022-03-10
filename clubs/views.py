@@ -846,7 +846,7 @@ def book_preferences(request):
     return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated})
 
 @login_required
-# @owner
+@owner
 def transfer(request, user_id, club_id):
     club = Club.objects.get(id=club_id)
     try:
