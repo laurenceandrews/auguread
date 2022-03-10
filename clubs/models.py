@@ -3,6 +3,7 @@
 import uuid
 from pickle import FALSE
 
+from django import forms
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     RegexValidator)
@@ -10,8 +11,6 @@ from django.db import models
 from django_countries.fields import CountryField
 from libgravatar import Gravatar
 from schedule.models import Calendar, Event, Rule
-
-from django import forms
 
 
 class UserManager(UserManager):
@@ -200,13 +199,11 @@ class Book(models.Model):
         blank=False,
         default='/static/default_book.png/'
     )
-    
+
     image_large = models.ImageField(
         blank=False,
         default='/static/default_book.png/'
     )
-
-
 
 
 class Post(models.Model):
@@ -493,22 +490,22 @@ class Book_Rating(models.Model):
         on_delete=models.CASCADE,
         blank=False,
         default=0
-    )    
+    )
 
     rating = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(10)],
         blank=False,
         default=1
-    )    
+    )
 
 
 class BookRatingForm(forms.Form):
-    user = models.ForeignKey(User, on_delete=models.CASCADE) 
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
    # previous_rating = Book.rating
     rating = forms.ChoiceField(
-        required = False,
-        label = 'Rate book',
-   #     initial = 'previous_rating',
-        error_messages = {},
+        required=False,
+        label='Rate book',
+        #     initial = 'previous_rating',
+        error_messages={},
         choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
     )

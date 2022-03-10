@@ -1,13 +1,14 @@
 from clubs.forms import (AddressForm, LogInForm, NewClubForm, PasswordForm,
                          PostForm, SignUpForm)
 from clubs.helpers import member, owner
-from clubs.models import Book, Club, MeetingAddress, MeetingLink, Post, User, BookRatingForm, Address
+from clubs.models import (Address, Book, BookRatingForm, Club, MeetingAddress,
+                          MeetingLink, Post, User)
 from django.conf import settings
 from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.http import (Http404, HttpResponse, HttpResponseForbidden,
                          HttpResponseRedirect)
@@ -310,21 +311,29 @@ def new_club(request):
         return render(request, "new_club.html", {"form": NewClubForm})
 
 
-@login_required
-def club_list(request):
-    clubs = Club.objects.all()
-    paginator = Paginator(clubs, settings.NUMBER_PER_PAGE)
+# @login_required
+# def club_list(request):
+#     clubs = Club.objects.all()
+#     paginator = Paginator(clubs, settings.NUMBER_PER_PAGE)
+#
+#     page_number = request.GET.get('page')
+#     page_obj = paginator.get_page(page_number)
+#     return render(
+#         request,
+#         'club_list.html',
+#         {
+#             "page_obj": page_obj,
+#             "clubs": clubs,
+#         }
+#     )
 
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(
-        request,
-        'club_list.html',
-        {
-            "page_obj": page_obj,
-            "clubs": clubs,
-        }
-    )
+class ClubListView(LoginRequiredMixin, ListView):
+    """View to display a list of available clubs."""
+
+    paginate_by = settings.NUMBER_PER_PAGE
+    model = Club
+    template_name = "club_list.html"
+    context_object_name = "clubs"
 
 
 @login_required
@@ -551,10 +560,19 @@ class CreateEventLinkView(CreateView):
 
         meeting_link = form.cleaned_data.get('meeting_link')
 
-        meeting_link_object = MeetingLink.objects.create(
-            event=event,
-            meeting_link=meeting_link
-        )
+        meeting_link_exists = MeetingLink.objects.filter(event=event).exists()
+
+        if meeting_link_exists:
+            meeting_link_object = MeetingLink.objects.get(
+                event=event
+            )
+            meeting_link_object.meeting_link = meeting_link
+            meeting_link_object.save()
+        else:
+            meeting_link_object = MeetingLink.objects.create(
+                event=event,
+                meeting_link=meeting_link
+            )
         return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
 
     def get_success_url(self):
@@ -582,10 +600,19 @@ class CreateEventAddressView(CreateView):
 
         address = form.cleaned_data.get('address')
 
-        meeting_address_object = MeetingAddress.objects.create(
-            event=event,
-            address=address
-        )
+        meeting_address_exists = MeetingAddress.objects.filter(event=event).exists()
+
+        if meeting_address_exists:
+            meeting_address_object = MeetingAddress.objects.get(
+                event=event
+            )
+            meeting_address_object.address = address
+            meeting_address_object.save()
+        else:
+            meeting_address_object = MeetingAddress.objects.create(
+                event=event,
+                address=address
+            )
         return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
 
     def get_form_kwargs(self):
@@ -639,9 +666,9 @@ class CreateAddressView(CreateView):
             country=country
         )
 
-        event_exists = MeetingAddress.objects.filter(event=event).exists()
+        meeting_address_exists = MeetingAddress.objects.filter(event=event).exists()
 
-        if event_exists:
+        if meeting_address_exists:
             meeting_address_object = MeetingAddress.objects.get(
                 event=event
             )
@@ -716,11 +743,19 @@ class EditEventLinkView(UpdateView):
 
         meeting_link = form.cleaned_data.get('meeting_link')
 
-        meeting_link_object = MeetingLink.objects.get(event=event)
+        meeting_link_exists = MeetingLink.objects.filter(event=event).exists()
 
-        meeting_link_object.meeting_link = meeting_link
-
-        meeting_link_object.save()
+        if meeting_link_exists:
+            meeting_link_object = MeetingLink.objects.get(
+                event=event
+            )
+            meeting_link_object.meeting_link = meeting_link
+            meeting_link_object.save()
+        else:
+            meeting_link_object = MeetingLink.objects.create(
+                event=event,
+                meeting_link=meeting_link
+            )
         return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
 
     def get_success_url(self):
@@ -758,11 +793,19 @@ class EditEventAddressView(UpdateView):
 
         address = form.cleaned_data.get('address')
 
-        meeting_address_object = MeetingAddress.objects.get(event=event)
+        meeting_address_exists = MeetingAddress.objects.filter(event=event).exists()
 
-        meeting_address_object.address = address
-
-        meeting_address_object.save()
+        if meeting_address_exists:
+            meeting_address_object = MeetingAddress.objects.get(
+                event=event
+            )
+            meeting_address_object.address = address
+            meeting_address_object.save()
+        else:
+            meeting_address_object = MeetingAddress.objects.create(
+                event=event,
+                address=address
+            )
         return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
 
     def get_success_url(self):
@@ -842,8 +885,8 @@ def book_preferences(request):
     page_number = request.GET.get('page')
     books_paginated = paginator.get_page(page_number)
 
-
     return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated})
+
 
 @login_required
 @owner
