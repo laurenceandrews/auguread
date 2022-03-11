@@ -58,45 +58,22 @@ class CreateEventViewTest(TestCase):
     def test_create_online_event_url(self):
         self.assertEqual(self.url_for_online_club, f'/event/create/{self.calendar_for_online_club.id}/')
 
-    # def test_create_event_redirects_when_not_logged_in(self):
-    #     events_count_before = Event.objects.count()
-    #     redirect_url = reverse_with_next('log_in', self.url_for_online_club)
-    #     response = self.client.post(self.url_for_online_club, self.data_for_online_club_event, follow=True)
-    #     self.assertRedirects(
-    #         response,
-    #         redirect_url,
-    #         status_code=302,
-    #         target_status_code=200,
-    #         fetch_redirect_response=True,
-    #     )
-    #     events_count_after = Event.objects.count()
-    #     self.assertEqual(events_count_after, events_count_before)
+    def test_post_new_post_redirects_when_not_logged_in(self):
+        event_count_before = Event.objects.count()
+        redirect_url = reverse_with_next('log_in', self.url_for_online_club)
+        response = self.client.post(self.url_for_online_club, self.data_for_online_club_event, follow=True)
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200, fetch_redirect_response=True
+                             )
+        event_count_after = Event.objects.count()
+        self.assertEqual(event_count_after, event_count_before)
 
-    # def test_successful_create_event_for_online_club(self):
-    #     self.client.login(username=self.user.username, password="Password123")
-    #     events_count_before = Event.objects.count()
-    #     response = self.client.post(self.url_for_online_club, self.data_for_online_club_event, follow=True)
-    #     events_count_after = Event.objects.count()
-    #     self.assertEqual(events_count_after, events_count_before + 1)
-    #     new_event = Event.objects.last()
-    #     response_url = reverse('create_event_link', kwargs={'event_id': new_event.id})
-    #     self.assertRedirects(
-    #         response,
-    #         response_url,
-    #         status_code=302,
-    #         target_status_code=200,
-    #         fetch_redirect_response=True,
-    #     )
-    #     self.assertTemplateUsed(response, 'event_link_form.html')
-
-    # def test_unsuccessful_create_event(self):
-    #     self.client.login(username=self.user.username, password="Password123")
-    #     self.data = {'club_id': 99999}
-    #     self.url = reverse(
-    #         'create_event', kwargs={'club_id': self.data['club_id']}
-    #     )
-    #     events_count_before = Event.objects.count()
-    #     response = self.client.post(self.url, self.data, follow=True)
-    #     events_count_after = Event.objects.count()
-    #     self.assertEqual(events_count_after, events_count_before)
-    #     self.assertTemplateUsed(response, 'users_clubs.html')
+    def test_unsuccessful_create_event(self):
+        self.client.login(username=self.user.username, password="Password123")
+        self.url_for_online_club = reverse(
+            'create_event', kwargs={'calendar_id': 999999999}
+        )
+        events_count_before = Event.objects.count()
+        response = self.client.post(self.url_for_online_club, self.data_for_online_club_event, follow=True)
+        events_count_after = Event.objects.count()
+        self.assertEqual(events_count_after, events_count_before)

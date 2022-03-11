@@ -1,13 +1,19 @@
 from clubs.forms import (AddressForm, CalendarPickerForm, CreateEventForm,
                          MeetingAddressForm, MeetingLinkForm)
 from clubs.models import Address, MeetingAddress, MeetingLink
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from schedule.models import Calendar, Event, Rule
 
+from .helpers import login_prohibited
+from .mixins import LoginProhibitedMixin
 
+
+@login_required
 def calendar_picker(request):
     if request.method == 'POST':
         form = CalendarPickerForm(request.POST)
@@ -19,11 +25,13 @@ def calendar_picker(request):
     return render(request, 'calendar_picker.html', {'form': form})
 
 
+@login_required
 def full_calendar(request, calendar_slug):
     calendar = Calendar.objects.get(slug=calendar_slug)
     return render(request, 'fullcalendar.html', {'calendar': calendar})
 
 
+@login_required
 def events_list(request, calendar_id):
     calendar = Calendar.objects.get(id=calendar_id)
     events = calendar.event_set.all()
@@ -34,7 +42,7 @@ def events_list(request, calendar_id):
                   })
 
 
-class CreateEventView(CreateView):
+class CreateEventView(LoginRequiredMixin, CreateView):
     model = Event
     template_name = 'event_create.html'
     form_class = CreateEventForm
@@ -82,7 +90,7 @@ class CreateEventView(CreateView):
         return context
 
 
-class CreateEventLinkView(CreateView):
+class CreateEventLinkView(LoginRequiredMixin, CreateView):
     model = MeetingLink
     template_name = 'event_link_form.html'
     form_class = MeetingLinkForm
@@ -122,7 +130,7 @@ class CreateEventLinkView(CreateView):
         return context
 
 
-class CreateEventAddressView(CreateView):
+class CreateEventAddressView(LoginRequiredMixin, CreateView):
     model = MeetingAddress
     template_name = 'event_address_create.html'
     form_class = MeetingAddressForm
@@ -174,7 +182,7 @@ class CreateEventAddressView(CreateView):
         return context
 
 
-class CreateAddressView(CreateView):
+class CreateAddressView(LoginRequiredMixin, CreateView):
     model = Address
     template_name = 'address_create.html'
     form_class = AddressForm
@@ -231,7 +239,7 @@ class CreateAddressView(CreateView):
         return context
 
 
-class EditEventView(UpdateView):
+class EditEventView(LoginRequiredMixin, UpdateView):
     model = Event
     template_name = 'event_update.html'
     form_class = CreateEventForm
@@ -264,7 +272,7 @@ class EditEventView(UpdateView):
         return context
 
 
-class EditEventLinkView(UpdateView):
+class EditEventLinkView(LoginRequiredMixin, UpdateView):
     model = Event
     template_name = 'event_link_update.html'
     form_class = MeetingLinkForm
@@ -309,7 +317,7 @@ class EditEventLinkView(UpdateView):
         return context
 
 
-class EditEventAddressView(UpdateView):
+class EditEventAddressView(LoginRequiredMixin, UpdateView):
     model = Event
     template_name = 'event_address_update.html'
     form_class = MeetingAddressForm
@@ -364,7 +372,7 @@ class EditEventAddressView(UpdateView):
         return context
 
 
-class DeleteEventView(DeleteView):
+class DeleteEventView(LoginRequiredMixin, DeleteView):
     model = Event
     template_name = 'event_delete.html'
     form_class = CreateEventForm
@@ -386,7 +394,7 @@ class DeleteEventView(DeleteView):
         return context
 
 
-class EventDetailView(DetailView):
+class EventDetailView(LoginRequiredMixin, DetailView):
 
     model = Event
     template_name = 'event_detail.html'
