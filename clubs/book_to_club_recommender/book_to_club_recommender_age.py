@@ -3,15 +3,16 @@
 
 import numpy as np
 import pandas as pd
+from clubs.models import Book, Club_Books, Club_Users, User
 
 
 class ClubBookRecommender:
     def __init__(self, club_id_to_query):
         # Load data
-        self.df_users = pd.read_csv('clubs/book_to_club_recommender/updated-data-set/clubs_user.csv', encoding='latin1')
-        self.df_books = pd.read_csv('clubs/book_to_club_recommender/updated-data-set/clubs_book.csv', encoding='latin1')
-        self.df_club_users = pd.read_csv('clubs/book_to_club_recommender/updated-data-set/clubs_club_users.csv')
-        self.df_club_books = pd.read_csv('clubs/book_to_club_recommender/updated-data-set/clubs_club_books.csv')
+        self.df_users = pd.DataFrame(list(User.objects.all().values()))
+        self.df_books = pd.DataFrame(list(Book.objects.all().values()))
+        self.df_club_users = pd.DataFrame(list(Club_Users.objects.all().values()))
+        self.df_club_books = pd.DataFrame(list(Club_Books.objects.all().values()))
 
         self.club_id_to_query = club_id_to_query
 
