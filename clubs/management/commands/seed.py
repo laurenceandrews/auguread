@@ -21,9 +21,6 @@ class Command(BaseCommand):
     USER_ID = 0
     first_name = ""
     last_name = ""
-    users = []
-    books = []
-    clubs = []
 
     def set_users(self):
         self.users = User.objects.all()
@@ -85,6 +82,11 @@ class Command(BaseCommand):
         self.user_count = 0
         self.book_count = 0
         self.rating_count = 0
+        
+        # Holds all users books and clubs to be used as a cache for when seeded
+        self.users = []
+        self.books = []
+        self.clubs = []
 
         # To update display when seeding
         self.books_seeded = 1
