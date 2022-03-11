@@ -737,6 +737,13 @@ class ClubBookSelectionView(CreateView):
         )
         return render(self.request, 'home.html')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        club = Club.objects.get(id=self.kwargs['club_id'])
+        context['club_name'] = club.name
+
+        return context
+
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
         return redirect('home')

@@ -266,5 +266,6 @@ class ClubBookForm(forms.ModelForm):
         club_id = kwargs.pop('club_id')
         super(ClubBookForm, self).__init__(*args, **kwargs)
         book_ids = ClubBookRecommender(club_id).get_recommended_books()
+        print(club_id)
         books = Book.objects.filter(id__in=book_ids)
         self.fields['book'].queryset = books
