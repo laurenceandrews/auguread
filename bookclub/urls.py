@@ -100,7 +100,7 @@ urlpatterns = [
     # Book recommender urls
     path('club_recommender/', views.club_recommender, name='club_recommender'),
 
-    path('book_preferences/', views.book_preferences, name='book_preferences'),
-    #path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
+    #path('book_preferences/', views.book_preferences, name='book_preferences'),
+    path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
 
 ]

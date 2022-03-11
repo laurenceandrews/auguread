@@ -207,6 +207,8 @@ class Book(models.Model):
     )
 
 
+
+
 class Post(models.Model):
     """Posts by users."""
     author = models.ForeignKey(
@@ -497,16 +499,14 @@ class Book_Rating(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(10)],
         blank=False,
         default=1
-    )    
+    )
 
 
 class BookRatingForm(forms.Form):
     user = models.ForeignKey(User, on_delete=models.CASCADE) 
-   # previous_rating = Book.rating
     rating = forms.ChoiceField(
         required = False,
         label = 'Rate book',
-   #     initial = 'previous_rating',
         error_messages = {},
         choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
     )
