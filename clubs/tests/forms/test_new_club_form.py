@@ -31,6 +31,7 @@ class NewClubTestCase(TestCase):
     def test_valid_new_club(self):
         form = NewClubForm(data=self.form_input)
         self.assertTrue(form.is_valid())
+        # self.assertContains(response, 'new_club', html=True)
 
     def test_form_has_necessary_fields(self):
         form = NewClubForm()
