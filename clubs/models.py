@@ -207,11 +207,6 @@ class Book(models.Model):
         default='/static/default_book.png/'
     )
 
-    rating = models.IntegerField(
-        blank=False,
-        default=0
-    )
-
 
 class Post(models.Model):
     """Posts by users."""
