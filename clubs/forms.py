@@ -10,6 +10,7 @@ from clubs.book_to_club_recommender.book_to_club_recommender_author import \
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
+from django.db.models import Subquery
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
@@ -210,6 +211,23 @@ class NewClubForm(forms.ModelForm):
 class MeetingAddressForm(forms.ModelForm):
     class Meta:
         model = MeetingAddress
+        fields = ['address']
+
+    def __init__(self, *args, **kwargs):
+        """Give user option of all addresses used for events for this calendar"""
+        calendar_slug = kwargs.pop('calendar_slug')
+        super(MeetingAddressForm, self).__init__(*args, **kwargs)
+        calendar = Calendar.objects.get(slug=calendar_slug)
+        events = Event.objects.filter(calendar=calendar)
+        meeting_addresses = MeetingAddress.objects.filter(event__in=events)
+        address_ids = meeting_addresses.values_list('address_id', flat=True)
+        addresses = Address.objects.filter(id__in=address_ids)
+        self.fields['address'].queryset = addresses.order_by('name')
+
+
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
         fields = ['name', 'address1', 'address2', 'zip_code', 'city']
 
     country = CountryField(blank_label='(Select country)').formfield()
@@ -238,8 +256,6 @@ class CreateEventForm(forms.ModelForm):
     end = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
         initial=meeting_end)
-
-    # end_recurring_period = forms.DateTimeField(help_text=_("This date is ignored for one time only events."), required=False)
 
     end_recurring_period = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),

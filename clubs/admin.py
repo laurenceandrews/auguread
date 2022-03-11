@@ -65,8 +65,12 @@ class MeetingAddressAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for meeting addresses."""
 
     list_display = [
-        'event', 'name'
+        'event', "address_name"
     ]
+
+    def address_name(self, meeting_address):
+        """Return the name of an address."""
+        return meeting_address.address.name
 
 
 @admin.register(MeetingLink)
