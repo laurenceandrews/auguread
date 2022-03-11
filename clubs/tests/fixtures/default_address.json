@@ -1,0 +1,14 @@
+[
+  {
+    "model": "clubs.Address",
+    "pk": 14,
+    "fields": {
+      "name": "City Library",
+      "address1": "New Concordia Wharf",
+      "address2": "3 Mill St",
+      "zip_code": "SE1 2BB",
+      "city":"London",
+      "country":"GB"
+    }
+  }
+]
