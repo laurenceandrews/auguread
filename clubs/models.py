@@ -446,6 +446,9 @@ class Club_Users(models.Model):
         default=1
     )
 
+    class Meta:
+        verbose_name = "Club User"
+
 
 class Club_Books(models.Model):
     club = models.ForeignKey(
@@ -461,6 +464,9 @@ class Club_Books(models.Model):
         blank=False,
         default=0
     )
+
+    class Meta:
+        verbose_name = "Club Book"
 
 
 class User_Books(models.Model):

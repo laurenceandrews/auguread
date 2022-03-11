@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Book, Club, MeetingAddress, MeetingLink, Post, User
+from .models import (Book, Club, Club_Books, Club_Users, MeetingAddress,
+                     MeetingLink, Post, User)
 
 
 @admin.register(User)
@@ -74,4 +75,22 @@ class MeetingLinkAdmin(admin.ModelAdmin):
 
     list_display = [
         'event', 'meeting_link'
+    ]
+
+
+@admin.register(Club_Users)
+class Club_UsersAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for club users."""
+
+    list_display = [
+        'club', 'user', 'role_num'
+    ]
+
+
+@admin.register(Club_Books)
+class Club_BookAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for club users."""
+
+    list_display = [
+        'club', 'book'
     ]

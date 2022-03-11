@@ -265,5 +265,6 @@ class ClubBookForm(forms.ModelForm):
         """Give user option of books from the book-to-club-recommender-age recommender."""
         club_id = kwargs.pop('club_id')
         super(ClubBookForm, self).__init__(*args, **kwargs)
-        books = ClubBookRecommender(club_id).get_recommended_books()
-        self.fields['book'].queryset = books.order_by('title')
+        book_ids = ClubBookRecommender(club_id).get_recommended_books()
+        books = Book.objects.filter(id__in=book_ids)
+        self.fields['book'].queryset = books

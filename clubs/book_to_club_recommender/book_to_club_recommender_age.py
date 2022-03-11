@@ -44,9 +44,9 @@ class ClubBookRecommender:
     def get_recommended_books(self):
         # Get favourite books from the above clubs
         df_closest_club_in_age = self.find_closest_clubs_in_age()
-        df_closest_club_books = pd.merge(df_closest_club_in_age, self.df_club_books, on='club_id')
+        df_closest_club_books = pd.merge(df_closest_club_in_age, self.df_club_books, left_on='id', right_on='club_id')
 
         recommended_books = pd.merge(df_closest_club_books, self.df_books, left_on='book_id', right_on='id')
-        recommended_books.drop(['club_id', 'id_x', 'id_y', 'book_id'], axis=1, inplace=True)
-        recommended_books_list = recommended_books['ISBN'].tolist()
+        recommended_books.drop(['club_id', 'id_x', 'id_y'], axis=1, inplace=True)
+        recommended_books_list = recommended_books['book_id'].tolist()
         return recommended_books_list
