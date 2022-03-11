@@ -23,9 +23,12 @@ class Command(BaseCommand):
     last_name = ""
     users = []
     books = []
+    clubs = []
 
-    def set_users_and_books(self):
+    def set_users(self):
         self.users = User.objects.all()
+
+    def set_books(self):
         self.books = Book.objects.all()
 
     def set_clubs(self):
@@ -295,6 +298,8 @@ class Command(BaseCommand):
         end = time.time()
         print(f'Time to seed books: {end - start}')
 
+        self.set_books()
+
         start = time.time()
         while self.user_count < self.HOW_MANY_USERS_TO_ADD:
             print(f'Seeding user {self.users_seeded}',  end='\r')
@@ -304,7 +309,7 @@ class Command(BaseCommand):
         print(f'Time to seed users: {end - start}')
         self.user_count = 0
 
-        self.set_users_and_books()
+        self.set_users()
 
         start = time.time()
         while self.club_count < self.HOW_MANY_CLUBS_TO_ADD:
