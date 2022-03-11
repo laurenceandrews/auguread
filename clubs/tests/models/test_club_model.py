@@ -52,7 +52,7 @@ class UserModelTestCase(TestCase):
 
     def test_can_not_transfer_to_member(self):
         self.club.transfer(self.member_user)
-        self.assertNotEqual(self.club.owner, self.officer_user)
+        self.assertNotEqual(self.club.owner, self.owner_user)
 
     def test_in_club(self):
         self.assertTrue(self.club.in_club(self.owner_user))
