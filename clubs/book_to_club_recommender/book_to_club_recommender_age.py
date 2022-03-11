@@ -13,7 +13,6 @@ class ClubBookRecommender:
         self.df_books = pd.DataFrame(list(Book.objects.all().values()))
         self.df_club_users = pd.DataFrame(list(Club_Users.objects.all().values()))
         self.df_club_books = pd.DataFrame(list(Club_Books.objects.all().values()))
-
         self.club_id_to_query = club_id_to_query
 
     def club_average_ages(self):
@@ -27,8 +26,7 @@ class ClubBookRecommender:
     def club_age_diff(self):
         # Find the difference in average age between the queried club and all other clubs
         df_club_avg_ages = self.club_average_ages()
-        queried_club_avg_age = df_club_avg_ages['average_age'][df_club_avg_ages['club_id'] == self.club_id_to_query]
-        queried_club_avg_age = queried_club_avg_age.astype(float, errors='raise')
+        queried_club_avg_age = float(df_club_avg_ages.query(f'club_id=={self.club_id_to_query}')['average_age'])
         df_club_avg_ages['age_difference'] = pd.DataFrame(abs(df_club_avg_ages['average_age'] - queried_club_avg_age))
         # Remove the club that is being queried
         df_club_avg_ages.drop(df_club_avg_ages[df_club_avg_ages['club_id'] == self.club_id_to_query].index, inplace=True)
