@@ -207,8 +207,6 @@ class Book(models.Model):
     )
 
 
-
-
 class Post(models.Model):
     """Posts by users."""
     author = models.ForeignKey(
