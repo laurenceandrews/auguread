@@ -4,7 +4,9 @@
 import datetime
 
 from clubs.book_to_club_recommender.book_to_club_recommender_age import \
-    ClubBookRecommender
+    ClubBookAgeRecommender
+from clubs.book_to_club_recommender.book_to_club_recommender_author import \
+    ClubBookAuthorRecommender
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
@@ -265,6 +267,9 @@ class ClubBookForm(forms.ModelForm):
         """Give user option of books from the book-to-club-recommender-age recommender."""
         club_id = kwargs.pop('club_id')
         super(ClubBookForm, self).__init__(*args, **kwargs)
-        book_ids = ClubBookRecommender(club_id).get_recommended_books()
+        if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
+            book_ids = ClubBookAuthorRecommender(club_id).get_recommended_books()
+        else:
+            book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
         books = Book.objects.filter(id__in=book_ids)
         self.fields['book'].queryset = books

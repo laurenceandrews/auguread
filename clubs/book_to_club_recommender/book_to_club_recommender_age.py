@@ -6,7 +6,7 @@ import pandas as pd
 from clubs.models import Book, Club_Books, Club_Users, User
 
 
-class ClubBookRecommender:
+class ClubBookAgeRecommender:
     def __init__(self, club_id_to_query):
         # Load data
         self.df_users = pd.DataFrame(list(User.objects.all().values()))
