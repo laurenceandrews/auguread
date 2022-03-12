@@ -1,6 +1,6 @@
 from clubs.forms import (AddressForm, CalendarPickerForm, CreateEventForm,
                          MeetingAddressForm, MeetingLinkForm)
-from clubs.models import Address, MeetingAddress, MeetingLink
+from clubs.models import Address, Club, MeetingAddress, MeetingLink
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
@@ -10,7 +10,8 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from schedule.models import Calendar, Event, Rule
 
 from .helpers import login_prohibited
-from .mixins import LoginProhibitedMixin
+from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
+                     MemberProhibitedMixin)
 
 
 @login_required
@@ -102,19 +103,10 @@ class CreateEventLinkView(LoginRequiredMixin, CreateView):
 
         meeting_link = form.cleaned_data.get('meeting_link')
 
-        meeting_link_exists = MeetingLink.objects.filter(event=event).exists()
-
-        if meeting_link_exists:
-            meeting_link_object = MeetingLink.objects.get(
-                event=event
-            )
-            meeting_link_object.meeting_link = meeting_link
-            meeting_link_object.save()
-        else:
-            meeting_link_object = MeetingLink.objects.create(
-                event=event,
-                meeting_link=meeting_link
-            )
+        meeting_link_object = MeetingLink.objects.create(
+            event=event,
+            meeting_link=meeting_link
+        )
         return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
 
     def get_success_url(self):
@@ -142,19 +134,10 @@ class CreateEventAddressView(LoginRequiredMixin, CreateView):
 
         address = form.cleaned_data.get('address')
 
-        meeting_address_exists = MeetingAddress.objects.filter(event=event).exists()
-
-        if meeting_address_exists:
-            meeting_address_object = MeetingAddress.objects.get(
-                event=event
-            )
-            meeting_address_object.address = address
-            meeting_address_object.save()
-        else:
-            meeting_address_object = MeetingAddress.objects.create(
-                event=event,
-                address=address
-            )
+        meeting_address_object = MeetingAddress.objects.create(
+            event=event,
+            address=address
+        )
         return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
 
     def get_form_kwargs(self):
@@ -208,9 +191,9 @@ class CreateAddressView(LoginRequiredMixin, CreateView):
             country=country
         )
 
-        meeting_address_exists = MeetingAddress.objects.filter(event=event).exists()
+        event_exists = MeetingAddress.objects.filter(event=event).exists()
 
-        if meeting_address_exists:
+        if event_exists:
             meeting_address_object = MeetingAddress.objects.get(
                 event=event
             )
@@ -285,19 +268,11 @@ class EditEventLinkView(LoginRequiredMixin, UpdateView):
 
         meeting_link = form.cleaned_data.get('meeting_link')
 
-        meeting_link_exists = MeetingLink.objects.filter(event=event).exists()
+        meeting_link_object = MeetingLink.objects.get(event=event)
 
-        if meeting_link_exists:
-            meeting_link_object = MeetingLink.objects.get(
-                event=event
-            )
-            meeting_link_object.meeting_link = meeting_link
-            meeting_link_object.save()
-        else:
-            meeting_link_object = MeetingLink.objects.create(
-                event=event,
-                meeting_link=meeting_link
-            )
+        meeting_link_object.meeting_link = meeting_link
+
+        meeting_link_object.save()
         return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
 
     def get_success_url(self):
@@ -335,19 +310,11 @@ class EditEventAddressView(LoginRequiredMixin, UpdateView):
 
         address = form.cleaned_data.get('address')
 
-        meeting_address_exists = MeetingAddress.objects.filter(event=event).exists()
+        meeting_address_object = MeetingAddress.objects.get(event=event)
 
-        if meeting_address_exists:
-            meeting_address_object = MeetingAddress.objects.get(
-                event=event
-            )
-            meeting_address_object.address = address
-            meeting_address_object.save()
-        else:
-            meeting_address_object = MeetingAddress.objects.create(
-                event=event,
-                address=address
-            )
+        meeting_address_object.address = address
+
+        meeting_address_object.save()
         return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
 
     def get_success_url(self):
