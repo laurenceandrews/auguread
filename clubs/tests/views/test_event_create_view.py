@@ -58,7 +58,7 @@ class CreateEventViewTest(TestCase):
     def test_create_online_event_url(self):
         self.assertEqual(self.url_for_online_club, f'/event/create/{self.calendar_for_online_club.id}/')
 
-    def test_post_new_post_redirects_when_not_logged_in(self):
+    def test_create_event_redirects_when_not_logged_in(self):
         event_count_before = Event.objects.count()
         redirect_url = reverse_with_next('log_in', self.url_for_online_club)
         response = self.client.post(self.url_for_online_club, self.data_for_online_club_event, follow=True)
