@@ -70,9 +70,7 @@ class ClubBookAuthorRecommender:
         df_all_author_books = self.getAuthorBooks()
 
         # Get the most rated books from the above list
-        print(df_all_author_books)
-        print(self.df_book_ratings)
-        df_author_book_ratings = pd.merge(df_all_author_books, self.df_book_ratings, on='ISBN')
+        df_author_book_ratings = pd.merge(df_all_author_books, self.df_book_ratings, left_on='ISBN', right_on='ISBN')
         df_author_books_rating_count = pd.DataFrame(df_author_book_ratings.groupby('ISBN')['Book-Rating'].count())
 
         # Make Rating count as a regular column and sort
@@ -80,6 +78,6 @@ class ClubBookAuthorRecommender:
         df_author_books_rating_count.sort_values('Book-Rating', ascending=False)
 
         recommended_books = df_author_books_rating_count['ISBN'].iloc[0:10]
-        recommended_books = pd.merge(recommended_books, df_books, on='ISBN')
+        recommended_books = pd.merge(recommended_books, self.df_books, on='ISBN')
         recommended_books_list = recommended_books['book_id'].tolist()
         return recommended_books_list

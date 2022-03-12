@@ -16,7 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
 
-from .models import (Book, Club, Club_Books, MeetingAddress, MeetingLink, Post,
+from .models import (Book, Club, Club_Books, Address, MeetingAddress, MeetingLink, Post,
                      User)
 
 
@@ -283,9 +283,10 @@ class ClubBookForm(forms.ModelForm):
         """Give user option of books from the book-to-club-recommender-age recommender."""
         club_id = kwargs.pop('club_id')
         super(ClubBookForm, self).__init__(*args, **kwargs)
-        if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
-            book_ids = ClubBookAuthorRecommender(club_id).get_recommended_books()
-        else:
-            book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
+        book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
+        # if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
+        #     book_ids = ClubBookAuthorRecommender(club_id).get_recommended_books()
+        # else:
+        #     book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
         books = Book.objects.filter(id__in=book_ids)
         self.fields['book'].queryset = books
