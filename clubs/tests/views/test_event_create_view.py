@@ -67,13 +67,3 @@ class CreateEventViewTest(TestCase):
                              )
         event_count_after = Event.objects.count()
         self.assertEqual(event_count_after, event_count_before)
-
-    def test_unsuccessful_create_event(self):
-        self.client.login(username=self.user.username, password="Password123")
-        self.url_for_online_club = reverse(
-            'create_event', kwargs={'calendar_id': 999999999}
-        )
-        events_count_before = Event.objects.count()
-        response = self.client.post(self.url_for_online_club, self.data_for_online_club_event, follow=True)
-        events_count_after = Event.objects.count()
-        self.assertEqual(events_count_after, events_count_before)

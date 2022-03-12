@@ -500,7 +500,7 @@ def events_list(request, calendar_id):
                   })
 
 
-class CreateEventView(CreateView):
+class CreateEventView(LoginRequiredMixin, CreateView):
     model = Event
     template_name = 'event_create.html'
     form_class = CreateEventForm
