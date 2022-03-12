@@ -214,7 +214,7 @@ class MeetingAddressForm(forms.ModelForm):
         fields = ['address']
 
     def __init__(self, *args, **kwargs):
-        """Give user option of all addresses used for events for this calendar"""
+        """Give user option of all addresses used for events for this calendar."""
         calendar_slug = kwargs.pop('calendar_slug')
         super(MeetingAddressForm, self).__init__(*args, **kwargs)
         calendar = Calendar.objects.get(slug=calendar_slug)
@@ -223,6 +223,13 @@ class MeetingAddressForm(forms.ModelForm):
         address_ids = meeting_addresses.values_list('address_id', flat=True)
         addresses = Address.objects.filter(id__in=address_ids)
         self.fields['address'].queryset = addresses.order_by('name')
+
+    def clean(self):
+        """ Ensure that address is not null."""
+
+        super().clean()
+        if self.cleaned_data['address'] == None:
+            self.add_error('address', 'You must select an existing address or create a new one.')
 
 
 class AddressForm(forms.ModelForm):
@@ -242,7 +249,7 @@ class MeetingLinkForm(forms.ModelForm):
 class CreateEventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['title', 'start', 'end', 'end_recurring_period', 'rule']
+        fields = ['title', 'rule']
 
     start = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
