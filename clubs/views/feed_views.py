@@ -1,9 +1,10 @@
 """Feed related views."""
+from clubs.forms import PostForm
+from clubs.models import Post
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
-from clubs.forms import PostForm
-from clubs.models import Post
+
 
 class FeedView(LoginRequiredMixin, ListView):
     """Class-based generic view for displaying a view."""
