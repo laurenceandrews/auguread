@@ -1,8 +1,7 @@
-from clubs.forms import (AddressForm, LogInForm, NewClubForm, PasswordForm,
+from clubs.forms import (ClubBookForm, AddressForm, LogInForm, NewClubForm, PasswordForm,
                          PostForm, SignUpForm)
 from clubs.helpers import member, owner
-from clubs.models import (Address, Book, BookRatingForm, Club, MeetingAddress,
-                          MeetingLink, Post, User)
+from clubs.models import Address, Book, Book_Rating,BookRatingForm, Club, Club_Books, MeetingAddress, MeetingLink, Post, User, BookRatingForm, Address
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -877,17 +876,6 @@ def club_recommender(request):
     return render(request, 'club_recommender.html')
 
 
-def book_preferences(request):
-    """View that allows the user to view all books and rate them."""
-    books_queryset = Book.objects.all()
-
-    paginator = Paginator(books_queryset, settings.BOOKS_PER_PAGE)
-    page_number = request.GET.get('page')
-    books_paginated = paginator.get_page(page_number)
-
-    return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated})
-
-
 @login_required
 @owner
 def transfer(request, user_id, club_id):
@@ -900,24 +888,20 @@ def transfer(request, user_id, club_id):
     else:
         return redirect('show_user', user_id=user_id, club_id=club_id)
 
-    form = BookRatingForm()
-    return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated, 'form': form})
-
 
 class BookPreferencesView(LoginRequiredMixin, View):
     """View that handles book preferences."""
 
     http_method_names = ['get', 'post']
-    redirect_when_logged_in_url = 'book_preferences'
-
-    books_queryset = Book.objects.all()
-    paginator = Paginator(books_queryset, settings.BOOKS_PER_PAGE)
+    #redirect_when_submitted = 'book_preferences'
 
     def get(self, request):
-        """Display log in template."""
+        """Display template."""
 
-        page_number = request.GET.get('page')
-        books_paginated = self.paginator.get_page(page_number)
+        self.books_queryset = Book.objects.all()
+        self.paginator = Paginator(self.books_queryset, settings.BOOKS_PER_PAGE)
+        self.page_number = request.GET.get('page')
+        self.books_paginated = self.paginator.get_page(self.page_number)
 
         self.next = request.GET.get('next') or ''
         return self.render()
@@ -927,11 +911,52 @@ class BookPreferencesView(LoginRequiredMixin, View):
 
         form = BookRatingForm(request.POST)
         self.next = request.POST.get('next') or settings.AUTO_REDIRECT_URL
+        rating = form.rating
+        # if rating is not None:
+            # Check if there is already a Book_Rating for this book
+                # If so, overwrite it
+                # Otherwise, create a new one
 
         return self.render()
 
     def render(self):
         """Render template with blank form."""
-
+        
         form = BookRatingForm()
-        return render(self.request, 'book_preferences.html', {'form': form, 'next': self.next})
+        return render(self.request, 'book_preferences.html', {'form': form, 'next': self.next, 'books_paginated': self.books_paginated})
+
+class ClubBookSelectionView(CreateView):
+    """Class-based generic view for new post handling."""
+
+    model = Club_Books
+    template_name = 'club_book_select.html'
+    form_class = ClubBookForm
+
+    def get_form_kwargs(self):
+        kwargs = super(ClubBookSelectionView, self).get_form_kwargs()
+        kwargs['club_id'] = self.kwargs['club_id']
+        return kwargs
+
+    def form_valid(self, form):
+        """Process a valid form."""
+        club = Club.objects.get(id=self.kwargs['club_id'])
+
+        book = form.cleaned_data.get('book')
+
+        club_book = Club_Books.objects.create(
+            club=club,
+            book=book
+        )
+        return render(self.request, 'home.html')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        club = Club.objects.get(id=self.kwargs['club_id'])
+        context['club_name'] = club.name
+
+        return context
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        return redirect('home')
+

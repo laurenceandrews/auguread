@@ -205,6 +205,8 @@ class Book(models.Model):
         default='/static/default_book.png/'
     )
 
+    def __str__(self):
+        return self.title
 
 class Post(models.Model):
     """Posts by users."""
@@ -436,6 +438,9 @@ class Club_Users(models.Model):
         default=1
     )
 
+    class Meta:
+        verbose_name = "Club User"
+
 
 class Club_Books(models.Model):
     club = models.ForeignKey(
@@ -451,6 +456,9 @@ class Club_Books(models.Model):
         blank=False,
         default=0
     )
+
+    class Meta:
+        verbose_name = "Club Book"
 
 
 class User_Books(models.Model):
@@ -476,7 +484,6 @@ class MyUUIDModel(models.Model):
         editable=False
     )
 
-
 class Book_Rating(models.Model):
     user = models.ForeignKey(
         User,
@@ -500,12 +507,10 @@ class Book_Rating(models.Model):
 
 
 class BookRatingForm(forms.Form):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-   # previous_rating = Book.rating
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
     rating = forms.ChoiceField(
-        required=False,
-        label='Rate book',
-        #     initial = 'previous_rating',
-        error_messages={},
+        required = False,
+        label = 'Rate book',
+        error_messages = {},
         choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
     )
