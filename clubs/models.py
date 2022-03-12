@@ -205,11 +205,8 @@ class Book(models.Model):
         default='/static/default_book.png/'
     )
 
-
-
     def __str__(self):
         return self.title
-
 
 class Post(models.Model):
     """Posts by users."""
@@ -500,7 +497,7 @@ class Book_Rating(models.Model):
         on_delete=models.CASCADE,
         blank=False,
         default=0
-    )    
+    )
 
     rating = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(10)],

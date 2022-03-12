@@ -7,7 +7,7 @@
       "location": "London, GB",
       "description": "A club that reads lots of fun books.",
       "avg_reading_speed": "200",
-      "owner": "@johndoe",
+      "owner": 1,
       "calendar": 5,
       "meeting_type": "ONL"
     }
@@ -20,7 +20,7 @@
       "location": "New York, USA",
       "description": "A club that reads blue books",
       "avg_reading_speed": "200",
-      "owner": "@johndoe",
+      "owner": 1,
       "calendar": 13,
       "meeting_type": "INP"
     }
