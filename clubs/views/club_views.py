@@ -53,21 +53,13 @@ def new_club(request):
         return render(request, "new_club.html", {"form": NewClubForm})
 
 
-@login_required
-def club_list(request):
-    clubs = Club.objects.all()
-    paginator = Paginator(clubs, settings.NUMBER_PER_PAGE)
+class ClubListView(LoginRequiredMixin, ListView):
+    """View to display a list of available clubs."""
 
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(
-        request,
-        'club_list.html',
-        {
-            "page_obj": page_obj,
-            "clubs": clubs,
-        }
-    )
+    paginate_by = settings.NUMBER_PER_PAGE
+    model = Club
+    template_name = "club_list.html"
+    context_object_name = "clubs"
 
 
 @login_required
