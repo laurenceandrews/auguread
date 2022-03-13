@@ -17,6 +17,7 @@ from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
 @login_required
 def calendar_picker(request):
     """ View to select a calendar to display its full calendar. """
+
     if request.method == 'POST':
         form = CalendarPickerForm(request.POST)
         if form.is_valid():
