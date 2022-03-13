@@ -22,7 +22,7 @@ def member(view_function, *args, **kwargs):
                 or club.owner.email == request.user.email):
             return view_function(request, *args, **kwargs)
         else:
-            return redirect(settings.AUTO_REDIRECT_URL)
+            return redirect(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
     return modified_view_function
 
@@ -36,6 +36,6 @@ def owner(view_function, *args, **kwargs):
         if request.user in club.owner.all() or club.owner.email == request.user.email:
             return view_function(request, *args, **kwargs)
         else:
-            return redirect(settings.AUTO_REDIRECT_URL)
+            return redirect(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
     return modified_view_function

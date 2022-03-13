@@ -70,7 +70,7 @@ class BookPreferencesView(LoginRequiredMixin, View):
         """Handles submit attempt."""
 
         form = BookRatingForm(request.POST)
-        self.next = request.POST.get('next') or settings.AUTO_REDIRECT_URL
+        self.next = request.POST.get('next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
 
         return self.render()
 

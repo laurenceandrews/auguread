@@ -65,7 +65,7 @@ from clubs.helpers import login_prohibited
 #                 or self.request.user in club.owners.all() or club.owner == self.request.user):
 #             return super().dispatch(*args, **kwargs)
 #         else:
-#             return redirect(settings.AUTO_REDIRECT_URL)
+#             return redirect(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 #
 #
 # class MemberProhibitedMixin:
@@ -78,7 +78,7 @@ from clubs.helpers import login_prohibited
 #         if self.request.user in club.owners.all() or club.owner == self.request.user:
 #             return super().dispatch(*args, **kwargs)
 #         else:
-#             return redirect(settings.AUTO_REDIRECT_URL)
+#             return redirect(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 #
 #
 # class LogInView(LoginProhibitedMixin, View):
@@ -96,12 +96,12 @@ from clubs.helpers import login_prohibited
 #         """Handles log in attempt."""
 #
 #         form = LogInForm(request.POST)
-#         self.next = request.POST.get('next') or settings.AUTO_REDIRECT_URL
+#         self.next = request.POST.get('next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
 #         user = form.get_user()
 #         if user is not None:
 #             login(request, user)
 #             redirect_url = request.POST.get(
-#                 'next') or settings.AUTO_REDIRECT_URL
+#                 'next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
 #             return redirect(redirect_url)
 #         messages.add_message(request, messages.ERROR,
 #                              "The credentials provided are invalid!")
@@ -161,7 +161,7 @@ from clubs.helpers import login_prohibited
 #
 #         messages.add_message(
 #             self.request, messages.SUCCESS, "Password updated!")
-#         return reverse(settings.AUTO_REDIRECT_URL)
+#         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 #
 #
 # class FeedView(LoginRequiredMixin, ListView):
@@ -883,7 +883,7 @@ from clubs.helpers import login_prohibited
 #         """Handles submit attempt."""
 #
 #         form = BookRatingForm(request.POST)
-#         self.next = request.POST.get('next') or settings.AUTO_REDIRECT_URL
+#         self.next = request.POST.get('next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
 #
 #         return self.render()
 #

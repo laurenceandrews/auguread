@@ -40,7 +40,7 @@ class BookPreferencesView(LoginRequiredMixin, View):
         """Handles submit attempt."""
 
         form = BookRatingForm(request.POST)
-        self.next = request.POST.get('next') or settings.AUTO_REDIRECT_URL
+        self.next = request.POST.get('next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
         rating = form.rating
         # if rating is not None:
         # Check if there is already a Book_Rating for this book

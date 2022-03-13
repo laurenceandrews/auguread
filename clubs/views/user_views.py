@@ -37,12 +37,12 @@ class LogInView(LoginProhibitedMixin, View):
         """Handles log in attempt."""
 
         form = LogInForm(request.POST)
-        self.next = request.POST.get('next') or settings.AUTO_REDIRECT_URL
+        self.next = request.POST.get('next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
         user = form.get_user()
         if user is not None:
             login(request, user)
             redirect_url = request.POST.get(
-                'next') or settings.AUTO_REDIRECT_URL
+                'next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
             return redirect(redirect_url)
         messages.add_message(request, messages.ERROR,
                              "The credentials provided are invalid!")
@@ -98,7 +98,7 @@ class PasswordView(LoginRequiredMixin, FormView):
 
         messages.add_message(
             self.request, messages.SUCCESS, "Password updated!")
-        return reverse(settings.AUTO_REDIRECT_URL)
+        return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
 
 class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
