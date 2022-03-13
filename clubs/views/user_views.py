@@ -1,30 +1,19 @@
-<<<<<<< HEAD
 """Views related to all types of users"""
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
-from django.shortcuts import redirect
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import MultipleObjectMixin
-from clubs.models import User, Club
 from clubs.views.mixins import *
-from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-=======
 from clubs.forms import LogInForm, PasswordForm, SignUpForm
 from clubs.models import Club, Post, User
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
-from django.views.generic import ListView
-from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from django.views.generic.list import MultipleObjectMixin
 
@@ -111,7 +100,6 @@ class PasswordView(LoginRequiredMixin, FormView):
             self.request, messages.SUCCESS, "Password updated!")
         return reverse(settings.AUTO_REDIRECT_URL)
 
->>>>>>> d4f583260ead71c9c5608da01f05e06a3bee5369
 
 class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
     """View that shows a list of all users"""
