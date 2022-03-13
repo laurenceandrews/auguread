@@ -42,6 +42,7 @@ class ApplicantProhibitedMixin:
         else:
             return redirect(settings.AUTO_REDIRECT_URL)
 
+
 class MemberProhibitedMixin:
     """Redirects to club_list if user is an applicant or a member and dispatches as normal otherwise."""
 

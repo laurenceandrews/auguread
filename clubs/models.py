@@ -3,6 +3,7 @@
 import uuid
 from pickle import FALSE
 
+from django import forms
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     RegexValidator)
@@ -10,8 +11,6 @@ from django.db import models
 from django_countries.fields import CountryField
 from libgravatar import Gravatar
 from schedule.models import Calendar, Event, Rule
-
-from django import forms
 
 
 class UserManager(UserManager):
@@ -200,14 +199,14 @@ class Book(models.Model):
         blank=False,
         default='/static/default_book.png/'
     )
-    
+
     image_large = models.ImageField(
         blank=False,
         default='/static/default_book.png/'
     )
 
-
-
+    def __str__(self):
+        return self.title
 
 class Post(models.Model):
     """Posts by users."""
@@ -439,6 +438,9 @@ class Club_Users(models.Model):
         default=1
     )
 
+    class Meta:
+        verbose_name = "Club User"
+
 
 class Club_Books(models.Model):
     club = models.ForeignKey(
@@ -454,6 +456,9 @@ class Club_Books(models.Model):
         blank=False,
         default=0
     )
+
+    class Meta:
+        verbose_name = "Club Book"
 
 
 class User_Books(models.Model):
@@ -479,7 +484,6 @@ class MyUUIDModel(models.Model):
         editable=False
     )
 
-
 class Book_Rating(models.Model):
     user = models.ForeignKey(
         User,
@@ -493,7 +497,7 @@ class Book_Rating(models.Model):
         on_delete=models.CASCADE,
         blank=False,
         default=0
-    )    
+    )
 
     rating = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(10)],

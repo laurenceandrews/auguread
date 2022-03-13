@@ -46,7 +46,7 @@ urlpatterns = [
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
 
     # Club urls
-    path('clubs/', views.club_list, name='club_list'),
+    path('clubs/', views.ClubListView.as_view(), name='club_list'),
     path('new_club/', views.new_club, name='new_club'),
 
     path('enter/<int:club_id>', views.enter, name='enter'),
@@ -57,7 +57,7 @@ urlpatterns = [
     path('<int:club_id>/applicants', views.ApplicantListView.as_view(), name='applicant_list'),
     path('<int:club_id>/members', views.MemberListView.as_view(), name='member_list'),
     path('<int:club_id>/officers', views.OwnerListView.as_view(), name='owner_list'),
-    
+
 
     # Meeting scheduler urls
     re_path(r"^schedule/api/occurrences", api_occurrences, name="api_occurrences"),
@@ -103,4 +103,8 @@ urlpatterns = [
     #path('book_preferences/', views.book_preferences, name='book_preferences'),
     path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
 
+
+    url(r"^club/book/edit/(?P<club_id>\d+)/$",
+        views.ClubBookSelectionView.as_view(),
+        name='club_book_select'),
 ]
