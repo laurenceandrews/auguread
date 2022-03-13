@@ -41,20 +41,6 @@ class CreateEventViewTest(TestCase):
             'create_event', kwargs={'calendar_id': self.calendar_for_online_club.id}
         )
 
-        self.calendar_for_in_person_club = Calendar.objects.get(pk=13)
-        self.in_person_club = Club.objects.get(pk=12)
-        self.data_for_in_person_club_event = {
-            'title': 'Exercise',
-            'start': self.default_meeting_start,
-            'end': self.default_meeting_end,
-            'end_recurring_period': self.default_meeting_start,
-            'rule': Rule.objects.get(pk=9),
-            'calendar': self.calendar_for_in_person_club
-        }
-        self.url_for_in_person_club = reverse(
-            'create_event', kwargs={'calendar_id': self.calendar_for_in_person_club.id}
-        )
-
     def test_create_online_event_url(self):
         self.assertEqual(self.url_for_online_club, f'/event/create/{self.calendar_for_online_club.id}/')
 
@@ -67,3 +53,9 @@ class CreateEventViewTest(TestCase):
                              )
         event_count_after = Event.objects.count()
         self.assertEqual(event_count_after, event_count_before)
+
+    def test_get_create_event(self):
+        self.client.login(email=self.user.email, password="Password123")
+        response = self.client.get(self.url_for_online_club)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'event_create.html')
