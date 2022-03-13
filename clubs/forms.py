@@ -290,7 +290,7 @@ class ClubBookForm(forms.ModelForm):
         """Give user option of books from the book-to-club-recommender-age recommender."""
         club_id = kwargs.pop('club_id')
         super(ClubBookForm, self).__init__(*args, **kwargs)
-        book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
+        book_ids = ClubBookAuthorRecommender(club_id).get_recommended_books()
         # if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
         #     book_ids = ClubBookAuthorRecommender(club_id).get_recommended_books()
         # else:
