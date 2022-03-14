@@ -47,6 +47,6 @@ class CreateEventFormTestCase(TestCase):
         self.assertIn('rule', form.fields)
 
     def test_end_must_be_later_than_start(self):
-        self.form_input['start'] = self.form_input['end']
+        self.form_input['start'] = self.data['end']
         form = CreateEventForm(data=self.form_input)
         self.assertFalse(form.is_valid())
