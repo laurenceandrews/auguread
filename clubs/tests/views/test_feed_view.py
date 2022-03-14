@@ -59,7 +59,7 @@ class FeedViewTestCase(TestCase):
         self.assertFalse(response.context['is_paginated'])
 
     def test_feed_with_pagination(self):
-        self.client.login(eamil=self.user.email, password='Password123')
+        self.client.login(email=self.user.email, password='Password123')
         jane = User.objects.get(email='janedoe@example.org')
         self.user.toggle_follow(jane)
         create_posts(self.user, 100, 100+settings.POSTS_PER_PAGE+2)

@@ -29,13 +29,12 @@ class NewClubTestCase(TestCase):
         }
 
     def test_valid_new_club(self):
-        input = {'name': 'x'*50,
+        self.form_input = {'name': 'x'*50,
                 'city': self.club_city,
                 'country': self.club_country,
                 'description': 'y'*200,
-                'avg_reading_speed': 'z',
+                'avg_reading_speed': 200,
                 'calendar_name': 'c'*200,
-
         }
         form = NewClubForm(data=self.form_input)
         self.assertTrue(form.is_valid())
