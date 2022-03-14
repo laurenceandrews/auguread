@@ -504,13 +504,3 @@ class Book_Rating(models.Model):
         blank=False,
         default=1
     )
-
-
-class BookRatingForm(forms.Form):
-    user = models.ForeignKey(User, on_delete=models.CASCADE) 
-    rating = forms.ChoiceField(
-        required = False,
-        label = 'Rate book',
-        error_messages = {},
-        choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
-    )

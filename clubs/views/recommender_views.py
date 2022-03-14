@@ -1,8 +1,8 @@
 """Views related to the recommender."""
 from clubs.forms import (AddressForm, LogInForm, NewClubForm, PasswordForm,
-                         PostForm, SignUpForm)
+                         PostForm, SignUpForm, BookRatingForm)
 from clubs.helpers import member, owner
-from clubs.models import Book, Club, MeetingAddress, MeetingLink, Post, User, BookRatingForm, Address
+from clubs.models import Book, Club, MeetingAddress, MeetingLink, Post, User, Address
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist

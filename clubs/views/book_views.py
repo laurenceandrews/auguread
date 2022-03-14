@@ -1,5 +1,5 @@
-from clubs.forms import ClubBookForm
-from clubs.models import Book, BookRatingForm, Club, Club_Books
+from clubs.forms import ClubBookForm, BookRatingForm
+from clubs.models import Book, Club, Club_Books
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
