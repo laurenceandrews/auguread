@@ -75,7 +75,7 @@ urlpatterns = [
     url(r"^event/address/create/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
         views.CreateEventAddressView.as_view(),
         name='create_event_address'),
-    url(r"^event/address/create/create/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
+    url(r"^event/address/create/newaddress/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
         views.CreateAddressView.as_view(),
         name='create_address'),
     url(r"^event/link/create/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
