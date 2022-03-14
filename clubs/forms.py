@@ -214,14 +214,18 @@ class MeetingAddressForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         """Give user option of all addresses used for events for this calendar."""
-        calendar_slug = kwargs.pop('calendar_slug')
+        calendar_slug = kwargs.pop('calendar_slug', [])
         super(MeetingAddressForm, self).__init__(*args, **kwargs)
-        calendar = Calendar.objects.get(slug=calendar_slug)
-        events = Event.objects.filter(calendar=calendar)
-        meeting_addresses = MeetingAddress.objects.filter(event__in=events)
-        address_ids = meeting_addresses.values_list('address_id', flat=True)
-        addresses = Address.objects.filter(id__in=address_ids)
-        self.fields['address'].queryset = addresses.order_by('name')
+        calendar_exists = Calendar.objects.filter(slug=calendar_slug)
+        if calendar_exists:
+            calendar = Calendar.objects.filter(slug=calendar_slug)
+            events = Event.objects.filter(calendar=calendar)
+            meeting_addresses = MeetingAddress.objects.filter(event__in=events)
+            address_ids = meeting_addresses.values_list('address_id', flat=True)
+            addresses = Address.objects.filter(id__in=address_ids)
+            self.fields['address'].queryset = addresses.order_by('name')
+        else:
+            self.fields['address'].queryset = Address.objects.none()
 
     def clean(self):
         """ Ensure that address is not null."""
