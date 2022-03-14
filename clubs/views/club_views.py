@@ -11,7 +11,7 @@ from django.template.defaultfilters import slugify
 from django.views.generic import ListView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
-
+from django.views.generic.edit import CreateView
 from .helpers import login_prohibited, member, owner
 from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
                      MemberProhibitedMixin)
