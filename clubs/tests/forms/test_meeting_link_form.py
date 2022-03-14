@@ -1,8 +1,6 @@
 """Unit tests of the meeting address form."""
 from clubs.forms import MeetingLinkForm
-from clubs.models import MeetingLink, User
-from django import forms
-from django.contrib.auth.hashers import check_password
+from clubs.models import User
 from django.test import TestCase
 from schedule.models import Calendar, Event, Rule
 
