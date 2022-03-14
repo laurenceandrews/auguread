@@ -102,7 +102,7 @@ class CreateEventLinkView(LoginRequiredMixin, CreateView):
     """ View to handle createing event links for online clubs. """
 
     model = MeetingLink
-    template_name = 'event_link_form.html'
+    template_name = 'event_link_create.html'
     form_class = MeetingLinkForm
 
     def form_valid(self, form):
