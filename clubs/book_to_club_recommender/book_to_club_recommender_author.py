@@ -3,7 +3,7 @@
 
 import numpy as np
 import pandas as pd
-from clubs.models import Book, Club_Books, Club_Users
+from clubs.models import Book, Book_Rating, Club_Books, Club_Users
 
 
 class ClubBookAuthorRecommender:
@@ -13,8 +13,8 @@ class ClubBookAuthorRecommender:
         self.df_club_users = pd.DataFrame(list(Club_Users.objects.all().values()))
         self.df_club_books = pd.DataFrame(list(Club_Books.objects.all().values()))
 
-        self.df_book_ratings = pd.read_csv('clubs/dataset/BX-Book-Ratings.csv', encoding='latin1', sep=';')
-        self.df_book_ratings.drop(self.df_book_ratings[self.df_book_ratings['Book-Rating'] == 0].index, inplace=True)
+        self.df_book_ratings = pd.DataFrame(list(Book_Rating.objects.all().values()))
+        self.df_book_ratings.drop(self.df_book_ratings[self.df_book_ratings['rating'] == 0].index, inplace=True)
 
         self.club_id_to_query = club_id_to_query
 
@@ -45,42 +45,34 @@ class ClubBookAuthorRecommender:
     def getFavBooksAuthors(self):
         df_favourite_books = self.getClubFavBooks()
         # Get authors of the favourite books
-        fav_authors = df_favourite_books['author'].tolist()
-        return df_favourite_books, fav_authors
+        df_fav_authors = df_favourite_books['author']
+        return df_favourite_books, df_fav_authors
 
     def getAuthorBooks(self):
         # Get all books by the favourite authors
-        df_all_author_books = pd.DataFrame()
-        df_favourite_books, fav_authors = self.getFavBooksAuthors()
-
-        for author in fav_authors:
-            df_author_books = pd.DataFrame(self.df_books['ISBN'][self.df_books['author'] == author])
-            # Exclude the books that are from the club's favourite books
-            df_author_books = df_author_books[~df_author_books.ISBN.isin(df_favourite_books.ISBN)]
-            df_all_author_books = pd.concat([df_all_author_books, df_author_books])
-
-        return df_all_author_books
+        df_favourite_books, df_fav_authors = self.getFavBooksAuthors()
+        print(df_fav_authors)
+        df_author_books = pd.merge(self.df_books, df_fav_authors, on='author')
+        # Exclude the books that are from the club's favourite books
+        df_author_books = df_author_books[~df_author_books.ISBN.isin(df_favourite_books.ISBN)]
+        return df_author_books
 
     def author_books_is_empty(self):
         author_books = self.getAuthorBooks()
         return len(author_books) == 0
 
     def get_recommended_books(self):
-        df_all_author_books = self.getAuthorBooks()
-
+        df_author_books = self.getAuthorBooks()
         # Get the most rated books from the above list
-        df_author_book_ratings = pd.merge(df_all_author_books, self.df_book_ratings, left_on='ISBN', right_on='ISBN')
-        df_author_books_rating_count = pd.DataFrame(df_author_book_ratings.groupby('ISBN')['Book-Rating'].count())
+        df_author_book_ratings = pd.merge(self.df_book_ratings, df_author_books, left_on='book_id', right_on='id')
+        df_author_books_rating_count = pd.DataFrame(df_author_book_ratings.groupby('book_id')['rating'].count())
 
         # Make Rating count as a regular column and sort
         df_author_books_rating_count.reset_index(level=0, inplace=True)
-        df_author_books_rating_count.sort_values('Book-Rating', ascending=False)
-        print('df_author_books_rating_count', df_author_books_rating_count)
+        df_author_books_rating_count.sort_values('rating', ascending=False)
 
-        recommended_books = pd.DataFrame(df_author_books_rating_count['ISBN'].iloc[0:10])
-        print('recommended_books', recommended_books)
-        print('self.df_books', self.df_books)
-        recommended_books = pd.merge(recommended_books, self.df_books, on='ISBN')
+        recommended_books = pd.DataFrame(df_author_books_rating_count['book_id'].iloc[0:10])
+        recommended_books = pd.merge(recommended_books, self.df_books, left_on='book_id', right_on='id')
 
         recommended_books_list = recommended_books['id'].tolist()
         return recommended_books_list
