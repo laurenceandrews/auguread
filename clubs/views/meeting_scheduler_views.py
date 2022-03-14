@@ -3,6 +3,7 @@ from clubs.forms import (AddressForm, CalendarPickerForm, CreateEventForm,
 from clubs.models import Address, Club, MeetingAddress, MeetingLink
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic.detail import DetailView
@@ -401,3 +402,11 @@ class EventDetailView(LoginRequiredMixin, DetailView):
         context['user'] = self.request.user
 
         return context
+
+    def get(self, request, *args, **kwargs):
+        """Handle get request, and redirect to user_list if user_id invalid."""
+
+        try:
+            return super().get(request, *args, **kwargs)
+        except Http404:
+            return render(request, 'fullcalendar.html', {'calendar': Calendar.objects.get(slug=self.kwargs['calendar_slug'])})
