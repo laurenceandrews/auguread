@@ -273,8 +273,9 @@ class CreateEventForm(forms.ModelForm):
 
     def clean(self):
         super().clean()
-        if self.cleaned_data['end'] <= self.cleaned_data['start']:
-            self.add_error('end', 'The end time must be later than start time.')
+        if (self.cleaned_data.get('end') is not None and self.cleaned_data.get('start') is not None):
+            if self.cleaned_data.get('end') <= self.cleaned_data.get('start'):
+                self.add_error('end', 'The end time must be later than start time.')
 
 
 class CalendarPickerForm(forms.Form):
