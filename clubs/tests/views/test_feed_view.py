@@ -16,14 +16,14 @@ class FeedViewTestCase(TestCase):
     ]
 
     def setUp(self):
-        self.user = User.objects.get(username='@johndoe')
+        self.user = User.objects.get(email='johndoe@example.org')
         self.url = reverse('feed')
 
     def test_feed_url(self):
         self.assertEqual(self.url,'/feed/')
 
     def test_get_feed(self):
-        self.client.login(username=self.user.username, password='Password123')
+        self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'feed.html')
@@ -37,10 +37,10 @@ class FeedViewTestCase(TestCase):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_feed_contains_posts_by_self_and_followees(self):
-        self.client.login(username=self.user.username, password='Password123')
-        jane = User.objects.get(username='@janedoe')
-        petra = User.objects.get(username='@petrapickles')
-        peter = User.objects.get(username='@peterpickles')
+        self.client.login(email=self.user.email, password='Password123')
+        jane = User.objects.get(email='janedoe@example.org')
+        petra = User.objects.get(email='petrapickles@example.org')
+        peter = User.objects.get(email='peterpickles@example.org')
         create_posts(self.user, 100, 103)
         create_posts(jane, 200, 203)
         create_posts(petra, 300, 303)
@@ -59,8 +59,8 @@ class FeedViewTestCase(TestCase):
         self.assertFalse(response.context['is_paginated'])
 
     def test_feed_with_pagination(self):
-        self.client.login(username=self.user.username, password='Password123')
-        jane = User.objects.get(username='@janedoe')
+        self.client.login(eamil=self.user.email, password='Password123')
+        jane = User.objects.get(email='janedoe@example.org')
         self.user.toggle_follow(jane)
         create_posts(self.user, 100, 100+settings.POSTS_PER_PAGE+2)
         create_posts(jane, 100, 100+settings.POSTS_PER_PAGE+2)
