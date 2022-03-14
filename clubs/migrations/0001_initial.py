@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ('bio', models.CharField(blank=True, max_length=520)),
                 ('city', models.CharField(max_length=50)),
                 ('country', django_countries.fields.CountryField(max_length=2)),
-                ('followers', models.ManyToManyField(related_name='followees', to=settings.AUTH_USER_MODEL)),
+                # ('followers', models.ManyToManyField(related_name='followees', to=settings.AUTH_USER_MODEL)),
                 ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups')),
                 ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions')),
             ],
