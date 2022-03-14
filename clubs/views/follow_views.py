@@ -1,8 +1,9 @@
 """Follow related views."""
+from clubs.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
-from clubs.models import User
+
 
 @login_required
 def follow_toggle(request, user_id):

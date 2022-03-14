@@ -47,8 +47,6 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'schedule',
     'djangobower',
-    # 'star_ratings',
-
 ]
 
 MIDDLEWARE = [
@@ -143,7 +141,7 @@ AUTH_USER_MODEL = 'clubs.User'
 LOGIN_URL = 'log_in'
 
 # URL where @login_prohibited redirects to
-AUTO_REDIRECT_URL = 'rec'
+REDIRECT_URL_WHEN_LOGGED_IN = 'rec'
 
 
 # Tailwind App Name
@@ -154,16 +152,14 @@ INTERNAL_IPS = [
 ]
 
 # Set up for windows, for mac/ubuntu change to r"/usr/local/bin/npm"
-NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+NPM_BIN_PATH = r"/usr/local/bin/npm"
 
-# URL where @login_prohibited redirects to
-REDIRECT_URL_WHEN_LOGGED_IN = 'home'
 
 # Page lengths
 USERS_PER_PAGE = 10
 POSTS_PER_PAGE = 20
 NUMBER_PER_PAGE = 15
-BOOKS_PER_PAGE = 10
+BOOKS_PER_PAGE = 12
 
 # Set up djangobower
 
@@ -185,7 +181,3 @@ BOWER_INSTALLED_APPS = (
     'bootstrap',
     'fullcalendar#3.8.2'
 )
-
-STAR_RATINGS_RERATE_SAME_DELETE = True
-STAR_RATINGS_RANGE = 10
-STAR_RATINGS_STAR_HEIGHT = 20

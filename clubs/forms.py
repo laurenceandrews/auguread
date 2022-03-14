@@ -3,15 +3,21 @@
 
 import datetime
 
+from clubs.book_to_club_recommender.book_to_club_recommender_age import \
+    ClubBookAgeRecommender
+from clubs.book_to_club_recommender.book_to_club_recommender_author import \
+    ClubBookAuthorRecommender
 from django import forms
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
+from django.db.models import Subquery
 from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
 
-from .models import Club, MeetingAddress, MeetingLink, Post, User
+from .models import (Address, Book, Club, Club_Books, MeetingAddress,
+                     MeetingLink, Post, User)
 
 
 class LogInForm(forms.Form):
@@ -205,6 +211,30 @@ class NewClubForm(forms.ModelForm):
 class MeetingAddressForm(forms.ModelForm):
     class Meta:
         model = MeetingAddress
+        fields = ['address']
+
+    def __init__(self, *args, **kwargs):
+        """Give user option of all addresses used for events for this calendar."""
+        calendar_slug = kwargs.pop('calendar_slug')
+        super(MeetingAddressForm, self).__init__(*args, **kwargs)
+        calendar = Calendar.objects.get(slug=calendar_slug)
+        events = Event.objects.filter(calendar=calendar)
+        meeting_addresses = MeetingAddress.objects.filter(event__in=events)
+        address_ids = meeting_addresses.values_list('address_id', flat=True)
+        addresses = Address.objects.filter(id__in=address_ids)
+        self.fields['address'].queryset = addresses.order_by('name')
+
+    def clean(self):
+        """ Ensure that address is not null."""
+
+        super().clean()
+        if self.cleaned_data.get('address') is None:
+            self.add_error('address', 'You must select an existing address or create a new one.')
+
+
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
         fields = ['name', 'address1', 'address2', 'zip_code', 'city']
 
     country = CountryField(blank_label='(Select country)').formfield()
@@ -219,7 +249,7 @@ class MeetingLinkForm(forms.ModelForm):
 class CreateEventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['title', 'start', 'end', 'end_recurring_period', 'rule']
+        fields = ['title', 'rule']
 
     start = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
@@ -234,8 +264,6 @@ class CreateEventForm(forms.ModelForm):
         widget=forms.SplitDateTimeWidget(),
         initial=meeting_end)
 
-    # end_recurring_period = forms.DateTimeField(help_text=_("This date is ignored for one time only events."), required=False)
-
     end_recurring_period = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
         initial=datetime.datetime.now,
@@ -245,19 +273,30 @@ class CreateEventForm(forms.ModelForm):
 
     def clean(self):
         super().clean()
-        if self.cleaned_data['end'] <= self.cleaned_data['start']:
-            self.add_error('end', 'The end time must be later than start time.')
+        if (self.cleaned_data.get('end') is not None and self.cleaned_data.get('start') is not None):
+            if self.cleaned_data.get('end') <= self.cleaned_data.get('start'):
+                self.add_error('end', 'The end time must be later than start time.')
 
 
 class CalendarPickerForm(forms.Form):
     calendar = forms.ModelChoiceField(queryset=Calendar.objects.all().order_by('name'))
 
 
-fields = ['name', 'location', 'description']
-
-class EditProfileForm(forms.ModelForm):
+class ClubBookForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'bio']
-        widgets = {'bio': forms.Textarea()}
-        email = forms.CharField(label = 'Email')
+        model = Club_Books
+        fields = ['book']
+
+    def __init__(self, *args, **kwargs):
+        """Give user option of books from the book-to-club-recommender-age recommender."""
+        club_id = kwargs.pop('club_id')
+        super(ClubBookForm, self).__init__(*args, **kwargs)
+
+        if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
+            book_ids = ClubBookAuthorRecommender(club_id).get_recommended_books()
+            if(len(book_ids) < 6):
+                book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
+        else:
+            book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
+        books = Book.objects.filter(id__in=book_ids)
+        self.fields['book'].queryset = books

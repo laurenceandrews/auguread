@@ -2,16 +2,144 @@
 {% load static %} {% load widget_tweaks %} {% load bootstrap_pagination %}
 {% block body %}
 
-<!-- <link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}"> -->
-<!-- <script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script> -->
-
 <style>
   ul.pagination {
-    display: inline-flex;
+    display: inline-block;
+    margin-bottom: 20px;
   }
+
+  .row {
+    display: inline-block;
+  }
+
+  .book-card {
+    width: 30%;
+    display: inline-block;
+    background-size: cover;
+    border-radius: 5px;
+    color: #fff;
+    background: rgba(66, 59, 210, 1);
+    height: 300px;
+    width: 240px;
+    margin: 5px 5px;
+    position: relative;
+    background-size: contain;
+    filter: drop-shadow(5px 5px 4px rgba(68, 68, 221, 0.3));
+  }
+
+  .book-info {
+    background-size: cover;
+    color: #fff;
+    vertical-align: top;
+    position: absolute;
+    padding: 20px;
+    width: 240px;
+    background: rgba(66, 59, 210, 0.8);
+    border-radius: 5px 5px 0px 0px;
+    height: 240px;
+  }
+
+  .book-title {
+    font-weight: 800;
+    font-size: 25px;
+    line-height: 32px;
+    margin-bottom: 15px;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* number of lines to show */
+            line-clamp: 5; 
+  }
+
+  .book-author {
+    position: absolute;
+    bottom: 15px;
+  }
+
+  .rating {
+    vertical-align: bottom;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    bottom: 0px;
+    position: absolute;
+    width: 240px;
+    font-weight: 800;
+    background: rgb(56, 49, 185);
+    border-radius: 0px 0px 5px 5px;
+  }
+
+  .rating label {
+    padding-right: 8px;
+  }
+
+  select#id_rating {
+    color:rgb(56, 49, 185);
+  }
+
   ul.pagination li {
-    padding: 5px;
+    border: solid 1px #352fa9;
+    border-radius: 2px;
+    color: #352fa9;
+    height: 40px;
+    width: 50px;
+    vertical-align: middle;
+    background-color: #fff;
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    display: inline-block;
   }
+
+  li.page-item.disabled li {
+    border: solid 1px #352fa9;
+    border-radius: 2px;
+    height: 40px;
+    width: 50px;
+    vertical-align: middle;
+    background-color: #fff;
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    display: inline-block;
+  }
+
+  ul.pagination li a {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+  }
+
+  li.page-item.disabled span.page-link {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+  }
+
+  li.page-item.active span.page-link {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+  }
+
+  ul.pagination li:hover {
+    color: #fff;
+    background-color: #352fa9;
+  }
+
+  li.page-item.active {
+    color: #fff;
+    background-color: #352fa9;
+  }
+
 </style>
 
 <div class="lg:flex h-full">
@@ -25,26 +153,36 @@
       
       <div class="mt-8 lg:mr-50">
 
-        <div class="inline-flex">
-            {% bootstrap_paginate books_paginated previous_label="Prev" next_label="Next" show_first_last="true" %}
+        <div class="inline-block">
+           {% bootstrap_paginate books_paginated previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
         </div>
-
-        <div class="grid grid-flow-col gap-3">
+          <form action="#" method = 'POST'>
+            {% csrf_token %}
             {% for book in books_paginated %}
-              <div class="pt-4" style="background-image: url({{ book.image_small }})">
-                  <p>{{ book.title }}</p>
-                  <p>{{ book.author }}</p>
-                  RATING GOES HERE
+              <div class = "row">
+                
+                <!-- If the book has an image, make it appear on hover -->
+                <div class = "book-card" style = "background-image: url({{ book.image_large }})">
+                  <div class = "book-info sm:text-left md text-left lg:text-left" >
+                    <p class = "book-title">{{ book.title }}</p>
+                    <p class = "book-author">By {{ book.author }}</p>
+                  </div>
+                  <div class = "rating">
+                      {{ form }}
+                  </div>
+                </div>
+
               </div>
             {% endfor %}
-        </div>
 
-        <div class="pt-4">
-          <div class="pt-4">
-            <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-50 dark:text-gray-300">We'll use these ratings to recommend you and your book clubs books that you'll love! The more books you rate, the more accurate our algorithm will be.</p>
-          </div>
-          <div class="pt-4">
-            <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save preferences</button>
+            <div class="pt-4">
+              <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-50 dark:text-gray-300">We'll use these ratings to recommend you and clubs you're in books that you'll love! The more books you rate, the more accurate our algorithm will be.</p>
+            </div>
+            <div class="pt-4">
+              <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save preferences</button>
+            </div>
+          </form>
+          <div class="pt-10">
           </div>
         </div>
       </div>
