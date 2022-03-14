@@ -3,6 +3,7 @@
 import uuid
 from pickle import FALSE
 
+from django import forms
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     RegexValidator)
@@ -92,7 +93,6 @@ class User(AbstractUser):
         'self', symmetrical=False, related_name='followees'
     )
 
-
     class Meta:
         """Model options"""
         ordering = ['first_name', 'last_name']
@@ -139,7 +139,7 @@ class User(AbstractUser):
     def toggle_follow(self, followee):
         """Toggles whether self follows the given followee."""
 
-        if followee==self:
+        if followee == self:
             return
         if self.is_following(followee):
             self._unfollow(followee)
@@ -195,8 +195,21 @@ class Book(models.Model):
 
     image_small = models.ImageField(
         blank=False,
-        default='https://media2.fdncms.com/stranger/imager/u/large/43820816/1591119073-screen_shot_2020-06-02_at_10.30.13_am.png'
+        default='/static/default_book.png/'
     )
+
+    image_medium = models.ImageField(
+        blank=False,
+        default='/static/default_book.png/'
+    )
+
+    image_large = models.ImageField(
+        blank=False,
+        default='/static/default_book.png/'
+    )
+
+    def __str__(self):
+        return self.title
 
 
 class Post(models.Model):
@@ -230,12 +243,7 @@ class MeetingLink(models.Model):
     )
 
 
-class MeetingAddress(models.Model):
-    event = models.OneToOneField(
-        Event,
-        on_delete=models.CASCADE
-    )
-
+class Address(models.Model):
     name = models.CharField(
         "Full name",
         max_length=1024,
@@ -267,12 +275,28 @@ class MeetingAddress(models.Model):
         blank_label='(select country)'
     )
 
-    class Meta:
-        verbose_name = "Meeting Address"
-        # verbose_name_plural = "Meeting Addresses"
+    def __str__(self):
+        return self.name
 
     def full_address(self):
         return f'{self.name}. {self.zip_code}, {self.address1}, {self.address2}. {self.city}, {self.country}.'
+
+
+class MeetingAddress(models.Model):
+    event = models.OneToOneField(
+        Event,
+        on_delete=models.CASCADE
+    )
+
+    address = models.ForeignKey(
+        Address,
+        on_delete=models.CASCADE,
+        blank=FALSE
+    )
+
+    class Meta:
+        verbose_name = "Meeting Address"
+        # verbose_name_plural = "Meeting Addresses"
 
 
 class Club(models.Model):
@@ -378,6 +402,14 @@ class Club(models.Model):
         else:
             return False
 
+    def transfer(self, user):
+        owner = self.owner
+        if user in self.owners.all():
+            self.owners.add(owner)
+            self.owner = user
+            self.owners.remove(user)
+            self.save()
+
 
 class ApplicantMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -410,6 +442,9 @@ class Club_Users(models.Model):
         default=1
     )
 
+    class Meta:
+        verbose_name = "Club User"
+
 
 class Club_Books(models.Model):
     club = models.ForeignKey(
@@ -425,6 +460,9 @@ class Club_Books(models.Model):
         blank=False,
         default=0
     )
+
+    class Meta:
+        verbose_name = "Club Book"
 
 
 class User_Books(models.Model):
@@ -448,4 +486,36 @@ class MyUUIDModel(models.Model):
         primary_key=True,
         default=uuid.uuid4,
         editable=False
+    )
+
+
+class Book_Rating(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        blank=False,
+        default=1
+    )
+
+
+class BookRatingForm(forms.Form):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = forms.ChoiceField(
+        required=False,
+        label='Rate book',
+        error_messages={},
+        choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
     )

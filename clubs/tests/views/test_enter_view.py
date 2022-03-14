@@ -30,6 +30,6 @@ class EnterViewTestCase(TestCase):
 
         self.client.login(email=self.applicant.email, password='Password123')
         response = self.client.get(self.url)
-        redirect_url = reverse(settings.AUTO_REDIRECT_URL)
+        redirect_url = reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
         self.assertRedirects(response, redirect_url,
                              status_code=302, target_status_code=200)

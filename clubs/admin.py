@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Book, Club, MeetingAddress, MeetingLink, Post, User
+from .models import (Book, Club, Club_Books, Club_Users, MeetingAddress,
+                     MeetingLink, Post, User, Book_Rating)
 
 
 @admin.register(User)
@@ -64,8 +65,12 @@ class MeetingAddressAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for meeting addresses."""
 
     list_display = [
-        'event', 'name'
+        'event', "address_name"
     ]
+
+    def address_name(self, meeting_address):
+        """Return the name of an address."""
+        return meeting_address.address.name
 
 
 @admin.register(MeetingLink)
@@ -75,3 +80,29 @@ class MeetingLinkAdmin(admin.ModelAdmin):
     list_display = [
         'event', 'meeting_link'
     ]
+
+
+@admin.register(Club_Users)
+class Club_UsersAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for club users."""
+
+    list_display = [
+        'club', 'user', 'role_num'
+    ]
+
+
+@admin.register(Club_Books)
+class Club_BookAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for club users."""
+
+    list_display = [
+        'club', 'book'
+    ]
+
+@admin.register(Book_Rating)
+class Book_RatingAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for book ratings."""
+
+    list_display = [
+        'book', 'rating'
+    ]    

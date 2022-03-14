@@ -7,3 +7,11 @@
     </span>
   </form>
 </span>
+<form action="{% url 'transfer' user_id=target.id club_id=club.id %}" method="get">
+  <span class="float-end">
+    {% if can_transfer %}
+      <button class="btn btn-primary">Transfer ownership</button>
+    {% endif %}
+  </span>
+</form>
+</span>
