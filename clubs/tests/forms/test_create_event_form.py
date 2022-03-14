@@ -38,15 +38,15 @@ class CreateEventFormTestCase(TestCase):
     #     form = CreateEventForm(data=self.form_input)
     #     self.assertTrue(form.is_valid())
 
-    # def test_form_has_necessary_fields(self):
-    #     form = CreateEventForm()
-    #     self.assertIn('title', form.fields)
-    #     self.assertIn('start', form.fields)
-    #     self.assertIn('end', form.fields)
-    #     self.assertIn('end_recurring_period', form.fields)
-    #     self.assertIn('rule', form.fields)
-    #
-    # def test_end_must_be_later_than_start(self):
-    #     self.form_input['start'] = self.form_input['end']
-    #     form = CreateEventForm(data=self.form_input)
-    #     self.assertFalse(form.is_valid())
+    def test_form_has_necessary_fields(self):
+        form = CreateEventForm()
+        self.assertIn('title', form.fields)
+        self.assertIn('start', form.fields)
+        self.assertIn('end', form.fields)
+        self.assertIn('end_recurring_period', form.fields)
+        self.assertIn('rule', form.fields)
+
+    def test_end_must_be_later_than_start(self):
+        self.form_input['start'] = self.form_input['end']
+        form = CreateEventForm(data=self.form_input)
+        self.assertFalse(form.is_valid())
