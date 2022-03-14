@@ -77,15 +77,6 @@ class EventLinkUpdateViewTest(TestCase):
         self.meeting_link.refresh_from_db()
         self.assertEqual(self.meeting_link.meeting_link, 'https://zoom.us/test')
 
-    def test_succesful_event_link_update(self):
-        meeting_link = MeetingLink.objects.get(event=self.event)
-        response = self.client.post(self.url, self.form_input, follow=True)
-
-        self.assertEqual(response.status_code, 302)
-
-        meeting_link.refresh_from_db()
-        self.assertEqual(meeting_link.meeting_link, 'https://meet.google.com/xxx-yyyy-zzz')
-
     def test_post_event_link_edit_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.post(self.url, self.form_input)
