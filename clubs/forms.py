@@ -16,8 +16,8 @@ from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
 
-from .models import (Book, Club, Club_Books, Address, MeetingAddress, MeetingLink, Post,
-                     User)
+from .models import (Address, Book, Club, Club_Books, MeetingAddress,
+                     MeetingLink, Post, User)
 
 
 class LogInForm(forms.Form):
@@ -228,7 +228,7 @@ class MeetingAddressForm(forms.ModelForm):
         """ Ensure that address is not null."""
 
         super().clean()
-        if self.cleaned_data['address'] == None:
+        if self.cleaned_data.get('address') is None:
             self.add_error('address', 'You must select an existing address or create a new one.')
 
 
@@ -273,8 +273,9 @@ class CreateEventForm(forms.ModelForm):
 
     def clean(self):
         super().clean()
-        if self.cleaned_data['end'] <= self.cleaned_data['start']:
-            self.add_error('end', 'The end time must be later than start time.')
+        if (self.cleaned_data.get('end') is not None and self.cleaned_data.get('start') is not None):
+            if self.cleaned_data.get('end') <= self.cleaned_data.get('start'):
+                self.add_error('end', 'The end time must be later than start time.')
 
 
 class CalendarPickerForm(forms.Form):

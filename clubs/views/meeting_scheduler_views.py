@@ -3,6 +3,7 @@ from clubs.forms import (AddressForm, CalendarPickerForm, CreateEventForm,
 from clubs.models import Address, Club, MeetingAddress, MeetingLink
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic.detail import DetailView
@@ -16,6 +17,8 @@ from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
 
 @login_required
 def calendar_picker(request):
+    """ View to select a calendar to display its full calendar. """
+
     if request.method == 'POST':
         form = CalendarPickerForm(request.POST)
         if form.is_valid():
@@ -28,12 +31,15 @@ def calendar_picker(request):
 
 @login_required
 def full_calendar(request, calendar_slug):
+    """ View to display a calendar's full calendar. """
+
     calendar = Calendar.objects.get(slug=calendar_slug)
     return render(request, 'fullcalendar.html', {'calendar': calendar})
 
 
 @login_required
 def events_list(request, calendar_id):
+    """ View to display a calendar's event list. """
     calendar = Calendar.objects.get(id=calendar_id)
     events = calendar.event_set.all()
     return render(request, "events_list.html",
@@ -44,6 +50,8 @@ def events_list(request, calendar_id):
 
 
 class CreateEventView(LoginRequiredMixin, CreateView):
+    """ View to handle creating events. """
+
     model = Event
     template_name = 'event_create.html'
     form_class = CreateEventForm
@@ -92,8 +100,10 @@ class CreateEventView(LoginRequiredMixin, CreateView):
 
 
 class CreateEventLinkView(LoginRequiredMixin, CreateView):
+    """ View to handle createing event links for online clubs. """
+
     model = MeetingLink
-    template_name = 'event_link_form.html'
+    template_name = 'event_link_create.html'
     form_class = MeetingLinkForm
 
     def form_valid(self, form):
@@ -123,6 +133,8 @@ class CreateEventLinkView(LoginRequiredMixin, CreateView):
 
 
 class CreateEventAddressView(LoginRequiredMixin, CreateView):
+    """ View to handle creating event addresses for in-person clubs. """
+
     model = MeetingAddress
     template_name = 'event_address_create.html'
     form_class = MeetingAddressForm
@@ -166,6 +178,8 @@ class CreateEventAddressView(LoginRequiredMixin, CreateView):
 
 
 class CreateAddressView(LoginRequiredMixin, CreateView):
+    """ View to handle requests to create a new address. """
+
     model = Address
     template_name = 'address_create.html'
     form_class = AddressForm
@@ -223,6 +237,8 @@ class CreateAddressView(LoginRequiredMixin, CreateView):
 
 
 class EditEventView(LoginRequiredMixin, UpdateView):
+    """ View that handles event edit requests. """
+
     model = Event
     template_name = 'event_update.html'
     form_class = CreateEventForm
@@ -256,6 +272,8 @@ class EditEventView(LoginRequiredMixin, UpdateView):
 
 
 class EditEventLinkView(LoginRequiredMixin, UpdateView):
+    """ View that handles event edit link requests. """
+
     model = Event
     template_name = 'event_link_update.html'
     form_class = MeetingLinkForm
@@ -293,6 +311,8 @@ class EditEventLinkView(LoginRequiredMixin, UpdateView):
 
 
 class EditEventAddressView(LoginRequiredMixin, UpdateView):
+    """ View that handles event address edit requests. """
+
     model = Event
     template_name = 'event_address_update.html'
     form_class = MeetingAddressForm
@@ -340,6 +360,8 @@ class EditEventAddressView(LoginRequiredMixin, UpdateView):
 
 
 class DeleteEventView(LoginRequiredMixin, DeleteView):
+    """ View that handles event delete requests. """
+
     model = Event
     template_name = 'event_delete.html'
     form_class = CreateEventForm
@@ -362,6 +384,7 @@ class DeleteEventView(LoginRequiredMixin, DeleteView):
 
 
 class EventDetailView(LoginRequiredMixin, DetailView):
+    """ View that shows event details and links to edit and delete event functions. """
 
     model = Event
     template_name = 'event_detail.html'
@@ -379,3 +402,11 @@ class EventDetailView(LoginRequiredMixin, DetailView):
         context['user'] = self.request.user
 
         return context
+
+    def get(self, request, *args, **kwargs):
+        """Handle get request, and redirect to user_list if user_id invalid."""
+
+        try:
+            return super().get(request, *args, **kwargs)
+        except Http404:
+            return render(request, 'fullcalendar.html', {'calendar': Calendar.objects.get(slug=self.kwargs['calendar_slug'])})

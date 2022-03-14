@@ -60,17 +60,20 @@ def log_out(request):
     return redirect('home')
 
 
-@login_prohibited
-def sign_up(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('book_preferences')
-    else:
-        form = SignUpForm()
-    return render(request, 'sign_up.html', {'form': form})
+class SignUpView(LoginProhibitedMixin, FormView):
+    """View that signs up user."""
+
+    form_class = SignUpForm
+    template_name = "sign_up.html"
+    redirect_when_logged_in_url = 'rec'
+
+    def form_valid(self, form):
+        self.object = form.save()
+        login(self.request, self.object)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('book_preferences')
 
 
 class PasswordView(LoginRequiredMixin, FormView):
