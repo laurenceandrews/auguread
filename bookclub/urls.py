@@ -58,6 +58,13 @@ urlpatterns = [
     path('<int:club_id>/members', views.MemberListView.as_view(), name='member_list'),
     path('<int:club_id>/officers', views.OwnerListView.as_view(), name='owner_list'),
 
+    path('user_detail/', views.user_detail, name='user_detail'),
+    path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
+    path('feed/', views.FeedView.as_view(), name='feed'),
+    path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
+
+    # sample scheduler
+    # url(r'^fullcalendar', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),
 
     # Meeting scheduler urls
     re_path(r"^schedule/api/occurrences", api_occurrences, name="api_occurrences"),

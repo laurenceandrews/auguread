@@ -2,6 +2,17 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from clubs.models import Post, User
 
+
+
+class PostTest(TestCase):
+
+    fixtures = ['clubs/tests/fixtures/default_user.json']
+
+    def setUp(self):
+        super(TestCase, self).setUp()
+        self.user = User.objects.get(username='@johndoe')
+
+
 from django_countries.fields import CountryField
 
 class PostTest(TestCase):

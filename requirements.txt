@@ -12,7 +12,6 @@ django-widget-tweaks==1.4.12
 django-tailwind==3.1.1
 django-with-asserts==0.0.1
 Faker==11.3.0
-fuzzywuzzy==0.18.0
 humanize==3.14.0
 libgravatar==1.0.0
 lxml==4.7.1
