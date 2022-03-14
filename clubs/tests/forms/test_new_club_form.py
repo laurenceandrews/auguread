@@ -29,9 +29,17 @@ class NewClubTestCase(TestCase):
         }
 
     def test_valid_new_club(self):
+        input = {'name': 'x'*50,
+                'city': self.club_city,
+                'country': self.club_country,
+                'description': 'y'*200,
+                'avg_reading_speed': 'z',
+                'calendar_name': 'c'*200,
+
+        }
         form = NewClubForm(data=self.form_input)
         self.assertTrue(form.is_valid())
-        # self.assertContains(response, 'new_club', html=True)
+
 
     def test_form_has_necessary_fields(self):
         form = NewClubForm()
