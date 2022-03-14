@@ -154,14 +154,17 @@ class User(AbstractUser):
 
     def is_following(self, user):
         """Returns whether self follows the given user."""
+
         return user in self.followees.all()
 
     def follower_count(self):
         """Returns the number of followers of self."""
+
         return self.followers.count()
 
     def followee_count(self):
         """Returns the number of followees of self."""
+
         return self.followees.count()
 
 
@@ -207,6 +210,7 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
 
 class Post(models.Model):
     """Posts by users."""
@@ -484,6 +488,7 @@ class MyUUIDModel(models.Model):
         editable=False
     )
 
+
 class Book_Rating(models.Model):
     user = models.ForeignKey(
         User,
@@ -507,10 +512,10 @@ class Book_Rating(models.Model):
 
 
 class BookRatingForm(forms.Form):
-    user = models.ForeignKey(User, on_delete=models.CASCADE) 
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = forms.ChoiceField(
-        required = False,
-        label = 'Rate book',
-        error_messages = {},
+        required=False,
+        label='Rate book',
+        error_messages={},
         choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
     )
