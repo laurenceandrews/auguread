@@ -134,6 +134,7 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, Applican
 
     def get_context_data(self, **kwargs):
         """Generate context data to be shown in the template."""
+        # user = self.get_object() #new
         club = Club.objects.get(id=self.kwargs['club_id'])
         target = self.get_object()
         user = self.request.user
@@ -143,6 +144,7 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, Applican
         user_type = user.membership_type(club)
         posts = Post.objects.filter(author=user)
         context = super().get_context_data(object_list=users, **kwargs)
+        # context = super().get_context_data(object_list=posts, **kwargs) #new
         context['can_approve'] = ((user != target) and (user_type == 'Owner'
                                                         or user == club.owner) and target_type == 'Applicant')
         context['is_owner'] = target_type == 'Owner'

@@ -343,7 +343,6 @@ class Club(models.Model):
 
     applicants = models.ManyToManyField(
         User, through='ApplicantMembership', related_name='applicant', blank=True)
-
     members = models.ManyToManyField(
         User, through='MemberMembership', related_name='member', blank=True)
     owners = models.ManyToManyField(
