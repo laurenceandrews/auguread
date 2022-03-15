@@ -11,8 +11,8 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from schedule.models import Calendar, Event, Rule
 
 from .helpers import login_prohibited
-from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
-                     MemberProhibitedMixin)
+from .mixins import (ApplicantProhibitedMixin, ClubUserRequiredMixin,
+                     LoginProhibitedMixin, MemberProhibitedMixin)
 
 
 @login_required
@@ -49,7 +49,7 @@ def events_list(request, calendar_id):
                   })
 
 
-class CreateEventView(LoginRequiredMixin, CreateView):
+class CreateEventView(LoginRequiredMixin, ClubUserRequiredMixin, CreateView):
     """ View to handle creating events. """
 
     model = Event
@@ -99,7 +99,7 @@ class CreateEventView(LoginRequiredMixin, CreateView):
         return context
 
 
-class CreateEventLinkView(LoginRequiredMixin, CreateView):
+class CreateEventLinkView(LoginRequiredMixin, ClubUserRequiredMixin, CreateView):
     """ View to handle createing event links for online clubs. """
 
     model = MeetingLink
@@ -132,7 +132,7 @@ class CreateEventLinkView(LoginRequiredMixin, CreateView):
         return context
 
 
-class CreateEventAddressView(LoginRequiredMixin, CreateView):
+class CreateEventAddressView(LoginRequiredMixin, ClubUserRequiredMixin, CreateView):
     """ View to handle creating event addresses for in-person clubs. """
 
     model = MeetingAddress
@@ -177,7 +177,7 @@ class CreateEventAddressView(LoginRequiredMixin, CreateView):
         return context
 
 
-class CreateAddressView(LoginRequiredMixin, CreateView):
+class CreateAddressView(LoginRequiredMixin, ClubUserRequiredMixin, CreateView):
     """ View to handle requests to create a new address. """
 
     model = Address
@@ -236,7 +236,7 @@ class CreateAddressView(LoginRequiredMixin, CreateView):
         return context
 
 
-class EditEventView(LoginRequiredMixin, UpdateView):
+class EditEventView(LoginRequiredMixin, ClubUserRequiredMixin, UpdateView):
     """ View that handles event edit requests. """
 
     model = Event
@@ -271,7 +271,7 @@ class EditEventView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class EditEventLinkView(LoginRequiredMixin, UpdateView):
+class EditEventLinkView(LoginRequiredMixin, ClubUserRequiredMixin, UpdateView):
     """ View that handles event edit link requests. """
 
     model = Event
@@ -310,7 +310,7 @@ class EditEventLinkView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class EditEventAddressView(LoginRequiredMixin, UpdateView):
+class EditEventAddressView(LoginRequiredMixin, ClubUserRequiredMixin, UpdateView):
     """ View that handles event address edit requests. """
 
     model = Event
@@ -359,7 +359,7 @@ class EditEventAddressView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class DeleteEventView(LoginRequiredMixin, DeleteView):
+class DeleteEventView(LoginRequiredMixin, ClubUserRequiredMixin, DeleteView):
     """ View that handles event delete requests. """
 
     model = Event
@@ -383,7 +383,7 @@ class DeleteEventView(LoginRequiredMixin, DeleteView):
         return context
 
 
-class EventDetailView(LoginRequiredMixin, DetailView):
+class EventDetailView(LoginRequiredMixin, ClubUserRequiredMixin, DetailView):
     """ View that shows event details and links to edit and delete event functions. """
 
     model = Event

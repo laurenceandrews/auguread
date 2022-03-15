@@ -1,6 +1,9 @@
-from clubs.models import Club
+from clubs.models import Club, Club_Users
 from django.conf import settings
+from django.contrib import messages
 from django.shortcuts import redirect
+from django.urls import reverse
+from schedule.models import Calendar, Event, Rule
 
 
 class LoginProhibitedMixin:
@@ -55,3 +58,26 @@ class MemberProhibitedMixin:
             return super().dispatch(*args, **kwargs)
         else:
             return redirect(settings.AUTO_REDIRECT_URL)
+
+
+class ClubUserRequiredMixin:
+    """Mixin that redirects when a user does not have a Club_Users relationshi."""
+
+    redirect_when_not_a_club_user_url = settings.AUTO_REDIRECT_URL
+
+    def dispatch(self, *args, **kwargs):
+        """Redirect when not a club_user, or dispatch as normal otherwise."""
+        calendar_id = kwargs['calendar_id']
+        calendar = Calendar.objects.get(id=calendar_id)
+        club = Club.objects.get(calendar=calendar)
+        club_user_relationship_exists = Club_Users.objects.filter(club=club, user=self.request.user)
+        if not club_user_relationship_exists:
+            return self.handle_not_a_club_user(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
+
+    def handle_not_a_club_user(self, *args, **kwargs):
+        calendar_id = kwargs['calendar_id']
+        calendar = Calendar.objects.get(id=calendar_id)
+        url = reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+        messages.add_message(self.request, messages.ERROR, "You are not a user of this club!")
+        return redirect(url)
