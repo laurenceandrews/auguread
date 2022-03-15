@@ -100,9 +100,9 @@ class ShowUserTest(TestCase, AssertHTMLMixin):
         self.client.login(email=self.user.email, password='Password123')
         self._create_test_posts_long()
         response = self.client.get(self.url)
-        self.assertEqual(Post.objects.all().count(), 6)
-        # self.assertEqual(len(response.context['posts']), settings.POSTS_PER_PAGE)
-        # self.assertTrue(response.context['is_paginated'])
+        self.assertEqual(Post.objects.all().count(), 40)
+        self.assertEqual(len(response.context['posts']), settings.POSTS_PER_PAGE)
+        self.assertTrue(response.context['is_paginated'])
         # page_obj = response.context['page_obj']
         # self.assertFalse(page_obj.has_previous())
         # self.assertTrue(page_obj.has_next())
@@ -155,44 +155,18 @@ class ShowUserTest(TestCase, AssertHTMLMixin):
         post.save()
 
     def _create_test_posts_long(self):
-        data = {
-            'author': self.user,
-            'text': 'My first post.'
-        }
-        post = Post(**data)
-        post.save()
+        for num in range(1, 21):
+            data = {
+                'author': self.user,
+                'text': 'My post: ' + str(num)
+            }
+            post = Post(**data)
+            post.save()
 
-        data = {
-            'author': self.user,
-            'text': 'My second post.'
-        }
-        post = Post(**data)
-        post.save()
-
-        data = {
-            'author': self.user,
-            'text': 'My third post.'
-        }
-        post = Post(**data)
-        post.save()
-
-        data = {
-            'author': self.target_user,
-            'text': 'My first post.'
-        }
-        post = Post(**data)
-        post.save()
-
-        data = {
-            'author': self.target_user,
-            'text': 'My second post.'
-        }
-        post = Post(**data)
-        post.save()
-
-        data = {
-            'author': self.target_user,
-            'text': 'My third post.'
-        }
-        post = Post(**data)
-        post.save()
+        for num in range(1, 21):
+            data = {
+                'author': self.target_user,
+                'text': 'My post: ' + str(num)
+            }
+            post = Post(**data)
+            post.save()
