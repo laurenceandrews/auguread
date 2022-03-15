@@ -144,7 +144,7 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, Applican
         user_type = user.membership_type(club)
         posts = Post.objects.filter(author=user)
         context = super().get_context_data(object_list=users, **kwargs)
-        # context = super().get_context_data(object_list=posts, **kwargs) #new
+        context = super().get_context_data(object_list=posts, **kwargs) #new
         context['can_approve'] = ((user != target) and (user_type == 'Owner'
                                                         or user == club.owner) and target_type == 'Applicant')
         context['is_owner'] = target_type == 'Owner'
