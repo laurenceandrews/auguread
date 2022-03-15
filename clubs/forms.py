@@ -1,6 +1,4 @@
 """Forms for the book club app"""
-
-
 import datetime
 
 from clubs.book_to_club_recommender.book_to_club_recommender_age import \
@@ -8,6 +6,7 @@ from clubs.book_to_club_recommender.book_to_club_recommender_age import \
 from clubs.book_to_club_recommender.book_to_club_recommender_author import \
     ClubBookAuthorRecommender
 from django import forms
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
 from django.db.models import Subquery
@@ -303,3 +302,8 @@ class ClubBookForm(forms.ModelForm):
             book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
         books = Book.objects.filter(id__in=book_ids)
         self.fields['book'].queryset = books
+
+class UserDeleteForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = []

@@ -39,6 +39,7 @@ urlpatterns = [
     path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
     path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
     path('user_detail/', views.user_detail, name='user_detail'),
+    path('delete_account/', views.delete_account, name='delete_account'),
 
     # Feed urls
     path('feed/', views.FeedView.as_view(), name='feed'),

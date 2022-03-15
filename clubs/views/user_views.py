@@ -7,7 +7,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import MultipleObjectMixin
 from clubs.views.mixins import *
 from django.contrib.auth.decorators import login_required
-from clubs.forms import LogInForm, PasswordForm, SignUpForm
+from clubs.forms import LogInForm, PasswordForm, SignUpForm, UserDeleteForm
 from clubs.models import Club, Post, User
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -16,7 +16,6 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic.edit import FormView
 from django.views.generic.list import MultipleObjectMixin
-
 from .helpers import login_prohibited
 from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
                      MemberProhibitedMixin)
@@ -260,3 +259,20 @@ class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
             user = User.objects.get(email=email)
             club.demote(user)
         return redirect('owner_list', club_id=club.id)
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        delete_form = UserDeleteForm(request.POST, instance=request.user)
+        user = request.user
+        user.delete()
+        messages.info(request, 'Your account has been deleted.')
+        return redirect('home')
+    else:
+        delete_form = UserDeleteForm(instance=request.user)
+
+    context = {
+        'delete_form': delete_form
+    }
+
+    return render(request, 'delete_account.html', context)
