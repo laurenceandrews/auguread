@@ -300,6 +300,7 @@ class MeetingAddress(models.Model):
 
 
 class Club(models.Model):
+    """Club model used for all the functions of a club."""
     name = models.CharField(
         max_length=50,
         blank=False,

@@ -44,10 +44,12 @@ class LogInView(LoginProhibitedMixin, View):
         form = LogInForm()
         return render(self.request, 'log_in.html', {'form': form, 'next': self.next})
 
+"""View that handles log out."""
 def log_out(request):
     logout(request)
     return redirect('home')
 
+"""View that handles sign up."""
 @login_prohibited
 def sign_up(request):
     if request.method == 'POST':

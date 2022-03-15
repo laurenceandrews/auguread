@@ -260,6 +260,7 @@ class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
             club.demote(user)
         return redirect('owner_list', club_id=club.id)
 
+"""View that handles deleting a user profile."""
 @login_required
 def delete_account(request):
     if request.method == 'POST':

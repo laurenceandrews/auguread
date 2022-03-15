@@ -97,6 +97,7 @@ class PasswordForm(NewPasswordMixin):
 
 
 class SignUpForm(NewPasswordMixin, forms.ModelForm):
+    """Form enabling users to sign up."""
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'age', 'username', 'email', 'bio', 'city', 'country']
@@ -304,6 +305,7 @@ class ClubBookForm(forms.ModelForm):
         self.fields['book'].queryset = books
 
 class UserDeleteForm(forms.ModelForm):
+    """Form enabling users to delete their profile."""
     class Meta:
         model = User
         fields = []
