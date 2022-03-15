@@ -1,5 +1,5 @@
 """Unit tests for the User model."""
-from clubs.models import User
+from clubs.models import User, Club
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -9,10 +9,14 @@ class UserModelTestCase(TestCase):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/other_users.json'
+        'clubs/tests/fixtures/other_users.json',
+        'clubs/tests/fixtures/default_calendar.json',
+        'clubs/tests/fixtures/default_rules.json',
+        'clubs/tests/fixtures/default_club.json',
     ]
 
     def setUp(self):
+        # self.user = User.objects.get(email='johndoe@example.org')
         self.user = User.objects.get(username='@johndoe')
 
     def test_valid_user(self):
