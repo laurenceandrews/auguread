@@ -34,6 +34,7 @@ urlpatterns = [
     path("__reload__/", include("django_browser_reload.urls")),
     path('password/', views.PasswordView.as_view(), name='password'),
     path('rec/', views.RecommendationsView, name='rec'),
+    path('edit_profile/', views.ProfileUpdateView.as_view(), name='edit_profile'),
 
     # User urls
     path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),

@@ -7,9 +7,9 @@
 
 <div class = "row-edit-profile">
   <div class = "col-xs-11 col-md-8 col-lg-6" my-auto>
-    <h2 class = "edit-profle">
-      Edit your profile
-    </h2>
+    <h1 class = "edit-profle">
+      Edit Profile
+    </h1>
     <form method = "post">
       {% csrf_token %}
       {% include 'partials/bootstrap_form.html' with form=form %}

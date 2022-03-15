@@ -9,7 +9,7 @@ from .mixins import LoginProhibitedMixin
 from django.contrib.auth import login, logout
 from django.shortcuts import redirect, render
 from django.views import View
-from clubs.helpers import login_prohibited
+from .helpers import login_prohibited
 
 
 class LogInView(LoginProhibitedMixin, View):
@@ -89,4 +89,21 @@ class PasswordView(LoginRequiredMixin, FormView):
 
         messages.add_message(
             self.request, messages.SUCCESS, "Password updated!")
+        return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    """View to update logged-in user's profile."""
+
+    model = UserForm
+    template_name = "edit_profile.html"
+    form_class = UserForm
+
+    def get_object(self):
+        """Return the object (user) to be updated."""
+        user = self.request.user
+        return user
+
+    def get_success_url(self):
+        """Return redirect URL after successful update."""
+        messages.add_message(self.request, messages.SUCCESS, "Profile updated!")
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
