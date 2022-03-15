@@ -219,7 +219,7 @@ class MeetingAddressForm(forms.ModelForm):
         super(MeetingAddressForm, self).__init__(*args, **kwargs)
         calendar_exists = Calendar.objects.filter(slug=calendar_slug)
         if calendar_exists:
-            calendar = Calendar.objects.filter(slug=calendar_slug)
+            calendar = Calendar.objects.get(slug=calendar_slug)
             events = Event.objects.filter(calendar=calendar)
             meeting_addresses = MeetingAddress.objects.filter(event__in=events)
             address_ids = meeting_addresses.values_list('address_id', flat=True)
