@@ -1,6 +1,6 @@
 from clubs.forms import (AddressForm, CalendarPickerForm, CreateEventForm,
                          MeetingAddressForm, MeetingLinkForm)
-from clubs.models import Address, Club, MeetingAddress, MeetingLink
+from clubs.models import Address, Club, Club_Books, MeetingAddress, MeetingLink
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
@@ -60,6 +60,7 @@ class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
     def form_valid(self, form):
         """Process a valid form."""
         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        club = Club.objects.get(calendar=calendar)
 
         title = form.cleaned_data.get('title')
         start = form.cleaned_data.get('start')
@@ -67,16 +68,22 @@ class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
         end_recurring_period = form.cleaned_data.get('end_recurring_period')
         rule = form.cleaned_data.get('rule')
 
+        club_book_exists = Club_Books.objects.filter(club=club).exists()
+        if club_book_exists:
+            club_book_latest = Club_Books.objects.filter(club=club).last()
+            description_test = 'This club is currently reading ' + club_book_latest.book.title + '.'
+        else:
+            description_test = 'This club has no books. When a book is selected, it will show here.'
+
         event = Event.objects.create(
             title=title,
             start=start,
             end=end,
             end_recurring_period=end_recurring_period,
             rule=rule,
-            calendar=calendar
+            calendar=calendar,
+            description=description_test
         )
-
-        club = Club.objects.get(calendar=event.calendar)
 
         if club.meeting_type == 'ONL':
             return redirect('create_event_link', calendar_slug=calendar.slug, event_id=event.id)
