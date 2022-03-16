@@ -15,7 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
 
-from .models import (Address, Book, Club, Club_Books, MeetingAddress,
+from .models import (Address, Book_Rating, Book, Club, Club_Books, MeetingAddress,
                      MeetingLink, Post, User)
 
 
@@ -307,3 +307,8 @@ class UserDeleteForm(forms.ModelForm):
     class Meta:
         model = User
         fields = []
+
+class BookRatingForm(forms.ModelForm):
+    class Meta:
+        model = Book_Rating
+        fields = ['rating']
