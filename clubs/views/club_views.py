@@ -1,3 +1,4 @@
+"""Views related to the clubs."""
 from clubs.forms import NewClubForm
 from clubs.models import Club, User
 from django.conf import settings
@@ -10,7 +11,7 @@ from django.template.defaultfilters import slugify
 from django.views.generic import ListView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
-
+from django.views.generic.edit import CreateView
 from .helpers import login_prohibited, member, owner
 from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
                      MemberProhibitedMixin)
@@ -88,6 +89,7 @@ def approve(request, user_id, club_id):
         return redirect('applicant_list', club_id=club_id)
     else:
         return redirect('show_user', user_id=user.id, club_id=club_id)
+
 
 
 class ApplicantListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
@@ -184,6 +186,7 @@ def club_recommender(request):
     return render(request, 'club_recommender.html')
 
 
+
 @login_required
 @owner
 def transfer(request, user_id, club_id):
@@ -195,3 +198,7 @@ def transfer(request, user_id, club_id):
         return redirect('owner_list', club_id=club_id)
     else:
         return redirect('show_user', user_id=user_id, club_id=club_id)
+
+
+    form = BookRatingForm()
+    return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated, 'form': form})

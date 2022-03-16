@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (Book, Club, Club_Books, Club_Users, MeetingAddress,
-                     MeetingLink, Post, User)
+                     MeetingLink, Post, User, Book_Rating)
 
 
 @admin.register(User)
@@ -98,3 +98,15 @@ class Club_BookAdmin(admin.ModelAdmin):
     list_display = [
         'club', 'book'
     ]
+
+@admin.register(Book_Rating)
+class BookRatingAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for book ratings."""
+
+    list_display = [
+        'user', 'book_title', 'rating'
+    ]
+
+    def book_title(self, book_rating):
+        """Return the title of an book rating's book."""
+        return book_rating.book.title

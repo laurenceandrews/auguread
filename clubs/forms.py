@@ -1,6 +1,4 @@
 """Forms for the book club app"""
-
-
 import datetime
 
 from clubs.book_to_club_recommender.book_to_club_recommender_age import \
@@ -8,6 +6,7 @@ from clubs.book_to_club_recommender.book_to_club_recommender_age import \
 from clubs.book_to_club_recommender.book_to_club_recommender_author import \
     ClubBookAuthorRecommender
 from django import forms
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
 from django.db.models import Subquery
@@ -16,7 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
 
-from .models import (Address, Book, Club, Club_Books, MeetingAddress,
+from .models import (Address, Book_Rating, Book, Club, Club_Books, MeetingAddress,
                      MeetingLink, Post, User)
 
 
@@ -207,7 +206,6 @@ class NewClubForm(forms.ModelForm):
             self.add_error('calendar_name',
                            'Calendar name is already taken.')
 
-
 class MeetingAddressForm(forms.ModelForm):
     class Meta:
         model = MeetingAddress
@@ -295,10 +293,44 @@ class ClubBookForm(forms.ModelForm):
         """Give user option of books from the book-to-club-recommender-age recommender."""
         club_id = kwargs.pop('club_id')
         super(ClubBookForm, self).__init__(*args, **kwargs)
-        book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
-        # if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
-        #     book_ids = ClubBookAuthorRecommender(club_id).get_recommended_books()
-        # else:
-        #     book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
+
+        if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
+            book_ids = ClubBookAuthorRecommender(club_id).get_recommended_books()
+            if(len(book_ids) < 6):
+                book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
+        else:
+            book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
         books = Book.objects.filter(id__in=book_ids)
         self.fields['book'].queryset = books
+
+class UserDeleteForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = []
+
+class BookRatingForm(forms.ModelForm):
+    class Meta:
+        model = Book_Rating
+        fields = ['rating']
+
+# class BookPreferencesOuterForm(forms.ModelForm):
+
+#     class Meta:
+#         ratings_made = 
+#         fields = 
+
+#     def clean(self):
+#         """ Ensure that at least 10 ratings over 5 are made """
+
+#         positive_ratings_required = 10
+
+#         super().clean()
+#         ratings_made = self.cleaned_data.get('ratings_made')
+#         for (rating in ratings_made):
+#             if rating > 5:
+#                 positive_ratings_made.add(ratings_made)
+
+#         if positive_ratings_made < 10:
+#             self.add_error("Please rate at least ten books over a 5/10 to ensure our recommenders can work their best for you.")
+#         else:
+#             # Allow user to continue

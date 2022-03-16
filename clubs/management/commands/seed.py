@@ -1,15 +1,16 @@
 import csv
 import datetime
 import random
+import time
 from random import randint
 
 import pandas as pd
-from clubs.models import Book, Club, Club_Books, Club_Users, User, User_Books, Book_Rating
+from clubs.models import (Book, Book_Rating, Club, Club_Books, Club_Users,
+                          User, User_Books)
 from django.core.management.base import BaseCommand, CommandError
 from django.template.defaultfilters import slugify
 from faker import Faker
 from schedule.models import Calendar, Event, Rule
-import time
 
 
 class Command(BaseCommand):
@@ -82,7 +83,7 @@ class Command(BaseCommand):
         self.user_count = 0
         self.book_count = 0
         self.rating_count = 0
-        
+
         # Holds all users books and clubs to be used as a cache for when seeded
         self.users = []
         self.books = []
