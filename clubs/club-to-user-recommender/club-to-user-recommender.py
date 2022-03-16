@@ -2,11 +2,12 @@
 # coding: utf-8
 # converted from a Jupyter notebook
 
-import numpy as np # linear algebra
+import numpy as np # linear algebra (not needed)
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-import scipy.sparse.linalg as spla
+import scipy.sparse.linalg as spla # (not used)
 from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
+from fuzzywuzzy import process #(not used)
+from clubs.models import User, Club, Club_Users, Club_Books
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -63,14 +64,14 @@ def get_average_club_age():
 
 # Add column for age difference and return clubs in ascending order of difference from my age
 def get_age_difference_df():
-    my_age = 65
+    my_age = User.objects.alias('age')
     average_club_age_df = get_average_club_age()
     average_club_age_df['age_difference'] = pd.DataFrame(abs(average_club_age_df['average_age'] - my_age))
     average_club_age_difference_df = average_club_age_df.sort_values('age_difference', ascending=True)
-    return average_club_age_difference_df
+    # return average_club_age_difference_df
 # -- comment the return statment and uncomment the next 2 lines to test whether it returns the correct DataFrame
-#     print(average_club_age_difference_df)
-# get_age_difference_df()
+    print(average_club_age_difference_df)
+get_age_difference_df()
 
 # Return top 10 closest aged club IDs
 def get_top_10_by_closest_age():
@@ -310,12 +311,12 @@ def get_best_clubs_df():
 # TO DO: Find a way to convert location to distance
 def get_best_clubs_in_person():
     best_clubs_df = get_best_clubs_df().sort_values(["location_fuzzy_score", "book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, False, True, False])
-    #return best_clubs_df
-    print(best_clubs_df)
+    return best_clubs_df
+    # print(best_clubs_df)
 
 # Order if online only
 def get_best_clubs_online():
     best_clubs_df = get_best_clubs_df().sort_values(["book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, True, False])
     return best_clubs_df
 
-get_best_clubs_in_person()
+# get_best_clubs_in_person()
