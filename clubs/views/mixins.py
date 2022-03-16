@@ -32,6 +32,7 @@ class LoginProhibitedMixin:
         else:
             return self.redirect_when_logged_in_url
 
+
 class ApplicantProhibitedMixin:
     """Redirects to club_list if user is an applicant and dispatches as normal otherwise."""
 
@@ -62,7 +63,7 @@ class MemberProhibitedMixin:
 class ClubOwnerRequiredMixin:
     """Mixin that redirects when a user is not the club owner."""
 
-    redirect_when_not_a_club_owner_url = settings.AUTO_REDIRECT_URL
+    redirect_when_not_a_club_owner_url = settings.REDIRECT_URL_WHEN_LOGGED_IN
 
     def dispatch(self, *args, **kwargs):
         """Redirect when not a club_user, or dispatch as normal otherwise."""
@@ -84,7 +85,7 @@ class ClubOwnerRequiredMixin:
 class ClubUserRequiredMixin:
     """Mixin that redirects when a user does not have a Club_Users relationship."""
 
-    redirect_when_not_a_club_user_url = settings.AUTO_REDIRECT_URL
+    redirect_when_not_a_club_user_url = settings.REDIRECT_URL_WHEN_LOGGED_IN
 
     def dispatch(self, *args, **kwargs):
         """Redirect when not a club_user, or dispatch as normal otherwise."""
