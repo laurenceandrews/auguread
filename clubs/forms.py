@@ -313,24 +313,24 @@ class BookRatingForm(forms.ModelForm):
         model = Book_Rating
         fields = ['rating']
 
-class BookPreferencesOuterForm(forms.ModelForm):
+# class BookPreferencesOuterForm(forms.ModelForm):
 
-    class Meta:
-        ratings_made = 
-        fields = 
+#     class Meta:
+#         ratings_made = 
+#         fields = 
 
-    def clean(self):
-        """ Ensure that at least 10 ratings over 5 are made """
+#     def clean(self):
+#         """ Ensure that at least 10 ratings over 5 are made """
 
-        positive_ratings_required = 10
+#         positive_ratings_required = 10
 
-        super().clean()
-        ratings_made = self.cleaned_data.get('ratings_made')
-        for (rating in ratings_made):
-            if rating > 5:
-                positive_ratings_made.add(ratings_made)
+#         super().clean()
+#         ratings_made = self.cleaned_data.get('ratings_made')
+#         for (rating in ratings_made):
+#             if rating > 5:
+#                 positive_ratings_made.add(ratings_made)
 
-        if positive_ratings_made < 10:
-            self.add_error("Please rate at least ten books over a 5/10 to ensure our recommenders can work their best for you.")
-        else:
-            # Allow user to continue
+#         if positive_ratings_made < 10:
+#             self.add_error("Please rate at least ten books over a 5/10 to ensure our recommenders can work their best for you.")
+#         else:
+#             # Allow user to continue

@@ -6,8 +6,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views import View
 from django.views.generic.edit import CreateView
+from django.db.models import Q
 
 from .helpers import login_prohibited
 from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
@@ -39,7 +41,7 @@ class BookPreferencesView(LoginRequiredMixin, View):
         page_number = request.GET.get('page')
         self.books_paginated = paginator.get_page(page_number)
 
-        self.form = BookRatingForm()
+        self.innerForm = BookRatingForm()
 
         self.next = request.GET.get('next') or ''
         return self.render()
@@ -47,7 +49,7 @@ class BookPreferencesView(LoginRequiredMixin, View):
     def render(self):
         """Render template."""
 
-        return render(self.request, 'book_preferences.html', {'form': self.form, 'next': self.next, 'books_paginated': self.books_paginated})
+        return render(self.request, 'book_preferences.html', {'innerForm': self.innerForm, 'next': self.next, 'books_paginated': self.books_paginated})
 
 
 def rate_book(request, book_id):
