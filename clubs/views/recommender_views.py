@@ -45,15 +45,13 @@ def club_recommender(request):
 
 class ClubRecommenderView(LoginRequiredMixin, View):
     """View that handles the club recommendations."""
+    
     http_method_names = ['get', 'post']
-    redirect_when_logged_in_url = 'club_recommender'
-
 
     def get(self, request):
         """Display template."""
 
         self.clubs_queryset = Club.objects.all().order_by('name')
-
         query = request.GET.get('q')
         if query:
             self.clubs_queryset = Club.objects.filter(
