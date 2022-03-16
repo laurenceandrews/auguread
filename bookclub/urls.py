@@ -67,9 +67,6 @@ urlpatterns = [
     path('feed/', views.FeedView.as_view(), name='feed'),
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
 
-    # Book recommender urls
-    path('club_recommender/', views.club_recommender, name='club_recommender'),
-
     path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
     path('book/rating/<int:book_id>/', views.CreateBookRatingView.as_view(), name='rate_book'),
 

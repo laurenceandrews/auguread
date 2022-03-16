@@ -33,16 +33,6 @@ def RecommendationsView(request):
     """View that shows a list of all recommended books."""
     return render(request, 'rec_page.html')
 
-def club_recommender(request):
-    """View that shows a list of all recommended clubs."""
-    clubs_queryset = Club.objects.all()
-
-    paginator = Paginator(clubs_queryset, settings.CLUBS_PER_PAGE)
-    page_number = request.GET.get('page')
-    clubs_paginated = paginator.get_page(page_number)
-
-    return render(request, 'club_recommender.html', {'current_user': request.user, 'clubs_queryset': clubs_queryset, 'clubs_paginated': clubs_paginated})
-
 class ClubRecommenderView(LoginRequiredMixin, View):
     """View that handles the club recommendations."""
     
