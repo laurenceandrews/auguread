@@ -22,6 +22,7 @@ from django.views.generic import TemplateView
 from schedule.views import (DeleteEventView, EditEventView, EventView,
                             api_move_or_resize_by_code, api_occurrences,
                             api_select_create)
+from clubs.views.recommender_views import ClubRecommenderView
 
 urlpatterns = [
     # Admin urls
@@ -98,7 +99,8 @@ urlpatterns = [
     ),
 
     # Book recommender urls
-    path('club_recommender/', views.club_recommender, name='club_recommender'),
+    # path('club_recommender/', views.club_recommender, name='club_recommender'),
+    path('club_recommender/', ClubRecommenderView.as_view(), name='club_recommender'),
 
     #path('book_preferences/', views.book_preferences, name='book_preferences'),
     path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
