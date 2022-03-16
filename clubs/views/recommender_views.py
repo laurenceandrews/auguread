@@ -65,7 +65,7 @@ class BookPreferencesView(LoginRequiredMixin, View):
         """Display log in template."""
 
         page_number = request.GET.get('page')
-        books_paginated = self.paginator.get_page(page_number)
+        self.books_paginated = self.paginator.get_page(page_number)
 
         self.next = request.GET.get('next') or ''
         return self.render()
@@ -82,7 +82,7 @@ class BookPreferencesView(LoginRequiredMixin, View):
         """Render template with blank form."""
 
         form = BookRatingForm()
-        return render(self.request, 'book_preferences.html', {'form': form, 'next': self.next})
+        return render(self.request, 'book_preferences.html', {'form': form, 'next': self.next, 'books_paginated': self.books_paginated})
 
 class ClubRecommenderView(LoginRequiredMixin, View):
     """View that handles the club recommendations."""
