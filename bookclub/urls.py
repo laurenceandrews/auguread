@@ -69,7 +69,7 @@ urlpatterns = [
     url(r"^event/detail/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
         views.EventDetailView.as_view(),
         name='event_detail'),
-    url(r'^event/create/(?P<calendar_id>[-\w]+)/$',
+    url(r'^event/create/(?P<calendar_slug>[-\w]+)/$',
         views.CreateEventView.as_view(),
         name='create_event'),
     url(r"^event/address/create/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",

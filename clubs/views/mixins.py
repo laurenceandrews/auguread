@@ -60,15 +60,37 @@ class MemberProhibitedMixin:
             return redirect(settings.AUTO_REDIRECT_URL)
 
 
+class ClubOwnerRequiredMixin:
+    """Mixin that redirects when a user is not the club owner."""
+
+    redirect_when_not_a_club_owner_url = settings.AUTO_REDIRECT_URL
+
+    def dispatch(self, *args, **kwargs):
+        """Redirect when not a club_user, or dispatch as normal otherwise."""
+        calendar_slug = kwargs['calendar_slug']
+        calendar = Calendar.objects.get(slug=calendar_slug)
+        club = Club.objects.get(calendar=calendar)
+        if self.request.user == club.owner:
+            return super().dispatch(*args, **kwargs)
+        return self.handle_not_a_club_owner(*args, **kwargs)
+
+    def handle_not_a_club_owner(self, *args, **kwargs):
+        calendar_slug = kwargs['calendar_slug']
+        calendar = Calendar.objects.get(slug=calendar_slug)
+        url = reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+        messages.add_message(self.request, messages.ERROR, "Only the club owner can perform this action!")
+        return redirect(url)
+
+
 class ClubUserRequiredMixin:
-    """Mixin that redirects when a user does not have a Club_Users relationshi."""
+    """Mixin that redirects when a user does not have a Club_Users relationship."""
 
     redirect_when_not_a_club_user_url = settings.AUTO_REDIRECT_URL
 
     def dispatch(self, *args, **kwargs):
         """Redirect when not a club_user, or dispatch as normal otherwise."""
-        calendar_id = kwargs['calendar_id']
-        calendar = Calendar.objects.get(id=calendar_id)
+        calendar_slug = kwargs['calendar_slug']
+        calendar = Calendar.objects.get(slug=calendar_slug)
         club = Club.objects.get(calendar=calendar)
         club_user_relationship_exists = Club_Users.objects.filter(club=club, user=self.request.user)
         if not club_user_relationship_exists:
@@ -76,8 +98,8 @@ class ClubUserRequiredMixin:
         return super().dispatch(*args, **kwargs)
 
     def handle_not_a_club_user(self, *args, **kwargs):
-        calendar_id = kwargs['calendar_id']
-        calendar = Calendar.objects.get(id=calendar_id)
+        calendar_slug = kwargs['calendar_slug']
+        calendar = Calendar.objects.get(slug=calendar_slug)
         url = reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
         messages.add_message(self.request, messages.ERROR, "You are not a user of this club!")
         return redirect(url)
