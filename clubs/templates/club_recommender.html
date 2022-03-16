@@ -17,14 +17,14 @@
   }
 
   .club-card {
-    width: 30%;
+    width: 0%;
     display: inline-block;
     background-size: cover;
     border-radius: 5px;
     color: #fff;
     background: #352fa9;
-    height: 210px;
-    width: 240px;
+    height: 250px;
+    width: 350px;
     margin: 5px 5px;
     padding: 20px;
     position: relative;
@@ -58,44 +58,39 @@
   }
 
   .club-location {
-    
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 32px;
+    margin-bottom: 10px;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* number of lines to show */
+            line-clamp: 5;
+
+  }
+
+  .club-description{
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 23px;
+    margin-bottom: 20px;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* number of lines to show */
+            line-clamp: 4;
+
   }
 
   button#visit-btn {
     position: absolute;
     bottom: 15px;
+    
   }
 
-  .rating {
-    vertical-align: bottom;
-    padding-top: 8px;
-    padding-bottom: 13px;
-    bottom: 0px;
-    position: absolute;
-    width: 240px;
-    font-weight: 800;
-    background: #352fa9;
-    border-radius: 0px 0px 5px 5px;
-  }
-
-  .rating label {
-    padding-right: 8px;
-    display: none;
-  }
-
-  .rating p {
-    padding-bottom: 4px;
-}
-
-  select#id_rating {
-    font-style: italic;
-    color: #6b7380;
-    border-radius: 5px;
-    width: 130px;
-    height: 40px;
-    vertical-align: middle;
-    padding-bottom: 6px;
-  }
 
   ul.pagination li {
     border: solid 1px #352fa9;
@@ -220,6 +215,13 @@
       
       <div class="mt-8 lg:mr-50">
         <h2 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-4xl md:text-4xl dark:text-gray-200">We recommend these clubs</h2>
+        <form method="GET" >
+          <div class="input-field">
+              <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Enter club name">
+              <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Search</button>
+          </div>
+        </form>
+  
         <div class="pt-4 ">
           <p>Based on the details you've given us, we recommend the following clubs</p>
           <div>
@@ -231,31 +233,23 @@
             {% for club in clubs_paginated %}
             <div class = "row">
               <div class = "club-card sm:text-left md text-left lg:text-left">
-                  <p class = "club-name">{{ club.name }}</p>
-                  <p class = "club-location">By {{ club.location }}</p>
+                  <span class = "club-name">{{ club.name }}</p>
+                  <p class="club-location">
+                    <span class ="block lg:inline ">Location: </span>
+                    <span class = "block text-gray-200 lg:inline dark:text-indigo-400 "> {{ club.location }}</span>
+                  </p>
+                  <span class = "club-description">{{club.description}}</span>
                 <div>
                   <button id = "visit-btn" type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button>
                 </div>
               </div>
             </div>
-          {% endfor %}
-
-            <!-- <ul>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-            </ul> -->
+            {% endfor %}
+            
           </div>
+
         </div>
       </div>
-
     </div>
   </div>
 </div>

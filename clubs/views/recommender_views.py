@@ -25,6 +25,8 @@ from schedule.models import Calendar, Event, Rule
 
 from clubs.forms import (CalendarPickerForm, CreateEventForm, MeetingAddressForm,
                     MeetingLinkForm, SignUpForm)
+from clubs.views.club_views import MemberListView
+from django.db.models import Q
 
 @login_required
 def RecommendationsView(request):
@@ -51,6 +53,12 @@ class ClubRecommenderView(LoginRequiredMixin, View):
         """Display template."""
 
         self.clubs_queryset = Club.objects.all().order_by('name')
+
+        query = request.GET.get('q')
+        if query:
+            self.clubs_queryset = Club.objects.filter(
+                Q(name__icontains=query) | Q(location__icontains=query)
+            ).distinct()
 
         paginator = Paginator(self.clubs_queryset, settings.CLUBS_PER_PAGE)
         page_number = request.GET.get('page')
