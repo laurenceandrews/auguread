@@ -1,6 +1,7 @@
-{% extends 'base.html' %} {% load static %} {% load widget_tweaks %} {% load bootstrap_pagination %}
-
+{% extends 'base.html' %}
+{% load static %} {% load widget_tweaks %} {% load bootstrap_pagination %}
 {% block body %}
+
 <div class="lg:flex h-full">
   <div class="pt-10 mx-auto max-w-7xl px-4 sm:pt-12 sm:px-6 md:pt-16 lg:pt-20 lg:px-8 xl:pt-35 sm:text-center lg:text-center">
     <div class="sm:text-center lg:text-center">
@@ -17,26 +18,26 @@
       </div>
       
       <div class="mt-8 lg:mr-50">
-        <div>
-          {% bootstrap_paginate clubs_paginated previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
-        </div>
         <h2 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-4xl md:text-4xl dark:text-gray-200">We recommend these clubs</h2>
-        <div class="pt-4">
+        <div class="pt-4 ">
           <p>Based on the details you've given us, we recommend the following clubs</p>
+          <div>
+          <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            {% bootstrap_paginate clubs_paginated previous_label="Prev" next_label="Next" show_first_last="true" range="5"%}
+          </div>
           <div class="pt-4">
-            
+
             {% for club in clubs_paginated %}
             <div class = "row">
-              
-              <!-- If the book has an image, make it appear on hover -->
               <div class = "justify-center py-2 px-4 border border-grey rounded-md">
                 <div class = "club-info sm:text-left md text-left lg:text-left" >
                   <p class = "club-name">{{ club.name }}</p>
                   <p class = "club-location">By {{ club.location }}</p>
+                </div>
+                <div>
                   <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button>
                 </div>
               </div>
-
             </div>
           {% endfor %}
 
