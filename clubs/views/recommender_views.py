@@ -91,12 +91,12 @@ class ClubRecommenderView(LoginRequiredMixin, View):
     redirect_when_logged_in_url = 'club_recommender'
 
 
-
     def get(self, request):
+        """Display template."""
+
         self.clubs_queryset = Club.objects.all().order_by('name')
 
         paginator = Paginator(self.clubs_queryset, settings.CLUBS_PER_PAGE)
-
         page_number = request.GET.get('page')
         self.clubs_paginated = paginator.get_page(page_number)
 
@@ -106,5 +106,5 @@ class ClubRecommenderView(LoginRequiredMixin, View):
     def render(self):
         """Render template with blank form."""
 
-        return render(self.request, 'club_recommender.html', {'next':self.next, 'clubs_paginated': self.clubs_paginated})
+        return render(self.request, 'club_recommender.html', {'next': self.next, 'clubs_paginated': self.clubs_paginated})
 
