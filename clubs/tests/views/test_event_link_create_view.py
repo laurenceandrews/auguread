@@ -13,9 +13,11 @@ class CreateEventLinkViewTest(TestCase):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/other_users.json',
         'clubs/tests/fixtures/default_calendar.json',
         'clubs/tests/fixtures/default_rules.json',
         'clubs/tests/fixtures/default_club.json',
+        'clubs/tests/fixtures/other_clubs.json'
     ]
 
     def setUp(self):
@@ -55,6 +57,38 @@ class CreateEventLinkViewTest(TestCase):
                              )
         meeting_link_count_after = MeetingLink.objects.count()
         self.assertEqual(meeting_link_count_after, meeting_link_count_before)
+
+    def test_create_event_link_redirects_when_not_a_club_owner(self):
+        calendar_not_owner = Calendar.objects.get(pk=17)
+        club_not_owner = Club.objects.get(pk=16)
+        data = {
+            'title': 'Exercise',
+            'start': datetime.datetime(2008, 11, 3, 8, 0),
+            'end': datetime.datetime(2008, 11, 3, 9, 0),
+            'end_recurring_period': datetime.datetime(2009, 6, 1, 0, 0),
+            'rule': Rule.objects.get(pk=9),
+            'calendar': self.calendar
+        }
+        event = Event(**data)
+        event.save()
+        data_for_club_event_not_owner = {
+            'meeting_link': 'https://zoom.us/test'
+        }
+        url = reverse(
+            'create_event_link', kwargs={'calendar_slug': calendar_not_owner.slug, 'event_id': event.id}
+        )
+
+        event_count_before = Event.objects.count()
+        self.client.login(email=self.user.email, password="Password123")
+        response = self.client.get(url)
+        redirect_url = reverse('full_calendar', kwargs={'calendar_slug': calendar_not_owner.slug})
+        response = self.client.post(url, data_for_club_event_not_owner, follow=True)
+        self.assertTemplateUsed(response, 'fullcalendar.html')
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200, fetch_redirect_response=True
+                             )
+        event_count_after = Event.objects.count()
+        self.assertEqual(event_count_after, event_count_before)
 
     def test_get_create_event_link(self):
         self.client.login(email=self.user.email, password="Password123")

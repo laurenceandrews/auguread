@@ -303,6 +303,26 @@ class ClubBookForm(forms.ModelForm):
         books = Book.objects.filter(id__in=book_ids)
         self.fields['book'].queryset = books
 
+class BookRatingForm(forms.Form):
+    # user = forms.ForeignKey(User, on_delete=forms.CASCADE) 
+    rating = forms.ChoiceField(
+        required = False,
+        label = 'Rate book',
+        error_messages = {},
+        choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
+    )
+
+class ClubRecommenderForm(forms.ModelForm):
+    class Meta:
+        model = Club
+        fields = ['name']
+    
+    online = forms.BooleanField(
+        label = 'Online only', 
+        required = False,  
+        disabled = False,
+        widget=forms.widgets.CheckboxInput(attrs={'class': 'checkbox-inline'}),)
+
 class UserDeleteForm(forms.ModelForm):
     class Meta:
         model = User

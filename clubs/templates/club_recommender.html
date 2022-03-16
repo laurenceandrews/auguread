@@ -1,6 +1,202 @@
-{% extends 'base.html' %} {% load static %} {% load widget_tweaks %}
-
+{% extends 'base.html' %}
+{% load static %} {% load widget_tweaks %} {% load bootstrap_pagination %}
 {% block body %}
+
+<style>
+  ul.pagination {
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+
+  form {
+    display: contents;
+  }
+
+  .row {
+    display: inline-flex;
+  }
+
+  .club-card {
+    width: 0%;
+    display: inline-block;
+    background-size: cover;
+    border-radius: 5px;
+    color: #fff;
+    background: #352fa9;
+    height: 280px;
+    width: 350px;
+    margin: 5px 5px;
+    padding: 22px 25px 11px 25px;
+    position: relative;
+    background-size: contain;
+    filter: drop-shadow(5px 5px 4px rgba(68, 68, 221, 0.3));
+  }
+
+  .club-name {
+    font-weight: 800;
+    font-size: 22px;
+    line-height: 32px;
+    margin-bottom: 15px;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* number of lines to show */
+            line-clamp: 5;
+  }
+
+  .club-location {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 18px;
+    margin-top: 10px;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* number of lines to show */
+            line-clamp: 5;
+
+  }
+
+  .club-description{
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 23px;
+    margin-bottom: 20px;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* number of lines to show */
+            line-clamp: 3;
+
+  }
+
+  .club-avg-reading-speed {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 32px;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* number of lines to show */
+            line-clamp: 5;
+
+  }
+
+  .button#visit-btn {
+
+  }
+
+
+  ul.pagination li {
+    border: solid 1px #4941e5;
+    border-radius: 2px;
+    color: #4941e5;
+    height: 40px;
+    width: 50px;
+    vertical-align: middle;
+    background-color: #fff;
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    display: inline-block;
+  }
+
+ li.page-item.disabled li {
+    border: solid 1px #eee;
+    border-radius: 2px;
+    height: 40px;
+    width: 50px;
+    vertical-align: middle;
+    background-color: #eee;
+    color: #999;
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    display: inline-block;
+  }
+
+  ul.pagination li a {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+  }
+
+  li.page-item.disabled span.page-link {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+    background-color: #eee;
+    border-color: #eee;
+  }
+
+  li.page-item.disabled li:hover{
+    color: #999;
+  }
+
+  li.page-item.disabled span.page-link {
+    color: #999;
+  }
+
+  li.page-item.disabled {
+    border-color: #999;
+  }
+
+  li.page-item.active span.page-link {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+    background-color: #4941e5;
+    border: solid 1px #4941e5;
+  }
+
+  ul.pagination li:hover {
+    color: #fff;
+    background-color: #4941e5;
+  }
+
+  li.page-item.active {
+    color: #fff;
+    background-color: #4941e5;
+    border: solid 0.1px #4941e5!important;
+    border-radius: 2px;
+  }
+
+  .input-field {
+    padding: 0px 0px 10px;
+  }
+
+  input[type="text"] {
+    font-style: italic;
+    border: solid 1px #352fa9;
+    vertical-align: middle;
+    border-radius: 5px;
+    height: 40px;
+    width: 30%;
+  }
+
+  .shadow-sm {
+    vertical-align: middle;
+    height: 40px;
+
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+  }
+</style>
+
 <div class="lg:flex h-full">
   <div class="pt-10 mx-auto max-w-7xl px-4 sm:pt-12 sm:px-6 md:pt-16 lg:pt-20 lg:px-8 xl:pt-35 sm:text-center lg:text-center">
     <div class="sm:text-center lg:text-center">
@@ -8,57 +204,44 @@
         <span class="block lg:inline">Find the club</span>
         <span class="block text-indigo-600 lg:inline dark:text-indigo-400">for you</span>
       </h1>
-      <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-50 dark:text-gray-300">The section below must be completed to ensure we can suggest the most fitting club for you.</p>
       
-      <!-- This block should be replaced by the block below once books selected-->
-      <div class="mt-8 lg:mr-50">
+      <div class="mt-6 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-100 dark:text-gray-300">
         <div class="pt-4">
+          <p>Based on what we know about you, we recommend the following clubs</p>
           <p>Will you be participating online only? <input type="checkbox"></p>
-        </div>
-        <br>
-        <p>Please select at least ten of your favourite books from our catelogue below</p>
-        <div class="pt-4">
-          <span class="block lg:inline">Book 1 <input type="checkbox"></span>
-          <span class="block lg:inline">Book 2 <input type="checkbox"></span>
-          <span class="block lg:inline">Book 3 <input type="checkbox"></span>
-          <span class="block lg:inline">Book 4 <input type="checkbox"></span>
-        </div>
-        <div class="pt-4">
-          <span class="block lg:inline">Book 5 <input type="checkbox"></span>
-          <span class="block lg:inline">Book 6 <input type="checkbox"></span>
-          <span class="block lg:inline">Book 7 <input type="checkbox"></span>
-          <span class="block lg:inline">Book 8 <input type="checkbox"></span>
-        </div>
-        <div class="pt-4">
-          <p>Pagination to go here...</p>
-          <div>
-            <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Go!</button>
-          </div>
         </div>
       </div>
       
-      <!-- This block should replace the block above once books selected -->
       <div class="mt-8 lg:mr-50">
-        <h2 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-4xl md:text-4xl dark:text-gray-200">The results are in!</h2>
-        <div class="pt-4">
-          <p>Based on the details you've given us, we recommend the following clubs</p>
-          <div class="pt-4">
-            <ul>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-              <li>Club name, owner, location, etc <button type="Book" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button></li>
-            </ul>
+
+        <form method="GET">
+          <div class="input-field">
+              <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Enter club name or location">
+              <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Search</button>
           </div>
+        </form>
+
+        <div class = "block">
+          {% bootstrap_paginate clubs_paginated previous_label="Prev" next_label="Next" show_first_last="true" range="5"%}
         </div>
+
+            {% for club in clubs_paginated %}
+              <div class = "row">
+                <div class = "club-card sm:text-left md text-left lg:text-left">
+                    <span class = "club-name">{{ club.name }}</p>
+                    <span class ="club-location block lg:inline">Location: {{ club.location }}</span>
+                    <span class = "club-avg-reading-speed">Avg reading speed: {{ club.avg_reading_speed }}wpm</span>
+                    <span class = "club-description"> {{ club.description }}</span>
+                  <div>
+                    <button id = "visit-btn" type="Book" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+            <!-- | truncatechars:75 -->
       </div>
     </div>
   </div>
 </div>
+
 {% endblock %}
