@@ -1,4 +1,4 @@
-from clubs.forms import ClubBookForm, BookRatingForm, BookPreferencesOuterForm
+from clubs.forms import ClubBookForm, BookRatingForm
 from clubs.models import Book, Club, Club_Books, Book_Rating
 from django.conf import settings
 from django.contrib import messages
@@ -42,7 +42,6 @@ class BookPreferencesView(LoginRequiredMixin, View):
         self.books_paginated = paginator.get_page(page_number)
 
         self.innerForm = BookRatingForm()
-        self.outerForm = BookPreferencesOuterForm()
 
         self.next = request.GET.get('next') or ''
         return self.render()
@@ -50,7 +49,7 @@ class BookPreferencesView(LoginRequiredMixin, View):
     def render(self):
         """Render template."""
 
-        return render(self.request, 'book_preferences.html', {'innerForm': self.innerForm, 'outerForm': self.outerForm, 'next': self.next, 'books_paginated': self.books_paginated})
+        return render(self.request, 'book_preferences.html', {'innerForm': self.innerForm, 'next': self.next, 'books_paginated': self.books_paginated})
 
 
 def rate_book(request, book_id):
