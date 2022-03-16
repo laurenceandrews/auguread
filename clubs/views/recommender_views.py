@@ -41,49 +41,6 @@ def club_recommender(request):
 
     return render(request, 'club_recommender.html', {'current_user': request.user, 'clubs_queryset': clubs_queryset, 'clubs_paginated': clubs_paginated})
 
-
-def book_preferences(request):
-    """View that allows the user to view all books and rate them."""
-    books_queryset = Book.objects.all()
-
-    paginator = Paginator(books_queryset, settings.BOOKS_PER_PAGE)
-    page_number = request.GET.get('page')
-    books_paginated = paginator.get_page(page_number)
-
-    return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated})
-
-class BookPreferencesView(LoginRequiredMixin, View):
-    """View that handles book preferences."""
-
-    http_method_names = ['get', 'post']
-    redirect_when_logged_in_url = 'book_preferences'
-
-    books_queryset = Book.objects.all()
-    paginator = Paginator(books_queryset, settings.BOOKS_PER_PAGE)
-
-    def get(self, request):
-        """Display log in template."""
-
-        page_number = request.GET.get('page')
-        self.books_paginated = self.paginator.get_page(page_number)
-
-        self.next = request.GET.get('next') or ''
-        return self.render()
-
-    def post(self, request):
-        """Handles submit attempt."""
-
-        form = BookRatingForm(request.POST)
-        self.next = request.POST.get('next') or settings.AUTO_REDIRECT_URL
-
-        return self.render()
-
-    def render(self):
-        """Render template with blank form."""
-
-        form = BookRatingForm()
-        return render(self.request, 'book_preferences.html', {'form': form, 'next': self.next, 'books_paginated': self.books_paginated})
-
 class ClubRecommenderView(LoginRequiredMixin, View):
     """View that handles the club recommendations."""
     http_method_names = ['get', 'post']
