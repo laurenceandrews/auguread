@@ -23,6 +23,7 @@
     border-radius: 5px;
     color: #fff;
     background: #352fa9;
+    height: 280px;
     width: 350px;
     margin: 5px 5px;
     padding: 22px 25px 11px 25px;
@@ -33,7 +34,7 @@
 
   .club-name {
     font-weight: 800;
-    font-size: 25px;
+    font-size: 22px;
     line-height: 32px;
     margin-bottom: 15px;
     -webkit-box-orient: vertical;
@@ -67,8 +68,8 @@
     text-overflow: ellipsis;
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 4; /* number of lines to show */
-            line-clamp: 4;
+    -webkit-line-clamp: 3; /* number of lines to show */
+            line-clamp: 3;
 
   }
 
@@ -85,7 +86,7 @@
 
   }
 
-  button#visit-btn {
+  .button#visit-btn {
 
   }
 
@@ -215,7 +216,7 @@
 
         <form method="GET">
           <div class="input-field">
-              <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Enter club name">
+              <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Enter club name or location">
               <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Search</button>
           </div>
         </form>
@@ -230,14 +231,14 @@
                     <span class = "club-name">{{ club.name }}</p>
                     <span class ="club-location block lg:inline">Location: {{ club.location }}</span>
                     <span class = "club-avg-reading-speed">Avg reading speed: {{ club.avg_reading_speed }}wpm</span>
-                    <span class = "club-description"> {{ club.description | truncatechars:75 }}</span>
+                    <span class = "club-description"> {{ club.description }}</span>
                   <div>
                     <button id = "visit-btn" type="Book" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button>
                   </div>
                 </div>
               </div>
             {% endfor %}
-            
+            <!-- | truncatechars:75 -->
       </div>
     </div>
   </div>
