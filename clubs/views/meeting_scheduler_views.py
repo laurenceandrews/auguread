@@ -71,9 +71,9 @@ class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
         club_book_exists = Club_Books.objects.filter(club=club).exists()
         if club_book_exists:
             club_book_latest = Club_Books.objects.filter(club=club).last()
-            description_test = 'This club is currently reading ' + club_book_latest.book.title + '.'
+            description_text = 'This club is currently reading ' + club_book_latest.book.title + '.'
         else:
-            description_test = 'This club has no books. When a book is selected, it will show here.'
+            description_text = 'This club has no books. When a book is selected, it will show here.'
 
         event = Event.objects.create(
             title=title,
@@ -82,7 +82,7 @@ class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
             end_recurring_period=end_recurring_period,
             rule=rule,
             calendar=calendar,
-            description=description_test
+            description=description_text
         )
 
         if club.meeting_type == 'ONL':
