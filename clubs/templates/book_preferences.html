@@ -2,7 +2,15 @@
 {% load static %} {% load widget_tweaks %} {% load bootstrap_pagination %}
 {% block body %}
 {% load book_rated %}
+{% load ratings_complete %}
 <style>
+
+  a#continue-btn-disabled {
+      pointer-events: none;
+      background-color: #eee;
+      color: #999;
+  }
+
   ul.pagination {
     display: inline-block;
     margin-bottom: 20px;
@@ -219,29 +227,17 @@
         <div class="block">
            {% bootstrap_paginate books_paginated previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
         </div>
-          <!-- || OUTER FORM: USER MUST RATE TEN BOOKS -->
-          <form action="#" method = 'POST'>
-            {% csrf_token %}
-            {% for book in books_paginated %}
-              <div class = "row">
-                <div class = "book-card" style = "background-image: url({{ book.image_large }})">
+          {% csrf_token %}
+          {% for book in books_paginated %}
+            <div class = "row">
+              <div class = "book-card" style = "background-image: url({{ book.image_large }})">
 
-                  <div class = "book-info sm:text-left md text-left lg:text-left" >
-                    <p class = "book-title">{{ book.title }}</p>
-                    <p class = "book-author">By {{ book.author }}</p>
-                  </div>
+                <div class = "book-info sm:text-left md text-left lg:text-left" >
+                  <p class = "book-title">{{ book.title }}</p>
+                  <p class = "book-author">By {{ book.author }}</p>
+                </div>
 
-                  {% if forloop.first %}
-                    <form action="{% url 'rate_book' book.id%}" method="post">
-                      {% csrf_token %}
-                      <div class = "rating">
-                          <p>{% book_rated book user%}</p>
-                          {{ innerForm }}
-                          <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
-                      </div>
-                    </form>
-                  {% endif %}
-
+                {% if forloop.first %}
                   <form action="{% url 'rate_book' book.id%}" method="post">
                     {% csrf_token %}
                     <div class = "rating">
@@ -250,20 +246,33 @@
                         <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
                     </div>
                   </form>
+                {% endif %}
 
-                </div>
+                <form action="{% url 'rate_book' book.id%}" method="post">
+                  {% csrf_token %}
+                  <div class = "rating">
+                      <p>{% book_rated book user%}</p>
+                      {{ innerForm }}
+                      <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
+                  </div>
+                </form>
+
               </div>
-            {% endfor %}
-
-            <div class="pt-4">
-              <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-50 dark:text-gray-300">Before continuing, please rate at least ten books above a score of five. We'll use these ratings to recommend you and clubs you're in books that you'll love! The more books you rate, the more accurate our algorithm will be.</p>
             </div>
+          {% endfor %}
 
-            <div class="pt-4">
-              <button a href = "club_recommender/" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Continue to club recommender</button>
-            </div>
+          <div class="pt-4">
+            <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-50 dark:text-gray-300">Before continuing, please rate at least ten books above a score of five. We'll use these ratings to recommend you and clubs you're in books that you'll love! The more books you rate, the more accurate our algorithm will be.</p>
+          </div>
 
-          </form>
+          <div class="pt-4">
+            {% ratings_complete user as ratings_good %}
+            {% if ratings_good %}
+              <a id = "continue-btn" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{% url 'club_recommender' %}">Continue to club recommender</a>
+            {% else %}
+              <a id = "continue-btn-disabled" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{% url 'club_recommender' %}">More positive ratings required</a>
+            {% endif %}
+          </div>
           <div class="pt-10">
           </div>
         </div>

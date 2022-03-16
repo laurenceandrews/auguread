@@ -532,7 +532,7 @@ class Book_Rating(models.Model):
         ('7', '7'),
         ('8', '8'),
         ('9', '9'),
-        ('10', '10')
+        ('10', '10'),
     ]
 
     rating = models.CharField(
