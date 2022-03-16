@@ -14,9 +14,11 @@ class EventLinkUpdateViewTest(TestCase):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/other_users.json',
         'clubs/tests/fixtures/default_calendar.json',
         'clubs/tests/fixtures/default_rules.json',
         'clubs/tests/fixtures/default_club.json',
+        'clubs/tests/fixtures/other_clubs.json'
     ]
 
     def setUp(self):
@@ -61,6 +63,33 @@ class EventLinkUpdateViewTest(TestCase):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+
+    def test_get_event_link_edit_redirects_when_not_club_owner(self):
+        calendar = Calendar.objects.get(pk=17)
+        club = Club.objects.get(pk=16)
+
+        data = {
+            'title': 'Exercise',
+            'start': datetime.datetime(2008, 11, 3, 8, 0),
+            'end': datetime.datetime(2008, 11, 3, 9, 0),
+            'end_recurring_period': datetime.datetime(2009, 6, 1, 0, 0),
+            'rule': Rule.objects.get(pk=9),
+            'calendar': self.calendar
+        }
+        event = Event(**data)
+        event.save()
+
+        url = reverse(
+            'edit_event_link', kwargs={'calendar_slug': calendar.slug, 'event_id': event.id}
+        )
+
+        self.client.login(email=self.user.email, password="Password123")
+        redirect_url = reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+        response = self.client.post(url, data, follow=True)
+        self.assertTemplateUsed(response, 'fullcalendar.html')
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200, fetch_redirect_response=True
+                             )
 
     def test_unsuccesful_event_link_edit_update(self):
         self.client.login(email=self.user.email, password="Password123")

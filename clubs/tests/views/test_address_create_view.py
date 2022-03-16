@@ -13,9 +13,11 @@ class CreateEventAddressViewTest(TestCase):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/other_users.json',
         'clubs/tests/fixtures/default_calendar.json',
         'clubs/tests/fixtures/default_rules.json',
         'clubs/tests/fixtures/default_club.json',
+        'clubs/tests/fixtures/other_clubs.json'
     ]
 
     def setUp(self):
@@ -55,6 +57,44 @@ class CreateEventAddressViewTest(TestCase):
         address_count_before = Address.objects.count()
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.post(self.url, self.data, follow=True)
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200, fetch_redirect_response=True
+                             )
+        address_count_after = Address.objects.count()
+        self.assertEqual(address_count_after, address_count_before)
+
+    def test_create_address_redirects_when_not_club_owner(self):
+        calendar_not_owner = Calendar.objects.get(pk=17)
+        club_not_owner = Club.objects.get(pk=16)
+
+        data = {
+            'title': 'Exercise',
+            'start': datetime.datetime(2008, 11, 5, 15, 0),
+            'end': datetime.datetime(2008, 11, 5, 16, 30),
+            'end_recurring_period': datetime.datetime(2009, 6, 1, 0, 0),
+            'rule': Rule.objects.get(pk=9),
+            'calendar': self.calendar
+        }
+        event = Event(**data)
+        event.save()
+        event = event
+
+        data = {
+            "name": "City Library",
+            "address1": "New Concordia Wharf",
+            "address2": "3 Mill St",
+            "zip_code": "SE1 2BB",
+            "city": "London",
+            "country": "GB"
+        }
+        url = reverse(
+            'create_address', kwargs={'calendar_slug': calendar_not_owner.slug, 'event_id': event.id}
+        )
+        self.client.login(email=self.user.email, password="Password123")
+        address_count_before = Address.objects.count()
+        redirect_url = reverse('full_calendar', kwargs={'calendar_slug': calendar_not_owner.slug})
+        response = self.client.post(url, data, follow=True)
+        self.assertTemplateUsed(response, 'fullcalendar.html')
         self.assertRedirects(response, redirect_url,
                              status_code=302, target_status_code=200, fetch_redirect_response=True
                              )
