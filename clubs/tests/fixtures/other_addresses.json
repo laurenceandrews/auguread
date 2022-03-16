@@ -1,0 +1,14 @@
+[
+  {
+    "model": "clubs.Address",
+    "pk": 15,
+    "fields": {
+      "name": "48 Laburnum Avenue",
+      "address1": "Mildenhall",
+      "address2": "",
+      "zip_code": "IP28 7PW",
+      "city":"Mildenhall",
+      "country":"GB"
+    }
+  }
+]

@@ -6,3 +6,5 @@ from .meeting_scheduler_views import *
 from .post_views import *
 from .static_views import *
 from .user_views import *
+from .account_views import *
+from .recommender_views import *

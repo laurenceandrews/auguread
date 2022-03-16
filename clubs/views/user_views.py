@@ -7,7 +7,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import MultipleObjectMixin
 from clubs.views.mixins import *
 from django.contrib.auth.decorators import login_required
-from clubs.forms import LogInForm, PasswordForm, SignUpForm
+from clubs.forms import LogInForm, PasswordForm, SignUpForm, UserDeleteForm
 from clubs.models import Club, Post, User
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -16,7 +16,6 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic.edit import FormView
 from django.views.generic.list import MultipleObjectMixin
-
 from .helpers import login_prohibited
 from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
                      MemberProhibitedMixin)
@@ -37,12 +36,12 @@ class LogInView(LoginProhibitedMixin, View):
         """Handles log in attempt."""
 
         form = LogInForm(request.POST)
-        self.next = request.POST.get('next') or settings.AUTO_REDIRECT_URL
+        self.next = request.POST.get('next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
         user = form.get_user()
         if user is not None:
             login(request, user)
             redirect_url = request.POST.get(
-                'next') or settings.AUTO_REDIRECT_URL
+                'next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
             return redirect(redirect_url)
         messages.add_message(request, messages.ERROR,
                              "The credentials provided are invalid!")
@@ -60,17 +59,20 @@ def log_out(request):
     return redirect('home')
 
 
-@login_prohibited
-def sign_up(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('book_preferences')
-    else:
-        form = SignUpForm()
-    return render(request, 'sign_up.html', {'form': form})
+class SignUpView(LoginProhibitedMixin, FormView):
+    """View that signs up user."""
+
+    form_class = SignUpForm
+    template_name = "sign_up.html"
+    redirect_when_logged_in_url = 'rec'
+
+    def form_valid(self, form):
+        self.object = form.save()
+        login(self.request, self.object)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('book_preferences')
 
 
 class PasswordView(LoginRequiredMixin, FormView):
@@ -98,7 +100,7 @@ class PasswordView(LoginRequiredMixin, FormView):
 
         messages.add_message(
             self.request, messages.SUCCESS, "Password updated!")
-        return reverse(settings.AUTO_REDIRECT_URL)
+        return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
 
 class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
@@ -131,6 +133,7 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, Applican
 
     def get_context_data(self, **kwargs):
         """Generate context data to be shown in the template."""
+        # user = self.get_object() #new
         club = Club.objects.get(id=self.kwargs['club_id'])
         target = self.get_object()
         user = self.request.user
@@ -140,6 +143,7 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, Applican
         user_type = user.membership_type(club)
         posts = Post.objects.filter(author=user)
         context = super().get_context_data(object_list=users, **kwargs)
+        context = super().get_context_data(object_list=posts, **kwargs) #new
         context['can_approve'] = ((user != target) and (user_type == 'Owner'
                                                         or user == club.owner) and target_type == 'Applicant')
         context['is_owner'] = target_type == 'Owner'
@@ -255,3 +259,20 @@ class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
             user = User.objects.get(email=email)
             club.demote(user)
         return redirect('owner_list', club_id=club.id)
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        delete_form = UserDeleteForm(request.POST, instance=request.user)
+        user = request.user
+        user.delete()
+        messages.info(request, 'Your account has been deleted.')
+        return redirect('home')
+    else:
+        delete_form = UserDeleteForm(instance=request.user)
+
+    context = {
+        'delete_form': delete_form
+    }
+
+    return render(request, 'delete_account.html', context)

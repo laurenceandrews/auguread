@@ -154,14 +154,17 @@ class User(AbstractUser):
 
     def is_following(self, user):
         """Returns whether self follows the given user."""
+
         return user in self.followees.all()
 
     def follower_count(self):
         """Returns the number of followers of self."""
+
         return self.followers.count()
 
     def followee_count(self):
         """Returns the number of followees of self."""
+
         return self.followees.count()
 
 
@@ -207,6 +210,7 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
 
 class Post(models.Model):
     """Posts by users."""
@@ -339,7 +343,6 @@ class Club(models.Model):
 
     applicants = models.ManyToManyField(
         User, through='ApplicantMembership', related_name='applicant', blank=True)
-
     members = models.ManyToManyField(
         User, through='MemberMembership', related_name='member', blank=True)
     owners = models.ManyToManyField(
@@ -484,6 +487,7 @@ class MyUUIDModel(models.Model):
         editable=False
     )
 
+
 class Book_Rating(models.Model):
     user = models.ForeignKey(
         User,
@@ -503,4 +507,37 @@ class Book_Rating(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(10)],
         blank=False,
         default=1
+    )
+    # BOOK_RATING_CHOICES = [
+    #     ('1', 'One'),
+    #     ('2', 'Two'),
+    #     ('3', 'Three'),
+    #     ('4', 'Four'),
+    #     ('5', 'Five'),
+    #     ('6', 'Six'),
+    #     ('7', 'Seven'),
+    #     ('8', 'Eight'),
+    #     ('9', 'Nine'),
+    #     ('10', 'Ten')
+    # ]
+    
+    BOOK_RATING_CHOICES = [
+        ("Rate book", "Rate book"),
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
+        ('4', '4'),
+        ('5', '5'),
+        ('6', '6'),
+        ('7', '7'),
+        ('8', '8'),
+        ('9', '9'),
+        ('10', '10')
+    ]
+
+    rating = models.CharField(
+        max_length=9,
+        choices=BOOK_RATING_CHOICES,
+        default="Rate book",
+        blank=False
     )

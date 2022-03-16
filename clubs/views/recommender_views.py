@@ -25,7 +25,6 @@ from schedule.models import Calendar, Event, Rule
 
 from clubs.forms import (CalendarPickerForm, CreateEventForm, MeetingAddressForm,
                     MeetingLinkForm, SignUpForm)
-# from clubs.helpers import login_prohibited
 
 @login_required
 def RecommendationsView(request):

@@ -7,8 +7,8 @@ class UserModelTestCase(TestCase):
     """Unit tests for the User model."""
 
     fixtures = [
-        'clubs/tests/fixtures/club.json',
-        'clubs/tests/fixtures/owner_user.json'
+        'clubs/tests/fixtures/db.json',
+        'clubs/tests/fixtures/default_user.json'
     ]
 
     def setUp(self):
@@ -25,9 +25,6 @@ class UserModelTestCase(TestCase):
     def test_is_owner(self):
         self.assertTrue(self.owner_user.is_owner(self.club))
 
-    def test_is_officer(self):
-        self.assertTrue(self.owner_user.is_owner(self.club))
-
     def test_member_membership_type(self):
         self.assertEqual(self.member_user.membership_type(self.club), 'Member')
 
@@ -38,13 +35,13 @@ class UserModelTestCase(TestCase):
     def test_user_membership_type(self):
         self.assertEqual(self.user.membership_type(self.club), 'User')
 
-    def test_demote_officer(self):
-        self.club.toggle_promote(self.owner_user)
-        self.assertTrue(self.owner_user in self.club.members.all())
-
-    def test_promote_member(self):
-        self.club.toggle_promote(self.member_user)
-        self.assertTrue(self.member_user in self.club.owners.all())
+    # def test_demote_owner(self):
+    #     self.club.toggle_promote(self.owner_user)
+    #     self.assertTrue(self.owner_user in self.club.members.all())
+    #
+    # def test_promote_member(self):
+    #     self.club.toggle_promote(self.member_user)
+    #     self.assertTrue(self.member_user in self.club.owners.all())
 
     def test_transfer(self):
         self.club.transfer(self.owner_user)
@@ -56,6 +53,6 @@ class UserModelTestCase(TestCase):
 
     def test_in_club(self):
         self.assertTrue(self.club.in_club(self.owner_user))
-        self.assertTrue(self.club.in_club(self.applicant_user))
+        self.assertTrue(self.club.in_club(self.member_user))
         self.assertTrue(self.club.in_club(self.applicant_user))
         self.assertFalse(self.club.in_club(self.user))

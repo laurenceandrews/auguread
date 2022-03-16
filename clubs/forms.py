@@ -1,6 +1,4 @@
 """Forms for the book club app"""
-
-
 import datetime
 
 from clubs.book_to_club_recommender.book_to_club_recommender_age import \
@@ -8,6 +6,7 @@ from clubs.book_to_club_recommender.book_to_club_recommender_age import \
 from clubs.book_to_club_recommender.book_to_club_recommender_author import \
     ClubBookAuthorRecommender
 from django import forms
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
 from django.db.models import Subquery
@@ -16,8 +15,8 @@ from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
 
-from .models import (Book, Club, Club_Books, Address, MeetingAddress, MeetingLink, Post,
-                     User)
+from .models import (Address, Book_Rating, Book, Club, Club_Books, MeetingAddress,
+                     MeetingLink, Post, User)
 
 
 class LogInForm(forms.Form):
@@ -207,7 +206,6 @@ class NewClubForm(forms.ModelForm):
             self.add_error('calendar_name',
                            'Calendar name is already taken.')
 
-
 class MeetingAddressForm(forms.ModelForm):
     class Meta:
         model = MeetingAddress
@@ -215,20 +213,24 @@ class MeetingAddressForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         """Give user option of all addresses used for events for this calendar."""
-        calendar_slug = kwargs.pop('calendar_slug')
+        calendar_slug = kwargs.pop('calendar_slug', [])
         super(MeetingAddressForm, self).__init__(*args, **kwargs)
-        calendar = Calendar.objects.get(slug=calendar_slug)
-        events = Event.objects.filter(calendar=calendar)
-        meeting_addresses = MeetingAddress.objects.filter(event__in=events)
-        address_ids = meeting_addresses.values_list('address_id', flat=True)
-        addresses = Address.objects.filter(id__in=address_ids)
-        self.fields['address'].queryset = addresses.order_by('name')
+        calendar_exists = Calendar.objects.filter(slug=calendar_slug)
+        if calendar_exists:
+            calendar = Calendar.objects.get(slug=calendar_slug)
+            events = Event.objects.filter(calendar=calendar)
+            meeting_addresses = MeetingAddress.objects.filter(event__in=events)
+            address_ids = meeting_addresses.values_list('address_id', flat=True)
+            addresses = Address.objects.filter(id__in=address_ids)
+            self.fields['address'].queryset = addresses.order_by('name')
+        else:
+            self.fields['address'].queryset = Address.objects.none()
 
     def clean(self):
         """ Ensure that address is not null."""
 
         super().clean()
-        if self.cleaned_data['address'] == None:
+        if self.cleaned_data.get('address') is None:
             self.add_error('address', 'You must select an existing address or create a new one.')
 
 
@@ -273,8 +275,9 @@ class CreateEventForm(forms.ModelForm):
 
     def clean(self):
         super().clean()
-        if self.cleaned_data['end'] <= self.cleaned_data['start']:
-            self.add_error('end', 'The end time must be later than start time.')
+        if (self.cleaned_data.get('end') is not None and self.cleaned_data.get('start') is not None):
+            if self.cleaned_data.get('end') <= self.cleaned_data.get('start'):
+                self.add_error('end', 'The end time must be later than start time.')
 
 
 class CalendarPickerForm(forms.Form):
@@ -290,11 +293,13 @@ class ClubBookForm(forms.ModelForm):
         """Give user option of books from the book-to-club-recommender-age recommender."""
         club_id = kwargs.pop('club_id')
         super(ClubBookForm, self).__init__(*args, **kwargs)
-        book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
-        # if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
-        #     book_ids = ClubBookAuthorRecommender(club_id).get_recommended_books()
-        # else:
-        #     book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
+
+        if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
+            book_ids = ClubBookAuthorRecommender(club_id).get_recommended_books()
+            if(len(book_ids) < 6):
+                book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
+        else:
+            book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
         books = Book.objects.filter(id__in=book_ids)
         self.fields['book'].queryset = books
 
@@ -318,3 +323,12 @@ class ClubRecommenderForm(forms.ModelForm):
         disabled = False,
         widget=forms.widgets.CheckboxInput(attrs={'class': 'checkbox-inline'}),)
 
+class UserDeleteForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = []
+
+class BookRatingForm(forms.ModelForm):
+    class Meta:
+        model = Book_Rating
+        fields = ['rating']
