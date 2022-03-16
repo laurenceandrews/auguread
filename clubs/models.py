@@ -503,18 +503,36 @@ class Book_Rating(models.Model):
         default=0
     )
 
-    rating = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(10)],
-        blank=False,
-        default=1
-    )
+    # BOOK_RATING_CHOICES = [
+    #     ('1', 'One'),
+    #     ('2', 'Two'),
+    #     ('3', 'Three'),
+    #     ('4', 'Four'),
+    #     ('5', 'Five'),
+    #     ('6', 'Six'),
+    #     ('7', 'Seven'),
+    #     ('8', 'Eight'),
+    #     ('9', 'Nine'),
+    #     ('10', 'Ten')
+    # ]
+    
+    BOOK_RATING_CHOICES = [
+        ("Rate book", "Rate book"),
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
+        ('4', '4'),
+        ('5', '5'),
+        ('6', '6'),
+        ('7', '7'),
+        ('8', '8'),
+        ('9', '9'),
+        ('10', '10')
+    ]
 
-
-class BookRatingForm(forms.Form):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    rating = forms.ChoiceField(
-        required=False,
-        label='Rate book',
-        error_messages={},
-        choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
+    rating = models.CharField(
+        max_length=9,
+        choices=BOOK_RATING_CHOICES,
+        default="Rate book",
+        blank=False
     )

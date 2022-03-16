@@ -100,9 +100,13 @@ class Club_BookAdmin(admin.ModelAdmin):
     ]
 
 @admin.register(Book_Rating)
-class Book_RatingAdmin(admin.ModelAdmin):
+class BookRatingAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for book ratings."""
 
     list_display = [
-        'book', 'rating'
-    ]    
+        'user', 'book_title', 'rating'
+    ]
+
+    def book_title(self, book_rating):
+        """Return the title of an book rating's book."""
+        return book_rating.book.title
