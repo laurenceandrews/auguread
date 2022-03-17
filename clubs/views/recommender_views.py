@@ -1,8 +1,8 @@
 """Views related to the recommender."""
-from clubs.forms import (AddressForm, LogInForm, NewClubForm, PasswordForm,
-                         PostForm, SignUpForm, BookRatingForm)
+from clubs.forms import (AddressForm, LogInForm, NewClubForm, PasswordForm, PostForm, SignUpForm, BookRatingForm, ClubBookForm)
 # from clubs.helpers import member, owner
-from clubs.models import Book, Club, MeetingAddress, MeetingLink, Post, User, Address
+from clubs.models import Book, Club, Club_Books, MeetingAddress, MeetingLink, Post, User, Address
+
 from django.conf import settings
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
@@ -28,11 +28,6 @@ from clubs.forms import (CalendarPickerForm, CreateEventForm, MeetingAddressForm
 from clubs.views.club_views import MemberListView
 from clubs.views.mixins import TenPosRatingsRequiredMixin
 from django.db.models import Q
-
-@login_required
-def RecommendationsView(request):
-    """View that shows a list of all recommended books."""
-    return render(request, 'rec_page.html')
 
 class ClubRecommenderView(LoginRequiredMixin, View):
     """View that handles the club recommendations."""
@@ -60,4 +55,38 @@ class ClubRecommenderView(LoginRequiredMixin, View):
         """Render template with blank form."""
 
         return render(self.request, 'club_recommender.html', {'next': self.next, 'clubs_paginated': self.clubs_paginated})
+      
+      
+class ClubBookSelectionView(LoginRequiredMixin, CreateView):
+    """Class-based generic view for new post handling."""
 
+    model = Club_Books
+    template_name = 'club_book_select.html'
+    form_class = ClubBookForm
+
+    def get_form_kwargs(self):
+        kwargs = super(ClubBookSelectionView, self).get_form_kwargs()
+        kwargs['club_id'] = self.kwargs['club_id']
+        return kwargs
+
+    def form_valid(self, form):
+        """Process a valid form."""
+        club = Club.objects.get(id=self.kwargs['club_id'])
+
+        book = form.cleaned_data.get('book')
+
+        club_book = Club_Books.objects.create(
+            club=club,
+            book=book
+        )
+        return render(self.request, 'home.html')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        club = Club.objects.get(id=self.kwargs['club_id'])
+        context['club_name'] = club.name
+        return context
+
+    def get_success_url(self):
+        """Return URL to redirect the user to after valid form handling."""
+        return redirect('home')

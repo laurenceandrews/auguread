@@ -23,7 +23,9 @@
 <h5>Email: </h5>
 <p class="">{{ user.email }}</p>
 
+{% if club %}
 <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href="{% url 'full_calendar' calendar_slug=club.calendar.slug %}">Club Events</a>
+{% endif %}
 
 {% if club %}
 <p class=""><h5>Club name: </h5>{{ club.name }}</p>

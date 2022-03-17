@@ -1,4 +1,4 @@
-from clubs.forms import ClubBookForm, BookRatingForm
+from clubs.forms import BookRatingForm
 from clubs.models import Book, Club, Club_Books, Book_Rating
 from django.conf import settings
 from django.contrib import messages
@@ -113,39 +113,3 @@ class CreateBookRatingView(CreateView):
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
         return reverse('book_preferences')
-
-
-class ClubBookSelectionView(CreateView):
-    """Class-based generic view for new post handling."""
-
-    model = Club_Books
-    template_name = 'club_book_select.html'
-    form_class = ClubBookForm
-
-    def get_form_kwargs(self):
-        kwargs = super(ClubBookSelectionView, self).get_form_kwargs()
-        kwargs['club_id'] = self.kwargs['club_id']
-        return kwargs
-
-    def form_valid(self, form):
-        """Process a valid form."""
-        club = Club.objects.get(id=self.kwargs['club_id'])
-
-        book = form.cleaned_data.get('book')
-
-        club_book = Club_Books.objects.create(
-            club=club,
-            book=book
-        )
-        return render(self.request, 'home.html')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        context['club_name'] = club.name
-
-        return context
-
-    def get_success_url(self):
-        """Return URL to redirect the user too after valid form handling."""
-        return redirect('home')
