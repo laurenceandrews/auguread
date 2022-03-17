@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import (Book, Club, Club_Books, Club_Users, MeetingAddress,
+from .models import (Book, Club, Club_Books, Club_Users, Club_Book_History, MeetingAddress,
                      MeetingLink, Post, User, Book_Rating)
 
 
@@ -98,6 +98,14 @@ class Club_BookAdmin(admin.ModelAdmin):
     list_display = [
         'club', 'book'
     ]
+
+@admin.register(Club_Book_History)
+class Club_Book_HistoryAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for club book history."""
+
+    list_display = [
+        'club', 'book'
+    ]    
 
 @admin.register(Book_Rating)
 class BookRatingAdmin(admin.ModelAdmin):
