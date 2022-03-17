@@ -51,7 +51,6 @@ class ClubBookAuthorRecommender:
     def getAuthorBooks(self):
         # Get all books by the favourite authors
         df_favourite_books, df_fav_authors = self.getFavBooksAuthors()
-        print(df_fav_authors)
         df_author_books = pd.merge(self.df_books, df_fav_authors, on='author')
         # Exclude the books that are from the club's favourite books
         df_author_books = df_author_books[~df_author_books.ISBN.isin(df_favourite_books.ISBN)]
