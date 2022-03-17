@@ -1,0 +1,15 @@
+[
+  {
+    "model": "clubs.club",
+    "pk": 19,
+    "fields": {
+      "name": "Purple Club",
+      "location": "London, GB",
+      "description": "A club that reads lots of fun books about purple.",
+      "avg_reading_speed": "200",
+      "owner": 1,
+      "calendar": 18,
+      "meeting_type": "ONL"
+    }
+  }
+]

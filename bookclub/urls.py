@@ -22,6 +22,7 @@ from django.views.generic import TemplateView
 from schedule.views import (DeleteEventView, EditEventView, EventView,
                             api_move_or_resize_by_code, api_occurrences,
                             api_select_create)
+from clubs.views.recommender_views import ClubRecommenderView
 
 urlpatterns = [
     # Admin urls
@@ -37,7 +38,6 @@ urlpatterns = [
     path('edit_profile/', views.ProfileUpdateView.as_view(), name='edit_profile'),
 
     # User urls
-    path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
     path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
     path('user_detail/', views.user_detail, name='user_detail'),
     path('delete_account/', views.delete_account, name='delete_account'),
@@ -56,6 +56,8 @@ urlpatterns = [
     path('apply/<int:club_id>', views.apply, name='apply'),
     path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
     path('<int:club_id>/transfer/<int:user_id>', views.transfer, name='transfer'),
+    path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
+
 
     path('<int:club_id>/applicants', views.ApplicantListView.as_view(), name='applicant_list'),
     path('<int:club_id>/members', views.MemberListView.as_view(), name='member_list'),
@@ -65,9 +67,6 @@ urlpatterns = [
     path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
     path('feed/', views.FeedView.as_view(), name='feed'),
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
-
-    # Book recommender urls
-    path('club_recommender/', views.club_recommender, name='club_recommender'),
 
     path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
     path('book/rating/<int:book_id>/', views.CreateBookRatingView.as_view(), name='rate_book'),
@@ -85,7 +84,7 @@ urlpatterns = [
     url(r"^event/detail/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
         views.EventDetailView.as_view(),
         name='event_detail'),
-    url(r'^event/create/(?P<calendar_id>[-\w]+)/$',
+    url(r'^event/create/(?P<calendar_slug>[-\w]+)/$',
         views.CreateEventView.as_view(),
         name='create_event'),
     url(r"^event/address/create/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
@@ -112,6 +111,14 @@ urlpatterns = [
         views.DeleteEventView.as_view(),
         name="delete_event",
     ),
+
+    # Book recommender urls
+    # path('club_recommender/', views.club_recommender, name='club_recommender'),
+    path('club_recommender/', ClubRecommenderView.as_view(), name='club_recommender'),
+
+    #path('book_preferences/', views.book_preferences, name='book_preferences'),
+    path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
+
 
     url(r"^club/book/edit/(?P<club_id>\d+)/$",
         views.ClubBookSelectionView.as_view(),

@@ -5,7 +5,7 @@
     <li>
       {# <a href='{%url 'calendar_create_event' calendar_slug=calendar.slug %}' class="btn btn-lg btn-secondary">Create new event</a> #}
 
-      <a href='{%url 'create_event' calendar_id=calendar.id %}' class="btn btn-lg btn-secondary">Create new event</a>
+      <a href='{%url 'create_event' calendar_slug=calendar.slug %}' class="btn btn-lg btn-secondary">Create new event</a>
     </li>
     <li>
       <a href='{%url 'events_list' calendar_id=calendar.id %}' class="btn btn-lg btn-secondary">View all events (you can edit or delete events here)</a>

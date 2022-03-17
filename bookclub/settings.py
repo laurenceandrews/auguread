@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 
+from django.contrib.messages import constants as message_constants
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -137,11 +139,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # User model for authentication purposes
 AUTH_USER_MODEL = 'clubs.User'
 
+# Message level tage should use Boostrap terms
+MESSAGE_TAGS = {
+    message_constants.DEBUG: 'dark',
+    message_constants.ERROR: 'danger',
+}
+
 # Login URL for redirecting users from login protected views
 LOGIN_URL = 'log_in'
 
 # URL where @login_prohibited redirects to
 REDIRECT_URL_WHEN_LOGGED_IN = 'rec'
+
+REDIRECT_URL_WHEN_NOT_ENOUGH_RATINGS = 'book_preferences'
 
 
 # Tailwind App Name
@@ -153,6 +163,9 @@ INTERNAL_IPS = [
 
 # Set up for windows, for mac/ubuntu change to r"/usr/local/bin/npm"
 NPM_BIN_PATH = r"/usr/local/bin/npm"
+# NPM_BIN_PATH = "/usr/bin/npm"
+# NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+
 
 
 # Page lengths

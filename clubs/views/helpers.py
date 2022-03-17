@@ -33,7 +33,7 @@ def member(view_function, *args, **kwargs):
 def owner(view_function, *args, **kwargs):
     def modified_view_function(request, *args, **kwargs):
         club = Club.objects.get(id=kwargs['club_id'])
-        if request.user in club.owner.all() or club.owner.email == request.user.email:
+        if request.user in club.owners.all() or club.owner.email == request.user.email:
             return view_function(request, *args, **kwargs)
         else:
             return redirect(settings.REDIRECT_URL_WHEN_LOGGED_IN)

@@ -303,6 +303,26 @@ class ClubBookForm(forms.ModelForm):
         books = Book.objects.filter(id__in=book_ids)
         self.fields['book'].queryset = books
 
+class BookRatingForm(forms.Form):
+    # user = forms.ForeignKey(User, on_delete=forms.CASCADE) 
+    rating = forms.ChoiceField(
+        required = False,
+        label = 'Rate book',
+        error_messages = {},
+        choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
+    )
+
+class ClubRecommenderForm(forms.ModelForm):
+    class Meta:
+        model = Club
+        fields = ['name']
+    
+    online = forms.BooleanField(
+        label = 'Online only', 
+        required = False,  
+        disabled = False,
+        widget=forms.widgets.CheckboxInput(attrs={'class': 'checkbox-inline'}),)
+
 class UserDeleteForm(forms.ModelForm):
     class Meta:
         model = User
@@ -312,25 +332,3 @@ class BookRatingForm(forms.ModelForm):
     class Meta:
         model = Book_Rating
         fields = ['rating']
-
-# class BookPreferencesOuterForm(forms.ModelForm):
-
-#     class Meta:
-#         ratings_made = 
-#         fields = 
-
-#     def clean(self):
-#         """ Ensure that at least 10 ratings over 5 are made """
-
-#         positive_ratings_required = 10
-
-#         super().clean()
-#         ratings_made = self.cleaned_data.get('ratings_made')
-#         for (rating in ratings_made):
-#             if rating > 5:
-#                 positive_ratings_made.add(ratings_made)
-
-#         if positive_ratings_made < 10:
-#             self.add_error("Please rate at least ten books over a 5/10 to ensure our recommenders can work their best for you.")
-#         else:
-#             # Allow user to continue
