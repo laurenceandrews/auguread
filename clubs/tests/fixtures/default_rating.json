@@ -1,0 +1,11 @@
+[
+    {
+      "model": "clubs.Book_Rating",
+      "pk": 1,
+      "fields": {
+        "user" : 1,
+        "book" : 20,
+        "rating" : "8"
+      }
+    }
+  ]
