@@ -107,7 +107,7 @@ class ClubUserRequiredMixin:
 class TenPosRatingsRequiredMixin:
     """Mixin that redirects when a user has not yet made ten positive book ratings."""
 
-    redirect_when_less_than_ten_pos_ratings_url = settings.REDIRECT_URL_WHEN_LOGGED_IN
+    redirect_when_less_than_ten_pos_ratings_url = settings.REDIRECT_URL_WHEN_NOT_ENOUGH_RATINGS
 
     def dispatch(self, *args, **kwargs):
         """Redirect when ten pos ratings not met, or dispatch as normal otherwise."""
