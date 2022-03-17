@@ -105,6 +105,8 @@ class CreateBookRatingView(CreateView):
                 book=book,
                 rating=rating
             )
+        
+        messages.add_message(self.request, messages.SUCCESS, "Rating created")
 
         return redirect('book_preferences')
 

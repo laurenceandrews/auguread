@@ -1,13 +1,21 @@
 {% load static %}
 <div class="relative bg-white dark:bg-slate-800">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6">
     <div
-      class="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10 dark:border-gray-700"
+      class="flex items-center justify-between border-b-2 border-gray-100 py-6 dark:border-gray-700 md:justify-start md:space-x-10"
     >
       <div class="flex justify-start lg:w-0 lg:flex-1">
         <!-- Load icon logo for light and dark mode -->
-        <img src="{% static 'icon-logo-light.svg' %}" alt="" class="h-8 w-8 dark:hidden" />
-        <img src="{% static 'icon-logo-dark.svg' %}" alt="" class="h-8 w-8 hidden dark:block" />
+        <img
+          src="{% static 'icon-logo-light.svg' %}"
+          alt=""
+          class="h-8 w-8 dark:hidden"
+        />
+        <img
+          src="{% static 'icon-logo-dark.svg' %}"
+          alt=""
+          class="hidden h-8 w-8 dark:block"
+        />
       </div>
       <div class="flex">
         <!-- Load text logo for light and dark mode-->
@@ -19,7 +27,7 @@
         <img
           src="{% static 'text-logo-dark.svg' %}"
           alt=""
-          class="h-10 w-auto hidden dark:block"
+          class="hidden h-10 w-auto dark:block"
         />
       </div>
       <!-- Sign in and Sign up-->
@@ -32,7 +40,7 @@
         </a>
         <a
           href="{% url 'sign_up' %}"
-          class="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+          class="ml-8 inline-flex items-center justify-center whitespace-nowrap rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
         >
           Sign up
         </a>
