@@ -1,0 +1,27 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+        <table class="table table-vcenter table-condensed table-bordered">
+          <thead>
+            <tr>
+              <th>&nbsp</th>
+              <th class="text-center">Full Name</th>
+              <th class="text-center">Email</th>
+              {% block colhead %}
+              {% endblock %}
+            </tr>
+          </thead>
+
+          {% for target in users %}
+            <tr>
+              <td class="text-center">
+                <img src="{{ target.mini_gravatar }}" alt="Gravatar of {{ target.username }}" class="rounded-circle">
+              </td>
+              {% block col %}
+              {% endblock %}
+            </tr>
+          {% endfor %}
+        </table>
+    </div>
+  </div>
+</div>

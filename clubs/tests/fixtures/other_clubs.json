@@ -1,0 +1,15 @@
+[
+  {
+    "model": "clubs.club",
+    "pk": 16,
+    "fields": {
+      "name": "Green Club",
+      "location": "London, GB",
+      "description": "A club that reads lots of fun books about green.",
+      "avg_reading_speed": "200",
+      "owner": 2,
+      "calendar": 17,
+      "meeting_type": "ONL"
+    }
+  }
+]

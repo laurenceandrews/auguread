@@ -1,0 +1,15 @@
+{% extends "base_content.html" %}
+{% block content %}
+<title>
+  {% block title %}
+  | User Detail
+  {% endblock %}
+</title>
+<div class="container">
+  <div class="row content">
+    <div class="col">
+      {% include 'user_profile.html' %}
+    </div>
+  </div>
+</div>
+{% endblock %}

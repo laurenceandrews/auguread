@@ -1,0 +1,35 @@
+{% extends "manage_list_template.html" %}
+{% load bootstrap_pagination %}
+{% block title %}
+ | Applicant Manage
+{% endblock %}
+{% block head %}
+  Manage Applicants
+{% endblock %}
+{% block form %}
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      {% if not users %}
+        <pre>
+
+
+
+        </pre>
+        <h1 style="text-align:center">No new applicants yet!</h1>
+
+      {% else %}
+      {% bootstrap_paginate page_obj range=10 show_first_last="true"%}
+      <form action="{% url 'applicant_list' club.id %}" method="post">
+        {% csrf_token %}
+        {% include "partials/manage_list.html" with users=page_obj applicants=True club=club %}
+        {% bootstrap_paginate page_obj range=10 show_first_last="true"%}
+        <div class="row" style="text-align:center">
+          <input type="submit" value="Accept" class="btn btn-lg btn-primary">
+        </div>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'event_create.html' %}
+{% block content%}
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <div class="meeting-link">
+        <h2>Meeting Link for Event: {{ event.title }}</h2>
+        <form action="{% url 'create_event_link' calendar_slug=event.calendar.slug event_id=event.id %}" method="post">
+          {% csrf_token %}
+          {% include 'partials/bootstrap_form.html' with form=form %}
+          <input type="submit" value="Confirm event link" class="btn btn-primary" />
+          <a href="{{ view.get_success_url }}" class="btn btn-default">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

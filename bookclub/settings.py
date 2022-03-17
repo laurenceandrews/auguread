@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from django.contrib.messages import constants as message_constants
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.humanize',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -43,6 +47,8 @@ INSTALLED_APPS = [
     'theme',
     'django_browser_reload',
     'widget_tweaks',
+    'schedule',
+    'djangobower',
 ]
 
 MIDDLEWARE = [
@@ -117,7 +123,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
+# USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -133,11 +139,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # User model for authentication purposes
 AUTH_USER_MODEL = 'clubs.User'
 
+# Message level tage should use Boostrap terms
+MESSAGE_TAGS = {
+    message_constants.DEBUG: 'dark',
+    message_constants.ERROR: 'danger',
+}
+
 # Login URL for redirecting users from login protected views
 LOGIN_URL = 'log_in'
 
 # URL where @login_prohibited redirects to
-AUTO_REDIRECT_URL = 'rec'
+REDIRECT_URL_WHEN_LOGGED_IN = 'rec'
 
 
 # Tailwind App Name
@@ -148,16 +160,33 @@ INTERNAL_IPS = [
 ]
 
 # Set up for windows, for mac/ubuntu change to r"/usr/local/bin/npm"
-NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+NPM_BIN_PATH = r"/usr/local/bin/npm"
 
-
-# URL where @login_prohibited redirects to
-
-# URL where @login_prohibited redirects to
-
-REDIRECT_URL_WHEN_LOGGED_IN = 'home'
 
 # Page lengths
 USERS_PER_PAGE = 10
 POSTS_PER_PAGE = 20
 NUMBER_PER_PAGE = 15
+BOOKS_PER_PAGE = 12
+CLUBS_PER_PAGE = 12
+
+# Set up djangobower
+
+PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
+
+STATIC_ROOT = os.path.join(PROJECT_PATH, 'assets')
+
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
+)
+
+BOWER_INSTALLED_APPS = (
+    'jquery',
+    'jquery-ui',
+    'bootstrap',
+    'fullcalendar#3.8.2'
+)

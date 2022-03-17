@@ -6,18 +6,6 @@
   | Club List
   {% endblock %}
 </title>
-
-<div class="container">
-  {% bootstrap_paginate page_obj range=10 show_first_last="true"%}
-  <div class="row">
-    <div class="col-12">
-      <h1 style="text-align:center">
-        {% block head %}
-        {% endblock %}
-      </h1>
-    </div>
-  </div>
-</div>
 <div class="container">
   <div class="row">
     <div class="col-12">
@@ -27,7 +15,7 @@
 
 
         </pre>
-        <h1 style="text-align:center">No existing clubs! Why not create your own chess club!</h1>
+        <h1 style="text-align:center">No existing clubs! Why not create your own book club!</h1>
         <div class="row-12" style="text-align:center">
           <h3 class="text-center"> Don't want to join an existing club? Why not create a new club yourself!</h1>
             <a href='{% url 'new_club' %}' class="btn btn-lg btn-primary">
@@ -43,6 +31,18 @@
           </a>
       </div>
       {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  {% bootstrap_paginate page_obj range=10 show_first_last="true"%}
+  <div class="row">
+    <div class="col-12">
+      <h1 style="text-align:center">
+        {% block head %}
+        {% endblock %}
+      </h1>
     </div>
   </div>
 </div>

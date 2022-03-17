@@ -1,0 +1,17 @@
+{% load event_meeting %}
+<div>
+  <div>
+    <p>Title: {{event.title}}</p>
+    <p>Start: {{event.start}}</p>
+    <p>End: {{event.end}}</p>
+    <!-- <p>End of recurring period: {{event.end_recurring_period}}</p> -->
+    <!-- <p>Rule: {{event.rule}}</p> -->
+    <!-- <p>calendar: {{event.calendar}}</p> -->
+    <p>Event meeting at: {% event_meeting event %}</p>
+    <p>Description: {{event.description}}</p>
+  </div>
+</div>
+
+<div onclick="location.href='{%url 'event_detail' calendar_slug=event.calendar.slug event_id=event.id %}';" style="cursor: pointer;">
+  <p>More options... (you can view, edit or delete this event here)</p>
+</div>
