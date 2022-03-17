@@ -385,14 +385,21 @@ class DeleteEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, DeleteView):
         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
         return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
 
+    def get_cancel_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        event = Event.objects.get(id=self.kwargs['event_id'])
         context['calendar'] = calendar
         context['calendar_id'] = calendar.id
         context['calendar_slug'] = calendar.slug
         context['calendar_name'] = calendar.name
         context['user'] = self.request.user
+        context['event_title'] = event.title
 
         return context
 

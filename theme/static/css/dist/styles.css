@@ -1015,6 +1015,10 @@ select {
   width: 0px;
 }
 
+.w-screen {
+  width: 100vw;
+}
+
 .max-w-md {
   max-width: 28rem;
 }
