@@ -1,15 +1,16 @@
 """Views related to the account."""
+from clubs.forms import LogInForm, PasswordForm, SignUpForm, UserForm
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import FormView, UpdateView
-from django.urls import reverse
-from clubs.forms import PasswordForm, UserForm, SignUpForm, LogInForm
-from .mixins import LoginProhibitedMixin
 from django.contrib.auth import login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views import View
+from django.views.generic.edit import FormView, UpdateView
+
 from .helpers import login_prohibited
+from .mixins import LoginProhibitedMixin
 
 
 class LogInView(LoginProhibitedMixin, View):
@@ -44,9 +45,11 @@ class LogInView(LoginProhibitedMixin, View):
         form = LogInForm()
         return render(self.request, 'log_in.html', {'form': form, 'next': self.next})
 
+
 def log_out(request):
     logout(request)
     return redirect('home')
+
 
 @login_prohibited
 def sign_up(request):
@@ -60,9 +63,6 @@ def sign_up(request):
         form = SignUpForm()
     return render(request, 'sign_up.html', {'form': form})
 
-
-def home(request):
-    return render(request, 'home.html')
 
 class PasswordView(LoginRequiredMixin, FormView):
     """View that handles password change requests."""
@@ -90,6 +90,7 @@ class PasswordView(LoginRequiredMixin, FormView):
         messages.add_message(
             self.request, messages.SUCCESS, "Password updated!")
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     """View to update logged-in user's profile."""

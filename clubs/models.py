@@ -503,6 +503,11 @@ class Book_Rating(models.Model):
         default=0
     )
 
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        blank=False,
+        default=1
+    )
     # BOOK_RATING_CHOICES = [
     #     ('1', 'One'),
     #     ('2', 'Two'),
@@ -527,7 +532,7 @@ class Book_Rating(models.Model):
         ('7', '7'),
         ('8', '8'),
         ('9', '9'),
-        ('10', '10')
+        ('10', '10'),
     ]
 
     rating = models.CharField(

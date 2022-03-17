@@ -22,6 +22,7 @@ from django.views.generic import TemplateView
 from schedule.views import (DeleteEventView, EditEventView, EventView,
                             api_move_or_resize_by_code, api_occurrences,
                             api_select_create)
+from clubs.views.recommender_views import ClubRecommenderView
 
 urlpatterns = [
     # Admin urls
@@ -67,9 +68,6 @@ urlpatterns = [
     path('feed/', views.FeedView.as_view(), name='feed'),
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
 
-    # Book recommender urls
-    path('club_recommender/', views.club_recommender, name='club_recommender'),
-
     path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
     path('book/rating/<int:book_id>/', views.CreateBookRatingView.as_view(), name='rate_book'),
 
@@ -113,6 +111,14 @@ urlpatterns = [
         views.DeleteEventView.as_view(),
         name="delete_event",
     ),
+
+    # Book recommender urls
+    # path('club_recommender/', views.club_recommender, name='club_recommender'),
+    path('club_recommender/', ClubRecommenderView.as_view(), name='club_recommender'),
+
+    #path('book_preferences/', views.book_preferences, name='book_preferences'),
+    path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
+
 
     url(r"^club/book/edit/(?P<club_id>\d+)/$",
         views.ClubBookSelectionView.as_view(),
