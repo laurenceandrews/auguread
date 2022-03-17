@@ -6,8 +6,8 @@ from clubs.book_to_club_recommender.book_to_club_recommender_age import \
 from clubs.book_to_club_recommender.book_to_club_recommender_author import \
     ClubBookAuthorRecommender
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.db.models import Subquery
 from django.template.defaultfilters import slugify
@@ -15,8 +15,8 @@ from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
 
-from .models import (Address, Book_Rating, Book, Club, Club_Books, MeetingAddress,
-                     MeetingLink, Post, User)
+from .models import (Address, Book, Book_Rating, Club, Club_Books,
+                     MeetingAddress, MeetingLink, Post, User)
 
 
 class LogInForm(forms.Form):
@@ -206,6 +206,7 @@ class NewClubForm(forms.ModelForm):
             self.add_error('calendar_name',
                            'Calendar name is already taken.')
 
+
 class MeetingAddressForm(forms.ModelForm):
     class Meta:
         model = MeetingAddress
@@ -260,7 +261,7 @@ class CreateEventForm(forms.ModelForm):
 
     default_meeting_start = datetime.datetime.now()
     default_meeting_lenth_in_hours = 1
-    default_meeting_lenth_delta = datetime.timedelta(hours=default_meeting_lenth_in_hours)
+    default_meeting_lenth_delta = abs(datetime.timedelta(hours=default_meeting_lenth_in_hours))
     meeting_end = default_meeting_start + default_meeting_lenth_delta
     end = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
@@ -303,30 +304,34 @@ class ClubBookForm(forms.ModelForm):
         books = Book.objects.filter(id__in=book_ids)
         self.fields['book'].queryset = books
 
+
 class BookRatingForm(forms.Form):
-    # user = forms.ForeignKey(User, on_delete=forms.CASCADE) 
+    # user = forms.ForeignKey(User, on_delete=forms.CASCADE)
     rating = forms.ChoiceField(
-        required = False,
-        label = 'Rate book',
-        error_messages = {},
+        required=False,
+        label='Rate book',
+        error_messages={},
         choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
     )
+
 
 class ClubRecommenderForm(forms.ModelForm):
     class Meta:
         model = Club
         fields = ['name']
-    
+
     online = forms.BooleanField(
-        label = 'Online only', 
-        required = False,  
-        disabled = False,
+        label='Online only',
+        required=False,
+        disabled=False,
         widget=forms.widgets.CheckboxInput(attrs={'class': 'checkbox-inline'}),)
+
 
 class UserDeleteForm(forms.ModelForm):
     class Meta:
         model = User
         fields = []
+
 
 class BookRatingForm(forms.ModelForm):
     class Meta:

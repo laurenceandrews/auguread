@@ -831,6 +831,26 @@ select {
   margin-top: 3.5rem;
 }
 
+.ml-4 {
+  margin-left: 1rem;
+}
+
+.mr-14 {
+  margin-right: 3.5rem;
+}
+
+.mr-px {
+  margin-right: 1px;
+}
+
+.ml-px {
+  margin-left: 1px;
+}
+
+.ml-14 {
+  margin-left: 3.5rem;
+}
+
 .block {
   display: block;
 }
@@ -981,12 +1001,28 @@ select {
   width: 5rem;
 }
 
+.w-0 {
+  width: 0px;
+}
+
 .max-w-md {
   max-width: 28rem;
 }
 
 .max-w-7xl {
   max-width: 80rem;
+}
+
+.max-w-2xl {
+  max-width: 42rem;
+}
+
+.max-w-lg {
+  max-width: 32rem;
+}
+
+.flex-1 {
+  flex: 1 1 0%;
 }
 
 .flex-shrink-0 {
@@ -1126,12 +1162,29 @@ select {
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
 
+.divide-y > :not([hidden]) ~ :not([hidden]) {
+  --tw-divide-y-reverse: 0;
+  border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
+  border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
+}
+
+.divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  --tw-divide-opacity: 1;
+  border-color: rgb(229 231 235 / var(--tw-divide-opacity));
+}
+
 .overflow-hidden {
   overflow: hidden;
 }
 
 .overflow-clip {
   overflow: clip;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .whitespace-nowrap {
@@ -1412,6 +1465,14 @@ select {
   padding-bottom: 2rem;
 }
 
+.pl-3 {
+  padding-left: 0.75rem;
+}
+
+.pr-4 {
+  padding-right: 1rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -1519,6 +1580,10 @@ select {
 
 .leading-none {
   line-height: 1;
+}
+
+.leading-6 {
+  line-height: 1.5rem;
 }
 
 .tracking-normal {
@@ -1842,6 +1907,10 @@ select {
 }
 
 @media (min-width: 640px) {
+  .sm\:col-span-2 {
+    grid-column: span 2 / span 2;
+  }
+
   .sm\:mx-auto {
     margin-left: auto;
     margin-right: auto;
@@ -1853,6 +1922,10 @@ select {
 
   .sm\:ml-8 {
     margin-left: 2rem;
+  }
+
+  .sm\:mt-0 {
+    margin-top: 0px;
   }
 
   .sm\:flex {
@@ -1881,6 +1954,14 @@ select {
 
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sm\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sm\:gap-4 {
+    gap: 1rem;
   }
 
   .sm\:space-y-0 > :not([hidden]) ~ :not([hidden]) {
