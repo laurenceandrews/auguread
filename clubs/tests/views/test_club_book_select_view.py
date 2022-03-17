@@ -4,7 +4,7 @@ from clubs.models import Book, Club, User
 from clubs.tests.helpers import reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
-from schedule.models import Calendar, Event, Rule
+from schedule.models import Calendar
 
 
 class ClubBookSelectViewTest(TestCase):
