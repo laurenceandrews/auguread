@@ -1,63 +1,42 @@
-<div class="row content">
-  <div class="col-12">
 
-    {# <img src="{{ user.gravatar }}" alt="Gravatar of {{ user.username }}" class="rounded-circle profile-image" > #}
-    <img src="{{ target.gravatar }}" alt="Gravatar of {{ target.email }}" class="rounded-circle profile-image" >
-    <div class="profile-text">
-      <h3 class="profile-title">{{ user.full_name }}</h3> Full Name:
-      <h5>Username: </h5>
-      <p class="profile-username">{{ user.username }}</p>
-    </div>
+<img src="{{ user.gravatar }}" alt="Gravatar of {{ target.email }}" class="" >
+<h3 class="">{{ user.full_name }}</h3> Full Name:
+<h5>Username: </h5>
+<p class="">{{ user.username }}</p>
+<form action="{% url 'follow_toggle' user_id=user.id %}" method="get">
+  <p class="">
+    <span>
+      <b>{{ user.followee_count }}</b> Following
+      &emsp;
+      <b>{{ user.follower_count }}</b> Followers
+    </span>
+    <span class="">
+      {% if followable %}
+        {% if following %}
+          <button class="">Unfollow</button>
+        {% else %}
+          <button class="">Follow</button>
+        {% endif %}
+      {% endif %}
+    </span>
+  </p>
+</form>
+<h5>Email: </h5>
+<p class="">{{ user.email }}</p>
+{% if club %}
+<p class=""><h5>Club name: </h5>{{ club.name }}</p>
+<p><h5>Membership Type: </h5>{{ type }}</p>
+{% endif %}
+
+{% if target.is_applicant %}
+  <p class=""><h5>Bio: </h5>{{ target.bio }}</p>
+{% endif %}
+
+{% if user in club.owner_list or user == club.owner %}
+  <div class="">
+    <p><h5>Bio:</h5>{{target.bio}}</p>
   </div>
-</div>
-<div class="row content">
-  <div class="col-12">
-    <form action="{% url 'follow_toggle' user_id=user.id %}" method="get">
-      <p class="profile-statistics">
-        <span>
-          <b>{{ user.followee_count }}</b> Following
-          &emsp;
-          <b>{{ user.follower_count }}</b> Followers
-        </span>
-        <span class="float-end">
-          {% if followable %}
-            {% if following %}
-              <button class="btn btn-secondary">Unfollow</button>
-            {% else %}
-              <button class="btn btn-primary">Follow</button>
-            {% endif %}
-          {% endif %}
-        </span>
-      </p>
-    </form>
-
-    <div class="profile-text">
-      <h5>Email: </h5>
-      <p class="profile-username">{{ target.email }}</p>
-    </div>
-  </div>
-</div>
-<div class="container">
-  <div class="row">
-    <div class="col">
-      {% if club %}
-      <p class="type"><h5>Club name: </h5>{{ club.name }}</p>
-      <p><h5>Membership Type: </h5>{{ type }}</p>
-      {% endif %}
-
-      {% if target.is_applicant %}
-        <p class="profile-bio"><h5>Bio: </h5>{{ target.bio }}</p>
-      {% endif %}
-
-      {% if user in club.owner_list or user == club.owner %}
-        <div class="col">
-          <p><h5>Bio:</h5>{{target.bio}}</p>
-        </div>
-      {% endif %}
-      {% if club %}
-        {% include "partials/user_profile_operations.html" with club=club target=target %}
-      {% endif %}
-    </div>
-
-  </div>
-</div>
+{% endif %}
+{% if club %}
+  {% include "partials/user_profile_operations.html" with club=club target=target %}
+{% endif %}

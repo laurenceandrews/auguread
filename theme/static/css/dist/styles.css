@@ -790,6 +790,10 @@ select {
   margin-bottom: 0.75rem;
 }
 
+.mt-9 {
+  margin-top: 2.25rem;
+}
+
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -916,6 +920,10 @@ select {
   max-width: 80rem;
 }
 
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
 .flex-grow {
   flex-grow: 1;
 }
@@ -1023,6 +1031,12 @@ select {
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
 }
 
+.space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
 .overflow-hidden {
   overflow: hidden;
 }
@@ -1119,6 +1133,10 @@ select {
 .bg-emerald-400 {
   --tw-bg-opacity: 1;
   background-color: rgb(52 211 153 / var(--tw-bg-opacity));
+}
+
+.bg-cover {
+  background-size: cover;
 }
 
 .object-cover {
@@ -1505,6 +1523,18 @@ select {
     margin-top: 1.25rem;
   }
 
+  .sm\:ml-8 {
+    margin-left: 2rem;
+  }
+
+  .sm\:flex {
+    display: flex;
+  }
+
+  .sm\:grid {
+    display: grid;
+  }
+
   .sm\:h-72 {
     height: 18rem;
   }
@@ -1519,6 +1549,16 @@ select {
 
   .sm\:max-w-md {
     max-width: 28rem;
+  }
+
+  .sm\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sm\:space-y-0 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-y-reverse: 0;
+    margin-top: calc(0px * calc(1 - var(--tw-space-y-reverse)));
+    margin-bottom: calc(0px * var(--tw-space-y-reverse));
   }
 
   .sm\:rounded-lg {

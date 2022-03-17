@@ -1,6 +1,6 @@
 {% load static tailwind_tags %}
 <!DOCTYPE html>
-<html class="h-full" lang="en">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,7 +20,7 @@
 
   </head>
 
-  <body class="bg-gray-50 dark:bg-slate-800 leading-normal tracking-normal h-full">
+  <body class="bg-gray-50 dark:bg-slate-800 leading-normal tracking-normal">
     {% if user.is_authenticated %}
       {% include 'partials/navbar.html' %}
     {% else %}
