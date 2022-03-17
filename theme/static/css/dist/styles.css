@@ -745,6 +745,11 @@ select {
   margin-bottom: 0px;
 }
 
+.mx-4 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
 .mt-4 {
   margin-top: 1rem;
 }
@@ -943,6 +948,10 @@ select {
   flex-direction: column;
 }
 
+.place-content-center {
+  place-content: center;
+}
+
 .items-center {
   align-items: center;
 }
@@ -983,6 +992,10 @@ select {
   --tw-space-y-reverse: 0;
   margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
+}
+
+.justify-self-center {
+  justify-self: center;
 }
 
 .overflow-hidden {
@@ -1143,10 +1156,6 @@ select {
   padding-top: 1rem;
 }
 
-.pb-10 {
-  padding-bottom: 2.5rem;
-}
-
 .pl-4 {
   padding-left: 1rem;
 }
@@ -1157,6 +1166,10 @@ select {
 
 .text-center {
   text-align: center;
+}
+
+.align-middle {
+  vertical-align: middle;
 }
 
 .font-serif {
@@ -1498,11 +1511,6 @@ select {
     line-height: 1.75rem;
   }
 
-  .sm\:text-4xl {
-    font-size: 2.25rem;
-    line-height: 2.5rem;
-  }
-
   .sm\:text-sm {
     font-size: 0.875rem;
     line-height: 1.25rem;
@@ -1598,11 +1606,6 @@ select {
   .md\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
-  }
-
-  .md\:text-4xl {
-    font-size: 2.25rem;
-    line-height: 2.5rem;
   }
 }
 
