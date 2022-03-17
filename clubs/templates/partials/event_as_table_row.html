@@ -1,11 +1,13 @@
 {% load event_meeting %}
-<div class="bg-slate-100">
-    <div class="px-4 max-w-md mx-auto">
-      <div class="h-24 my-4 bg-gradient-to-r from-fuchsia-700 to-purple-800 flex justify-center items-center p-3 rounded-xl border-2 border-slate-100 shadow-lg transition-all transform-all hover:scale-105 cursor-pointer relative" onclick="location.href='{%url 'event_detail' calendar_slug=event.calendar.slug event_id=event.id %}';">
-        <div class="text-slate-200 text-center">
-          <div>{{event.title}}</div>
-          <div class="font-mono text-xs">{{event.start}}</div>
+<div class="w-screen">
+  <div class="bg-slate-100">
+      <div class="px-4 max-w-md mx-auto">
+        <div class="h-24 my-4 bg-gradient-to-r from-fuchsia-700 to-purple-800 flex justify-center items-center p-3 rounded-xl border-2 border-slate-100 shadow-lg transition-all transform-all hover:scale-105 cursor-pointer relative" onclick="location.href='{%url 'event_detail' calendar_slug=event.calendar.slug event_id=event.id %}';">
+          <div class="text-slate-200 text-center">
+            <div>{{event.title}}</div>
+            <div class="font-mono text-xs">{{event.start}}</div>
+          </div>
         </div>
       </div>
-    </div>
+  </div>
 </div>
