@@ -1,17 +1,18 @@
 """Views related to the clubs."""
 from clubs.forms import NewClubForm
-from clubs.models import Club, User
+from clubs.models import Club, Post, User
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import Paginator
+from django.http import Http404
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import slugify
 from django.views.generic import ListView
+from django.views.generic.detail import DetailView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
-from django.views.generic.edit import CreateView
+
 from .helpers import login_prohibited, member, owner
 from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
                      MemberProhibitedMixin)
@@ -90,6 +91,48 @@ def approve(request, user_id, club_id):
     else:
         return redirect('show_user', user_id=user.id, club_id=club_id)
 
+
+class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, ApplicantProhibitedMixin):
+    """View that shows individual user details."""
+
+    model = User
+    template_name = 'show_user.html'
+    paginate_by = settings.NUMBER_PER_PAGE
+    pk_url_kwarg = 'user_id'
+
+    def get_context_data(self, **kwargs):
+        """Generate context data to be shown in the template."""
+        # user = self.get_object() #new
+        club = Club.objects.get(id=self.kwargs['club_id'])
+        target = self.get_object()
+        user = self.request.user
+        users = User.objects.all()
+        target_type = target.membership_type(club)
+        is_owner = target_type == 'Owner'
+        user_type = user.membership_type(club)
+        posts = Post.objects.filter(author=user)
+        context = super().get_context_data(object_list=users, **kwargs)
+        context = super().get_context_data(object_list=posts, **kwargs)  # new
+        context['can_approve'] = ((user != target) and (user_type == 'Owner'
+                                                        or user == club.owner) and target_type == 'Applicant')
+        context['is_owner'] = target_type == 'Owner'
+        context['can_transfer'] = ((user != target) and user == club.owner
+                                   and is_owner)
+        context['type'] = target_type
+        context['user'] = user
+        context['posts'] = context['object_list']
+        context['following'] = self.request.user.is_following(user)
+        context['followable'] = (self.request.user != user)
+        context['target'] = target
+        context['club'] = club
+        return context
+
+    def get(self, request, *args, **kwargs):
+        """Handle get request, and redirect to user_list if user_id invalid."""
+        try:
+            return super().get(request, *args, **kwargs)
+        except Http404:
+            return redirect('user_list', club_id=self.kwargs['club_id'])
 
 
 class ApplicantListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
@@ -186,7 +229,6 @@ def club_recommender(request):
     return render(request, 'club_recommender.html')
 
 
-
 @login_required
 @owner
 def transfer(request, user_id, club_id):
@@ -198,7 +240,6 @@ def transfer(request, user_id, club_id):
         return redirect('owner_list', club_id=club_id)
     else:
         return redirect('show_user', user_id=user_id, club_id=club_id)
-
 
     form = BookRatingForm()
     return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated, 'form': form})

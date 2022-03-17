@@ -2,7 +2,7 @@
   <div class="col-12">
 
     {# <img src="{{ user.gravatar }}" alt="Gravatar of {{ user.username }}" class="rounded-circle profile-image" > #}
-    <img src="{{ target.gravatar }}" alt="Gravatar of {{ target.email }}" class="rounded-circle profile-image" >
+    <img src="{{ target.gravatar }}" alt="Gravatar of {{ target.email }}" class="rounded-circle profile-image">
     <div class="profile-text">
       <h3 class="profile-title">{{ user.full_name }}</h3> Full Name:
       <h5>Username: </h5>
@@ -10,6 +10,7 @@
     </div>
   </div>
 </div>
+
 <div class="row content">
   <div class="col-12">
     <form action="{% url 'follow_toggle' user_id=user.id %}" method="get">
@@ -21,11 +22,11 @@
         </span>
         <span class="float-end">
           {% if followable %}
-            {% if following %}
-              <button class="btn btn-secondary">Unfollow</button>
-            {% else %}
-              <button class="btn btn-primary">Follow</button>
-            {% endif %}
+          {% if following %}
+          <button class="btn btn-secondary">Unfollow</button>
+          {% else %}
+          <button class="btn btn-primary">Follow</button>
+          {% endif %}
           {% endif %}
         </span>
       </p>
@@ -37,27 +38,39 @@
     </div>
   </div>
 </div>
+
+<div class="container">
+  <div class="row content">
+    <div class="col-xs-12 col-lg-6 col-xl-12">
+      <a class="custom-btn" href="{% url 'full_calendar' calendar_slug=club.calendar.slug %}">Club Events</a>
+    </div>
+  </div>
+</div>
+
 <div class="container">
   <div class="row">
     <div class="col">
       {% if club %}
-      <p class="type"><h5>Club name: </h5>{{ club.name }}</p>
-      <p><h5>Membership Type: </h5>{{ type }}</p>
+      <p class="type">
+      <h5>Club name: </h5>{{ club.name }}</p>
+      <p>
+      <h5>Membership Type: </h5>{{ type }}</p>
       {% endif %}
 
       {% if target.is_applicant %}
-        <p class="profile-bio"><h5>Bio: </h5>{{ target.bio }}</p>
+      <p class="profile-bio">
+      <h5>Bio: </h5>{{ target.bio }}</p>
       {% endif %}
 
       {% if user in club.owner_list or user == club.owner %}
-        <div class="col">
-          <p><h5>Bio:</h5>{{target.bio}}</p>
-        </div>
+      <div class="col">
+        <p>
+        <h5>Bio:</h5>{{target.bio}}</p>
+      </div>
       {% endif %}
       {% if club %}
-        {% include "partials/user_profile_operations.html" with club=club target=target %}
+      {% include "partials/user_profile_operations.html" with club=club target=target %}
       {% endif %}
     </div>
-
   </div>
 </div>
