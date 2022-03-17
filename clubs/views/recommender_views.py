@@ -26,6 +26,7 @@ from schedule.models import Calendar, Event, Rule
 from clubs.forms import (CalendarPickerForm, CreateEventForm, MeetingAddressForm,
                     MeetingLinkForm, SignUpForm)
 from clubs.views.club_views import MemberListView
+from clubs.views.mixins import TenPosRatingsRequiredMixin
 from django.db.models import Q
 
 @login_required
