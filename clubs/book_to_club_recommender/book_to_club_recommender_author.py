@@ -12,8 +12,8 @@ class ClubBookAuthorRecommender:
         self.df_books = pd.DataFrame(list(Book.objects.all().values()))
         self.df_club_users = pd.DataFrame(list(Club_Users.objects.all().values()))
         self.df_club_books = pd.DataFrame(list(Club_Books.objects.all().values()))
-
         self.df_book_ratings = pd.DataFrame(list(Book_Rating.objects.all().values()))
+        
         self.df_book_ratings.drop(self.df_book_ratings[self.df_book_ratings['rating'] == 0].index, inplace=True)
 
         self.club_id_to_query = club_id_to_query

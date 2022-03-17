@@ -14,6 +14,9 @@ class ClubBookSelectViewTest(TestCase):
         'clubs/tests/fixtures/default_calendar.json',
         'clubs/tests/fixtures/default_club.json',
         'clubs/tests/fixtures/default_book.json',
+        'clubs/tests/fixtures/default_rating.json',
+        'clubs/tests/fixtures/default_club_book.json',
+        'clubs/tests/fixtures/default_club_user.json'
     ]
 
     def setUp(self):
@@ -32,26 +35,26 @@ class ClubBookSelectViewTest(TestCase):
     def test_club_book_select_url(self):
         self.assertEqual(self.url, f'/club/book/edit/{self.club.id}/')
 
-    # def test_get_club_book_select_redirects_when_not_logged_in(self):
-    #     redirect_url = reverse_with_next('log_in', self.url)
-    #     response = self.client.get(self.url)
-    #     self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-    #
-    # def test_get_club_book_select(self):
-    #     self.client.login(email=self.user.email, password="Password123")
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'club_book_select.html')
-    #     form = response.context['form']
-    #     self.assertTrue(isinstance(form, ClubBookForm))
-    #     self.assertFalse(form.is_bound)
-    #
-    # def test_unsuccesful_calendar_picker(self):
-    #     self.client.login(email=self.user.email, password="Password123")
-    #     self.form_input['book'] = 'BAD_BOOK'
-    #     response = self.client.post(self.url, self.form_input)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'club_book_select.html')
-    #     form = response.context['form']
-    #     self.assertTrue(isinstance(form, ClubBookForm))
-    #     self.assertTrue(form.is_bound)
+    def test_get_club_book_select_redirects_when_not_logged_in(self):
+        redirect_url = reverse_with_next('log_in', self.url)
+        response = self.client.get(self.url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+    
+    def test_get_club_book_select(self):
+        self.client.login(email=self.user.email, password="Password123")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'club_book_select.html')
+        form = response.context['form']
+        self.assertTrue(isinstance(form, ClubBookForm))
+        self.assertFalse(form.is_bound)
+    
+    def test_unsuccesful_calendar_picker(self):
+        self.client.login(email=self.user.email, password="Password123")
+        self.form_input['book'] = 'BAD_BOOK'
+        response = self.client.post(self.url, self.form_input)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'club_book_select.html')
+        form = response.context['form']
+        self.assertTrue(isinstance(form, ClubBookForm))
+        self.assertTrue(form.is_bound)

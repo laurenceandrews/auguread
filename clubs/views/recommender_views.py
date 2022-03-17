@@ -37,7 +37,7 @@ def club_recommender(request):
     return render(request, 'club_recommender.html')
 
 
-class ClubBookSelectionView(CreateView):
+class ClubBookSelectionView(LoginRequiredMixin, CreateView):
     """Class-based generic view for new post handling."""
 
     model = Club_Books
@@ -68,5 +68,5 @@ class ClubBookSelectionView(CreateView):
         return context
 
     def get_success_url(self):
-        """Return URL to redirect the user too after valid form handling."""
+        """Return URL to redirect the user to after valid form handling."""
         return redirect('home')
