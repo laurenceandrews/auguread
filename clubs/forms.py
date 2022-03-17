@@ -15,7 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
 
-from .models import (Address, Book, Club, Club_Books, MeetingAddress,
+from .models import (Address, Book_Rating, Book, Club, Club_Books, MeetingAddress,
                      MeetingLink, Post, User)
 
 
@@ -304,8 +304,33 @@ class ClubBookForm(forms.ModelForm):
         books = Book.objects.filter(id__in=book_ids)
         self.fields['book'].queryset = books
 
+class BookRatingForm(forms.Form):
+    # user = forms.ForeignKey(User, on_delete=forms.CASCADE) 
+    rating = forms.ChoiceField(
+        required = False,
+        label = 'Rate book',
+        error_messages = {},
+        choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
+    )
+
+class ClubRecommenderForm(forms.ModelForm):
+    class Meta:
+        model = Club
+        fields = ['name']
+    
+    online = forms.BooleanField(
+        label = 'Online only', 
+        required = False,  
+        disabled = False,
+        widget=forms.widgets.CheckboxInput(attrs={'class': 'checkbox-inline'}),)
+
 class UserDeleteForm(forms.ModelForm):
     """Form enabling users to delete their profile."""
     class Meta:
         model = User
         fields = []
+
+class BookRatingForm(forms.ModelForm):
+    class Meta:
+        model = Book_Rating
+        fields = ['rating']

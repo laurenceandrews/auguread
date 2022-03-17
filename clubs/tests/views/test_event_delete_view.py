@@ -13,9 +13,11 @@ class DeleteEventViewTest(TestCase):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/other_users.json',
         'clubs/tests/fixtures/default_calendar.json',
         'clubs/tests/fixtures/default_rules.json',
         'clubs/tests/fixtures/default_club.json',
+        'clubs/tests/fixtures/other_clubs.json',
     ]
 
     def setUp(self):
@@ -48,6 +50,36 @@ class DeleteEventViewTest(TestCase):
         event_count_before = Event.objects.count()
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.post(self.url, self.data, follow=True)
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200, fetch_redirect_response=True
+                             )
+        event_count_after = Event.objects.count()
+        self.assertEqual(event_count_after, event_count_before)
+
+    def test_delete_event_redirects_when_not_logged_in(self):
+        calendar = Calendar.objects.get(pk=17)
+        club = Club.objects.get(pk=16)
+
+        data = {
+            'title': 'Exercise',
+            'start': datetime.datetime(2008, 11, 3, 8, 0),
+            'end': datetime.datetime(2008, 11, 3, 9, 0),
+            'end_recurring_period': datetime.datetime(2009, 6, 1, 0, 0),
+            'rule': Rule.objects.get(pk=9),
+            'calendar': self.calendar
+        }
+        event = Event(**data)
+        event.save()
+
+        url = reverse(
+            'delete_event', kwargs={'calendar_slug': calendar.slug, 'event_id': event.id}
+        )
+
+        event_count_before = Event.objects.count()
+        self.client.login(email=self.user.email, password="Password123")
+        redirect_url = reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+        response = self.client.post(url, data, follow=True)
+        self.assertTemplateUsed(response, 'fullcalendar.html')
         self.assertRedirects(response, redirect_url,
                              status_code=302, target_status_code=200, fetch_redirect_response=True
                              )

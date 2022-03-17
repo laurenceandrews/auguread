@@ -14,5 +14,13 @@
       "name": "Blue Club's Calendar",
       "slug": "blue-clubs-calendar"
     }
+  },
+  {
+    "model": "schedule.Calendar",
+    "pk": 17,
+    "fields": {
+      "name": "Green Club's Calendar",
+      "slug": "green-clubs-calendar"
+    }
   }
 ]

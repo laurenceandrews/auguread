@@ -5,7 +5,7 @@
   <div class="row">
     <div class="col-12">
       <h1>Create Event for {{calendar_name}}</h1>
-      <form action="{% url 'create_event' calendar_id=calendar_id %}" method="post">
+      <form action="{% url 'create_event' calendar_slug=calendar_slug %}" method="post">
         {% csrf_token %}
         <table>
           {{ form.as_table }}

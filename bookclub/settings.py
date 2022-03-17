@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from pathlib import Path
 
+from django.contrib.messages import constants as message_constants
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -137,6 +139,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # User model for authentication purposes
 AUTH_USER_MODEL = 'clubs.User'
 
+# Message level tage should use Boostrap terms
+MESSAGE_TAGS = {
+    message_constants.DEBUG: 'dark',
+    message_constants.ERROR: 'danger',
+}
+
 # Login URL for redirecting users from login protected views
 LOGIN_URL = 'log_in'
 
@@ -160,6 +168,7 @@ USERS_PER_PAGE = 10
 POSTS_PER_PAGE = 20
 NUMBER_PER_PAGE = 15
 BOOKS_PER_PAGE = 12
+CLUBS_PER_PAGE = 12
 
 # Set up djangobower
 
