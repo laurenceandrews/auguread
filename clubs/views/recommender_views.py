@@ -1,7 +1,7 @@
 """Views related to the recommender."""
 from clubs.forms import (AddressForm, LogInForm, NewClubForm, PasswordForm, PostForm, SignUpForm, BookRatingForm, ClubBookForm)
 # from clubs.helpers import member, owner
-from clubs.models import Book, Club, Club_Books, MeetingAddress, MeetingLink, Post, User, Address
+from clubs.models import Book, Club, Club_Books, Club_Book_History, MeetingAddress, MeetingLink, Post, User, Address
 
 from django.conf import settings
 from django.contrib import messages
@@ -58,7 +58,7 @@ class ClubRecommenderView(LoginRequiredMixin, View):
       
       
 class ClubBookSelectionView(LoginRequiredMixin, CreateView):
-    """Class-based generic view for new post handling."""
+    """Class-based generic view for club book selection handling."""
 
     model = Club_Books
     template_name = 'club_book_select.html'
@@ -75,7 +75,7 @@ class ClubBookSelectionView(LoginRequiredMixin, CreateView):
 
         book = form.cleaned_data.get('book')
 
-        club_book = Club_Books.objects.create(
+        Club_Book_History.objects.create(
             club=club,
             book=book
         )
