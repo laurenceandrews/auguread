@@ -1,31 +1,14 @@
 """Views related to the recommender."""
-from clubs.forms import (AddressForm, LogInForm, NewClubForm, PasswordForm,
-                         PostForm, SignUpForm, BookRatingForm)
+from clubs.forms import ClubRecommenderForm
 # from clubs.helpers import member, owner
-from clubs.models import Book, Club, MeetingAddress, MeetingLink, Post, User, Address
+from clubs.models import Club, User, Club_Users
 from django.conf import settings
-from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.http import (Http404, HttpResponse, HttpResponseForbidden,
-                         HttpResponseRedirect)
 from django.shortcuts import redirect, render
-from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.views import View
-from django.views.generic import ListView
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import (CreateView, DeleteView, FormView,
-                                       UpdateView)
-from django.views.generic.list import MultipleObjectMixin
-from schedule.models import Calendar, Event, Rule
-
-from clubs.forms import (CalendarPickerForm, CreateEventForm, MeetingAddressForm,
-                    MeetingLinkForm, SignUpForm)
-from clubs.views.club_views import MemberListView
 from django.db.models import Q
 
 @login_required
@@ -35,8 +18,10 @@ def RecommendationsView(request):
 
 class ClubRecommenderView(LoginRequiredMixin, View):
     """View that handles the club recommendations."""
-    
-    http_method_names = ['get', 'post']
+    model = Club_Users
+    template_name = 'club_recommender.html'
+    form_class = ClubRecommenderForm
+    # http_method_names = ['get', 'post']
 
     def get(self, request):
         """Display template."""
@@ -54,6 +39,21 @@ class ClubRecommenderView(LoginRequiredMixin, View):
 
         self.next = request.GET.get('next') or ''
         return self.render()
+
+    def get_form_kwargs(self):
+        kwargs = super(ClubRecommenderView, self).get_form_kwargs()
+        kwargs['id'] = self.kwargs['id']
+        return kwargs
+
+    # def form_valid(self, form):
+    #     user = User.objects.get(id = self.kwargs['id'])
+    #     club = form.cleaned_data.get('club')
+    #     return render(self.request, 'club_recommender.html')
+    
+    def get_data(self, **kwargs):
+        data = super().get_data(**kwargs)
+        user = User.objects.get(id = self.kwargs['id'])
+        data['first_name'] = user.first_name
 
     def render(self):
         """Render template with blank form."""

@@ -80,10 +80,10 @@ class ClubUserRecommender:
         average_club_age_df = self.get_average_club_age()
         average_club_age_df['age_difference'] = pd.DataFrame(abs(average_club_age_df['average_age'] - my_age))
         average_club_age_difference_df = average_club_age_df.sort_values('age_difference', ascending=True)
-        # return average_club_age_difference_df
+        return average_club_age_difference_df
     # -- comment the return statment and uncomment the next 2 lines to test whether it returns the correct DataFrame
-        print(average_club_age_difference_df)
-    get_age_difference_df()
+    #     print(average_club_age_difference_df)
+    # get_age_difference_df()
 
     # Return top 10 closest aged club IDs
     def get_top_10_by_closest_age(self):
@@ -198,9 +198,9 @@ class ClubUserRecommender:
 
         all_book_matches_df = all_book_matches_df.sort_values('book_fuzzy_match_score', ascending=False).dropna(how='any',axis=0)
 
-        # return all_book_matches_df
-        print(all_book_matches_df)
-    get_all_favourite_book_matches_fuzzy()
+        return all_book_matches_df
+    #     print(all_book_matches_df)
+    # get_all_favourite_book_matches_fuzzy()
 
     # Return a list of clubs in order of which have the most matching favourite books with the user
     def get_average_book_match_df(self):
@@ -290,13 +290,15 @@ class ClubUserRecommender:
 
     # TO DO: Find a way to convert location to distance
     def get_best_clubs_in_person(self):
-        best_clubs_df = self.get_best_clubs_df().sort_values(["location_fuzzy_score", "book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, False, True, False])
-        return best_clubs_df
+        best_clubs_in_person_df = self.get_best_clubs_df().sort_values(["location_fuzzy_score", "book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, False, True, False])
+        best_clubs_in_person_list = best_clubs_in_person_df['club_id'].tolist()
+        return best_clubs_in_person_list
         # print(best_clubs_df)
 
     # Order if online only
     def get_best_clubs_online(self):
-        best_clubs_df = self.get_best_clubs_df().sort_values(["book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, True, False])
-        return best_clubs_df
+        best_clubs_online_df = self.get_best_clubs_df().sort_values(["book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, True, False])
+        best_clubs_online_list = best_clubs_online_df['club_id'].tolist()
+        return best_clubs_online_list
 
     # get_best_clubs_in_person()

@@ -5,6 +5,7 @@ from clubs.book_to_club_recommender.book_to_club_recommender_age import \
     ClubBookAgeRecommender
 from clubs.book_to_club_recommender.book_to_club_recommender_author import \
     ClubBookAuthorRecommender
+from clubs.club_to_user_recommender.club_to_user_recommender import ClubUserRecommender
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -303,6 +304,30 @@ class ClubBookForm(forms.ModelForm):
         books = Book.objects.filter(id__in=book_ids)
         self.fields['book'].queryset = books
 
+class ClubRecommenderForm(forms.ModelForm):
+    class Meta:
+        model = Club
+        fields = ['name', 'location', 'description']
+
+    online = forms.BooleanField(
+        label = 'Online only', 
+        required = False,  
+        disabled = False,
+        widget=forms.widgets.CheckboxInput(attrs={'class': 'checkbox-inline'}),)
+
+    def __init__(self, *args, **kwargs):
+        user_id = kwargs.pop('id')
+        super(ClubRecommenderForm, self).__init__(*args, **kwargs)
+
+        if not self.online:
+            club_ids = ClubUserRecommender(user_id).get_best_clubs_in_person()
+        else:
+            club_ids = ClubUserRecommender(user_id).get_best_clubs_online()
+        clubs = Club.objects.filter(id__in=club_ids)
+        self.fields['club'].queryset = clubs
+    
+
+
 class BookRatingForm(forms.Form):
     # user = forms.ForeignKey(User, on_delete=forms.CASCADE) 
     rating = forms.ChoiceField(
@@ -312,16 +337,6 @@ class BookRatingForm(forms.Form):
         choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
     )
 
-class ClubRecommenderForm(forms.ModelForm):
-    class Meta:
-        model = Club
-        fields = ['name']
-    
-    online = forms.BooleanField(
-        label = 'Online only', 
-        required = False,  
-        disabled = False,
-        widget=forms.widgets.CheckboxInput(attrs={'class': 'checkbox-inline'}),)
 
 class UserDeleteForm(forms.ModelForm):
     class Meta:

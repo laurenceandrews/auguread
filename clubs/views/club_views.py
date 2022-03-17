@@ -181,9 +181,9 @@ class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
         return redirect('owner_list', club_id=club.id)
 
 
-def club_recommender(request):
-    """View that shows a list of all recommended clubs."""
-    return render(request, 'club_recommender.html')
+# def club_recommender(request):
+#     """View that shows a list of all recommended clubs."""
+#     return render(request, 'club_recommender.html')
 
 
 
