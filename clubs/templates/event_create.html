@@ -8,7 +8,7 @@
 
   <div class="">
     <div class="">
-      <div class="mr-14">
+      <div class="mx-14">
         <form action="{% url 'create_event' calendar_slug=calendar_slug %}" method="post">
           {% csrf_token %}
           <table>
@@ -19,7 +19,7 @@
           <div class="flex flex-row-reverse items-end gap-5">
 
             <div class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" style="cursor: pointer;">
-              <a href="{{ view.get_success_url }}" class="btn btn-default">Cancel</a>
+              <a href="{{ view.get_success_url }}" class="">Cancel</a>
             </div>
 
 
