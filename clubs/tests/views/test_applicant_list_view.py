@@ -34,12 +34,12 @@ class ApplicantListViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'applicant_list.html')
 
-    # def test_member_can_not_access_applicant_list(self):
-    #     self.client.login(email=self.member.email, password="Password123")
-    #     response = self.client.get(self.url)
-    #     redirect_url = reverse('club_list')
-    #     self.assertRedirects(response, redirect_url,
-    #                          status_code=302, target_status_code=200)
+    def test_member_can_not_access_applicant_list(self):
+        self.client.login(email=self.member.email, password="Password123")
+        response = self.client.get(self.url)
+        redirect_url = reverse('club_list')
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200)
 
     def test_post_applicant_list(self):
         self.client.login(email=self.owner.email, password="Password123")

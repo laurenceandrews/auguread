@@ -40,13 +40,13 @@ class MemberListViewTestCase(TestCase):
                              status_code=302, target_status_code=200, fetch_redirect_response=True
                              )
 
-    # def test_applicant_can_not_access_member_list(self):
-    #     self.client.login(email=self.applicant.email, password="Password123")
-    #     response = self.client.get(self.url)
-    #     redirect_url = reverse('club_list')
-    #     self.assertTemplateUsed(response, 'club_list.html')
-    #     self.assertRedirects(response, redirect_url,
-    #                          status_code=302, target_status_code=200)
+    def test_applicant_can_not_access_member_list(self):
+        self.client.login(email=self.applicant.email, password="Password123")
+        response = self.client.get(self.url)
+        redirect_url = reverse('club_list')
+        self.assertTemplateUsed(response, 'club_list.html')
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200)
 
     def _create_club_owner_members_and_applicants(self):
         self.club_owner = self.club.owner
