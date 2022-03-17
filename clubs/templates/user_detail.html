@@ -1,15 +1,29 @@
-{% extends "base_content.html" %}
-{% block content %}
-<title>
-  {% block title %}
-  | User Detail
-  {% endblock %}
-</title>
-<div class="container">
-  <div class="row content">
-    <div class="col">
-      {% include 'user_profile.html' %}
+{% extends "base_content.html" %} {% block content %}
+<div class="w-full">
+  <div class="sm:flex mx-auto w-full">
+    <img
+      src="{{ user.gravatar }}"
+      alt="Gravatar of {{ user.username }}"
+      class="rounded-xl h-full bg-cover mx-auto sm:ml-8 mt-8"
+    />
+    <div class="mt-8 flex-grow">
+      <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2">
+        <h4 class="font-semibold">Username:</h4>
+        <h3 class="">{{ user.username }}</h3>
+
+        <h4 class="font-semibold">First Name:</h4>
+        <h3 class="">{{ user.first_name }}</h3>
+
+        <h4 class="font-semibold">Last Name:</h4>
+        <h3 class="">{{ user.last_name }}</h3>
+
+        <h4 class="font-semibold">Email Address:</h4>
+        <h3 class="">{{ user.email }}</h3>
+
+        <h4 class="font-semibold">Bio:</h4>
+        <h3 class="">{{ user.bio }}</h3>
+      </div>
     </div>
   </div>
-</div>
+
 {% endblock %}
