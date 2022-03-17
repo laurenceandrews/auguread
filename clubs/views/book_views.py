@@ -99,14 +99,14 @@ class CreateBookRatingView(CreateView):
             )
             book_rating.rating = rating
             book_rating.save()
-            messages.add_message(self.request, messages.SUCCESS, "Book rating updated!")
+            messages.add_message(self.request, messages.SUCCESS, "Rating Saved")
         else:
             book_rating = Book_Rating.objects.create(
                 user=current_user,
                 book=book,
                 rating=rating
             )
-            messages.add_message(self.request, messages.SUCCESS, "Book rating created!")
+            messages.add_message(self.request, messages.SUCCESS, "Rating created")
 
         return redirect('book_preferences')
 
