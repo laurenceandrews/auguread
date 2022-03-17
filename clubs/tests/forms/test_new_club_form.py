@@ -12,23 +12,22 @@ class NewClubTestCase(TestCase):
     ]
 
     def setUp(self):
-        super(TestCase, self).setUp()
-        self.user = User.objects.get(email="johndoe@example.org")
-        self.existing_calendar = Calendar.objects.get(pk=5)
-        self.club_city = 'London'
-        self.club_country = 'GB'
-        self.club_location = self.club_city + ", " + self.club_country
+        self.user = User.objects.get(username='@johndoe')
+        self.calendar = Calendar.objects.get(pk=5)
+
         self.form_input = {
-            'name': 'Fun Reading Club',
-            'city': self.club_city,
-            'country': self.club_country,
-            'description': 'A book club that is fun.',
-            'avg_reading_speed': 200,
-            # 'meeting_type': 'online',
-            'calendar_name': 'Fun Reading Clubs Calendar'
+            "name": "Pink Club",
+            "city": "London",
+            "country": "GB",
+            "description": "A club that reads lots of pink books.",
+            "avg_reading_speed": "200",
+            "owner": self.user,
+            "calendar_name": "Pink Club's Calendar",
+            "meeting_type": "ONL"
         }
 
     def test_valid_new_club(self):
+
         self.form_input = {'name': 'x'*50,
                 # 'city': self.club_city,
                 # 'country': self.club_country,
@@ -37,9 +36,9 @@ class NewClubTestCase(TestCase):
                 # 'calendar_name': 'c'*200,
                 'meeting_type': 'z'*50
         }
+
         form = NewClubForm(data=self.form_input)
         self.assertTrue(form.is_valid())
-
 
     def test_form_has_necessary_fields(self):
         form = NewClubForm()
@@ -48,8 +47,8 @@ class NewClubTestCase(TestCase):
         self.assertIn('country', form.fields)
         self.assertIn('description', form.fields)
         self.assertIn('avg_reading_speed', form.fields)
-        # self.assertIn('meeting_type', form.fields)
         self.assertIn('calendar_name', form.fields)
+        self.assertIn('meeting_type', form.fields)
 
     def test_name_cannot_exceed_50_characters(self):
         self.form_input['name'] = 'x' * 51
