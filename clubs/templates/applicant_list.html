@@ -22,7 +22,7 @@
       {% bootstrap_paginate page_obj range=10 show_first_last="true"%}
       <form action="{% url 'applicant_list' club.id %}" method="post">
         {% csrf_token %}
-        {% include "partials/manageable_list.html" with users=page_obj applicants=True club=club %}
+        {% include "partials/manage_list.html" with users=page_obj applicants=True club=club %}
         {% bootstrap_paginate page_obj range=10 show_first_last="true"%}
         <div class="row" style="text-align:center">
           <input type="submit" value="Accept" class="btn btn-lg btn-primary">
