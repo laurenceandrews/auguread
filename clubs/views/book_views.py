@@ -9,11 +9,31 @@ from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
 
 from .helpers import login_prohibited
 from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
                      MemberProhibitedMixin)
+
+
+class BookDetailView(DetailView):
+
+    model = Book
+    template_name = 'book_detail.html'
+    pk_url_kwarg = "book_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        """Handle get request, and redirect to user_list if user_id invalid."""
+
+        try:
+            return super().get(request, *args, **kwargs)
+        except Http404:
+            return render(request, 'fullcalendar.html', {'calendar': Calendar.objects.get(slug=self.kwargs['calendar_slug'])})
 
 
 class BookPreferencesView(LoginRequiredMixin, View):
