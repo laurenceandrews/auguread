@@ -19,7 +19,7 @@ class CalendarPickerFormTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.get(username='@johndoe')
         self.calendar = Calendar.objects.get(pk=5)
-        self.club = Club.objects.get(pk=6)
+        self.club = Club.objects.get(pk=12)
         self.form_input = {
             'calendar': self.calendar
         }

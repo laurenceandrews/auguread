@@ -1,0 +1,10 @@
+[
+    {
+      "model": "clubs.Club_Book_History",
+      "pk": 1,
+      "fields": {
+        "club" : 6,
+        "book" : 20
+      }
+    }
+  ]

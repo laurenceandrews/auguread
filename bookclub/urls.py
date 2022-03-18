@@ -38,7 +38,6 @@ urlpatterns = [
     path('edit_profile/', views.ProfileUpdateView.as_view(), name='edit_profile'),
 
     # User urls
-    path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
     path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
     path('user_detail/', views.user_detail, name='user_detail'),
     path('delete_account/', views.delete_account, name='delete_account'),
@@ -57,6 +56,8 @@ urlpatterns = [
     path('apply/<int:club_id>', views.apply, name='apply'),
     path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
     path('<int:club_id>/transfer/<int:user_id>', views.transfer, name='transfer'),
+    path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
+
 
     path('<int:club_id>/applicants', views.ApplicantListView.as_view(), name='applicant_list'),
     path('<int:club_id>/members', views.MemberListView.as_view(), name='member_list'),

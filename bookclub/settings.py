@@ -149,7 +149,9 @@ MESSAGE_TAGS = {
 LOGIN_URL = 'log_in'
 
 # URL where @login_prohibited redirects to
-REDIRECT_URL_WHEN_LOGGED_IN = 'book_preferences'
+REDIRECT_URL_WHEN_LOGGED_IN = 'rec'
+
+REDIRECT_URL_WHEN_NOT_ENOUGH_RATINGS = 'book_preferences'
 
 
 # Tailwind App Name
@@ -160,7 +162,9 @@ INTERNAL_IPS = [
 ]
 
 # Set up for windows, for mac/ubuntu change to r"/usr/local/bin/npm"
-NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+# NPM_BIN_PATH = r"/usr/local/bin/npm"
+NPM_BIN_PATH = "/usr/bin/npm"
+# NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 
 
 # Page lengths

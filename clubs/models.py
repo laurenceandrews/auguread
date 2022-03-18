@@ -465,6 +465,25 @@ class Club_Books(models.Model):
         verbose_name = "Club Book"
 
 
+class Club_Book_History(models.Model):
+    club = models.ForeignKey(
+        Club,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    class Meta:
+        verbose_name = "Club Book History"        
+
+
 class User_Books(models.Model):
     user = models.ForeignKey(
         User,
