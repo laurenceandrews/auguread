@@ -4,16 +4,21 @@ from clubs.models import User, Club
 from clubs.tests.helpers import reverse_with_next
 
 # class FollowToggleTest(TestCase):
-#
+# 
 #     fixtures = [
 #         'clubs/tests/fixtures/default_user.json',
-#         'clubs/tests/fixtures/other_users.json'
+#         'clubs/tests/fixtures/other_users.json',
+#         'clubs/tests/fixtures/default_calendar.json',
+#         'clubs/tests/fixtures/default_club.json',
+#         'clubs/tests/fixtures/detailed_club.json',
+#         'clubs/tests/fixtures/default_rules.json',
 #     ]
 #
 #     def setUp(self):
+#         self.user = User.objects.get(pk=1)
 #         self.user = User.objects.get(email='johndoe@example.org')
 #         self.followee = User.objects.get(email='janedoe@example.org')
-#         self.club = Club.objects.get(pk=1)
+#         self.club = Club.objects.get(pk=6)
 #         self.url = reverse('follow_toggle', kwargs={'club_id': self.club.id, 'user_id': self.followee.id})
 #
 #     def test_follow_toggle_url(self):
