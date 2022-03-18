@@ -1,25 +1,39 @@
 from clubs.forms import BookRatingForm
-from clubs.models import Book, Club, Club_Books, Book_Rating
+from clubs.models import Book, Book_Rating, Club, Club_Books
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
-from django.db.models import Q
 
 from .helpers import login_prohibited
 from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
                      MemberProhibitedMixin)
 
 
-@login_required
-def RecommendationsView(request):
-    """View that shows a list of all recommended books."""
-    return render(request, 'rec_page.html')
+class BookDetailView(DetailView):
+
+    model = Book
+    template_name = 'book_detail.html'
+    pk_url_kwarg = "book_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        """Handle get request, and redirect to user_list if user_id invalid."""
+
+        try:
+            return super().get(request, *args, **kwargs)
+        except Http404:
+            return render(request, 'fullcalendar.html', {'calendar': Calendar.objects.get(slug=self.kwargs['calendar_slug'])})
 
 
 class BookPreferencesView(LoginRequiredMixin, View):
@@ -77,6 +91,7 @@ def rate_book(request, book_id):
 
     return redirect('book_preferences')
 
+
 class CreateBookRatingView(CreateView):
     model = Book_Rating
     template_name = 'book_rating_create.html'
@@ -105,7 +120,7 @@ class CreateBookRatingView(CreateView):
                 book=book,
                 rating=rating
             )
-        
+
         messages.add_message(self.request, messages.SUCCESS, "Rating created")
 
         return redirect('book_preferences')
