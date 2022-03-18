@@ -3,9 +3,6 @@ from clubs.models import Club, User
 from django.test import TestCase
 from django.urls import reverse
 
-"""WILL BE UPDATED"""
-
-
 class ApplicantListViewTestCase(TestCase):
     """Unit tests for the Applicant list."""
     fixtures = [
@@ -20,6 +17,9 @@ class ApplicantListViewTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.get(pk=1)
         self.club = Club.objects.get(pk=19)
+        self.owner = Club.objects.get(pk=19).owner
+        self.member = Club.objects.get(pk=19).members.all()
+        self.applicant = Club.objects.get(pk=19).applicants.all()
         self._create_club_owner_members_and_applicants()
         self.url = reverse('applicant_list', kwargs={'club_id': self.club.id})
         self.approve_url = reverse(
@@ -51,8 +51,6 @@ class ApplicantListViewTestCase(TestCase):
     def test_member_can_not_approve_applicant(self):
         self.client.login(email=self.member.email, password="Password123")
         self.client.get(self.approve_url)
-        # print(self.club_applicants)
-        # print(self.club_members)
         self.assertTrue(self.applicant in self.club.applicants.all())
         self.assertFalse(self.applicant in self.club.members.all())
 
