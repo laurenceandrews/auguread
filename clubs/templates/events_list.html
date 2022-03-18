@@ -1,0 +1,14 @@
+{% extends 'base_content.html' %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <h1>Events for calendar: {{calendar.name}}</h1>
+      <div class="mt-1 max-w-2xl text-sm text-gray-500">
+        <p>There are {{events.count}} events on this calendar. Click on them to edit or delete.</p>
+      </div>
+      {% include 'partials/events_as_table.html' with events=events %}
+    </div>
+  </div>
+</div>
+{% endblock %}

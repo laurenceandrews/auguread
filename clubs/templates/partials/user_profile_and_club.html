@@ -1,0 +1,46 @@
+<img src="{{ user.gravatar }}" alt="Gravatar of {{ target.email }}" class="" >
+<h3 class="">{{ user.full_name }}</h3> Full Name:
+<h5>Username: </h5>
+<p class="">{{ user.username }}</p>
+<form action="{% url 'follow_toggle' user_id=user.id %}" method="get">
+  <p class="">
+    <span>
+      <b>{{ user.followee_count }}</b> Following
+      &emsp;
+      <b>{{ user.follower_count }}</b> Followers
+    </span>
+    <span class="">
+      {% if followable %}
+        {% if following %}
+          <button class="">Unfollow</button>
+        {% else %}
+          <button class="">Follow</button>
+        {% endif %}
+      {% endif %}
+    </span>
+  </p>
+</form>
+<h5>Email: </h5>
+<p class="">{{ user.email }}</p>
+
+{% if club %}
+<a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href="{% url 'full_calendar' calendar_slug=club.calendar.slug %}">Club Events</a>
+{% endif %}
+
+{% if club %}
+<p class=""><h5>Club name: </h5>{{ club.name }}</p>
+<p><h5>Membership Type: </h5>{{ type }}</p>
+{% endif %}
+
+{% if target.is_applicant %}
+  <p class=""><h5>Bio: </h5>{{ target.bio }}</p>
+{% endif %}
+
+{% if user in club.owner_list or user == club.owner %}
+  <div class="">
+    <p><h5>Bio:</h5>{{target.bio}}</p>
+  </div>
+{% endif %}
+{% if club %}
+  {% include "partials/user_profile_operations.html" with club=club target=target %}
+{% endif %}

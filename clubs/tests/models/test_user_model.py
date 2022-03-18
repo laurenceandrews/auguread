@@ -1,17 +1,22 @@
 """Unit tests for the User model."""
+from clubs.models import User, Club
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from clubs.models import User
+
 
 class UserModelTestCase(TestCase):
     """Unit tests for the User model."""
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/other_users.json'
+        'clubs/tests/fixtures/other_users.json',
+        'clubs/tests/fixtures/default_calendar.json',
+        'clubs/tests/fixtures/default_rules.json',
+        'clubs/tests/fixtures/default_club.json',
     ]
 
     def setUp(self):
+        # self.user = User.objects.get(email='johndoe@example.org')
         self.user = User.objects.get(username='@johndoe')
 
     def test_valid_user(self):
@@ -54,7 +59,6 @@ class UserModelTestCase(TestCase):
         self.user.username = '@@johndoe'
         self._assert_user_is_invalid()
 
-
     def test_first_name_must_not_be_blank(self):
         self.user.first_name = ''
         self._assert_user_is_invalid()
@@ -69,9 +73,8 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_valid()
 
     def test_first_name_must_not_contain_more_than_50_characters(self):
-        self.user.first_name = 'x' * 51
+        self.user.first_name = 'x' * 55
         self._assert_user_is_invalid()
-
 
     def test_last_name_must_not_be_blank(self):
         self.user.last_name = ''
@@ -87,9 +90,8 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_valid()
 
     def test_last_name_must_not_contain_more_than_50_characters(self):
-        self.user.last_name = 'x' * 51
+        self.user.last_name = 'x' * 55
         self._assert_user_is_invalid()
-
 
     def test_email_must_not_be_blank(self):
         self.user.email = ''
@@ -120,7 +122,6 @@ class UserModelTestCase(TestCase):
         self.user.email = 'johndoe@@example.org'
         self._assert_user_is_invalid()
 
-
     def test_bio_may_be_blank(self):
         self.user.bio = ''
         self._assert_user_is_valid()
@@ -135,42 +136,51 @@ class UserModelTestCase(TestCase):
         self._assert_user_is_valid()
 
     def test_bio_must_not_contain_more_than_520_characters(self):
-        self.user.bio = 'x' * 521
+        self.user.bio = 'x' * 525
         self._assert_user_is_invalid()
 
-    def test_toggle_follow_user(self):
-        jane = User.objects.get(username='@janedoe')
-        self.assertFalse(self.user.is_following(jane))
-        self.assertFalse(jane.is_following(self.user))
-        self.user.toggle_follow(jane)
-        self.assertTrue(self.user.is_following(jane))
-        self.assertFalse(jane.is_following(self.user))
-        self.user.toggle_follow(jane)
-        self.assertFalse(self.user.is_following(jane))
-        self.assertFalse(jane.is_following(self.user))
+    def test_city_cannot_be_blank(self):
+        self.user.city = ''
+        self._assert_user_is_invalid()
 
-    def test_follow_counters(self):
-        jane = User.objects.get(username='@janedoe')
-        petra = User.objects.get(username='@petrapickles')
-        peter = User.objects.get(username='@peterpickles')
-        self.user.toggle_follow(jane)
-        self.user.toggle_follow(petra)
-        self.user.toggle_follow(peter)
-        jane.toggle_follow(petra)
-        jane.toggle_follow(peter)
-        self.assertEqual(self.user.follower_count(), 0)
-        self.assertEqual(self.user.followee_count(), 3)
-        self.assertEqual(jane.follower_count(), 1)
-        self.assertEqual(jane.followee_count(), 2)
-        self.assertEqual(petra.follower_count(), 2)
-        self.assertEqual(petra.followee_count(), 0)
-        self.assertEqual(peter.follower_count(), 2)
-        self.assertEqual(peter.followee_count(), 0)
+    def test_country_need_not_be_unique(self):
+        second_user = User.objects.get(username='@janedoe')
+        self.user.city = second_user.city
+        self._assert_user_is_valid()
 
-    def test_user_cannot_follow_self(self):
-        self.user.toggle_follow(self.user)
-        self.assertEqual(self.user.follower_count(), 0)
-        self.assertEqual(self.user.followee_count(), 0)
+    def test_country_cannot_be_blank(self):
+        self.user.country = ''
+        self._assert_user_is_invalid()
+
+    def test_country_need_not_be_unique(self):
+        second_user = User.objects.get(username='@janedoe')
+        self.user.country = second_user.country
+        self._assert_user_is_valid()
+
+    def test_age_cannot_be_blank(self):
+        self.user.age = ''
+        self._assert_user_is_invalid()
+
+    def test_age_need_not_be_unique(self):
+        second_user = User.objects.get(username='@janedoe')
+        self.user.age = second_user.age
+        self._assert_user_is_valid()
+
+    def test_age_may_not_be_less_than_5(self):
+        self.user.age = 0
+        self._assert_user_is_invalid()
+
+    def test_age_may_not_be_more_than_105(self):
+        self.user.age = 555
+        self._assert_user_is_invalid()
+
+    def test_age_may_be_5(self):
+        self.user.age = 5
+        self._assert_user_is_valid()
+
+    def test_age_may_be_105(self):
+        self.user.age = 105
+        self._assert_user_is_valid()
 
     def _assert_user_is_valid(self):
         try:

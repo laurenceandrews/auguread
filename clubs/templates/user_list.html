@@ -1,25 +1,35 @@
-{% extends 'base_content.html' %}
+{% extends "base_content.html" %}
 {% load bootstrap_pagination %}
 
 {% block content %}
+<title>
+  {% block title %}
+  | User List
+  {% endblock %}
+</title>
+
 <div class="container">
   <div class="row">
     <div class="col-12">
-      <h1>Users</h1>
-      {% bootstrap_paginate page_obj range=6 previous_label="Previous" next_label="Next" show_first_last="true" %}
-      <table class="table">
-        {% for user in users %}
-          <tr>
-            <td>
-              <img src="{{ user.mini_gravatar }}" alt="Gravatar of {{ user.username }}" class="rounded-circle" >
-            </td>
-            <td>{{ user.full_name }}</td>
-            <td><a href="{% url 'show_user' user.id %}">{{ user.username }}</a></td>
-          </tr>
-        {% endfor %}
-      </table>
-      {% bootstrap_paginate page_obj range=6 previous_label="Previous" next_label="Next" show_first_last="true" %}
+      <h1 style="text-align:center">
+        Members in {{club.name}}
+      </h1>
+      {% bootstrap_paginate page_obj range=10 show_first_last="true"%}
     </div>
   </div>
 </div>
+
+<form action="{% url 'applicant_list' club.id %}" method="post">
+  {% csrf_token %}
+  {% include "partials/manage_list.html" with users=users club=club%}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        {% bootstrap_paginate page_obj range=10 show_first_last="true"%}
+      </div>
+    </div>
+  </div>
+
+</form>
 {% endblock %}
