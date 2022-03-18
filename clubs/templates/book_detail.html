@@ -1,0 +1,40 @@
+{% extends 'base_content.html' %}
+{% load i18n %}
+{% block content%}
+<div class="h-screen flex items-center justify-center">
+
+  <card class="flex flex-col rounded-lg shadow-lg w-1/2 p-10 bg-violet-100">
+
+    <!-- Title -->
+    <p class="text-center text-gray-800 text-4xl mt-8">{{book.title}}</p>
+
+    <!-- Description -->
+    <div class="text-gray-700 font-light mt-5">
+      <p>Authon: {{book.author}}</p>
+      <p>Publisher: {{book.publisher}}</p>
+      <p>Publication year: {{book.publication_year}}</p>
+      <p>ISBN: {{book.ISBN}}</p>
+      {% if rating_exists == True %}
+        <p>Rating: {{book_rating}}</p>
+      {% else %}
+        <p>Rating: You haven't rated this book yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex flex-row-reverse mt-14 items-end gap-5">
+
+      <div class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" onclick="location.href='#';" style="cursor: pointer;">
+        <p>Rate book</p>
+      </div>
+
+      <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="location.href='#';" style="cursor: pointer;">
+        <p>Set as currently reading</p>
+      </div>
+
+    </div>
+
+  </card>
+
+</div>
+{% endblock %}
