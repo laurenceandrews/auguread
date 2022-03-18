@@ -40,8 +40,7 @@ class ApplicantProhibitedMixin:
         """Checks the membership type of the user of the club."""
 
         club = Club.objects.get(id=kwargs['club_id'])
-        if (self.request.user in club.members.all()
-                or self.request.user in club.owners.all() or club.owner == self.request.user):
+        if (self.request.user in club.members.all() or self.request.user == club.owner):
             return super().dispatch(*args, **kwargs)
         else:
             return redirect(settings.REDIRECT_URL_WHEN_LOGGED_IN)
@@ -54,7 +53,7 @@ class MemberProhibitedMixin:
         """Checks the membership type of the user of the club with the given club id."""
 
         club = Club.objects.get(id=kwargs['club_id'])
-        if self.request.user in club.owners.all() or club.owner == self.request.user:
+        if self.request.user == club.owner:
             return super().dispatch(*args, **kwargs)
         else:
             return redirect(settings.REDIRECT_URL_WHEN_LOGGED_IN)
@@ -120,7 +119,7 @@ class TenPosRatingsRequiredMixin:
 
         user = self.request.user
         POSITIVE_RATINGS = [6, 7, 8, 9, 10]
-        
+
         positive_book_rating_count = Book_Rating.objects.filter(user = user, rating__in=POSITIVE_RATINGS).count()
         if positive_book_rating_count >= 10:
             less_than_ten_pos_ratings = False
