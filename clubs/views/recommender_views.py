@@ -102,8 +102,17 @@ class RecommendationsView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         books = Book.objects.all()
-        print('PRINTING...')
-
         context['books'] = books
-        context['other_books'] = books
+
+        club_favourites = Club_Books.objects.all()
+        if club_favourites.count() == 0:
+            context['club_favourites_exist'] = False
+        else:
+            context['club_favourites_exist'] = True
+
+        if len(club_favourites) < 5:
+            context['club_favourites'] = club_favourites
+        else:
+            context['club_favourites'] = club_favourites[0:5]
+
         return context
