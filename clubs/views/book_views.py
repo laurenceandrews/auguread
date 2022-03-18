@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
@@ -27,10 +27,17 @@ class BookDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         book = Book.objects.get(id=self.kwargs['book_id'])
+
+        # update to get this from BookHistory model
+        book_history_exists = False
+        context['book_history_exists'] = book_history_exists
+
         rating_exists = Book_Rating.objects.filter(user=self.request.user, book=book).exists()
         context['rating_exists'] = rating_exists
         if rating_exists:
-            context['book_rating'] = Book_Rating.objects.get(user=self.request.user, book=book)
+            context['book_rating'] = Book_Rating.objects.get(user=self.request.user, book=book).rating
+
+        context['book_rating_form'] = BookRatingForm()
         return context
 
     def get(self, request, *args, **kwargs):
@@ -72,32 +79,6 @@ class BookPreferencesView(LoginRequiredMixin, View):
         return render(self.request, 'book_preferences.html', {'innerForm': self.innerForm, 'next': self.next, 'books_paginated': self.books_paginated})
 
 
-def rate_book(request, book_id):
-    current_user = request.user
-    book = Book.objects.get(id=book_id)
-    rating = request.POST.get('rating')
-
-    print(book.title)
-
-    book_rating_exists = Book_Rating.objects.filter(user=current_user, book=book)
-
-    if book_rating_exists.exists():
-        book_rating = Book_Rating.objects.get(
-            user=current_user,
-            book=book
-        )
-        book_rating.rating = rating
-        book_rating.save()
-    else:
-        book_rating = Book_Rating.objects.create(
-            user=current_user,
-            book=book,
-            rating=rating
-        )
-
-    return redirect('book_preferences')
-
-
 class CreateBookRatingView(CreateView):
     model = Book_Rating
     template_name = 'book_rating_create.html'
@@ -120,14 +101,14 @@ class CreateBookRatingView(CreateView):
             )
             book_rating.rating = rating
             book_rating.save()
+            messages.add_message(self.request, messages.SUCCESS, "Rating updated")
         else:
             book_rating = Book_Rating.objects.create(
                 user=current_user,
                 book=book,
                 rating=rating
             )
-
-        messages.add_message(self.request, messages.SUCCESS, "Rating created")
+            messages.add_message(self.request, messages.SUCCESS, "Rating created")
 
         return redirect('book_preferences')
 
