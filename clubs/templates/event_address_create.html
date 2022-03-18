@@ -8,7 +8,7 @@
   <div class="">
     <div class="">
       <div class="mx-14 my-14">
-        <form action="{% url 'create_event' calendar_slug=calendar_slug %}" method="post">
+        <form action="{% url 'create_event_address' calendar_slug=event.calendar.slug event_id=event.id %}" method="post">
           {% csrf_token %}
           <table>
             {{ form.as_table }}
@@ -25,10 +25,10 @@
               <a href="{{ view.get_create_address_url }}" class="">Create new event address</a>
             </div>
 
+
             <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
               <input type="submit" value="Continue with selected address" class="" />
             </div>
-
           </div>
         </form>
       </div>
