@@ -123,4 +123,7 @@ urlpatterns = [
     url(r"^club/book/edit/(?P<club_id>\d+)/$",
         views.ClubBookSelectionView.as_view(),
         name='club_book_select'),
+    url(r"^book/detail/(?P<book_id>\d+)/$",
+        views.BookDetailView.as_view(),
+        name='book_detail'),
 ]

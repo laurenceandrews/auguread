@@ -35,14 +35,12 @@
       </div>
 
       <div class="max-w-2xl mx-auto py-4 px-4 sm:py-6 sm:px-6 lg:max-w-7xl lg:px-8">
-        <p>This page is still in progress. Check back soon!</p>
-
         <h2 class="text-2xl font-extrabold tracking-tight text-gray-900">
           <a id="other_clubs_favourites">Other clubs' favourites...</a>
         </h2>
         {% if club_favourites_exist is True %}
         <div class="max-h-[24rem] overflow-scroll mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-            {% include 'partials/books_as_list.html' with books=club_favourites %}
+            {% include 'partials/books_as_list.html' with club_favourites=books %}
         </div>
         {% else %}
           <div class="max-h-[24rem] overflow-scroll mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
