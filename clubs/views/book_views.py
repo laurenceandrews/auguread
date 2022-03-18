@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
@@ -25,15 +26,20 @@ class BookDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        book = Book.objects.get(id=self.kwargs['book_id'])
+        rating_exists = Book_Rating.objects.filter(user=self.request.user, book=book).exists()
+        context['rating_exists'] = rating_exists
+        if rating_exists:
+            context['book_rating'] = Book_Rating.objects.get(user=self.request.user, book=book)
         return context
 
     def get(self, request, *args, **kwargs):
-        """Handle get request, and redirect to user_list if user_id invalid."""
+        """Handle get request, and redirect to user_list if book_id invalid."""
 
         try:
             return super().get(request, *args, **kwargs)
         except Http404:
-            return render(request, 'fullcalendar.html', {'calendar': Calendar.objects.get(slug=self.kwargs['calendar_slug'])})
+            return redirect('rec')
 
 
 class BookPreferencesView(LoginRequiredMixin, View):
