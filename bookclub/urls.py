@@ -15,6 +15,7 @@ Including another URLconf
 """
 
 from clubs import views
+from clubs.views.recommender_views import ClubRecommenderView
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include, path, re_path
@@ -22,7 +23,6 @@ from django.views.generic import TemplateView
 from schedule.views import (DeleteEventView, EditEventView, EventView,
                             api_move_or_resize_by_code, api_occurrences,
                             api_select_create)
-from clubs.views.recommender_views import ClubRecommenderView
 
 urlpatterns = [
     # Admin urls
@@ -34,7 +34,7 @@ urlpatterns = [
     path('log_out/', views.log_out, name='log_out'),
     path("__reload__/", include("django_browser_reload.urls")),
     path('password/', views.PasswordView.as_view(), name='password'),
-    path('rec/', views.RecommendationsView, name='rec'),
+    path('rec/', views.RecommendationsView.as_view(), name='rec'),
     path('edit_profile/', views.ProfileUpdateView.as_view(), name='edit_profile'),
 
     # User urls

@@ -1,15 +1,21 @@
 """Views related to the recommender."""
-from clubs.forms import (AddressForm, LogInForm, NewClubForm, PasswordForm, PostForm, SignUpForm, BookRatingForm, ClubBookForm)
+from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
+                         ClubBookForm, CreateEventForm, LogInForm,
+                         MeetingAddressForm, MeetingLinkForm, NewClubForm,
+                         PasswordForm, PostForm, SignUpForm)
 # from clubs.helpers import member, owner
-from clubs.models import Book, Club, Club_Books, Club_Book_History, MeetingAddress, MeetingLink, Post, User, Address
-
+from clubs.models import (Address, Book, Club, Club_Book_History, Club_Books,
+                          MeetingAddress, MeetingLink, Post, User)
+from clubs.views.club_views import MemberListView
+from clubs.views.mixins import TenPosRatingsRequiredMixin
 from django.conf import settings
 from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import (Http404, HttpResponse, HttpResponseForbidden,
                          HttpResponseRedirect)
 from django.shortcuts import redirect, render
@@ -23,15 +29,10 @@ from django.views.generic.edit import (CreateView, DeleteView, FormView,
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
-from clubs.forms import (CalendarPickerForm, CreateEventForm, MeetingAddressForm,
-                    MeetingLinkForm, SignUpForm)
-from clubs.views.club_views import MemberListView
-from clubs.views.mixins import TenPosRatingsRequiredMixin
-from django.db.models import Q
 
 class ClubRecommenderView(LoginRequiredMixin, View):
     """View that handles the club recommendations."""
-    
+
     http_method_names = ['get', 'post']
 
     def get(self, request):
@@ -55,8 +56,8 @@ class ClubRecommenderView(LoginRequiredMixin, View):
         """Render template with blank form."""
 
         return render(self.request, 'club_recommender.html', {'next': self.next, 'clubs_paginated': self.clubs_paginated})
-      
-      
+
+
 class ClubBookSelectionView(LoginRequiredMixin, CreateView):
     """Class-based generic view for club book selection handling."""
 
@@ -90,3 +91,19 @@ class ClubBookSelectionView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         """Return URL to redirect the user to after valid form handling."""
         return redirect('home')
+
+
+class RecommendationsView(ListView):
+    template_name = 'rec_page.html'
+
+    def get_queryset(self):
+        return Book.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        books = Book.objects.all()
+        print('PRINTING...')
+
+        context['books'] = books
+        context['other_books'] = books
+        return context
