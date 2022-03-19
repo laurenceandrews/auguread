@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity 
 from surprise import Reader, Dataset, SVD
 from surprise.model_selection import train_test_split, cross_validate  
-from clubs.models import Book, Book_Rating, Club_Users
+from models import Book, Book_Rating, Users
 
 
 class BookToUserRecommender:
@@ -13,7 +13,7 @@ class BookToUserRecommender:
         # load dataset
 
         self.df_books = pd.DataFrame(list(Book.objects.all().values()))
-        self.df_users = pd.DataFrame(list(Club_Users.objects.all().values()))
+        self.df_users = pd.DataFrame(list(Users.objects.all().values()))
         self.df_ratings = pd.DataFrame(list(Book_Rating.objects.all().values()))
 
         self.user_index = user
