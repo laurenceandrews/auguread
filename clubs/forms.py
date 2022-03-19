@@ -15,8 +15,9 @@ from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
 
-from .models import (Address, Book, Book_Rating, Club, Club_Books,
-                     MeetingAddress, MeetingLink, Post, User)
+from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
+                     Club_Books, MeetingAddress, MeetingLink, Post, User,
+                     User_Books)
 
 
 class LogInForm(forms.Form):
@@ -285,6 +286,15 @@ class CreateEventForm(forms.ModelForm):
 class CalendarPickerForm(forms.Form):
     calendar = forms.ModelChoiceField(queryset=Calendar.objects.all().order_by('name'))
 
+    def __init__(self, *args, **kwargs):
+        """Give user option of all calendars used for clubs they are a member or user of."""
+        user_id = kwargs.pop('user_id', [])
+        super(CalendarPickerForm, self).__init__(*args, **kwargs)
+        user = User.objects.get(id=user_id)
+        users_clubs = user.clubs_attended()
+        users_calendars = Calendar.objects.filter(club__in=users_clubs)
+        self.fields['calendar'].queryset = users_calendars.order_by('name')
+
 
 class ClubBookForm(forms.ModelForm):
     class Meta:
@@ -304,16 +314,6 @@ class ClubBookForm(forms.ModelForm):
             book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
         books = Book.objects.filter(id__in=book_ids)
         self.fields['book'].queryset = books
-
-
-class BookRatingForm(forms.Form):
-    # user = forms.ForeignKey(User, on_delete=forms.CASCADE)
-    rating = forms.ChoiceField(
-        required=False,
-        label='Rate book',
-        error_messages={},
-        choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
-    )
 
 
 class ClubRecommenderForm(forms.ModelForm):
@@ -339,3 +339,15 @@ class BookRatingForm(forms.ModelForm):
     class Meta:
         model = Book_Rating
         fields = ['rating']
+
+
+class ClubBookHistoryForm(forms.ModelForm):
+    class Meta:
+        model = Club_Book_History
+        fields = []
+
+
+class UserBooksForm(forms.ModelForm):
+    class Meta:
+        model = User_Books
+        fields = []
