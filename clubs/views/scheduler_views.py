@@ -23,7 +23,7 @@ class CalendarPickerView(FormView):
 
     def form_valid(self, form):
         calendar = form.cleaned_data.get('calendar')
-        return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+        return render(self.request, 'fullcalendar.html', {'calendar': calendar})
 
     def get_form_kwargs(self):
         kwargs = super(CalendarPickerView, self).get_form_kwargs()

@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-from .models import (Book, Club, Club_Books, Club_Users, Club_Book_History, MeetingAddress,
-                     MeetingLink, Post, User, Book_Rating)
+from .models import (ApplicantMembership, Book, Book_Rating, Club,
+                     Club_Book_History, Club_Books, Club_Users, MeetingAddress,
+                     MeetingLink, OwnerMembership, Post, User)
 
 
 @admin.register(User)
@@ -49,6 +50,24 @@ class ClubAdmin(admin.ModelAdmin):
 
     def applicant_list(self, Club):
         return "\n".join([applicant.first_name for applicant in Club.applicants.all()])
+
+
+@admin.register(ApplicantMembership)
+class ApplicantMembership(admin.ModelAdmin):
+    """Configuration of the admin interface for ApplicantMembership."""
+
+    list_display = [
+        'club', 'user'
+    ]
+
+
+@admin.register(OwnerMembership)
+class OwnerMembership(admin.ModelAdmin):
+    """Configuration of the admin interface for OwnerMembership."""
+
+    list_display = [
+        'club', 'user'
+    ]
 
 
 @admin.register(Book)
@@ -99,13 +118,15 @@ class Club_BookAdmin(admin.ModelAdmin):
         'club', 'book'
     ]
 
+
 @admin.register(Club_Book_History)
 class Club_Book_HistoryAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for club book history."""
 
     list_display = [
         'club', 'book'
-    ]    
+    ]
+
 
 @admin.register(Book_Rating)
 class BookRatingAdmin(admin.ModelAdmin):
