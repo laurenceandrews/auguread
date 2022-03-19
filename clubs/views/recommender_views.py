@@ -93,26 +93,27 @@ class ClubBookSelectionView(LoginRequiredMixin, CreateView):
         return redirect('home')
 
 
-class RecommendationsView(ListView):
-    template_name = 'rec_page.html'
+class RecommendationsView(LoginRequiredMixin, View):
+    """View that handles the club recommendations."""
+    http_method_names = ['get', 'post']
 
-    def get_queryset(self):
-        return Book.objects.all()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        books = Book.objects.all()
-        context['books'] = books
+    def get(self, request):
+        """Display template."""
 
         club_favourites = Club_Books.objects.all()
         if club_favourites.count() == 0:
-            context['club_favourites_exist'] = False
+            self.club_favourites_exist = False
         else:
-            context['club_favourites_exist'] = True
+            self.club_favourites_exist = True
 
-        if len(club_favourites) < 5:
-            context['club_favourites'] = club_favourites
-        else:
-            context['club_favourites'] = club_favourites[0:5]
+        self.club_favourites_book_ids = Club_Books.objects.values('book')[0:11]
+        self.club_favourites = Book.objects.filter(id__in=self.club_favourites_book_ids)
 
-        return context
+        return self.render()
+
+    def render(self):
+        """Render template."""
+
+        return render(self.request, 'rec_page.html',
+                      {'club_favourites_exist': self.club_favourites_exist, 'club_favourites': self.club_favourites}
+                      )
