@@ -30,7 +30,7 @@ class BookDetailView(DetailView):
         rating_exists = Book_Rating.objects.filter(user=self.request.user, book=book).exists()
         context['rating_exists'] = rating_exists
         if rating_exists:
-            context['book_rating'] = Book_Rating.objects.get(user=self.request.user, book=book)
+            context['book_rating'] = Book_Rating.objects.get(user=self.request.user, book=book).rating
         return context
 
     def get(self, request, *args, **kwargs):
