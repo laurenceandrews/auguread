@@ -1,27 +1,39 @@
-
 {% extends 'base_content.html' %}
 {% load i18n %}
 {% load event_meeting %}
 {% block content%}
-<div>
-  <div>
-    <p>Title: {{event.title}}</p>
-    <p>Start: {{event.start}}</p>
-    <p>End: {{event.end}}</p>
-    <p>End of recurring period: {{event.end_recurring_period}}</p>
-    <p>Rule: {{event.rule}}</p>
-    <p>calendar: {{event.calendar}}</p>
-    <p>Event meeting at: {% event_meeting event %}</p>
-    <p>Description: {{event.description}}</p>
+<div class="h-screen flex items-center justify-center">
 
-  </div>
-</div>
+  <card class="flex flex-col rounded-lg shadow-lg w-1/2 p-10 bg-violet-100">
 
-<div onclick="location.href='{%url 'edit_event' calendar_slug=event.calendar.slug event_id=event.id %}';" style="cursor: pointer;">
-  <p>Edit event</p>
-</div>
+    <!-- Title -->
+    <p class="text-center text-gray-800 text-4xl mt-8">{{event.title}}</p>
 
-<div onclick="location.href='{%url 'delete_event' calendar_slug=event.calendar.slug event_id=event.id %}';" style="cursor: pointer;">
-  <p>Delete event</p>
+    <!-- Description -->
+    <div class="text-gray-700 font-light mt-5">
+      <p>Start: {{event.start}}</p>
+      <p>End: {{event.end}}</p>
+      <p>End of recurring period: {{event.end_recurring_period}}</p>
+      <p>Rule: {{event.rule}}</p>
+      <p>Calendar: {{event.calendar}}</p>
+      <p>Event meeting at: {% event_meeting event %}</p>
+      <p>Description: {{event.description}}</p>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex flex-row-reverse mt-14 items-end gap-5">
+
+      <div class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" onclick="location.href='{%url 'delete_event' calendar_slug=event.calendar.slug event_id=event.id %}';" style="cursor: pointer;">
+        <p>Delete event</p>
+      </div>
+
+      <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="location.href='{%url 'edit_event' calendar_slug=event.calendar.slug event_id=event.id %}';" style="cursor: pointer;">
+        <p>Edit event</p>
+      </div>
+
+    </div>
+
+  </card>
+
 </div>
 {% endblock %}

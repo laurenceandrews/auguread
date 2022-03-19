@@ -124,7 +124,7 @@ class User(AbstractUser):
 
     def membership_type(self, club):
         """Type of membership the user has"""
-        if self == club.owners.all():
+        if self == club.owner:
             return 'Owner'
         elif self in club.members.all():
             return 'Member'
@@ -300,6 +300,7 @@ class MeetingAddress(models.Model):
 
 
 class Club(models.Model):
+    """Club model used for all the functions of a club."""
     name = models.CharField(
         max_length=50,
         blank=False,
@@ -419,6 +420,10 @@ class OwnerMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
 
+# class MemberMembership(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     club = models.ForeignKey(Club, on_delete=models.CASCADE)
+
 
 class Club_Users(models.Model):
     club = models.ForeignKey(
@@ -462,6 +467,25 @@ class Club_Books(models.Model):
 
     class Meta:
         verbose_name = "Club Book"
+
+
+class Club_Book_History(models.Model):
+    club = models.ForeignKey(
+        Club,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    class Meta:
+        verbose_name = "Club Book History"
 
 
 class User_Books(models.Model):
@@ -520,7 +544,7 @@ class Book_Rating(models.Model):
     #     ('9', 'Nine'),
     #     ('10', 'Ten')
     # ]
-    
+
     BOOK_RATING_CHOICES = [
         ("Rate book", "Rate book"),
         ('1', '1'),
