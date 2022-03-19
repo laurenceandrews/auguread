@@ -3,8 +3,8 @@ from clubs.models import Club, User
 from django.test import TestCase
 
 
-class UserModelTestCase(TestCase):
-    """Unit tests for the User model."""
+class ClubModelTestCase(TestCase):
+    """Unit tests for the Club model."""
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
@@ -34,6 +34,9 @@ class UserModelTestCase(TestCase):
 
     def test_user_membership_type(self):
         self.assertEqual(self.user.membership_type(self.club), 'User')
+
+    # def test_owner_membership_type(self):
+    #     self.assertEqual(self.owner.membership_type(self.club), 'Owner')
 
     def test_transfer(self):
         self.club.transfer(self.member)

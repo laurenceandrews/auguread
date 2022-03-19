@@ -17,7 +17,7 @@ from .helpers import login_prohibited, member, owner
 from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
                      MemberProhibitedMixin)
 
-
+"""View that handles creating a new club."""
 @login_required()
 def new_club(request):
     if request.method == "POST":
@@ -63,14 +63,14 @@ class ClubListView(LoginRequiredMixin, ListView):
     template_name = "club_list.html"
     context_object_name = "clubs"
 
-
+"""View that handles entering a club."""
 @login_required
 @member
 def enter(request, club_id):
     user = request.user
     return redirect('show_user', user_id=user.id, club_id=club_id)
 
-
+"""View that handles applying for a club."""
 @login_required
 def apply(request, club_id):
     user = request.user
@@ -78,7 +78,7 @@ def apply(request, club_id):
     club.applied_by(user)
     return redirect('club_list')
 
-
+"""View that handles approving applicants for a club."""
 @login_required
 @owner
 def approve(request, user_id, club_id):
@@ -229,6 +229,8 @@ def club_recommender(request):
     return render(request, 'club_recommender.html')
 
 
+
+"""View that handles transfering ownership of a club."""
 @login_required
 @owner
 def transfer(request, user_id, club_id):
