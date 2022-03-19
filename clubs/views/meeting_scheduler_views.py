@@ -298,11 +298,13 @@ class EditEventLinkView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
 
         meeting_link = form.cleaned_data.get('meeting_link')
 
-        meeting_link_object = MeetingLink.objects.get(event=event)
-
-        meeting_link_object.meeting_link = meeting_link
-
-        meeting_link_object.save()
+        meeting_link_object_exists = MeetingLink.objects.filter(event=event).exists()
+        if meeting_link_object_exists:
+            meeting_link_object = MeetingLink.objects.get(event=event)
+            meeting_link_object.meeting_link = meeting_link
+            meeting_link_object.save()
+        else:
+            meeting_link_object = MeetingLink.objects.create(event=event, meeting_link=meeting_link)
         return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
 
     def get_success_url(self):
@@ -343,11 +345,13 @@ class EditEventAddressView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateVie
 
         address = form.cleaned_data.get('address')
 
-        meeting_address_object = MeetingAddress.objects.get(event=event)
-
-        meeting_address_object.address = address
-
-        meeting_address_object.save()
+        meeting_address_object_exists = MeetingAddress.objects.filter(event=event).exists()
+        if meeting_address_object_exists:
+            meeting_address_object = MeetingAddress.objects.get(event=event)
+            meeting_address_object.address = address
+            meeting_address_object.save()
+        else:
+            meeting_address_object = MeetingAddress.objects.create(event=event, address=address)
         return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
 
     def get_success_url(self):
@@ -385,14 +389,21 @@ class DeleteEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, DeleteView):
         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
         return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
 
+    def get_cancel_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        event = Event.objects.get(id=self.kwargs['event_id'])
         context['calendar'] = calendar
         context['calendar_id'] = calendar.id
         context['calendar_slug'] = calendar.slug
         context['calendar_name'] = calendar.name
         context['user'] = self.request.user
+        context['event_title'] = event.title
 
         return context
 

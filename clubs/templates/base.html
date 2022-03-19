@@ -1,11 +1,13 @@
 {% load static tailwind_tags %}
 <!DOCTYPE html>
-<html class="h-full" lang="en">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Team Sick Legends Book Club</title>
+    <link rel='stylesheet' type='text/css' href="{% static 'custom.css' %}" />
+
     <link rel='stylesheet' type='text/css' href="{% static 'schedule.css' %}" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type='text/javascript' src="{% static 'jquery-ui/jquery-ui.js' %}"></script>
@@ -20,7 +22,7 @@
 
   </head>
 
-  <body class="bg-gray-50 dark:bg-slate-800 leading-normal tracking-normal h-full">
+  <body class="bg-gray-50 dark:bg-slate-800 leading-normal tracking-normal">
     {% if user.is_authenticated %}
       {% include 'partials/navbar.html' %}
     {% else %}

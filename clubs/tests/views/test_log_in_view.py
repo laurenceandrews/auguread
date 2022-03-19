@@ -141,3 +141,11 @@ class LogInViewTestCase(TestCase, LogInTester):
         response = self.client.post(self.url, form_input)
         next = response.context['next']
         self.assertEqual(next, redirect_url)
+
+    def test_home_return_rec_when_logged_in(self):
+        self.client.login(email=self.user.email, password="Password123")
+        response = self.client.get(reverse('home'), follow=True)
+        redirect_url = reverse('rec')
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'rec_page.html')

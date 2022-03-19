@@ -44,7 +44,6 @@ class MemberListViewTestCase(TestCase):
         self.client.login(email=self.applicant.email, password="Password123")
         response = self.client.get(self.url)
         redirect_url = reverse('club_list')
-        self.assertTemplateUsed(response, 'club_list.html')
         self.assertRedirects(response, redirect_url,
                              status_code=302, target_status_code=200)
 
