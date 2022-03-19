@@ -285,6 +285,15 @@ class CreateEventForm(forms.ModelForm):
 class CalendarPickerForm(forms.Form):
     calendar = forms.ModelChoiceField(queryset=Calendar.objects.all().order_by('name'))
 
+    def __init__(self, *args, **kwargs):
+        """Give user option of all calendars used for clubs they are a member or user of."""
+        user_id = kwargs.pop('user_id', [])
+        super(CalendarPickerForm, self).__init__(*args, **kwargs)
+        user = User.objects.get(id=user_id)
+        users_clubs = user.clubs_attended()
+        users_calendars = Calendar.objects.filter(club__in=users_clubs)
+        self.fields['calendar'].queryset = users_calendars.order_by('name')
+
 
 class ClubBookForm(forms.ModelForm):
     class Meta:

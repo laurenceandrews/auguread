@@ -76,7 +76,7 @@ urlpatterns = [
 
     # Meeting scheduler urls
     re_path(r"^schedule/api/occurrences", api_occurrences, name="api_occurrences"),
-    path('calendar_picker/', views.calendar_picker, name='calendar_picker'),
+    path('calendar_picker/', views.CalendarPickerView.as_view(), name='calendar_picker'),
     url(r"^fullcalendar/(?P<calendar_slug>[-\w]+)/$",
         views.full_calendar,
         name='full_calendar'),

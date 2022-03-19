@@ -7,13 +7,28 @@ from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.edit import (CreateView, DeleteView, FormView,
+                                       UpdateView)
 from schedule.models import Calendar, Event, Rule
 
 from .helpers import login_prohibited
 from .mixins import (ApplicantProhibitedMixin, ClubOwnerRequiredMixin,
                      ClubUserRequiredMixin, LoginProhibitedMixin,
                      MemberProhibitedMixin)
+
+
+class CalendarPickerView(FormView):
+    template_name = 'calendar_picker.html'
+    form_class = CalendarPickerForm
+
+    def form_valid(self, form):
+        calendar = form.cleaned_data.get('calendar')
+        return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+
+    def get_form_kwargs(self):
+        kwargs = super(CalendarPickerView, self).get_form_kwargs()
+        kwargs['user_id'] = self.request.user.id
+        return kwargs
 
 
 @login_required
