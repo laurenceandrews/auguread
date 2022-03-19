@@ -1,4 +1,5 @@
 """Views related to the recommender."""
+from clubs.book_to_user_recommender.book_to_user import BookToUserRecommender
 from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
                          ClubBookForm, CreateEventForm, LogInForm,
                          MeetingAddressForm, MeetingLinkForm, NewClubForm,
@@ -99,6 +100,7 @@ class RecommendationsView(LoginRequiredMixin, View):
 
     def get(self, request):
         """Display template."""
+        self.user_rec_books = BookToUserRecommender.get_recommended_books(self.request.user)
 
         club_favourites = Club_Books.objects.all()
         if club_favourites.count() == 0:
