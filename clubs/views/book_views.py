@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
@@ -31,6 +31,8 @@ class BookDetailView(DetailView):
         context['rating_exists'] = rating_exists
         if rating_exists:
             context['book_rating'] = Book_Rating.objects.get(user=self.request.user, book=book).rating
+
+        context['book_rating_form'] = BookRatingForm()
         return context
 
     def get(self, request, *args, **kwargs):
@@ -95,7 +97,7 @@ def rate_book(request, book_id):
             rating=rating
         )
 
-    return redirect('book_preferences')
+    return redirect('rec')
 
 
 class CreateBookRatingView(CreateView):
@@ -120,16 +122,16 @@ class CreateBookRatingView(CreateView):
             )
             book_rating.rating = rating
             book_rating.save()
+            messages.add_message(self.request, messages.SUCCESS, "Book rating updated!")
         else:
             book_rating = Book_Rating.objects.create(
                 user=current_user,
                 book=book,
                 rating=rating
             )
+            messages.add_message(self.request, messages.SUCCESS, "Book rating created!")
 
-        messages.add_message(self.request, messages.SUCCESS, "Rating created")
-
-        return redirect('book_preferences')
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""

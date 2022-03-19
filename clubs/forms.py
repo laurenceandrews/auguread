@@ -315,16 +315,6 @@ class ClubBookForm(forms.ModelForm):
         self.fields['book'].queryset = books
 
 
-class BookRatingForm(forms.Form):
-    # user = forms.ForeignKey(User, on_delete=forms.CASCADE)
-    rating = forms.ChoiceField(
-        required=False,
-        label='Rate book',
-        error_messages={},
-        choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
-    )
-
-
 class ClubRecommenderForm(forms.ModelForm):
     class Meta:
         model = Club
