@@ -1,6 +1,7 @@
 from clubs.forms import (AddressForm, CalendarPickerForm, CreateEventForm,
                          MeetingAddressForm, MeetingLinkForm)
-from clubs.models import Address, Club, Club_Books, MeetingAddress, MeetingLink
+from clubs.models import (Address, Club, Club_Book_History, MeetingAddress,
+                          MeetingLink)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
@@ -29,20 +30,6 @@ class CalendarPickerView(FormView):
         kwargs = super(CalendarPickerView, self).get_form_kwargs()
         kwargs['user_id'] = self.request.user.id
         return kwargs
-
-
-@login_required
-def calendar_picker(request):
-    """ View to select a calendar to display its full calendar. """
-
-    if request.method == 'POST':
-        form = CalendarPickerForm(request.POST)
-        if form.is_valid():
-            calendar = form.cleaned_data.get('calendar')
-            return render(request, 'fullcalendar.html', {'calendar': calendar})
-    else:
-        form = CalendarPickerForm()
-    return render(request, 'calendar_picker.html', {'form': form})
 
 
 @login_required
@@ -83,10 +70,10 @@ class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
         end_recurring_period = form.cleaned_data.get('end_recurring_period')
         rule = form.cleaned_data.get('rule')
 
-        club_book_exists = Club_Books.objects.filter(club=club).exists()
-        if club_book_exists:
-            club_book_latest = Club_Books.objects.filter(club=club).last()
-            description_text = 'This club is currently reading ' + club_book_latest.book.title + '.'
+        club_book_history_exists = Club_Book_History.objects.filter(club=club).exists()
+        if club_book_history_exists:
+            club_book_history_latest = Club_Book_History.objects.filter(club=club).last()
+            description_text = 'This club is currently reading ' + club_book_history_latest.book.title + '.'
         else:
             description_text = 'This club has no books. When a book is selected, it will show here.'
 

@@ -15,8 +15,9 @@ from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
 
-from .models import (Address, Book, Book_Rating, Club, Club_Books,
-                     MeetingAddress, MeetingLink, Post, User)
+from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
+                     Club_Books, MeetingAddress, MeetingLink, Post, User,
+                     User_Books)
 
 
 class LogInForm(forms.Form):
@@ -338,3 +339,15 @@ class BookRatingForm(forms.ModelForm):
     class Meta:
         model = Book_Rating
         fields = ['rating']
+
+
+class ClubBookHistoryForm(forms.ModelForm):
+    class Meta:
+        model = Club_Book_History
+        fields = []
+
+
+class UserBooksForm(forms.ModelForm):
+    class Meta:
+        model = User_Books
+        fields = []
