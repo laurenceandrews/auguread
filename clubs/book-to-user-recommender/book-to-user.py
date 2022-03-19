@@ -1,17 +1,22 @@
 
 import numpy as np
 import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity 
+from surprise import Reader, Dataset, SVD
+from surprise.model_selection import train_test_split, cross_validate  
 from clubs.models import Book, Book_Rating, Club_Users
 
 
 class BookToUserRecommender:
-    def __init__(self):
+    def __init__(self, user):
       
         # load dataset
 
         self.df_books = pd.DataFrame(list(Book.objects.all().values()))
         self.df_users = pd.DataFrame(list(Club_Users.objects.all().values()))
         self.df_ratings = pd.DataFrame(list(Book_Rating.objects.all().values()))
+
+        self.user_index = user
 
         # removing 0-rating from dataframe
         self.df_ratings.drop(self.df_ratings[self.df_ratings['rating'] == 0].index, inplace=True) 
@@ -95,12 +100,141 @@ class BookToUserRecommender:
 
         return highest_rated_author.iloc[:20]
 
+    
+    def get_collaborative_filtering(self):
+        # merge ratings and books to get book titles and drop rows for which title is not available
+        df_books_ratings = pd.merge(self.df_ratings, self.df_books_cleaned, on='ISBN')
+
+        # get total counts of no. of occurrence of book
+        df_books_ratings['count'] = df_books_ratings.groupby('ISBN').transform('count')['User-ID']
+
+        # fetch top 100 books based on count
+        isbn = df_books_ratings.drop_duplicates('ISBN').sort_values('count', ascending=False).iloc[:100]['ISBN']
+
+        # filter out data as per the ISBN
+        df_books_ratings = df_books_ratings[df_books_ratings['ISBN'].isin(isbn)].reset_index(drop=True)
+        return df_books_ratings
+
+
+    def get_user_book_matrix(self):
+        #creating a book-user matrix
+        df_books_ratings  = self.get_collaborative_filtering()
+        matrix = df_books_ratings.pivot(index='User-ID', columns='ISBN', values='Book-Rating')
+        return matrix
+
+
+    def get_train_test(self):
+        # create train and test set
+        df_books_ratings  = self.get_collaborative_filtering()
+        reader = Reader(rating_scale=(0, 10))
+        surprise_data = Dataset.load_from_df(df_books_ratings[['User-ID', 'ISBN', 'Book-Rating']], reader)
+        trainset, testset = train_test_split(surprise_data, test_size=0.25) 
+        return trainset, testset
+
+
+    def get_cross_validation(self):
+        benchmark = []
+        # iterate over all algorithms
+        for algorithm in [SVD()]:
+        # Perform cross validation
+            results = cross_validate(algorithm, surprise_data, measures=['RMSE'], cv=3, verbose=False)
+    
+        # Get results & append algorithm name
+        tmp = pd.DataFrame.from_dict(results).mean(axis=0)
+        tmp = tmp.append(pd.Series([str(algorithm).split(' ')[0].split('.')[-1]], index=['Algorithm']))
+        benchmark.append(tmp)
+    
+        return pd.DataFrame(benchmark).set_index('Algorithm').sort_values('test_rmse')
+    
+    def get_svd_algorithm(self):
+        trainset = self.get_train_test()[0]
+        svd = SVD() 
+        svd.fit(trainset)
+        return svd 
 
     def get_user_prediction(self):
         # get the prediction of book to recommend
-        pass   
+        matrix = self.get_user_book_matrix()
+        df_books_ratings  = self.get_collaborative_filtering()
+        index_val = 111
+        # get user id
+
+        userId = matrix.index[index_val]
+        books = []
+        ratings = [] 
+        titles = []
+
+        for isbn in matrix.iloc[index_val][matrix.iloc[index_val].isna()].index:
+            books.append(isbn)
+            title = df_books_ratings[df_books_ratings['ISBN']==isbn]['title'].values[0]
+            titles.append(title)
+            ratings.append(svd.predict(userId, isbn).est)
+
+        prediction = pd.DataFrame({'ISBN':books, 'title':titles, 'rating':ratings, 'userId':userId})  
+        prediction = prediction.sort_values('rating', ascending=False).iloc[:10].reset_index(drop=True)
+
+        # get other highly rated books by user
+        temp = df_books_ratings[df_books_ratings['User-ID']==matrix.index[index_val]].sort_values(
+            'Book-Rating', ascending=False)[['Book-Rating', 'title', 'User-ID']].iloc[:10].reset_index(drop=True)
+        prediction['Book Read'] = temp['title']
+        prediction['Rated']= temp['Book-Rating']
+        return prediction 
 
 
-    def get_recommended_books(self):
+    def get_similarity_matrix(self):
+        matrix = self.get_user_book_matrix()
+        # replace NaN with user based average rating in pivot (matrix) dataframe
+        matrix_imputed = matrix.fillna(matrix.mean(axis=0))
+
+        # get similarity between all users
+        similarity_matrix = cosine_similarity(matrix_imputed.values)
+        return similarity_matrix
+
+    def get_recommendation(self, user_index):
+        matrix = self.get_user_book_matrix() 
+        similarity_matrix = self.get_similarity_matrix()
+        df_books_ratings  = self.get_collaborative_filtering()
+
         # get the top 10 most popular authors
-        pass
+        idx = user_index
+        sim_scores = list(enumerate(similarity_matrix[idx]))
+
+        # get books that are unrated by the given user
+        unrated_books = matrix.iloc[idx][matrix.iloc[idx].isna()].index
+
+        # get weighted ratings of unrated books by all other users
+        book_ratings = (matrix[unrated_books].T * similarity_matrix[idx]).T
+
+        # get top 100 similar users by skipping the current user
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:101]
+
+        # get mean of book ratings by top 100 most similar users for the unrated books
+        book_ratings = book_ratings.iloc[[x[0] for x in sim_scores]].mean()
+    
+        # get rid of null values and sort it based on ratings
+        book_ratings = book_ratings.reset_index().dropna().sort_values(0, ascending=False).iloc[:10]
+    
+        # get recommended book titles in sorted order
+        recommended_books = df_books_ratings[df_books_ratings['ISBN'].isin(book_ratings['ISBN'])][['ISBN', 'title']]
+        recommended_books = recommended_books.drop_duplicates('ISBN').reset_index(drop=True)
+        assumed_ratings = book_ratings[0].reset_index(drop=True)
+
+        return pd.DataFrame({'ISBN':recommended_books['ISBN'], 
+                         'Recommended Book':recommended_books['title'], 
+                         'Assumed Rating':assumed_ratings})
+
+
+    def get_recommended_books(self, user_index):
+        matrix = self.get_user_book_matrix()  
+        df_books_ratings  = self.get_collaborative_filtering()
+        recommended_books = self.get_recommendation(user_index)
+
+        user_index = 211
+
+        # get other highly rated books by user
+        temp = df_books_ratings[df_books_ratings['User-ID']==matrix.index[user_index]].sort_values(
+            'Book-Rating', ascending=False)[['Book-Rating', 'title', 'User-ID']].iloc[:10].reset_index(drop=True)
+        recommended_books['userId'] = temp['User-ID']
+        recommended_books['Book Read'] = temp['title']
+        recommended_books['Rated']= temp['Book-Rating']
+        return recommended_books
