@@ -1,25 +1,28 @@
 
 import numpy as np
 import pandas as pd
-from clubs.models import Book, Book_Rating, Club_Users
+from clubs.models import Book, Book_Rating, User
 from sklearn.metrics.pairwise import cosine_similarity
 from surprise import SVD, Dataset, Reader
 from surprise.model_selection import cross_validate, train_test_split
 
 
 class BookToUserRecommender:
-    def __init__(self, user):
+    def __init__(self, user_id):
 
         # load dataset
 
         self.df_books = pd.DataFrame(list(Book.objects.all().values()))
-        self.df_users = pd.DataFrame(list(Club_Users.objects.all().values()))
+        self.df_users = pd.DataFrame(list(User.objects.all().values()))
         self.df_ratings = pd.DataFrame(list(Book_Rating.objects.all().values()))
 
-        self.user_index = user
+        self.user_index = user_id
 
         # removing 0-rating from dataframe
         self.df_ratings.drop(self.df_ratings[self.df_ratings['rating'] == 0].index, inplace=True)
+
+        self.set_age_constraint()
+        self.set_columns_to_keep()
 
         # columns to keep
         # self.df_books_cleaned = pd.DataFrame(self.df_books[['ISBN','title', 'author','publication_year','publisher']])
@@ -180,13 +183,13 @@ class BookToUserRecommender:
         similarity_matrix = cosine_similarity(matrix_imputed.values)
         return similarity_matrix
 
-    def get_recommendation(self, user_index):
+    def get_recommendation(self):
         matrix = self.get_user_book_matrix()
         similarity_matrix = self.get_similarity_matrix()
         df_books_ratings = self.get_collaborative_filtering()
 
         # get the top 10 most popular authors
-        idx = user_index
+        idx = self.user_index
         sim_scores = list(enumerate(similarity_matrix[idx]))
 
         # get books that are unrated by the given user
@@ -213,7 +216,7 @@ class BookToUserRecommender:
                              'Recommended Book': recommended_books['title'],
                              'Assumed Rating': assumed_ratings})
 
-    def get_recommended_books(self, user_index):
+    def get_recommended_books(self):
         matrix = self.get_user_book_matrix()
         df_books_ratings = self.get_collaborative_filtering()
         recommended_books = self.get_recommendation(user_index)

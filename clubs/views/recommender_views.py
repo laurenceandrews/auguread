@@ -100,7 +100,7 @@ class RecommendationsView(LoginRequiredMixin, View):
 
     def get(self, request):
         """Display template."""
-        self.user_rec_books = BookToUserRecommender.get_recommended_books(self.request.user)
+        self.user_rec_books = BookToUserRecommender(self.request.user.id).get_recommended_books()
 
         club_favourites = Club_Books.objects.all()
         if club_favourites.count() == 0:
