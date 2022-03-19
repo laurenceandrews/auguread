@@ -100,10 +100,13 @@ class BookToUserRecommender:
 
     def get_collaborative_filtering(self):
         # merge ratings and books to get book titles and drop rows for which title is not available
-        df_books_ratings = pd.merge(self.df_ratings, self.df_books_cleaned, on='ISBN')
+
+        self.df_books_cleaned.reset_index(level=0, inplace=True)
+        self.df_books_cleaned = self.df_books_cleaned.reset_index().rename(columns={'index': 'id'})
+        df_books_ratings = pd.merge(self.df_ratings, self.df_books_cleaned, left_on='book_id', right_on='id')
 
         # get total counts of no. of occurrence of book
-        df_books_ratings['count'] = df_books_ratings.groupby('ISBN').transform('count')['User-ID']
+        df_books_ratings['count'] = df_books_ratings.groupby('ISBN').transform('count')['user_id']
 
         # fetch top 100 books based on count
         isbn = df_books_ratings.drop_duplicates('ISBN').sort_values('count', ascending=False).iloc[:100]['ISBN']
