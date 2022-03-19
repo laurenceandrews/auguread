@@ -4,7 +4,7 @@ from clubs.models import User, Club
 from clubs.tests.helpers import reverse_with_next
 
 # class FollowToggleTest(TestCase):
-# 
+#
 #     fixtures = [
 #         'clubs/tests/fixtures/default_user.json',
 #         'clubs/tests/fixtures/other_users.json',
