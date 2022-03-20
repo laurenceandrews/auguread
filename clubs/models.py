@@ -440,6 +440,7 @@ class Club_Users(models.Model):
         default=0
     )
 
+    
     role_num = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(4)],
         blank=False,
@@ -482,6 +483,12 @@ class Club_Book_History(models.Model):
         on_delete=models.CASCADE,
         blank=False,
         default=0
+    )
+
+    average_rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        blank=False,
+        default=None
     )
 
     class Meta:
