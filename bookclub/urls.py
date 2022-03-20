@@ -70,13 +70,17 @@ urlpatterns = [
 
     path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
     path('book/rating/<int:book_id>/', views.CreateBookRatingView.as_view(), name='rate_book'),
+    path('club/<int:club_id>/book/<int:book_id>/history/', views.CreateClubBookHistoryView.as_view(), name='create_club_book_history'),
+    path('user/<int:user_id>/book/<int:book_id>/history/', views.CreateUserBooksView.as_view(), name='create_user_books'),
+
+
 
     # sample scheduler
     # url(r'^fullcalendar', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),
 
     # Meeting scheduler urls
     re_path(r"^schedule/api/occurrences", api_occurrences, name="api_occurrences"),
-    path('calendar_picker/', views.calendar_picker, name='calendar_picker'),
+    path('calendar_picker/', views.CalendarPickerView.as_view(), name='calendar_picker'),
     url(r"^fullcalendar/(?P<calendar_slug>[-\w]+)/$",
         views.full_calendar,
         name='full_calendar'),
