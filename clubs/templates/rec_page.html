@@ -1,12 +1,58 @@
 {% extends 'base_content.html' %}
 {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col-12">
-      <h1>Book Recommendations</h1>
-      <p> This is the page after log in where the book recommendations will appear. </p>
-      <p> STILL IN PROGRESS... </p>
+<div class="py-12 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="lg:text-center">
+      <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Our system will recommend only the best books for you.</h2>
+      <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">Your Book Recommendations</p>
+      <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">Scroll through the categories and click on a book for more details.</p>
     </div>
+
+    <!-- Buttons -->
+    <div class="flex flex-row-reverse items-end gap-5">
+
+      <div class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" style="cursor: pointer;">
+          <a href="#other_clubs_favourites">Other clubs' favourites...</a>
+      </div>
+
+      <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
+          <a href="#we_think_youll_like">We think you'll like...</a>
+      </div>
+    </div>
+
+
+    <div class="bg-white">
+      <div class="max-w-2xl mx-auto py-4 px-4 sm:py-6 sm:px-6 lg:max-w-7xl lg:px-8">
+
+         <h2 class="text-2xl font-extrabold tracking-tight text-gray-900">
+           <a id="we_think_youll_like">We think you'll like...</a>
+         </h2>
+
+        <p>This page is still in progress. Check back soon!</p>
+        <!--  <div class="max-h-[24rem] overflow-scroll mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+            {% include 'partials/books_as_list.html' with books=books %}
+        </div>  -->
+      </div>
+
+      <div class="max-w-2xl mx-auto py-4 px-4 sm:py-6 sm:px-6 lg:max-w-7xl lg:px-8">
+        <h2 class="text-2xl font-extrabold tracking-tight text-gray-900">
+          <a id="other_clubs_favourites">Other clubs' favourites...</a>
+        </h2>
+        {% if club_favourites_exist is True %}
+        <div class="max-h-[24rem] overflow-scroll mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+            {% include 'partials/books_as_list.html' with books=club_favourites %}
+        </div>
+        {% else %}
+          <div class="max-h-[24rem] overflow-scroll mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+            <p>There are currently no clubs with favourites. Check back later.</p>
+          </div>
+        {% endif %}
+      </div>
+
+
+    </div>
+
   </div>
 </div>
+
 {% endblock %}

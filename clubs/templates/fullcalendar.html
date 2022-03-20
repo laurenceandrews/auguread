@@ -1,18 +1,24 @@
 {% extends "base_content.html" %}
-
 {% load i18n static %}
-{% block rtab_id %}id="schedule_tab"{% endblock %}
-{% block tab_id %}id="home_tab"{% endblock %}
 {% block extra_head %}
-<link rel='stylesheet' type='text/css' href="{% static 'fullcalendar/dist/fullcalendar.css' %}" />
-<script type='text/javascript' src="{% static 'moment/moment.js' %}"></script>
-<script type='text/javascript' src="{% static 'fullcalendar/dist/fullcalendar.js' %}"></script>
+<link rel='stylesheet' type='text/css' href="{% static 'schedule.css' %}" />
+<link rel='stylesheet' type='text/css' href="{% static 'css/fullcalendar.css' %}" />
+<script type='text/javascript' src="{% static 'schedule.js' %}"></script>
+<script type='text/javascript' src="{% static 'js/moment.js' %}"></script>
+<script type='text/javascript' src="{% static 'js/fullcalendar.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 {% include 'partials/fullcalendar_menu.html' with calendar=calendar%}
 
-<div id="calendar"></div>
+<div class="flex items-center justify-center">
+
+  <card id="calendar" class="flex flex-col rounded-lg w-3/4 p-10 ">
+
+
+  </card>
+
+</div>
 <script type='text/javascript'>
 $(document).ready(function() {
 

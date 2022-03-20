@@ -310,10 +310,12 @@ def get_best_clubs_df():
 # TO DO: Find a way to convert location to distance
 def get_best_clubs_in_person():
     best_clubs_df = get_best_clubs_df().sort_values(["location_fuzzy_score", "book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, False, True, False])
-    return best_clubs_df
-    # print(best_clubs_df)
+    #return best_clubs_df
+    print(best_clubs_df)
 
 # Order if online only
 def get_best_clubs_online():
     best_clubs_df = get_best_clubs_df().sort_values(["book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, True, False])
     return best_clubs_df
+
+get_best_clubs_in_person()

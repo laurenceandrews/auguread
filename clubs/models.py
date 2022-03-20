@@ -3,6 +3,7 @@
 import uuid
 from pickle import FALSE
 
+from django import forms
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     RegexValidator)
@@ -88,6 +89,10 @@ class User(AbstractUser):
         blank_label='(select country)'
     )
 
+    followers = models.ManyToManyField(
+        'self', symmetrical=False, related_name='followees'
+    )
+
     class Meta:
         """Model options"""
         ordering = ['first_name', 'last_name']
@@ -119,7 +124,7 @@ class User(AbstractUser):
 
     def membership_type(self, club):
         """Type of membership the user has"""
-        if self == club.owners.all():
+        if self == club.owner:
             return 'Owner'
         elif self in club.members.all():
             return 'Member'
@@ -130,6 +135,37 @@ class User(AbstractUser):
 
     def clubs_attended(self):
         return list(self.member.all()) + list(self.owner.all()) + list(Club.objects.filter(owner=self))
+
+    def toggle_follow(self, followee):
+        """Toggles whether self follows the given followee."""
+
+        if followee == self:
+            return
+        if self.is_following(followee):
+            self._unfollow(followee)
+        else:
+            self._follow(followee)
+
+    def _follow(self, user):
+        user.followers.add(self)
+
+    def _unfollow(self, user):
+        user.followers.remove(self)
+
+    def is_following(self, user):
+        """Returns whether self follows the given user."""
+
+        return user in self.followees.all()
+
+    def follower_count(self):
+        """Returns the number of followers of self."""
+
+        return self.followers.count()
+
+    def followee_count(self):
+        """Returns the number of followees of self."""
+
+        return self.followees.count()
 
 
 class Book(models.Model):
@@ -157,9 +193,23 @@ class Book(models.Model):
         blank=False
     )
 
-    thumbnail = models.ImageField(
-        blank=False
+    image_small = models.ImageField(
+        blank=False,
+        default='/static/default_book.png/'
     )
+
+    image_medium = models.ImageField(
+        blank=False,
+        default='/static/default_book.png/'
+    )
+
+    image_large = models.ImageField(
+        blank=False,
+        default='/static/default_book.png/'
+    )
+
+    def __str__(self):
+        return self.title
 
 
 class Post(models.Model):
@@ -193,12 +243,7 @@ class MeetingLink(models.Model):
     )
 
 
-class MeetingAddress(models.Model):
-    event = models.OneToOneField(
-        Event,
-        on_delete=models.CASCADE
-    )
-
+class Address(models.Model):
     name = models.CharField(
         "Full name",
         max_length=1024,
@@ -230,15 +275,32 @@ class MeetingAddress(models.Model):
         blank_label='(select country)'
     )
 
-    class Meta:
-        verbose_name = "Meeting Address"
-        # verbose_name_plural = "Meeting Addresses"
+    def __str__(self):
+        return self.name
 
     def full_address(self):
         return f'{self.name}. {self.zip_code}, {self.address1}, {self.address2}. {self.city}, {self.country}.'
 
 
+class MeetingAddress(models.Model):
+    event = models.OneToOneField(
+        Event,
+        on_delete=models.CASCADE
+    )
+
+    address = models.ForeignKey(
+        Address,
+        on_delete=models.CASCADE,
+        blank=FALSE
+    )
+
+    class Meta:
+        verbose_name = "Meeting Address"
+        # verbose_name_plural = "Meeting Addresses"
+
+
 class Club(models.Model):
+    """Club model used for all the functions of a club."""
     name = models.CharField(
         max_length=50,
         blank=False,
@@ -282,7 +344,6 @@ class Club(models.Model):
 
     applicants = models.ManyToManyField(
         User, through='ApplicantMembership', related_name='applicant', blank=True)
-
     members = models.ManyToManyField(
         User, through='MemberMembership', related_name='member', blank=True)
     owners = models.ManyToManyField(
@@ -341,6 +402,14 @@ class Club(models.Model):
         else:
             return False
 
+    def transfer(self, user):
+        owner = self.owner
+        if user in self.owners.all():
+            self.owners.add(owner)
+            self.owner = user
+            self.owners.remove(user)
+            self.save()
+
 
 class ApplicantMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -350,6 +419,10 @@ class ApplicantMembership(models.Model):
 class OwnerMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
+
+# class MemberMembership(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     club = models.ForeignKey(Club, on_delete=models.CASCADE)
 
 
 class Club_Users(models.Model):
@@ -367,11 +440,15 @@ class Club_Users(models.Model):
         default=0
     )
 
+    
     role_num = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(4)],
         blank=False,
         default=1
     )
+
+    class Meta:
+        verbose_name = "Club User"
 
 
 class Club_Books(models.Model):
@@ -388,6 +465,34 @@ class Club_Books(models.Model):
         blank=False,
         default=0
     )
+
+    class Meta:
+        verbose_name = "Club Book"
+
+
+class Club_Book_History(models.Model):
+    club = models.ForeignKey(
+        Club,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    average_rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        blank=False,
+        default=None
+    )
+
+    class Meta:
+        verbose_name = "Club Book History"
 
 
 class User_Books(models.Model):
@@ -411,4 +516,59 @@ class MyUUIDModel(models.Model):
         primary_key=True,
         default=uuid.uuid4,
         editable=False
+    )
+
+
+class Book_Rating(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        blank=False,
+        default=1
+    )
+    # BOOK_RATING_CHOICES = [
+    #     ('1', 'One'),
+    #     ('2', 'Two'),
+    #     ('3', 'Three'),
+    #     ('4', 'Four'),
+    #     ('5', 'Five'),
+    #     ('6', 'Six'),
+    #     ('7', 'Seven'),
+    #     ('8', 'Eight'),
+    #     ('9', 'Nine'),
+    #     ('10', 'Ten')
+    # ]
+
+    BOOK_RATING_CHOICES = [
+        ("Rate book", "Rate book"),
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
+        ('4', '4'),
+        ('5', '5'),
+        ('6', '6'),
+        ('7', '7'),
+        ('8', '8'),
+        ('9', '9'),
+        ('10', '10'),
+    ]
+
+    rating = models.CharField(
+        max_length=9,
+        choices=BOOK_RATING_CHOICES,
+        default="Rate book",
+        blank=False
     )
