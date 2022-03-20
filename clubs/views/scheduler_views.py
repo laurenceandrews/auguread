@@ -18,7 +18,7 @@ from .mixins import (ApplicantProhibitedMixin, ClubOwnerRequiredMixin,
                      MemberProhibitedMixin)
 
 
-class CalendarPickerView(FormView):
+class CalendarPickerView(LoginRequiredMixin, FormView):
     template_name = 'calendar_picker.html'
     form_class = CalendarPickerForm
 
