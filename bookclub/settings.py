@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'django_browser_reload',
     'widget_tweaks',
     'schedule',
-    'djangobower',
 ]
 
 MIDDLEWARE = [
