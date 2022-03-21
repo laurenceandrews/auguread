@@ -435,12 +435,13 @@ class Club_Users(models.Model):
     )
 
     ROLE_NUM_CHOICES = [
-        ('1', 'Applicant'),
-        ('2', 'Member'),
-        ('3', 'Officer'),
-        ('4', 'Owner')
+        ('1', '1'),  # Applicant
+        ('2', '2'),  # Member
+        ('3', '3'),  # Officer
+        ('4', '4')  # Owner
     ]
-    role_num = models.IntegerField(
+    role_num = models.CharField(
+        max_length=1,
         choices=ROLE_NUM_CHOICES,
         default=1,
         blank=False
