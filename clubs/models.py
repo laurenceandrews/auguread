@@ -344,13 +344,6 @@ class Club(models.Model):
         blank=FALSE
     )
 
-    books = models.ManyToManyField(
-        Book,
-        through='club_books',
-        related_name='book',
-        blank=True
-    )
-
     # measured in words per minute (average for all club members)
     avg_reading_speed = models.IntegerField(
         validators=[
@@ -413,11 +406,10 @@ class Club(models.Model):
             self.owner = new_owner_club_user.user
             self.save()
 
-    def promote(self, user):
-        """Make this user an officer."""
-        club_user = Club_Users.objects.get(club=Club.objects.get(id=self.id), user=user)
-        club_user.role_num = 3
-        club_user.save()
+    def favourite_books(self):
+        """Return all favourite books of this club."""
+        club_books_ids = Club_Books.objects.filter(club=Club.objects.get(id=self.id)).values_list('user', flat=True)
+        return Book.objects.filter(id__in=club_books_ids)
 
 
 class Club_Users(models.Model):
