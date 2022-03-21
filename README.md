@@ -35,11 +35,6 @@ Install all required packages:
 ```
 $ pip3 install -r requirements.txt
 ```
-Install bower components:
-
-```
-$ python manage.py bower install
-```
 
 Migrate the database:
 
@@ -68,4 +63,4 @@ $ python3 manage.py test
 ## Sources
 The packages used by this application are specified in `requirements.txt`
 
-- [django-scheduler](https://django-scheduler.readthedocs.io/en/latest/), specifically the Calendar, Event and Rule models 
+- [django-scheduler](https://django-scheduler.readthedocs.io/en/latest/), specifically the Calendar, Event and Rule models

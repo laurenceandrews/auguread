@@ -1,5 +1,6 @@
-from clubs.forms import BookRatingForm
-from clubs.models import Book, Book_Rating, Club, Club_Books
+from clubs.forms import BookRatingForm, ClubBookHistoryForm, UserBooksForm
+from clubs.models import (Book, Book_Rating, Club, Club_Book_History, User,
+                          User_Books)
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -26,11 +27,9 @@ class BookDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['user'] = user
         book = Book.objects.get(id=self.kwargs['book_id'])
-
-        # update to get this from BookHistory model
-        book_history_exists = False
-        context['book_history_exists'] = book_history_exists
 
         rating_exists = Book_Rating.objects.filter(user=self.request.user, book=book).exists()
         context['rating_exists'] = rating_exists
@@ -38,6 +37,11 @@ class BookDetailView(DetailView):
             context['book_rating'] = Book_Rating.objects.get(user=self.request.user, book=book).rating
 
         context['book_rating_form'] = BookRatingForm()
+
+        user_books_exists = User_Books.objects.filter(user=user, book=book).exists()
+        context['user_books_exists'] = user_books_exists
+        context['user_book_form'] = UserBooksForm()
+
         return context
 
     def get(self, request, *args, **kwargs):
@@ -90,8 +94,6 @@ class CreateBookRatingView(CreateView):
         book = Book.objects.get(id=self.kwargs['book_id'])
         rating = self.request.POST.get('rating')
 
-        print(book.title)
-
         book_rating_exists = Book_Rating.objects.filter(user=current_user, book=book)
 
         if book_rating_exists.exists():
@@ -101,17 +103,76 @@ class CreateBookRatingView(CreateView):
             )
             book_rating.rating = rating
             book_rating.save()
-            messages.add_message(self.request, messages.SUCCESS, "Rating updated")
+            messages.add_message(self.request, messages.SUCCESS, "Book rating updated!")
         else:
             book_rating = Book_Rating.objects.create(
                 user=current_user,
                 book=book,
                 rating=rating
             )
-            messages.add_message(self.request, messages.SUCCESS, "Rating created")
+            messages.add_message(self.request, messages.SUCCESS, "Book rating created!")
 
-        return redirect('book_preferences')
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
         return reverse('book_preferences')
+
+
+class CreateClubBookHistoryView(CreateView):
+    model = Club_Book_History
+    template_name = 'club_book_history_create.html'
+    form_class = ClubBookHistoryForm
+
+    def form_valid(self, form):
+        """Process a valid form."""
+        current_user = self.request.user
+        club = Club.objects.get(id=self.kwargs['club_id'])
+        book = Book.objects.get(id=self.kwargs['book_id'])
+
+        club_book_history_exists = Club_Book_History.objects.filter(club=club, book=book)
+
+        if club_book_history_exists.exists():
+            club_book_history = Club_Book_History.objects.get(club=club, book=book)
+            club_book_history.delete()
+
+        club_book_history = Club_Book_History.objects.create(
+            club=club,
+            book=book
+        )
+        messages.add_message(self.request, messages.SUCCESS, "Book set as club's currently reading!")
+
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+
+
+class CreateUserBooksView(CreateView):
+    model = User_Books
+    template_name = 'user_books_create.html'
+    form_class = UserBooksForm
+
+    def form_valid(self, form):
+        """Process a valid form."""
+        user = User.objects.get(id=self.kwargs['user_id'])
+        book = Book.objects.get(id=self.kwargs['book_id'])
+
+        user_books_exists = User_Books.objects.filter(user=user, book=book)
+
+        if user_books_exists.exists():
+            user_books_object = User_Books.objects.get(user=user, book=book)
+            user_books_object.delete()
+
+        user_books_object = User_Books.objects.create(
+            user=user,
+            book=book
+        )
+        messages.add_message(self.request, messages.SUCCESS, "Book set as your currently reading!")
+
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))

@@ -14,13 +14,6 @@
       <p>Publisher: {{book.publisher}}</p>
       <p>Publication year: {{book.publication_year}}</p>
       <p>ISBN: {{book.ISBN}}</p>
-
-      {% if book_history_exists == True %}
-        <p>You have read this book already.</p>
-      {% else %}
-        <p>You haven't read this book yet.</p>
-      {% endif %}
-
       {% if rating_exists == True %}
         <p>Rating: {{book_rating}}</p>
       {% else %}
@@ -46,15 +39,24 @@
         </div>
       </form>
       {% endif %}
-
-
     </div>
+
+
 
     <!-- Buttons -->
     <div class="flex flex-row-reverse mt-14 items-end gap-5">
-      <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="location.href='#';" style="cursor: pointer;">
-        <p>Set as currently reading</p>
-      </div>
+
+      <form action="{% url 'create_user_books' user_id=user.id book_id=book.id%}" method="post">
+        {% csrf_token %}
+        <div class = "rating">
+            {{ user_book_form }}
+            {% if user_books_exists == True %}
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Reread book</button>
+            {% else %}
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Read book</button>
+            {% endif %}
+        </div>
+      </form>
 
     </div>
 
