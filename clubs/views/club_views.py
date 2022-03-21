@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import slugify
@@ -148,34 +149,22 @@ class ShowUserView(LoginRequiredMixin, ApplicantProhibitedMixin, DetailView, Mul
             return redirect('user_list', club_id=self.kwargs['club_id'])
 
 
-class ApplicantListView(LoginRequiredMixin, MemberProhibitedMixin, ListView, MultipleObjectMixin):
-    """View that shows a list of all the applicants."""
-
-    model = User
-    template_name = "applicant_list.html"
-    context_object_name = "users"
-    paginate_by = settings.NUMBER_PER_PAGE
-
-    def get_queryset(self):
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.applicants())
-        return users
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['club'] = Club.objects.get(id=self.kwargs['club_id'])
-        context['user'] = self.request.user
-
-        return context
-
-    def post(self, request, **kwargs):
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        emails = request.POST.getlist('check[]')
-        for email in emails:
-            user = User.objects.get(email=email)
-            club.accept(user)
-        users = club.applicants()
-        return redirect('applicant_list', club_id=club.id)
+@login_required
+@owner
+def applicants_list(request, club_id):
+    """ View to display a club's applicants list. """
+    club = Club.objects.get(id=club_id)
+    applicants = club.applicants()
+    paginator = Paginator(applicants, settings.NUMBER_PER_PAGE)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, "applicant_list.html",
+                  {
+                      'club': club,
+                      'user': request.user,
+                      'users': applicants,
+                      'page_obj': page_obj
+                  })
 
 
 class MemberListView(LoginRequiredMixin, ApplicantProhibitedMixin, ListView, MultipleObjectMixin):

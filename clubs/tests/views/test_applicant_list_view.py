@@ -71,7 +71,7 @@ class ApplicantListViewTestCase(TestCase):
     def test_accept_applicant_with_in_applicant_list(self):
         self.client.login(email=self.owner.email, password="Password123")
         post_data = {'check[]': [self.applicant.email]}
-        self.client.post(self.url, post_data)
+        self.client.post(self.approve_url, post_data)
         self.assertTrue(self.applicant in self.club.members())
         self.assertFalse(self.applicant in self.club.applicants())
 

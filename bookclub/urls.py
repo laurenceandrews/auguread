@@ -59,7 +59,7 @@ urlpatterns = [
     path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
 
 
-    path('<int:club_id>/applicants', views.ApplicantListView.as_view(), name='applicant_list'),
+    path('<int:club_id>/applicants', views.applicants_list, name='applicant_list'),
     path('<int:club_id>/members', views.MemberListView.as_view(), name='member_list'),
     path('<int:club_id>/owners', views.OwnerListView.as_view(), name='owner_list'),
 
