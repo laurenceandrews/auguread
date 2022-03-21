@@ -100,10 +100,10 @@ class RecommendationsView(LoginRequiredMixin, View):
 
     def get(self, request):
         """Display template."""
-        # self.user_rec_books = BookToUserRecommender(self.request.user.id).get_recommended_books()
-        self.user_rec_books = BookToUserRecommender().get_top_books()
-        self.user_rec_books = BookToUserRecommender().get_top_authors()
-        self.user_rec_books = BookToUserRecommender().get_collaborative_filtering()
+
+        # returns the collaborative filtering of ratings between users
+        user_rec_book_ids = BookToUserRecommender().get_collaborative_filtering()
+        self.user_rec_books = Book.objects.filter(id__in=user_rec_book_ids)[0:11]
 
         club_favourites = Club_Books.objects.all()
         if club_favourites.count() == 0:
@@ -120,5 +120,9 @@ class RecommendationsView(LoginRequiredMixin, View):
         """Render template."""
 
         return render(self.request, 'rec_page.html',
-                      {'club_favourites_exist': self.club_favourites_exist, 'club_favourites': self.club_favourites}
+                      {
+                          'user_rec_books_exists': self.user_rec_books.exists(),
+                          'user_rec_books': self.user_rec_books,
+                          'club_favourites_exist': self.club_favourites_exist,
+                          'club_favourites': self.club_favourites}
                       )
