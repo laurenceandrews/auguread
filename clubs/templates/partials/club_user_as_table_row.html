@@ -1,0 +1,17 @@
+<div class="w-screen">
+  <div class="bg-slate-100">
+      <div class="px-4 max-w-md mx-auto">
+        <div class="h-auto my-4 bg-gradient-to-r from-fuchsia-700 to-purple-800 flex justify-center items-center p-3 rounded-xl border-2 border-slate-100 shadow-lg transition-all transform-all hover:scale-105 cursor-pointer relative" >
+          <div class="text-slate-200 text-center">
+            <div>{{user.full_name}}</div>
+            <div>{{user.bio}}</div>
+            <form action="{% url 'approve' club.id user.id %}" method="post">
+              {% csrf_token %}
+              <input type="submit" value="Accept" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            </form>
+          </div>
+
+        </div>
+      </div>
+  </div>
+</div>

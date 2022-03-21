@@ -1,0 +1,16 @@
+{% extends 'base_content.html' %}
+{% block content %}
+<div class="container">
+  <div class="row">
+    {% if list_of_applicants == True%}
+    <div class="col-12">
+      <h1>Pending applications for club: {{club.name}}</h1>
+      <div class="mt-1 max-w-2xl text-sm text-gray-500">
+        <p>There are {{users.count}} pending applications. Only the owner can approve them.</p>
+      </div>
+      {% include 'partials/club_users_as_table.html' with users=users club=club%}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

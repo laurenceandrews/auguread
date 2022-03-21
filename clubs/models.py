@@ -434,11 +434,15 @@ class Club_Users(models.Model):
         default=0
     )
 
+    APPLICANT = '1'
+    MEMBER = '2'
+    OFFICER = '3'
+    OWNER = '4'
     ROLE_NUM_CHOICES = [
-        ('1', '1'),  # Applicant
-        ('2', '2'),  # Member
-        ('3', '3'),  # Officer
-        ('4', '4')  # Owner
+        (APPLICANT, 'Applicant'),
+        (MEMBER, 'Member'),
+        (OFFICER, 'Officer'),
+        (OWNER, 'Owner')
     ]
     role_num = models.CharField(
         max_length=1,

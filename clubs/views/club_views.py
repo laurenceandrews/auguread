@@ -2,6 +2,7 @@
 from clubs.forms import NewClubForm
 from clubs.models import Club, Club_Users, Post, User
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
@@ -101,9 +102,29 @@ def approve(request, user_id, club_id):
         user = User.objects.get(id=user_id)
         club.accept(user)
     except ObjectDoesNotExist:
+        messages.add_message(request, messages.ERROR, "Invalid applicant!")
         return redirect('applicant_list', club_id=club_id)
     else:
-        return redirect('show_user', user_id=user.id, club_id=club_id)
+        messages.add_message(request, messages.SUCCESS, "Application approved!")
+        return redirect('applicant_list', club_id=club_id)
+
+
+@login_required
+@owner
+def transfer(request, user_id, club_id):
+    """View that handles transfering ownership of a club."""
+    club = Club.objects.get(id=club_id)
+    try:
+        target = User.objects.get(id=user_id)
+        club.transfer(target)
+    except ObjectDoesNotExist:
+        messages.add_message(request, messages.ERROR, "Invalid member!")
+        return redirect('member_list', club_id=club_id)
+    else:
+        return redirect('show_user', user_id=user_id, club_id=club_id)
+
+    form = BookRatingForm()
+    return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated, 'form': form})
 
 
 class ShowUserView(LoginRequiredMixin, ApplicantProhibitedMixin, DetailView, MultipleObjectMixin):
@@ -158,8 +179,9 @@ def applicants_list(request, club_id):
     paginator = Paginator(applicants, settings.NUMBER_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, "applicant_list.html",
+    return render(request, "club_users_list.html",
                   {
+                      'list_of_applicants': True,
                       'club': club,
                       'user': request.user,
                       'users': applicants,
@@ -229,22 +251,3 @@ class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
 def club_recommender(request):
     """View that shows a list of all recommended clubs."""
     return render(request, 'club_recommender.html')
-
-
-"""View that handles transfering ownership of a club."""
-
-
-@ login_required
-@ owner
-def transfer(request, user_id, club_id):
-    club = Club.objects.get(id=club_id)
-    try:
-        target = User.objects.get(id=user_id)
-        club.transfer(target)
-    except ObjectDoesNotExist:
-        return redirect('owner_list', club_id=club_id)
-    else:
-        return redirect('show_user', user_id=user_id, club_id=club_id)
-
-    form = BookRatingForm()
-    return render(request, 'book_preferences.html', {'current_user': request.user, 'books_queryset': books_queryset, 'books_paginated': books_paginated, 'form': form})
