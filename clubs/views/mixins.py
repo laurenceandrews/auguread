@@ -44,7 +44,7 @@ class ApplicantProhibitedMixin:
         club = Club.objects.get(id=kwargs['club_id'])
         user = self.request.user
         if Club_Users.objects.filter(club=club, user=user).exists():
-            if Club_Users.objects.get(club=club, user=user).role_num == 1:
+            if Club_Users.objects.get(club=club, user=user).role_num == "1":
                 messages.add_message(self.request, messages.ERROR, "Club applicants cannot perform this action!")
                 return redirect(self.redirect_when_is_applicant_url)
             else:
@@ -64,7 +64,7 @@ class MemberProhibitedMixin:
         club = Club.objects.get(id=kwargs['club_id'])
         user = self.request.user
         if Club_Users.objects.filter(club=club, user=user).exists():
-            if Club_Users.objects.get(club=club, user=user).role_num == 1 or Club_Users.objects.get(club=club, user=user).role_num == 2:
+            if Club_Users.objects.get(club=club, user=user).role_num == "1" or Club_Users.objects.get(club=club, user=user).role_num == "2":
                 messages.add_message(self.request, messages.ERROR, "Club applicants and members cannot perform this action!")
                 return redirect(self.redirect_when_is_applicant_or_member_url)
             else:

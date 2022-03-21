@@ -1,5 +1,5 @@
 """Unit tests for the User model."""
-from clubs.models import Club, User
+from clubs.models import Club, Club_Users, User
 from django.test import TestCase
 
 
@@ -53,11 +53,8 @@ class ClubModelTestCase(TestCase):
         self.assertFalse(self.club.in_club(self.user))
 
     def _create_club_owner_members_and_applicants(self):
-        self.owner = self.club.owner
+        self.owner = Club_Users.objects.get(club=self.club, role_num=4).user
         self.applicant = User.objects.get(pk=2)
-        self.club.applied_by(self.applicant)
-        self.club_applicants = self.club.applicants
+        Club_Users.objects.create(user=self.applicant, club=self.club)
         self.member = User.objects.get(pk=3)
-        self.club.applied_by(self.member)
-        self.club.accept(self.member)
-        self.club_members = self.club.members
+        Club_Users.objects.create(user=self.member, club=self.club, role_num=2)

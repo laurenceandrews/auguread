@@ -115,7 +115,7 @@ class User(AbstractUser):
 
     def clubs_attended(self):
         """Return all clubs user is either a member, officer or owner of."""
-        club_ids = Club_Users.objects.filter(user=self).exclude(role_num=1).values_list('club', flat=True)
+        club_ids = Club_Users.objects.filter(user=self).exclude(role_num="1").values_list('club', flat=True)
         return Club.objects.filter(id__in=club_ids)
 
     def is_applicant(self, club):
@@ -130,11 +130,11 @@ class User(AbstractUser):
     def membership_type(self, club):
         """Type of membership the user has"""
         club_user = Club_Users.objects.get(user=self, club=club)
-        if club_user.role_num == 4:
+        if club_user.role_num == "4":
             return 'Owner'
-        elif club_user.role_num == 3:
+        elif club_user.role_num == "3":
             return 'Officer'
-        elif club_user.role_num == 2:
+        elif club_user.role_num == "2":
             return 'Member'
         else:
             return 'Applicant'
@@ -396,7 +396,7 @@ class Club(models.Model):
         """Transfer ownership of the club to another owner"""
         owner = self.owner
         club = Club.objects.get(id=self.id)
-        old_owner_club_user = Club_Users.objects.get(club=club, role_num=4)
+        old_owner_club_user = Club_Users.objects.get(club=club, role_num="4")
         new_owner_club_user = Club_Users.objects.get(club=Club.objects.get(id=self.id), user=user)
         if new_owner_club_user.user in self.members():
             old_owner_club_user.role_num = 2

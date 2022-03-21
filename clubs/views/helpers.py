@@ -13,17 +13,15 @@ def login_prohibited(view_function):
     return modified_view_function
 
 
-"""Specifies view that only members can access"""
-
-
 def member(view_function, *args, **kwargs):
+    """Specifies view that only members and above can access"""
     def modified_view_function(request, *args, **kwargs):
         redirect_when_is_applicant_url = 'club_list'
 
         club = Club.objects.get(id=kwargs['club_id'])
         user = request.user
         if Club_Users.objects.filter(club=club, user=user).exists():
-            if Club_Users.objects.get(club=club, user=user).role_num == 1:
+            if Club_Users.objects.get(club=club, user=user).role_num == "1":
                 messages.add_message(request, messages.ERROR, "Club applicants cannot perform this action!")
                 return redirect(redirect_when_is_applicant_url)
             else:
@@ -35,17 +33,15 @@ def member(view_function, *args, **kwargs):
     return modified_view_function
 
 
-"""Specifies view that only owners can access"""
-
-
 def owner(view_function, *args, **kwargs):
+    """Specifies view that only owners can access"""
     def modified_view_function(request, *args, **kwargs):
         redirect_when_is_not_owner_url = 'club_list'
 
         club = Club.objects.get(id=kwargs['club_id'])
         user = request.user
         if Club_Users.objects.filter(club=club, user=user).exists():
-            if Club_Users.objects.get(club=club, user=user).role_num == 4:
+            if Club_Users.objects.get(club=club, user=user).role_num == "4":
                 return view_function(request, *args, **kwargs)
             else:
                 messages.add_message(request, messages.ERROR, "Only club owners can perform this action!")

@@ -70,33 +70,28 @@ class ClubListView(LoginRequiredMixin, ListView):
     context_object_name = "clubs"
 
 
-"""View that handles entering a club."""
-
-
 @login_required
 @member
 def enter(request, club_id):
+    """View that handles entering a club."""
     user = request.user
     return redirect('show_user', user_id=user.id, club_id=club_id)
 
 
-"""View that handles applying for a club."""
-
-
 @login_required
 def apply(request, club_id):
+    """View that handles applying for a club."""
     user = request.user
     club = Club.objects.get(id=club_id)
     club.applied_by(user)
     return redirect('club_list')
 
 
-"""View that handles approving applicants for a club."""
-
-
 @login_required
 @owner
 def approve(request, user_id, club_id):
+    """View that handles approving applicants for a club."""
+
     club = Club.objects.get(id=club_id)
     try:
         user = User.objects.get(id=user_id)
@@ -113,6 +108,7 @@ def approve(request, user_id, club_id):
 @owner
 def transfer(request, user_id, club_id):
     """View that handles transfering ownership of a club."""
+
     club = Club.objects.get(id=club_id)
     target = User.objects.get(id=user_id)
     club.transfer(target)
