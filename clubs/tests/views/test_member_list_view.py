@@ -1,5 +1,5 @@
 """Unit tests for the Member list."""
-from clubs.models import ApplicantMembership, Club, Club_Users, User
+from clubs.models import Club, Club_Users, User
 from clubs.tests.helpers import reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
@@ -31,7 +31,7 @@ class MemberListViewTestCase(TestCase):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'member_list.html')
+        self.assertTemplateUsed(response, 'club_users_list.html')
 
     def test_member_list_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
@@ -50,8 +50,9 @@ class MemberListViewTestCase(TestCase):
     def _create_club_owner_members_and_applicants(self):
         self.club_owner = self.club.owner
         self.applicant = User.objects.get(pk=2)
-        self.club.applicants.add(self.applicant)
-        self.club_applicants = self.club.applicants.all()
+        self.club.applied_by(self.applicant)
+        self.club_applicants = self.club.applicants
         self.member = User.objects.get(pk=3)
-        self.club.members.add(self.member)
-        self.club_members = self.club.members.all()
+        self.club.applied_by(self.member)
+        self.club.accept(self.member)
+        self.club_members = self.club.members

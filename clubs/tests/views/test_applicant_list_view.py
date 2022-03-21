@@ -3,6 +3,7 @@ from clubs.models import Club, User
 from django.test import TestCase
 from django.urls import reverse
 
+
 class ApplicantListViewTestCase(TestCase):
     """Unit tests for the Applicant list."""
     fixtures = [
@@ -16,10 +17,7 @@ class ApplicantListViewTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(pk=1)
-        self.club = Club.objects.get(pk=19)
-        self.owner = Club.objects.get(pk=19).owner
-        self.member = Club.objects.get(pk=19).members.all()
-        self.applicant = Club.objects.get(pk=19).applicants.all()
+        self.club = Club.objects.get(pk=6)
         self._create_club_owner_members_and_applicants()
         self.url = reverse('applicant_list', kwargs={'club_id': self.club.id})
         self.approve_url = reverse(
@@ -32,7 +30,7 @@ class ApplicantListViewTestCase(TestCase):
         self.client.login(email=self.owner.email, password="Password123")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'applicant_list.html')
+        self.assertTemplateUsed(response, 'club_users_list.html')
 
     def test_member_can_not_access_applicant_list(self):
         self.client.login(email=self.member.email, password="Password123")
@@ -45,44 +43,44 @@ class ApplicantListViewTestCase(TestCase):
         self.client.login(email=self.owner.email, password="Password123")
         response = self.client.get(self.approve_url)
         self.assertEqual(response.status_code, 302)
-        self.assertTrue(self.applicant in self.club.members.all())
-        self.assertFalse(self.applicant in self.club.applicants.all())
+        self.assertTrue(self.applicant in self.club.members())
+        self.assertFalse(self.applicant in self.club.applicants())
 
     def test_member_can_not_approve_applicant(self):
         self.client.login(email=self.member.email, password="Password123")
         self.client.get(self.approve_url)
-        self.assertTrue(self.applicant in self.club.applicants.all())
-        self.assertFalse(self.applicant in self.club.members.all())
+        self.assertTrue(self.applicant in self.club.applicants())
+        self.assertFalse(self.applicant in self.club.members())
 
     def test_owner_can_approve_applicant(self):
         self.client.login(email=self.owner.email, password="Password123")
         self.client.get(self.approve_url)
-        self.assertTrue(self.applicant in self.club.members.all())
-        self.assertFalse(self.applicant in self.club.applicants.all())
+        self.assertTrue(self.applicant in self.club.members())
+        self.assertFalse(self.applicant in self.club.applicants())
 
     def test_owner_can_not_approve_not_exists_user(self):
         self.client.login(email=self.owner.email, password="Password123")
         url = reverse('approve', kwargs={
-                      'club_id': self.club.id, 'user_id': 1000000})
+            'club_id': self.club.id, 'user_id': 1000000})
         response = self.client.get(url)
         redirect_url = reverse('applicant_list', kwargs={
-                               'club_id': self.club.id})
+            'club_id': self.club.id})
         self.assertRedirects(response, redirect_url,
                              status_code=302, target_status_code=200)
 
     def test_accept_applicant_with_in_applicant_list(self):
         self.client.login(email=self.owner.email, password="Password123")
         post_data = {'check[]': [self.applicant.email]}
-        self.client.post(self.url, post_data)
-        self.assertTrue(self.applicant in self.club.members.all())
-        self.assertFalse(self.applicant in self.club.applicants.all())
+        self.client.post(self.approve_url, post_data)
+        self.assertTrue(self.applicant in self.club.members())
+        self.assertFalse(self.applicant in self.club.applicants())
 
     def _create_club_owner_members_and_applicants(self):
         self.owner = self.club.owner
         self.applicant = User.objects.get(pk=2)
-        self.club.applicants.add(self.applicant)
-        self.club_applicants = self.club.applicants.all()
+        self.club.applied_by(self.applicant)
+        self.club_applicants = self.club.applicants
         self.member = User.objects.get(pk=3)
-        self.club.members.add(self.member)
-        self.club_members = self.club.members.all()
-        self.club.save()
+        self.club.applied_by(self.member)
+        self.club.accept(self.member)
+        self.club_members = self.club.members

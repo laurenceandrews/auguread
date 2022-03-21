@@ -20,14 +20,13 @@ class ShowUserTest(TestCase, AssertHTMLMixin):
     ]
 
     def setUp(self):
-        self.user = User.objects.get(username='@johndoe')
-        self.calendar = Calendar.objects.get(pk=5)
+        self.user = User.objects.get(pk=1)
         self.club = Club.objects.get(pk=6)
-        self.target_user = User.objects.get(username='@janedoe')
-        self.url = reverse('show_user', kwargs={'club_id': self.club.id, 'user_id': self.target_user.id})
+        self._create_club_owner_members_and_applicants()
+        self.url = reverse('show_user', kwargs={'club_id': self.club.id, 'user_id': self.member.id})
 
     def test_show_user_url(self):
-        self.assertEqual(self.url, f'/{self.club.id}/user/{self.target_user.id}')
+        self.assertEqual(self.url, f'/{self.club.id}/user/{self.member.id}')
 
     def test_show_user(self):
         self.client.login(email=self.user.email, password="Password123")
@@ -40,19 +39,19 @@ class ShowUserTest(TestCase, AssertHTMLMixin):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'show_user.html')
-        # target_user = response.context['target']
-        # self.assertEqual(target_user, self.target_user)
+        # member = response.context['target']
+        # self.assertEqual(member, self.member)
         # self.assertContains(response, "Jane Doe")
         # self.assertContains(response, "@janedoe")
         # self.assertContains(response, "janedoe@example.org")
         # followable = response.context['followable']
         # self.assertTrue(followable)
-        # follow_toggle_url = reverse('follow_toggle', kwargs={'club_id': self.club.id, 'user_id': self.target_user.id})
+        # follow_toggle_url = reverse('follow_toggle', kwargs={'club_id': self.club.id, 'user_id': self.member.id})
         # query = f'.//form[@action="{follow_toggle_url}"]//button'
         # with self.assertHTML(response) as html:
         #     button = html.find(query)
         #     self.assertEquals(button.text, "Follow")
-        # self.user.toggle_follow(self.target_user)
+        # self.user.toggle_follow(self.member)
         # response = self.client.get(self.url)
         # with self.assertHTML(response) as html:
         #     button = html.find(query)
@@ -64,13 +63,13 @@ class ShowUserTest(TestCase, AssertHTMLMixin):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'show_user.html')
-        target_user = response.context['target']
-        self.assertEqual(target_user, self.user)
+        member = response.context['target']
+        self.assertEqual(member, self.user)
         self.assertContains(response, "John Doe")
         self.assertContains(response, "johndoe@example.org")
         followable = response.context['followable']
         self.assertFalse(followable)
-        follow_toggle_url = reverse('follow_toggle', kwargs={'user_id': self.target_user.id})
+        follow_toggle_url = reverse('follow_toggle', kwargs={'user_id': self.member.id})
         query = f'.//form[@action="{follow_toggle_url}"]//button'
         with self.assertHTML(response) as html:
             button = html.find(query)
@@ -100,7 +99,7 @@ class ShowUserTest(TestCase, AssertHTMLMixin):
     def test_show_user_displays_posts_with_pagination(self):
         self.client.login(email=self.user.email, password='Password123')
         self._create_test_posts_long()
-        url = reverse('show_user', kwargs={'club_id': self.club.id, 'user_id': self.target_user.id})
+        url = reverse('show_user', kwargs={'club_id': self.club.id, 'user_id': self.member.id})
         response = self.client.get(self.url)
         self.assertEqual(Post.objects.all().count(), 40)
         # self.assertEqual(len(response.context['posts']), settings.POSTS_PER_PAGE)
@@ -143,18 +142,37 @@ class ShowUserTest(TestCase, AssertHTMLMixin):
         post.save()
 
         data = {
-            'author': self.target_user,
+            'author': self.member,
             'text': 'My first post.'
         }
         post = Post(**data)
         post.save()
 
         data = {
-            'author': self.target_user,
+            'author': self.member,
             'text': 'My second post.'
         }
         post = Post(**data)
         post.save()
+
+    def test_show_user_with_not_exists_user(self):
+        self.client.login(email=self.user.email, password="Password123")
+        url = reverse('show_user', kwargs={
+                      'club_id': self.club.id, 'user_id': 1000})
+        response = self.client.get(url)
+        redirect_url = reverse('user_list', kwargs={'club_id': self.club.id})
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200)
+
+    def _create_club_owner_members_and_applicants(self):
+        self.club_owner = self.club.owner
+        self.applicant = User.objects.get(pk=2)
+        self.club.applied_by(self.applicant)
+        self.club_applicants = self.club.applicants
+        self.member = User.objects.get(pk=3)
+        self.club.applied_by(self.member)
+        self.club.accept(self.member)
+        self.club_members = self.club.members
 
     def _create_test_posts_long(self):
         for num in range(1, 21):
@@ -167,17 +185,8 @@ class ShowUserTest(TestCase, AssertHTMLMixin):
 
         for num in range(1, 21):
             data = {
-                'author': self.target_user,
+                'author': self.member,
                 'text': 'My post: ' + str(num)
             }
             post = Post(**data)
             post.save()
-
-    def test_show_user_with_not_exists_user(self):
-        self.client.login(email=self.user.email, password="Password123")
-        url = reverse('show_user', kwargs={
-                      'club_id': self.club.id, 'user_id': 1000})
-        response = self.client.get(url)
-        redirect_url = reverse('user_list', kwargs={'club_id': self.club.id})
-        self.assertRedirects(response, redirect_url,
-                             status_code=302, target_status_code=200)

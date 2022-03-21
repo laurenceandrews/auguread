@@ -1,11 +1,15 @@
 """Views related to the recommender."""
+from statistics import mean
+
+from clubs.book_to_user_recommender.book_to_user import BookToUserRecommender
 from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
                          ClubBookForm, CreateEventForm, LogInForm,
                          MeetingAddressForm, MeetingLinkForm, NewClubForm,
                          PasswordForm, PostForm, SignUpForm)
 # from clubs.helpers import member, owner
-from clubs.models import (Address, Book, Club, Club_Book_History, Club_Books,
-                          MeetingAddress, MeetingLink, Post, User)
+from clubs.models import (Address, Book, Book_Rating, Club, Club_Book_History,
+                          Club_Books, Club_Users, MeetingAddress, MeetingLink,
+                          Post, User)
 from clubs.views.club_views import MemberListView
 from clubs.views.mixins import TenPosRatingsRequiredMixin
 from django.conf import settings
@@ -76,9 +80,27 @@ class ClubBookSelectionView(LoginRequiredMixin, CreateView):
 
         book = form.cleaned_data.get('book')
 
+        lastBookRead = Club_Book_History.objects.last()
+        if lastBookRead:
+
+            # Verify applicant number below
+            club_users = Club_Users.objects.filter(club=club).exclude(role_num=1).values('user')
+            book_ratings = Book_Rating.objects.filter(book=lastBookRead.book, user__in=club_users)
+            all_ratings = map(int, list(book_ratings.values_list('rating', flat=True)))
+            average_rating = mean(all_ratings)
+
+            lastBookRead.average_rating = average_rating
+
+            if lastBookRead.average_rating >= 6:
+                Club_Books.objects.create(
+                    club=club,
+                    book=lastBookRead.book
+                )
+
         Club_Book_History.objects.create(
             club=club,
-            book=book
+            book=book,
+            average_rating=1
         )
         return render(self.request, 'home.html')
 
@@ -100,6 +122,10 @@ class RecommendationsView(LoginRequiredMixin, View):
     def get(self, request):
         """Display template."""
 
+        # returns the collaborative filtering of ratings between users
+        # user_rec_book_ids = BookToUserRecommender().get_collaborative_filtering()
+        # self.user_rec_books = Book.objects.filter(id__in=user_rec_book_ids)[0:11]
+
         club_favourites = Club_Books.objects.all()
         if club_favourites.count() == 0:
             self.club_favourites_exist = False
@@ -115,5 +141,9 @@ class RecommendationsView(LoginRequiredMixin, View):
         """Render template."""
 
         return render(self.request, 'rec_page.html',
-                      {'club_favourites_exist': self.club_favourites_exist, 'club_favourites': self.club_favourites}
+                      {
+                          # 'user_rec_books_exists': self.user_rec_books.exists(),
+                          # 'user_rec_books': self.user_rec_books,
+                          'club_favourites_exist': self.club_favourites_exist,
+                          'club_favourites': self.club_favourites}
                       )

@@ -16,9 +16,9 @@ from schedule.models import Calendar, Event, Rule
 class Command(BaseCommand):
 
     HOW_MANY_CLUBS_TO_ADD = 10
-    HOW_MANY_USERS_TO_ADD = 500
-    HOW_MANY_BOOKS_TO_ADD = 500
-    HOW_MANY_RATINGS_TO_ADD = 500
+    HOW_MANY_USERS_TO_ADD = 50
+    HOW_MANY_BOOKS_TO_ADD = 50
+    HOW_MANY_RATINGS_TO_ADD = 50
     USER_ID = 0
     first_name = ""
     last_name = ""
@@ -154,6 +154,13 @@ class Command(BaseCommand):
                 calendar=cal
             )
             club.save()
+
+            # Set owner's Club User object
+            Club_Users.objects.create(
+                user=user,
+                club=club,
+                role_num="4"
+            )
 
             # self.clubs_made.append(club)
             self.club_count += 1
