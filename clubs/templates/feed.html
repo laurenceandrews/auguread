@@ -1,15 +1,21 @@
 {% extends 'base_content.html' %}
 {% block content %}
+
 <div class="">
   {% include 'partials/user_profile_and_club.html' with following=False followable=False %}
+  
   <form action="{% url 'new_post' %}" method="post">
     {% csrf_token %}
     {% include 'partials/bootstrap_form.html' with form=form %}
     <button type="submit" class="">Post</button>
+  
   </form>
 </div>
-<div class="col-xs-12 col-lg-6 col-xl-8">
-  {% include 'partials/posts_as_table.html' with posts=posts %}
-  {% include 'partials/post_pager.html' with page_obj=page_obj%}
+<div class="ml-8 mt-6">
+  {% include 'partials/posts.html' with posts=posts %}
 </div>
+<div class="m-4">
+  {% include 'partials/post_pager.html' with page_obj=page_obj range=5 %}
+</div>
+
 {% endblock %}
