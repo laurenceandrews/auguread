@@ -1,0 +1,14 @@
+{
+    "cSpell.words": [
+        "dropna",
+        "fillna",
+        "iloc",
+        "inplace",
+        "isin",
+        "isna",
+        "quantile",
+        "rmse",
+        "RMSE",
+        "sklearn"
+    ]
+}
