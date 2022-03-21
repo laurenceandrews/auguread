@@ -36,7 +36,7 @@ class LogInView(LoginProhibitedMixin, View):
                 'next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
             return redirect(redirect_url)
         messages.add_message(request, messages.ERROR,
-                             "The credentials provided are invalid!")
+                             "The credentials provided are invalid")
         return self.render()
 
     def render(self):
