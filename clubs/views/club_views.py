@@ -148,7 +148,7 @@ class ShowUserView(LoginRequiredMixin, ApplicantProhibitedMixin, DetailView, Mul
             return redirect('user_list', club_id=self.kwargs['club_id'])
 
 
-class ApplicantListView(LoginRequiredMixin, ApplicantProhibitedMixin, ListView, MultipleObjectMixin):
+class ApplicantListView(LoginRequiredMixin, MemberProhibitedMixin, ListView, MultipleObjectMixin):
     """View that shows a list of all the applicants."""
 
     model = User

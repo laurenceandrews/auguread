@@ -40,28 +40,7 @@ class ApplicantProhibitedMixin:
 
     def dispatch(self, *args, **kwargs):
         """Checks the membership type of the user of the club."""
-
-        club = Club.objects.get(id=kwargs['club_id'])
-        user = self.request.user
-        if Club_Users.objects.filter(club=club, user=user).exists():
-            if Club_Users.objects.get(club=club, user=user).role_num == 1:
-                messages.add_message(self.request, messages.ERROR, "Club applicants cannot perform this action!")
-                return redirect(self.redirect_when_is_applicant_url)
-            else:
-                return super().dispatch(*args, **kwargs)
-        else:
-            messages.add_message(self.request, messages.ERROR, "You are not a member of this club!")
-            return redirect(self.redirect_when_is_applicant_url)
-
-
-class ApplicantProhibitedMixin:
-    """Redirects to club_list if user is an applicant and dispatches as normal otherwise."""
-
-    redirect_when_is_applicant_url = 'club_list'
-
-    def dispatch(self, *args, **kwargs):
-        """Checks the membership type of the user of the club."""
-
+        print('ApplicantProhibitedMixin PRINTING...')
         club = Club.objects.get(id=kwargs['club_id'])
         user = self.request.user
         if Club_Users.objects.filter(club=club, user=user).exists():
@@ -81,7 +60,7 @@ class MemberProhibitedMixin:
     redirect_when_is_applicant_or_member_url = 'club_list'
 
     def dispatch(self, *args, **kwargs):
-
+        print('MemberProhibitedMixin PRINTING...')
         club = Club.objects.get(id=kwargs['club_id'])
         user = self.request.user
         if Club_Users.objects.filter(club=club, user=user).exists():
