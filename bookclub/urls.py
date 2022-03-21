@@ -37,6 +37,14 @@ urlpatterns = [
     path('rec/', views.RecommendationsView.as_view(), name='rec'),
     path('edit_profile/', views.ProfileUpdateView.as_view(), name='edit_profile'),
 
+    path('summary/', views.UserSummaryView.as_view(), name='user_summary'),
+    path('summary/clubs/<str:role_num>', views.clubs_list, name='user_clubs'),
+    path('summary/books/favourite', views.user_favourite_books, name='user_favourite_books'),
+    path('summary/clubs/books', views.user_clubs_books, name='user_clubs_books'),
+
+
+
+
     # User urls
     path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
     path('user_detail/', views.user_detail, name='user_detail'),

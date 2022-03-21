@@ -408,7 +408,7 @@ class Club(models.Model):
 
     def favourite_books(self):
         """Return all favourite books of this club."""
-        club_books_ids = Club_Books.objects.filter(club=Club.objects.get(id=self.id)).values_list('user', flat=True)
+        club_books_ids = Club_Books.objects.filter(club=Club.objects.get(id=self.id)).values_list('book', flat=True)
         return Book.objects.filter(id__in=club_books_ids)
 
 
