@@ -32,12 +32,14 @@ class BookToUserRecommender:
         rating_mean = top_20_books['mean']  # average for the book (mean) = (Rating)
         vote_count = top_20_books['count']  # number of votes for the book = (votes)
         vote_mean = top_20_books['mean'].mean()  # mean vote across all books
-        top_20_books['weighted rating'] = (vote_count / (vote_count + min_votes)) * rating_mean + (min_votes/ (vote_count + min_votes)) * vote_mean
+        top_20_books['weighted rating'] = ((vote_count / (vote_count + min_votes)) * rating_mean + 
+            (min_votes/ (vote_count + min_votes)) * vote_mean)
+
         top_20_books = top_20_books.sort_values('weighted rating', ascending=False).reset_index(drop=True)
 
         # get title of books
-        top_books_to_recommend = pd.merge(top_20_books, self.df_books, on='id')[['title', 'author', 'mean', 'count', 'weighted rating',
-                                                                             'publication_year']].drop_duplicates('title').iloc[:10]
+        top_books_to_recommend = pd.merge(top_20_books, self.df_books, on='id')[['title', 'author', 'mean', 
+            'count', 'weighted rating','publication_year']].drop_duplicates('title').iloc[:10]
         # breakpoint()    
         return top_books_to_recommend
 
@@ -61,12 +63,17 @@ class BookToUserRecommender:
         rating_mean_author = highest_rated_author['mean']  # average for the author (mean) = (Rating)
         vote_count_author = highest_rated_author['count']  # number of votes for the author = (votes)
         vote_mean_author = highest_rated_author['mean'].mean()  # mean vote across all authors
-        highest_rated_author['weighted rating'] = (vote_count_author / (vote_count_author + min_votes_author)) * rating_mean_author + (min_votes_author / (vote_count_author + min_votes_author)) * vote_mean_author
+        highest_rated_author['weighted rating'] = ((vote_count_author / (vote_count_author + min_votes_author)) * 
+            rating_mean_author + (min_votes_author / (vote_count_author + min_votes_author)) * vote_mean_author)
+
         highest_rated_author = highest_rated_author.sort_values('weighted rating', ascending=False).reset_index(drop=True)
         
-        # breakpoint() 
+        authors_to_recommend_list = list(highest_rated_author.iloc[:10])
 
-        return highest_rated_author.iloc[:10]  
+        # breakpoint() 
+        print('get_top_authors return list count: ', len(authors_to_recommend_list))
+
+        return authors_to_recommend_list
 
     def get_collaborative_filtering(self):
         # merge ratings and books to get book titles and drop rows for which title is not available
@@ -89,7 +96,7 @@ class BookToUserRecommender:
         # breakpoint()
         print('collaborative filtering output =', df_books_ratings.head(15))
         print('df shape: ' , df_books_ratings.shape)
-        print('list count: ' , books_ratings_list.count(books_ratings_list))
+        print('get_collaborative_filtering list count: ', len(books_ratings_list))
 
         return books_ratings_list
     
