@@ -748,6 +748,10 @@ select {
   top: 2rem;
 }
 
+.m-4 {
+  margin: 1rem;
+}
+
 .m-2 {
   margin: 0.5rem;
 }
@@ -829,6 +833,10 @@ select {
   margin-top: 3.5rem;
 }
 
+.ml-8 {
+  margin-left: 2rem;
+}
+
 .ml-2 {
   margin-left: 0.5rem;
 }
@@ -845,8 +853,8 @@ select {
   margin-bottom: 0.5rem;
 }
 
-.ml-8 {
-  margin-left: 2rem;
+.mb-6 {
+  margin-bottom: 1.5rem;
 }
 
 .block {
@@ -1022,6 +1030,10 @@ select {
     opacity: 100;
   }
 
+  50% {
+    opacity: 100;
+  }
+
   100% {
     opacity: 0;
   }
@@ -1032,14 +1044,18 @@ select {
     opacity: 100;
   }
 
+  50% {
+    opacity: 100;
+  }
+
   100% {
     opacity: 0;
   }
 }
 
 .animate-fade {
-  -webkit-animation: fadeOut 2s ease-in-out;
-          animation: fadeOut 2s ease-in-out;
+  -webkit-animation: fadeOut 3s ease-in-out;
+          animation: fadeOut 3s ease-in-out;
 }
 
 .cursor-pointer {
@@ -1262,6 +1278,11 @@ select {
   background-color: rgb(237 233 254 / var(--tw-bg-opacity));
 }
 
+.bg-rose-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(251 113 133 / var(--tw-bg-opacity));
+}
+
 .bg-emerald-400 {
   --tw-bg-opacity: 1;
   background-color: rgb(52 211 153 / var(--tw-bg-opacity));
@@ -1310,6 +1331,10 @@ select {
   padding: 1rem;
 }
 
+.p-2 {
+  padding: 0.5rem;
+}
+
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -1345,9 +1370,9 @@ select {
   padding-right: 0.5rem;
 }
 
-.py-16 {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .py-6 {
@@ -1358,11 +1383,6 @@ select {
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
-}
-
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
 }
 
 .pt-2 {
@@ -1478,6 +1498,10 @@ select {
   text-transform: uppercase;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .leading-normal {
   line-height: 1.5;
 }
@@ -1575,6 +1599,11 @@ select {
   color: rgb(226 232 240 / var(--tw-text-opacity));
 }
 
+.text-indigo-400 {
+  --tw-text-opacity: 1;
+  color: rgb(129 140 248 / var(--tw-text-opacity));
+}
+
 .placeholder-gray-400::-moz-placeholder {
   --tw-placeholder-opacity: 1;
   color: rgb(156 163 175 / var(--tw-placeholder-opacity));
@@ -1653,8 +1682,8 @@ select {
   transition-duration: 150ms;
 }
 
-.delay-150 {
-  transition-delay: 150ms;
+.delay-300 {
+  transition-delay: 300ms;
 }
 
 .duration-300 {
@@ -1667,6 +1696,10 @@ select {
 
 .ease-in-out {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.last\:mb-0:last-child {
+  margin-bottom: 0px;
 }
 
 .hover\:scale-105:hover {
@@ -1827,11 +1860,6 @@ select {
   .sm\:px-10 {
     padding-left: 2.5rem;
     padding-right: 2.5rem;
-  }
-
-  .sm\:py-24 {
-    padding-top: 6rem;
-    padding-bottom: 6rem;
   }
 
   .sm\:py-6 {
