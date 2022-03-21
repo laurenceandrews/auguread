@@ -32,11 +32,11 @@ class ClubModelTestCase(TestCase):
         self.assertEqual(self.applicant.membership_type(
             self.club), 'Applicant')
 
-    def test_user_membership_type(self):
-        self.assertEqual(self.user.membership_type(self.club), 'User')
+    # def test_officer_membership_type(self):
+    #     self.assertEqual(self.officer.membership_type(self.club), 'Officer')
 
-    # def test_owner_membership_type(self):
-    #     self.assertEqual(self.owner.membership_type(self.club), 'Owner')
+    def test_owner_membership_type(self):
+        self.assertEqual(self.owner.membership_type(self.club), 'Owner')
 
     def test_transfer(self):
         self.club.transfer(self.member)
@@ -55,8 +55,9 @@ class ClubModelTestCase(TestCase):
     def _create_club_owner_members_and_applicants(self):
         self.owner = self.club.owner
         self.applicant = User.objects.get(pk=2)
-        self.club.applicants.add(self.applicant)
-        self.club_applicants = self.club.applicants.all()
+        self.club.applied_by(self.applicant)
+        self.club_applicants = self.club.applicants
         self.member = User.objects.get(pk=3)
-        self.club.members.add(self.member)
-        self.club_members = self.club.members.all()
+        self.club.applied_by(self.member)
+        self.club.accept(self.member)
+        self.club_members = self.club.members

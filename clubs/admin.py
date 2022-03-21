@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from .models import (ApplicantMembership, Book, Book_Rating, Club,
-                     Club_Book_History, Club_Books, Club_Users, MeetingAddress,
-                     MeetingLink, OwnerMembership, Post, User, User_Books)
+from .models import (Book, Book_Rating, Club, Club_Book_History, Club_Books,
+                     Club_Users, MeetingAddress, MeetingLink, Post, User,
+                     User_Books)
 
 
 @admin.register(User)
@@ -12,12 +12,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = [
         'id',
         'username',
-        'first_name',
-        'last_name',
-        'email',
-        'bio',
-        'location',
-        'is_active',
+        'clubs_attended'
     ]
 
 
@@ -39,34 +34,7 @@ class ClubAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for users."""
 
     list_display = [
-        'name', 'owner_name', 'location', 'description', 'applicant_list', 'member_list', 'owner_list'
-    ]
-
-    def owner_name(self, Club):
-        return "\n".join([owner.first_name for owner in Club.owners.all()])
-
-    def member_list(self, Club):
-        return "\n".join([member.first_name for member in Club.members.all()])
-
-    def applicant_list(self, Club):
-        return "\n".join([applicant.first_name for applicant in Club.applicants.all()])
-
-
-@admin.register(ApplicantMembership)
-class ApplicantMembership(admin.ModelAdmin):
-    """Configuration of the admin interface for ApplicantMembership."""
-
-    list_display = [
-        'club', 'user'
-    ]
-
-
-@admin.register(OwnerMembership)
-class OwnerMembership(admin.ModelAdmin):
-    """Configuration of the admin interface for OwnerMembership."""
-
-    list_display = [
-        'club', 'user'
+        'name', 'location', 'description', 'applicants', 'members', 'officers', 'owners'
     ]
 
 

@@ -1,4 +1,4 @@
-from clubs.models import Club, Club_Users, Book_Rating
+from clubs.models import Book_Rating, Club, Club_Users
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect
@@ -36,27 +36,63 @@ class LoginProhibitedMixin:
 class ApplicantProhibitedMixin:
     """Redirects to club_list if user is an applicant and dispatches as normal otherwise."""
 
+    redirect_when_is_applicant_url = 'club_list'
+
     def dispatch(self, *args, **kwargs):
         """Checks the membership type of the user of the club."""
 
         club = Club.objects.get(id=kwargs['club_id'])
-        if (self.request.user in club.members.all() or self.request.user == club.owner):
-            return super().dispatch(*args, **kwargs)
+        user = self.request.user
+        if Club_Users.objects.filter(club=club, user=user).exists():
+            if Club_Users.objects.get(club=club, user=user).role_num == 1:
+                messages.add_message(self.request, messages.ERROR, "Club applicants cannot perform this action!")
+                return redirect(self.redirect_when_is_applicant_url)
+            else:
+                return super().dispatch(*args, **kwargs)
         else:
-            return redirect(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+            messages.add_message(self.request, messages.ERROR, "You are not a member of this club!")
+            return redirect(self.redirect_when_is_applicant_url)
+
+
+class ApplicantProhibitedMixin:
+    """Redirects to club_list if user is an applicant and dispatches as normal otherwise."""
+
+    redirect_when_is_applicant_url = 'club_list'
+
+    def dispatch(self, *args, **kwargs):
+        """Checks the membership type of the user of the club."""
+
+        club = Club.objects.get(id=kwargs['club_id'])
+        user = self.request.user
+        if Club_Users.objects.filter(club=club, user=user).exists():
+            if Club_Users.objects.get(club=club, user=user).role_num == 1:
+                messages.add_message(self.request, messages.ERROR, "Club applicants cannot perform this action!")
+                return redirect(self.redirect_when_is_applicant_url)
+            else:
+                return super().dispatch(*args, **kwargs)
+        else:
+            messages.add_message(self.request, messages.ERROR, "You are not a member of this club!")
+            return redirect(self.redirect_when_is_applicant_url)
 
 
 class MemberProhibitedMixin:
     """Redirects to club_list if user is an applicant or a member and dispatches as normal otherwise."""
 
+    redirect_when_is_applicant_or_member_url = 'club_list'
+
     def dispatch(self, *args, **kwargs):
-        """Checks the membership type of the user of the club with the given club id."""
 
         club = Club.objects.get(id=kwargs['club_id'])
-        if self.request.user == club.owner:
-            return super().dispatch(*args, **kwargs)
+        user = self.request.user
+        if Club_Users.objects.filter(club=club, user=user).exists():
+            if Club_Users.objects.get(club=club, user=user).role_num == 1 or Club_Users.objects.get(club=club, user=user).role_num == 2:
+                messages.add_message(self.request, messages.ERROR, "Club applicants and members cannot perform this action!")
+                return redirect(self.redirect_when_is_applicant_or_member_url)
+            else:
+                return super().dispatch(*args, **kwargs)
         else:
-            return redirect(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+            messages.add_message(self.request, messages.ERROR, "You are not in this club!")
+            return redirect(self.redirect_when_is_applicant_or_member_url)
 
 
 class ClubOwnerRequiredMixin:
@@ -103,6 +139,7 @@ class ClubUserRequiredMixin:
         messages.add_message(self.request, messages.ERROR, "You are not a user of this club!")
         return redirect(url)
 
+
 class TenPosRatingsRequiredMixin:
     """Mixin that redirects when a user has not yet made ten positive book ratings."""
 
@@ -120,7 +157,7 @@ class TenPosRatingsRequiredMixin:
         user = self.request.user
         POSITIVE_RATINGS = [6, 7, 8, 9, 10]
 
-        positive_book_rating_count = Book_Rating.objects.filter(user = user, rating__in=POSITIVE_RATINGS).count()
+        positive_book_rating_count = Book_Rating.objects.filter(user=user, rating__in=POSITIVE_RATINGS).count()
         if positive_book_rating_count >= 10:
             less_than_ten_pos_ratings = False
 

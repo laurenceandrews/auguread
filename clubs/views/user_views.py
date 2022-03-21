@@ -109,7 +109,7 @@ class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantP
 
     def get_queryset(self):
         club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.members.all()) + list(club.owners.all()) + [club.owner]
+        users = list(club.members()) + list(club.officers()) + list(club.owners())
         return users
 
     def get_context_data(self, **kwargs):
@@ -137,7 +137,7 @@ class ApplicantListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
 
     def get_queryset(self):
         club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.applicants.all())
+        users = club.applicants()
         return users
 
     def get_context_data(self, *args, **kwargs):
@@ -153,11 +153,11 @@ class ApplicantListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
         for email in emails:
             user = User.objects.get(email=email)
             club.accept(user)
-        users = club.applicants.all()
+        users = club.applicants()
         return redirect('applicant_list', club_id=club.id)
 
 
-class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
+class MemberListView(LoginRequiredMixin, ApplicantProhibitedMixin, ListView, MultipleObjectMixin):
     """View that shows a list of all the members."""
 
     model = User
@@ -167,7 +167,7 @@ class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin, Applican
 
     def get_queryset(self):
         club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.members.all())
+        users = club.members()
         return users
 
     def get_context_data(self, **kwargs):
@@ -183,7 +183,7 @@ class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin, Applican
         for email in emails:
             user = User.objects.get(email=email)
             club.promote(user)
-        users = club.members.all()
+        users = club.members()
         return redirect('member_list', club_id=club.id)
 
 
@@ -197,7 +197,7 @@ class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
 
     def get_queryset(self):
         club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.owners.all())
+        users = club.owners()
         return users
 
     def get_context_data(self, **kwargs):
@@ -217,6 +217,8 @@ class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
 
 
 """View that handles deleting a user profile."""
+
+
 @login_required
 def delete_account(request):
     if request.method == 'POST':

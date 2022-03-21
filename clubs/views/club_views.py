@@ -1,6 +1,6 @@
 """Views related to the clubs."""
 from clubs.forms import NewClubForm
-from clubs.models import Club, Post, User
+from clubs.models import Club, Club_Users, Post, User
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -18,6 +18,8 @@ from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
                      MemberProhibitedMixin)
 
 """View that handles creating a new club."""
+
+
 @login_required()
 def new_club(request):
     if request.method == "POST":
@@ -48,6 +50,8 @@ def new_club(request):
                 calendar=cal,
                 meeting_type=meeting_type
             )
+
+            Club_Users.objects.create(user=current_user, club=club, role_num=4)
             return redirect("club_list")
         else:
             return render(request, "new_club.html", {"form": form})
@@ -63,14 +67,20 @@ class ClubListView(LoginRequiredMixin, ListView):
     template_name = "club_list.html"
     context_object_name = "clubs"
 
+
 """View that handles entering a club."""
+
+
 @login_required
 @member
 def enter(request, club_id):
     user = request.user
     return redirect('show_user', user_id=user.id, club_id=club_id)
 
+
 """View that handles applying for a club."""
+
+
 @login_required
 def apply(request, club_id):
     user = request.user
@@ -78,7 +88,10 @@ def apply(request, club_id):
     club.applied_by(user)
     return redirect('club_list')
 
+
 """View that handles approving applicants for a club."""
+
+
 @login_required
 @owner
 def approve(request, user_id, club_id):
@@ -92,7 +105,7 @@ def approve(request, user_id, club_id):
         return redirect('show_user', user_id=user.id, club_id=club_id)
 
 
-class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, ApplicantProhibitedMixin):
+class ShowUserView(LoginRequiredMixin, ApplicantProhibitedMixin, DetailView, MultipleObjectMixin):
     """View that shows individual user details."""
 
     model = User
@@ -135,7 +148,7 @@ class ShowUserView(LoginRequiredMixin, DetailView, MultipleObjectMixin, Applican
             return redirect('user_list', club_id=self.kwargs['club_id'])
 
 
-class ApplicantListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
+class ApplicantListView(LoginRequiredMixin, ApplicantProhibitedMixin, ListView, MultipleObjectMixin):
     """View that shows a list of all the applicants."""
 
     model = User
@@ -145,7 +158,7 @@ class ApplicantListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
 
     def get_queryset(self):
         club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.applicants.all())
+        users = list(club.applicants())
         return users
 
     def get_context_data(self, *args, **kwargs):
@@ -161,11 +174,11 @@ class ApplicantListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
         for email in emails:
             user = User.objects.get(email=email)
             club.accept(user)
-        users = club.applicants.all()
+        users = club.applicants()
         return redirect('applicant_list', club_id=club.id)
 
 
-class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
+class MemberListView(LoginRequiredMixin, ApplicantProhibitedMixin, ListView, MultipleObjectMixin):
     """View that shows a list of all the members."""
 
     model = User
@@ -175,7 +188,7 @@ class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin, Applican
 
     def get_queryset(self):
         club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.members.all())
+        users = list(club.members())
         return users
 
     def get_context_data(self, **kwargs):
@@ -191,7 +204,7 @@ class MemberListView(LoginRequiredMixin, ListView, MultipleObjectMixin, Applican
         for email in emails:
             user = User.objects.get(email=email)
             club.promote(user)
-        users = club.members.all()
+        users = club.members()
         return redirect('member_list', club_id=club.id)
 
 
@@ -205,7 +218,7 @@ class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
 
     def get_queryset(self):
         club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.owners.all())
+        users = list(club.owners())
         return users
 
     def get_context_data(self, **kwargs):
@@ -229,10 +242,11 @@ def club_recommender(request):
     return render(request, 'club_recommender.html')
 
 
-
 """View that handles transfering ownership of a club."""
-@login_required
-@owner
+
+
+@ login_required
+@ owner
 def transfer(request, user_id, club_id):
     club = Club.objects.get(id=club_id)
     try:
