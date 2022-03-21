@@ -1,4 +1,5 @@
 """Views related to the recommender."""
+from clubs.book_to_user_recommender.book_to_user import BookToUserRecommender
 from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
                          ClubBookForm, CreateEventForm, LogInForm,
                          MeetingAddressForm, MeetingLinkForm, NewClubForm,
@@ -118,6 +119,10 @@ class RecommendationsView(LoginRequiredMixin, View):
     def get(self, request):
         """Display template."""
 
+        # returns the collaborative filtering of ratings between users
+        user_rec_book_ids = BookToUserRecommender().get_collaborative_filtering()
+        self.user_rec_books = Book.objects.filter(id__in=user_rec_book_ids)[0:11]
+
         club_favourites = Club_Books.objects.all()
         if club_favourites.count() == 0:
             self.club_favourites_exist = False
@@ -133,5 +138,9 @@ class RecommendationsView(LoginRequiredMixin, View):
         """Render template."""
 
         return render(self.request, 'rec_page.html',
-                      {'club_favourites_exist': self.club_favourites_exist, 'club_favourites': self.club_favourites}
+                      {
+                          'user_rec_books_exists': self.user_rec_books.exists(),
+                          'user_rec_books': self.user_rec_books,
+                          'club_favourites_exist': self.club_favourites_exist,
+                          'club_favourites': self.club_favourites}
                       )
