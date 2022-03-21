@@ -11,5 +11,14 @@
       "calendar": 17,
       "meeting_type": "ONL"
     }
+  },
+  {
+    "model": "clubs.Club_Users",
+    "pk": 23,
+    "fields": {
+      "user": 2,
+      "club": 16,
+      "role_num": "4"
+    }
   }
 ]

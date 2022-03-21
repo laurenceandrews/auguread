@@ -113,6 +113,11 @@ class User(AbstractUser):
         """Return a URL to a miniature version of the user's gravatar."""
         return self.gravatar(size=60)
 
+    def clubs_attended(self):
+        """Return all clubs user is either a member, officer or owner of."""
+        club_ids = Club_Users.objects.filter(user=self).exclude(role_num="1").values_list('club', flat=True)
+        return Club.objects.filter(id__in=club_ids)
+
     def is_applicant(self, club):
         return self.membership_type(club) == 'Applicant'
 
@@ -124,17 +129,15 @@ class User(AbstractUser):
 
     def membership_type(self, club):
         """Type of membership the user has"""
-        if self == club.owner:
+        club_user = Club_Users.objects.get(user=self, club=club)
+        if club_user.role_num == "4":
             return 'Owner'
-        elif self in club.members.all():
+        elif club_user.role_num == "3":
+            return 'Officer'
+        elif club_user.role_num == "2":
             return 'Member'
-        elif self in club.applicants.all():
-            return 'Applicant'
         else:
-            return 'User'
-
-    def clubs_attended(self):
-        return list(self.member.all()) + list(self.owner.all()) + list(Club.objects.filter(owner=self))
+            return 'Applicant'
 
     def toggle_follow(self, followee):
         """Toggles whether self follows the given followee."""
@@ -335,32 +338,10 @@ class Club(models.Model):
         blank=False
     )
 
-    # A foreign key is not required for the club owner
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         blank=FALSE
-    )
-
-    applicants = models.ManyToManyField(
-        User, through='ApplicantMembership', related_name='applicant', blank=True)
-    members = models.ManyToManyField(
-        User, through='MemberMembership', related_name='member', blank=True)
-    owners = models.ManyToManyField(
-        User, through='OwnerMembership', related_name='owner', blank=True)
-
-    members = models.ManyToManyField(
-        User,
-        through='club_users',
-        related_name='member',
-        blank=True
-    )
-
-    books = models.ManyToManyField(
-        Book,
-        through='club_books',
-        related_name='book',
-        blank=True
     )
 
     # measured in words per minute (average for all club members)
@@ -373,56 +354,62 @@ class Club(models.Model):
         default=200  # if reading speed test not completed
     )
 
-    # favourite_books = models.ManyToManyField(
-    #
-    # )
     class Meta:
         """Model options"""
         ordering = ['name']
 
-    def member_list(self):
-        return self.members.all()
+    def applicants(self):
+        """Return all users who are applicants of this club."""
+        club_applicants_ids = Club_Users.objects.filter(club=Club.objects.get(id=self.id), role_num='1').values_list('user', flat=True)
+        return User.objects.filter(id__in=club_applicants_ids)
 
-    def applicant_list(self):
-        return self.applicants.all()
+    def members(self):
+        """Return all users who are members of this club."""
+        club_members_ids = Club_Users.objects.filter(club=Club.objects.get(id=self.id), role_num='2').values_list('user', flat=True)
+        return User.objects.filter(id__in=club_members_ids)
 
-    def owner_list(self):
-        return self.owners.all()
+    def officers(self):
+        """Return all users who are officers of this club."""
+        club_officers_ids = Club_Users.objects.filter(club=Club.objects.get(id=self.id), role_num='3').values_list('user', flat=True)
+        return User.objects.filter(id__in=club_officers_ids)
+
+    def owners(self):
+        """Return all users who are owners of this club."""
+        club_owners_ids = Club_Users.objects.filter(club=Club.objects.get(id=self.id), role_num='4').values_list('user', flat=True)
+        return User.objects.filter(id__in=club_owners_ids)
 
     def accept(self, user):
-        self.members.add(user)
-        self.applicants.remove(user)
+        club_user = Club_Users.objects.get(club=Club.objects.get(id=self.id), user=user)
+        club_user.role_num = 2
+        club_user.save()
 
     def applied_by(self, user):
-        self.applicants.add(user)
+        Club_Users.objects.create(club=Club.objects.get(id=self.id), user=user)
 
     def in_club(self, user):
-        if user in self.members.all() or user in self.owners.all() or user in self.applicants.all() or user == self.owner:
+        if user in self.members() or user in self.owners() or user in self.applicants() or user == self.owner:
             return True
         else:
             return False
 
     def transfer(self, user):
+        """Transfer ownership of the club to another owner"""
         owner = self.owner
-        if user in self.owners.all():
-            self.owners.add(owner)
-            self.owner = user
-            self.owners.remove(user)
+        club = Club.objects.get(id=self.id)
+        old_owner_club_user = Club_Users.objects.get(club=club, role_num="4")
+        new_owner_club_user = Club_Users.objects.get(club=Club.objects.get(id=self.id), user=user)
+        if new_owner_club_user.user in self.members():
+            old_owner_club_user.role_num = 2
+            old_owner_club_user.save()
+            new_owner_club_user.role_num = 4
+            new_owner_club_user.save()
+            self.owner = new_owner_club_user.user
             self.save()
 
-
-class ApplicantMembership(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    club = models.ForeignKey(Club, on_delete=models.CASCADE)
-
-
-class OwnerMembership(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    club = models.ForeignKey(Club, on_delete=models.CASCADE)
-
-# class MemberMembership(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     club = models.ForeignKey(Club, on_delete=models.CASCADE)
+    def favourite_books(self):
+        """Return all favourite books of this club."""
+        club_books_ids = Club_Books.objects.filter(club=Club.objects.get(id=self.id)).values_list('user', flat=True)
+        return Book.objects.filter(id__in=club_books_ids)
 
 
 class Club_Users(models.Model):
@@ -440,11 +427,21 @@ class Club_Users(models.Model):
         default=0
     )
 
-    
-    role_num = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(4)],
-        blank=False,
-        default=1
+    APPLICANT = '1'
+    MEMBER = '2'
+    OFFICER = '3'
+    OWNER = '4'
+    ROLE_NUM_CHOICES = [
+        (APPLICANT, 'Applicant'),
+        (MEMBER, 'Member'),
+        (OFFICER, 'Officer'),
+        (OWNER, 'Owner')
+    ]
+    role_num = models.CharField(
+        max_length=1,
+        choices=ROLE_NUM_CHOICES,
+        default=1,
+        blank=False
     )
 
     class Meta:
@@ -539,18 +536,6 @@ class Book_Rating(models.Model):
         blank=False,
         default=1
     )
-    # BOOK_RATING_CHOICES = [
-    #     ('1', 'One'),
-    #     ('2', 'Two'),
-    #     ('3', 'Three'),
-    #     ('4', 'Four'),
-    #     ('5', 'Five'),
-    #     ('6', 'Six'),
-    #     ('7', 'Seven'),
-    #     ('8', 'Eight'),
-    #     ('9', 'Nine'),
-    #     ('10', 'Ten')
-    # ]
 
     BOOK_RATING_CHOICES = [
         ("Rate book", "Rate book"),

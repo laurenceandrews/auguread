@@ -25,13 +25,14 @@ class ApplyViewTestCase(TestCase):
         redirect_url = reverse('club_list')
         self.assertRedirects(response, redirect_url,
                              status_code=302, target_status_code=200)
-        self.assertTrue(self.applicant in self.club.applicants.all())
+        self.assertTrue(self.applicant in self.club.applicants())
 
     def _create_club_owner_members_and_applicants(self):
-        self.owner = self.club.owner
+        self.club_owner = self.club.owner
         self.applicant = User.objects.get(pk=2)
-        self.club.applicants.add(self.applicant)
-        self.club_applicants = self.club.applicants.all()
+        self.club.applied_by(self.applicant)
+        self.club_applicants = self.club.applicants
         self.member = User.objects.get(pk=3)
-        self.club.members.add(self.member)
-        self.club_members = self.club.members.all()
+        self.club.applied_by(self.member)
+        self.club.accept(self.member)
+        self.club_members = self.club.members

@@ -1,5 +1,5 @@
 """Unit tests for the User model."""
-from clubs.models import Club, User
+from clubs.models import Club, Club_Users, User
 from django.test import TestCase
 
 
@@ -32,19 +32,19 @@ class ClubModelTestCase(TestCase):
         self.assertEqual(self.applicant.membership_type(
             self.club), 'Applicant')
 
-    def test_user_membership_type(self):
-        self.assertEqual(self.user.membership_type(self.club), 'User')
+    # def test_officer_membership_type(self):
+    #     self.assertEqual(self.officer.membership_type(self.club), 'Officer')
 
-    # def test_owner_membership_type(self):
-    #     self.assertEqual(self.owner.membership_type(self.club), 'Owner')
+    def test_owner_membership_type(self):
+        self.assertEqual(self.owner.membership_type(self.club), 'Owner')
 
     def test_transfer(self):
         self.club.transfer(self.member)
-        self.assertEqual(self.club.owner, self.owner)
+        self.assertEqual(self.club.owner, self.member)
 
-    def test_can_not_transfer_to_member(self):
-        self.club.transfer(self.member)
-        self.assertNotEqual(self.club.owner, self.member)
+    def test_can_not_transfer_to_applicant(self):
+        self.club.transfer(self.applicant)
+        self.assertNotEqual(self.club.owner, self.applicant)
 
     def test_in_club(self):
         self.assertTrue(self.club.in_club(self.owner))
@@ -53,10 +53,8 @@ class ClubModelTestCase(TestCase):
         self.assertFalse(self.club.in_club(self.user))
 
     def _create_club_owner_members_and_applicants(self):
-        self.owner = self.club.owner
+        self.owner = Club_Users.objects.get(club=self.club, role_num=4).user
         self.applicant = User.objects.get(pk=2)
-        self.club.applicants.add(self.applicant)
-        self.club_applicants = self.club.applicants.all()
+        Club_Users.objects.create(user=self.applicant, club=self.club)
         self.member = User.objects.get(pk=3)
-        self.club.members.add(self.member)
-        self.club_members = self.club.members.all()
+        Club_Users.objects.create(user=self.member, club=self.club, role_num=2)

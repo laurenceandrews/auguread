@@ -159,7 +159,7 @@ class Command(BaseCommand):
             Club_Users.objects.create(
                 user=user,
                 club=club,
-                role_num=4
+                role_num="4"
             )
 
             # self.clubs_made.append(club)
