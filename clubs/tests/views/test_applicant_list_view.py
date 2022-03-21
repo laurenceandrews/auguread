@@ -30,7 +30,7 @@ class ApplicantListViewTestCase(TestCase):
         self.client.login(email=self.owner.email, password="Password123")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'applicant_list.html')
+        self.assertTemplateUsed(response, 'club_users_list.html')
 
     def test_member_can_not_access_applicant_list(self):
         self.client.login(email=self.member.email, password="Password123")

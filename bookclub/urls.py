@@ -60,7 +60,7 @@ urlpatterns = [
 
 
     path('<int:club_id>/applicants', views.applicants_list, name='applicant_list'),
-    path('<int:club_id>/members', views.MemberListView.as_view(), name='member_list'),
+    path('<int:club_id>/members', views.members_list, name='member_list'),
     path('<int:club_id>/owners', views.OwnerListView.as_view(), name='owner_list'),
 
     path('user_detail/', views.user_detail, name='user_detail'),

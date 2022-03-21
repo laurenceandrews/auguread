@@ -402,14 +402,15 @@ class Club(models.Model):
     def transfer(self, user):
         """Transfer ownership of the club to another owner"""
         owner = self.owner
-        old_owner_club_user = Club_Users.objects.get(club=Club.objects.get(id=self.id), user=owner)
+        club = Club.objects.get(id=self.id)
+        old_owner_club_user = Club_Users.objects.get(club=club, role_num=4)
         new_owner_club_user = Club_Users.objects.get(club=Club.objects.get(id=self.id), user=user)
-        if user in self.owners():
+        if new_owner_club_user.user in self.members():
             old_owner_club_user.role_num = 2
             old_owner_club_user.save()
             new_owner_club_user.role_num = 4
             new_owner_club_user.save()
-            self.owner = user
+            self.owner = new_owner_club_user.user
             self.save()
 
     def promote(self, user):

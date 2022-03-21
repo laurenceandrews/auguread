@@ -31,7 +31,7 @@ class MemberListViewTestCase(TestCase):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'member_list.html')
+        self.assertTemplateUsed(response, 'club_users_list.html')
 
     def test_member_list_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)

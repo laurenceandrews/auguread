@@ -40,11 +40,11 @@ class ClubModelTestCase(TestCase):
 
     def test_transfer(self):
         self.club.transfer(self.member)
-        self.assertEqual(self.club.owner, self.owner)
+        self.assertEqual(self.club.owner, self.member)
 
-    def test_can_not_transfer_to_member(self):
-        self.club.transfer(self.member)
-        self.assertNotEqual(self.club.owner, self.member)
+    def test_can_not_transfer_to_applicant(self):
+        self.club.transfer(self.applicant)
+        self.assertNotEqual(self.club.owner, self.applicant)
 
     def test_in_club(self):
         self.assertTrue(self.club.in_club(self.owner))

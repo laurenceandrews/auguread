@@ -8,9 +8,28 @@
       <div class="mt-1 max-w-2xl text-sm text-gray-500">
         <p>There are {{users.count}} pending applications. Only the owner can approve them.</p>
       </div>
-      {% include 'partials/club_users_as_table.html' with users=users club=club%}
+      {% include 'partials/club_users_as_table.html' with users=users club=club list_of_applicants=list_of_applicants%}
     </div>
     {% endif %}
+
+    {% if list_of_members == True%}
+    <div class="col-12">
+      <h1>Members in club: {{club.name}}</h1>
+      {% if is_owner == True%}
+      <div class="mt-1 max-w-2xl text-sm text-gray-500">
+        <p>There are {{users.count}} club members. As the owner, you can transfer club ownership to any club member.</p>
+      </div>
+      {% include 'partials/club_users_as_table.html' with users=users club=club is_owner=is_owner list_of_members=list_of_members%}
+      {% else %}
+      <div class="mt-1 max-w-2xl text-sm text-gray-500">
+        <p>There are {{users.count}} club members.</p>
+      </div>
+      {% include 'partials/club_users_as_table.html' with users=users club=club %}
+      {% endif %}
+    </div>
+    {% endif %}
+
+
   </div>
 </div>
 {% endblock %}
