@@ -1,5 +1,5 @@
-from clubs.models import (Book, Club, Club_Book_History, Club_Users, User,
-                          User_Books)
+from clubs.models import (Book, Club, Club_Book_History, Club_Books,
+                          Club_Users, User, User_Books)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
@@ -44,7 +44,7 @@ def user_clubs_books(request):
     user = request.user
     clubs_ids = Club_Users.objects.filter(user=user).exclude(role_num="1").values_list('club', flat=True)
     clubs = Club.objects.filter(id__in=clubs_ids)
-    book_ids = User_Books.objects.filter(club__in=clubs).values_list('book', flat=True)
+    book_ids = Club_Books.objects.filter(club__in=clubs).values_list('book', flat=True)
     books = Book.objects.filter(id__in=book_ids)
     return render(request, "partials/books_table.html",
                   {

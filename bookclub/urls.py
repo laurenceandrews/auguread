@@ -40,7 +40,7 @@ urlpatterns = [
     path('summary/', views.UserSummaryView.as_view(), name='user_summary'),
     path('summary/clubs/<str:role_num>', views.clubs_list, name='user_clubs'),
     path('summary/books/favourite', views.user_favourite_books, name='user_favourite_books'),
-    path('summary/clubs/books', views.user_clubs_books, name='user_clubs_books'),
+    path('summary/books/clubs', views.user_clubs_books, name='user_clubs_books'),
 
 
 
