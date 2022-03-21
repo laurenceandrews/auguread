@@ -363,6 +363,25 @@ class Book_Rating(models.Model):
         app_label = "clubs"
 
 
+class User_Book_History(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    class Meta:
+        app_label = "clubs"
+
+
 class User_Books(models.Model):
     user = models.ForeignKey(
         User,

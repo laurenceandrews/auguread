@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from .models import (Book, Book_Rating, Club, Club_Book_History, Club_Books,
                      Club_Users, MeetingAddress, MeetingLink, Post, User,
-                     User_Books)
+                     User_Book_History, User_Books)
 
 
 @admin.register(User)
@@ -44,6 +44,15 @@ class BookAdmin(admin.ModelAdmin):
 
     list_display = [
         'ISBN', 'title', 'author', 'publication_year'
+    ]
+
+
+@admin.register(User_Book_History)
+class User_Book_History(admin.ModelAdmin):
+    """Configuration of the admin interface for user book history."""
+
+    list_display = [
+        'user', 'book'
     ]
 
 
