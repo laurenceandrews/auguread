@@ -38,7 +38,7 @@ class BookToUserRecommender:
         # get title of books
         top_books_to_recommend = pd.merge(top_20_books, self.df_books, on='id')[['title', 'author', 'mean', 'count', 'weighted rating',
                                                                              'publication_year']].drop_duplicates('title').iloc[:10]
-        # breakpoint()   
+        # breakpoint()    
         return top_books_to_recommend
 
     def get_top_authors(self):
@@ -77,13 +77,19 @@ class BookToUserRecommender:
         df_books_ratings['count'] = df_books_ratings.groupby('book_id').transform('count')['user_id']
 
         # fetch top 100 books based on count
-        isbn = df_books_ratings.drop_duplicates('book_id').sort_values('count', ascending=False).iloc[:100]['book_id']
-
+        isbn = df_books_ratings.drop_duplicates('book_id').sort_values('count', ascending=False).iloc[:100]['book_id'] 
         # filter out data as per the ISBN
         df_books_ratings = df_books_ratings[df_books_ratings['book_id'].isin(isbn)].reset_index(drop=True)
 
-       # breakpoint()
+        # remove columns
+        # df_books_ratings = df_books_ratings.drop(['image_small', "image_medium", "image_large"]) 
+
+        books_ratings_list = df_books_ratings['book_id'].tolist()
+
+        # breakpoint()
         print('collaborative filtering output =', df_books_ratings.head(15))
-        print(df_books_ratings.shape)
-        return df_books_ratings
+        print('df shape: ' , df_books_ratings.shape)
+        print('list count: ' , books_ratings_list.count(books_ratings_list))
+
+        return books_ratings_list
     
