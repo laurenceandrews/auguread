@@ -15,17 +15,10 @@ class OwnerListViewTestCase(TestCase):
         'clubs/tests/fixtures/default_rules.json',
     ]
     def setUp(self):
-        # self.user = User.objects.get(pk=1)
-        # self.club = Club.objects.get(pk=6)
-        # self._create_club_owner_members_and_applicants()
-        #
-        # self.data = {}
-        #
-        # self.url = reverse('owner_list', kwargs={'club_id': self.club.id})
-
         self.user = User.objects.get(pk=1)
         self.club = Club.objects.get(pk=6)
         self._create_club_owner_members_and_applicants()
+        self.data = {}
         self.url = reverse('owner_list', kwargs={'club_id': self.club.id})
         self.approve_url = reverse(
             'approve', kwargs={'club_id': self.club.id, 'user_id': self.applicant.id})
