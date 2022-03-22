@@ -32,6 +32,7 @@ urlpatterns = [
     path('rec/', views.RecommendationsView.as_view(), name='rec'),
     path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
     path('club_recommender/', ClubRecommenderView.as_view(), name='club_recommender'),
+    url(r"^club/book/edit/(?P<club_id>\d+)/$", views.ClubBookSelectionView.as_view(), name='club_book_select'),
 
     path('sign_up/', views.SignUpView.as_view(), name='sign_up'),
     path('log_in/', views.LogInView.as_view(), name='log_in'),
@@ -70,52 +71,31 @@ urlpatterns = [
 
 
     path('book/rating/<int:book_id>/', views.CreateBookRatingView.as_view(), name='rate_book'),
+
     path('club/<int:club_id>/book/<int:book_id>/history/', views.CreateClubBookHistoryView.as_view(), name='create_club_book_history'),
     path('user/<int:user_id>/book/<int:book_id>/history/', views.CreateUserBookHistoryView.as_view(), name='create_user_book_history'),
+
     path('user/<int:user_id>/book/<int:book_id>/favourite/', views.CreateUserBooksView.as_view(), name='create_user_book_favourite'),
     path('user/<int:user_id>/book/<int:book_id>/favourite/delete/', views.delete_user_book_favourite, name='delete_user_book_favourite'),
-    url(r"^club/book/edit/(?P<club_id>\d+)/$",
-        views.ClubBookSelectionView.as_view(),
-        name='club_book_select'),
-    url(r"^book/detail/(?P<book_id>\d+)/$",
-        views.BookDetailView.as_view(),
-        name='book_detail'),
+
+    url(r"^book/detail/(?P<book_id>\d+)/$", views.BookDetailView.as_view(), name='book_detail'),
 
     # Meeting scheduler urls
     re_path(r"^schedule/api/occurrences", api_occurrences, name="api_occurrences"),
     path('calendar_picker/', views.CalendarPickerView.as_view(), name='calendar_picker'),
-    url(r"^fullcalendar/(?P<calendar_slug>[-\w]+)/$",
-        views.full_calendar,
-        name='full_calendar'),
+    url(r"^fullcalendar/(?P<calendar_slug>[-\w]+)/$", views.full_calendar, name='full_calendar'),
+
     path('events_list/<int:calendar_id>', views.events_list, name='events_list'),
-    url(r"^event/detail/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
-        views.EventDetailView.as_view(),
-        name='event_detail'),
-    url(r'^event/create/(?P<calendar_slug>[-\w]+)/$',
-        views.CreateEventView.as_view(),
-        name='create_event'),
-    url(r"^event/address/create/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
-        views.CreateEventAddressView.as_view(),
-        name='create_event_address'),
-    url(r"^event/address/create/newaddress/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
-        views.CreateAddressView.as_view(),
-        name='create_address'),
-    url(r"^event/link/create/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
-        views.CreateEventLinkView.as_view(),
-        name='create_event_link'),
-    url(r"^event/edit/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
-        views.EditEventView.as_view(),
-        name='edit_event'),
-    url(r"^event/link/edit/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
-        views.EditEventLinkView.as_view(),
-        name='edit_event_link'),
-    url(r"^event/address/edit/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
-        views.EditEventAddressView.as_view(),
-        name='edit_event_address'),
-    re_path(r"^event/(?P<event_id>\d+)/$", EventView.as_view(), name="event"),
-    re_path(
-        r"^event/delete/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$",
-        views.DeleteEventView.as_view(),
-        name="delete_event",
-    ),
+    url(r"^event/detail/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$", views.EventDetailView.as_view(), name='event_detail'),
+    url(r'^event/create/(?P<calendar_slug>[-\w]+)/$', views.CreateEventView.as_view(), name='create_event'),
+    url(r"^event/edit/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$", views.EditEventView.as_view(), name='edit_event'),
+    re_path(r"^event/delete/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$", views.DeleteEventView.as_view(), name="delete_event"),
+    url(r"^event/address/create/newaddress/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$", views.CreateAddressView.as_view(), name='create_address'),
+    url(r"^event/address/create/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$", views.CreateEventAddressView.as_view(), name='create_event_address'),
+    url(r"^event/address/edit/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$", views.EditEventAddressView.as_view(), name='edit_event_address'),
+    url(r"^event/link/create/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$", views.CreateEventLinkView.as_view(), name='create_event_link'),
+    url(r"^event/link/edit/(?P<calendar_slug>[-\w]+)/(?P<event_id>\d+)/$", views.EditEventLinkView.as_view(), name='edit_event_link'),
+
+
+
 ]

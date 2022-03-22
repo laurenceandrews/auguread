@@ -99,4 +99,5 @@ def clubs_list(request, role_num):
                   {
                       'user': user,
                       'clubs': clubs,
+                      'role_num': role_num
                   })
