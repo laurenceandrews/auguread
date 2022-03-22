@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect
@@ -154,15 +155,19 @@ class CreateClubBookHistoryView(CreateView):
         return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
 
-class CreateUserBookHistoryView(CreateView):
+class CreateUserBookHistoryView(LoginRequiredMixin, CreateView):
     model = User_Book_History
     template_name = 'user_book_history_create.html'
     form_class = UserBookHistoryForm
 
     def form_valid(self, form):
         """Process a valid form."""
-        user = User.objects.get(id=self.kwargs['user_id'])
-        book = Book.objects.get(id=self.kwargs['book_id'])
+        try:
+            user = User.objects.get(id=self.kwargs['user_id'])
+            book = Book.objects.get(id=self.kwargs['book_id'])
+        except ObjectDoesNotExist:
+            messages.add_message(self.request, messages.ERROR, "Invalid user or book!")
+            return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
         user_book_history_exists = User_Book_History.objects.filter(user=user, book=book)
 
