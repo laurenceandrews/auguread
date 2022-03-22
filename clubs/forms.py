@@ -334,6 +334,12 @@ class BookRatingForm(forms.ModelForm):
         model = Book_Rating
         fields = ['rating']
 
+    # def clean(self):
+    #     super().clean()
+    #     valid_ratings = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    #     if self.cleaned_data.get('rating') not in valid_ratings:
+    #         self.add_error('rating', 'Please select a rating from 1 to 10.')
+
 
 class ClubBookHistoryForm(forms.ModelForm):
     class Meta:

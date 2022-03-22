@@ -345,7 +345,6 @@ class Book_Rating(models.Model):
     )
 
     BOOK_RATING_CHOICES = [
-        ("Rate book", "Rate book"),
         ('1', '1'),
         ('2', '2'),
         ('3', '3'),
@@ -361,7 +360,6 @@ class Book_Rating(models.Model):
     rating = models.CharField(
         max_length=9,
         choices=BOOK_RATING_CHOICES,
-        default="Rate book",
         blank=False
     )
 
