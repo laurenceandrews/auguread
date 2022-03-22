@@ -43,8 +43,6 @@ class CreateEventFormTestCase(TestCase):
         self.assertIn('title', form.fields)
         self.assertIn('start', form.fields)
         self.assertIn('end', form.fields)
-        self.assertIn('end_recurring_period', form.fields)
-        self.assertIn('rule', form.fields)
 
     def test_end_must_be_later_than_start(self):
         self.form_input['start'] = self.data['end']

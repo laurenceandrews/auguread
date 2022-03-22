@@ -67,8 +67,6 @@ class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
         title = form.cleaned_data.get('title')
         start = form.cleaned_data.get('start')
         end = form.cleaned_data.get('end')
-        end_recurring_period = form.cleaned_data.get('end_recurring_period')
-        rule = form.cleaned_data.get('rule')
 
         club_book_history_exists = Club_Book_History.objects.filter(club=club).exists()
         if club_book_history_exists:
@@ -81,8 +79,6 @@ class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
             title=title,
             start=start,
             end=end,
-            end_recurring_period=end_recurring_period,
-            rule=rule,
             calendar=calendar,
             description=description_text
         )

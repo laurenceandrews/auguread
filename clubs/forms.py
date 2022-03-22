@@ -254,7 +254,7 @@ class MeetingLinkForm(forms.ModelForm):
 class CreateEventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['title', 'rule']
+        fields = ['title']
 
     start = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
@@ -268,13 +268,6 @@ class CreateEventForm(forms.ModelForm):
     end = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
         initial=meeting_end)
-
-    end_recurring_period = forms.SplitDateTimeField(
-        widget=forms.SplitDateTimeWidget(),
-        initial=datetime.datetime.now,
-        help_text=_("This date is ignored for one time only events."),
-        required=False
-    )
 
     def clean(self):
         super().clean()

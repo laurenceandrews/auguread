@@ -17,6 +17,8 @@ class MeetingLink(models.Model):
 
     class Meta:
         app_label = "clubs"
+        verbose_name = "Meeting Link"
+        verbose_name_plural = "Meeting Links"
 
 
 class Address(models.Model):
@@ -53,6 +55,8 @@ class Address(models.Model):
 
     class Meta:
         app_label = "clubs"
+        verbose_name = "Address"
+        verbose_name_plural = "Addresses"
 
     def __str__(self):
         return self.name
@@ -76,4 +80,4 @@ class MeetingAddress(models.Model):
     class Meta:
         app_label = "clubs"
         verbose_name = "Meeting Address"
-        # verbose_name_plural = "Meeting Addresses"
+        verbose_name_plural = "Meeting Addresses"
