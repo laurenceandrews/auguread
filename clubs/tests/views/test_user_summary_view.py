@@ -36,6 +36,6 @@ class UserSummaryViewTestCase(TestCase):
         self.assertContains(response, '<option>Clubs with application pending</option>', status_code=200)
         self.assertContains(response, '<option>Clubs with membership</option>', status_code=200)
         self.assertContains(response, '<option>Clubs with ownership</option>', status_code=200)
-        self.assertContains(response, '<option>My clubs currently reading</option>', status_code=200)
+        self.assertContains(response, '<option>My clubs are currently reading</option>', status_code=200)
         self.assertContains(response, '<option>My favourite books</option>', status_code=200)
         self.assertContains(response, '<option>My current book</option>', status_code=200)
