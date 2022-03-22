@@ -8,7 +8,7 @@ from django.urls import reverse
 from schedule.models import Calendar, Event, Rule
 
 
-class CreateEventAddressViewTest(TestCase):
+class CreateAddressViewTest(TestCase):
     """Tests of the create_address view."""
 
     fixtures = [
@@ -116,6 +116,31 @@ class CreateEventAddressViewTest(TestCase):
         meeting_address_count_after = MeetingAddress.objects.count()
         self.assertEqual(address_count_after, address_count_before + 1)
         self.assertEqual(meeting_address_count_after, meeting_address_count_before + 1)
+        new_meeting_address = MeetingAddress.objects.get(event=self.event)
+        self.assertEqual(self.data['name'], new_meeting_address.address.name)
+        response_url = reverse('full_calendar', kwargs={'calendar_slug': self.calendar.slug})
+        self.assertTemplateUsed(response, 'fullcalendar.html')
+
+    def test_successful_new_event_address_if_event_exists(self):
+        data = {
+            "name": "Not City Library",
+            "address1": "New Concordia Wharf",
+            "address2": "3 Mill St",
+            "zip_code": "SE1 2BB",
+            "city": "London",
+            "country": "GB"
+        }
+        address = Address(**data)
+        address.save()
+        MeetingAddress.objects.create(event=self.event, address=address)
+        self.client.login(email=self.user.email, password="Password123")
+        address_count_before = Address.objects.count()
+        meeting_address_count_before = MeetingAddress.objects.count()
+        response = self.client.post(self.url, self.data, follow=True)
+        address_count_after = Address.objects.count()
+        meeting_address_count_after = MeetingAddress.objects.count()
+        self.assertEqual(address_count_after, address_count_before + 1)
+        self.assertEqual(meeting_address_count_after, meeting_address_count_before)
         new_meeting_address = MeetingAddress.objects.get(event=self.event)
         self.assertEqual(self.data['name'], new_meeting_address.address.name)
         response_url = reverse('full_calendar', kwargs={'calendar_slug': self.calendar.slug})
