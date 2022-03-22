@@ -16,6 +16,53 @@ class UserAdmin(admin.ModelAdmin):
     ]
 
 
+@admin.register(Club)
+class ClubAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for clubs."""
+
+    list_display = [
+        'name', 'location', 'calendar', 'meeting_type', 'applicants_count', 'members_count', 'owners_count', 'favourite_books'
+    ]
+
+    def applicants_count(self, club):
+        """Return the number of club applicants."""
+        return club.applicants().count()
+
+    def members_count(self, club):
+        """Return the number of club applicants."""
+        return club.members().count()
+
+    def owners_count(self, club):
+        """Return the number of club members."""
+        return club.owners().count()
+
+
+@admin.register(Club_Users)
+class Club_UsersAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for club users."""
+
+    list_display = [
+        'club_name', 'user', 'role_num'
+    ]
+
+    def club_name(self, club):
+        """Return the name of the club of the club_user."""
+        return club.club.name
+
+
+@admin.register(Book_Rating)
+class BookRatingAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for book ratings."""
+
+    list_display = [
+        'user', 'book_title', 'rating'
+    ]
+
+    def book_title(self, book_rating):
+        """Return the title of an book rating's book."""
+        return book_rating.book.title
+
+
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for posts."""
@@ -27,15 +74,6 @@ class PostAdmin(admin.ModelAdmin):
     def get_author(self, post):
         """Return the author of a given post."""
         return post.author.username
-
-
-@admin.register(Club)
-class ClubAdmin(admin.ModelAdmin):
-    """Configuration of the admin interface for users."""
-
-    list_display = [
-        'name', 'location', 'description', 'applicants', 'members', 'owners', 'favourite_books'
-    ]
 
 
 @admin.register(Book)
@@ -78,15 +116,6 @@ class MeetingLinkAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Club_Users)
-class Club_UsersAdmin(admin.ModelAdmin):
-    """Configuration of the admin interface for club users."""
-
-    list_display = [
-        'club', 'user', 'role_num'
-    ]
-
-
 @admin.register(Club_Books)
 class Club_BookAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for club users."""
@@ -103,19 +132,6 @@ class Club_Book_HistoryAdmin(admin.ModelAdmin):
     list_display = [
         'club', 'book'
     ]
-
-
-@admin.register(Book_Rating)
-class BookRatingAdmin(admin.ModelAdmin):
-    """Configuration of the admin interface for book ratings."""
-
-    list_display = [
-        'user', 'book_title', 'rating'
-    ]
-
-    def book_title(self, book_rating):
-        """Return the title of an book rating's book."""
-        return book_rating.book.title
 
 
 @admin.register(User_Books)
