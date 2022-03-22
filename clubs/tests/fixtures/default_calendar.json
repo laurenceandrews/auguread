@@ -30,5 +30,13 @@
       "name": "Purple Club's Calendar",
       "slug": "purple-clubs-calendar"
     }
+  },
+  {
+    "model": "schedule.Calendar",
+    "pk": 27,
+    "fields": {
+      "name": "Exciting Club's Calendar",
+      "slug": "exciting-clubs-calendar"
+    }
   }
 ]

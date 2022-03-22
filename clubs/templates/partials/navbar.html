@@ -33,6 +33,12 @@
       <!-- Sign in and Sign up-->
       <div class="flex items-center justify-end md:flex-1 lg:w-0">
         <a
+          href="{% url 'user_summary' %}"
+          class="text-md mx-4 whitespace-nowrap font-medium text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-400"
+        >
+          Home
+        </a>
+        <a
           href="{% url 'feed' %}"
           class="text-md mx-4 whitespace-nowrap font-medium text-gray-500 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-400"
         >

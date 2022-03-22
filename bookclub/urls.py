@@ -29,28 +29,34 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
 
+    path('rec/', views.RecommendationsView.as_view(), name='rec'),
+    path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
+    path('club_recommender/', ClubRecommenderView.as_view(), name='club_recommender'),
+
     path('sign_up/', views.SignUpView.as_view(), name='sign_up'),
     path('log_in/', views.LogInView.as_view(), name='log_in'),
     path('log_out/', views.log_out, name='log_out'),
     path("__reload__/", include("django_browser_reload.urls")),
     path('password/', views.PasswordView.as_view(), name='password'),
-    path('rec/', views.RecommendationsView.as_view(), name='rec'),
     path('edit_profile/', views.ProfileUpdateView.as_view(), name='edit_profile'),
-
-    # User urls
-    path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
-    path('user_detail/', views.user_detail, name='user_detail'),
     path('delete_account/', views.delete_account, name='delete_account'),
+
+    path('summary/', views.UserSummaryView.as_view(), name='user_summary'),
+    path('summary/clubs/<str:role_num>', views.clubs_list, name='user_clubs'),
+    path('summary/books/favourite', views.user_favourite_books, name='user_favourite_books'),
+    path('summary/books/clubs', views.user_clubs_books, name='user_clubs_books'),
+    path('summary/books/current', views.user_current_book, name='user_current_book'),
 
     # Feed urls
     path('feed/', views.FeedView.as_view(), name='feed'),
     path('new_post/', views.NewPostView.as_view(), name='new_post'),
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
+    path('user_detail/', views.user_detail, name='user_detail'),
 
     # Club urls
     path('clubs/', views.ClubListView.as_view(), name='club_list'),
     path('new_club/', views.new_club, name='new_club'),
-
+    path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
 
     path('enter/<int:club_id>', views.enter, name='enter'),
     path('apply/<int:club_id>', views.apply, name='apply'),
@@ -58,25 +64,22 @@ urlpatterns = [
     path('<int:club_id>/transfer/<int:user_id>', views.transfer, name='transfer'),
     path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
 
-
     path('<int:club_id>/applicants', views.applicants_list, name='applicant_list'),
     path('<int:club_id>/members', views.members_list, name='member_list'),
     path('<int:club_id>/owners', views.OwnerListView.as_view(), name='owner_list'),
 
-    path('user_detail/', views.user_detail, name='user_detail'),
-    path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
-    path('feed/', views.FeedView.as_view(), name='feed'),
-    path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
 
-    path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
     path('book/rating/<int:book_id>/', views.CreateBookRatingView.as_view(), name='rate_book'),
     path('club/<int:club_id>/book/<int:book_id>/history/', views.CreateClubBookHistoryView.as_view(), name='create_club_book_history'),
-    path('user/<int:user_id>/book/<int:book_id>/history/', views.CreateUserBooksView.as_view(), name='create_user_books'),
-
-
-
-    # sample scheduler
-    # url(r'^fullcalendar', TemplateView.as_view(template_name="fullcalendar.html"), name='fullcalendar'),
+    path('user/<int:user_id>/book/<int:book_id>/history/', views.CreateUserBookHistoryView.as_view(), name='create_user_book_history'),
+    path('user/<int:user_id>/book/<int:book_id>/favourite/', views.CreateUserBooksView.as_view(), name='create_user_book_favourite'),
+    path('user/<int:user_id>/book/<int:book_id>/favourite/delete/', views.delete_user_book_favourite, name='delete_user_book_favourite'),
+    url(r"^club/book/edit/(?P<club_id>\d+)/$",
+        views.ClubBookSelectionView.as_view(),
+        name='club_book_select'),
+    url(r"^book/detail/(?P<book_id>\d+)/$",
+        views.BookDetailView.as_view(),
+        name='book_detail'),
 
     # Meeting scheduler urls
     re_path(r"^schedule/api/occurrences", api_occurrences, name="api_occurrences"),
@@ -115,19 +118,4 @@ urlpatterns = [
         views.DeleteEventView.as_view(),
         name="delete_event",
     ),
-
-    # Book recommender urls
-    # path('club_recommender/', views.club_recommender, name='club_recommender'),
-    path('club_recommender/', ClubRecommenderView.as_view(), name='club_recommender'),
-
-    #path('book_preferences/', views.book_preferences, name='book_preferences'),
-    path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
-
-
-    url(r"^club/book/edit/(?P<club_id>\d+)/$",
-        views.ClubBookSelectionView.as_view(),
-        name='club_book_select'),
-    url(r"^book/detail/(?P<book_id>\d+)/$",
-        views.BookDetailView.as_view(),
-        name='book_detail'),
 ]

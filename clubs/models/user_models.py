@@ -1,9 +1,6 @@
-"""Models in the clubs app."""
-
-import uuid
 from pickle import FALSE
 
-from django import forms
+from clubs.models.book_models import Book
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import (MaxValueValidator, MinValueValidator,
                                     RegexValidator)
@@ -95,6 +92,7 @@ class User(AbstractUser):
 
     class Meta:
         """Model options"""
+        app_label = "clubs"
         ordering = ['first_name', 'last_name']
 
     def full_name(self):
@@ -171,137 +169,6 @@ class User(AbstractUser):
         return self.followees.count()
 
 
-class Book(models.Model):
-    ISBN = models.CharField(
-        max_length=10,
-        blank=False
-    )
-
-    title = models.CharField(
-        max_length=250,
-        blank=False
-    )
-
-    author = models.CharField(
-        max_length=300,
-        blank=False
-    )
-
-    publisher = models.CharField(
-        max_length=300,
-        blank=False
-    )
-
-    publication_year = models.IntegerField(
-        blank=False
-    )
-
-    image_small = models.ImageField(
-        blank=False,
-        default='/static/default_book.png/'
-    )
-
-    image_medium = models.ImageField(
-        blank=False,
-        default='/static/default_book.png/'
-    )
-
-    image_large = models.ImageField(
-        blank=False,
-        default='/static/default_book.png/'
-    )
-
-    def __str__(self):
-        return self.title
-
-
-class Post(models.Model):
-    """Posts by users."""
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
-
-    text = models.CharField(
-        max_length=280
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-    class Meta:
-        """Model options."""
-        ordering = ['-created_at']
-
-
-class MeetingLink(models.Model):
-    event = models.OneToOneField(
-        Event,
-        on_delete=models.CASCADE
-    )
-
-    meeting_link = models.URLField(
-        blank=False
-    )
-
-
-class Address(models.Model):
-    name = models.CharField(
-        "Full name",
-        max_length=1024,
-    )
-
-    address1 = models.CharField(
-        "Address line 1",
-        max_length=1024,
-    )
-
-    address2 = models.CharField(
-        "Address line 2",
-        max_length=1024,
-        blank=True
-    )
-
-    zip_code = models.CharField(
-        "ZIP / Postal code",
-        max_length=12,
-        blank=True
-    )
-
-    city = models.CharField(
-        "City",
-        max_length=1024,
-    )
-
-    country = CountryField(
-        blank_label='(select country)'
-    )
-
-    def __str__(self):
-        return self.name
-
-    def full_address(self):
-        return f'{self.name}. {self.zip_code}, {self.address1}, {self.address2}. {self.city}, {self.country}.'
-
-
-class MeetingAddress(models.Model):
-    event = models.OneToOneField(
-        Event,
-        on_delete=models.CASCADE
-    )
-
-    address = models.ForeignKey(
-        Address,
-        on_delete=models.CASCADE,
-        blank=FALSE
-    )
-
-    class Meta:
-        verbose_name = "Meeting Address"
-        # verbose_name_plural = "Meeting Addresses"
-
-
 class Club(models.Model):
     """Club model used for all the functions of a club."""
     name = models.CharField(
@@ -356,6 +223,7 @@ class Club(models.Model):
 
     class Meta:
         """Model options"""
+        app_label = "clubs"
         ordering = ['name']
 
     def applicants(self):
@@ -408,7 +276,7 @@ class Club(models.Model):
 
     def favourite_books(self):
         """Return all favourite books of this club."""
-        club_books_ids = Club_Books.objects.filter(club=Club.objects.get(id=self.id)).values_list('user', flat=True)
+        club_books_ids = Club_Books.objects.filter(club=Club.objects.get(id=self.id)).values_list('book', flat=True)
         return Book.objects.filter(id__in=club_books_ids)
 
 
@@ -445,75 +313,8 @@ class Club_Users(models.Model):
     )
 
     class Meta:
+        app_label = "clubs"
         verbose_name = "Club User"
-
-
-class Club_Books(models.Model):
-    club = models.ForeignKey(
-        Club,
-        on_delete=models.CASCADE,
-        blank=False,
-        default=0
-    )
-
-    book = models.ForeignKey(
-        Book,
-        on_delete=models.CASCADE,
-        blank=False,
-        default=0
-    )
-
-    class Meta:
-        verbose_name = "Club Book"
-
-
-class Club_Book_History(models.Model):
-    club = models.ForeignKey(
-        Club,
-        on_delete=models.CASCADE,
-        blank=False,
-        default=0
-    )
-
-    book = models.ForeignKey(
-        Book,
-        on_delete=models.CASCADE,
-        blank=False,
-        default=0
-    )
-
-    average_rating = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(10)],
-        blank=False,
-        default=None
-    )
-
-    class Meta:
-        verbose_name = "Club Book History"
-
-
-class User_Books(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        blank=False,
-        default=0
-    )
-
-    book = models.ForeignKey(
-        Book,
-        on_delete=models.CASCADE,
-        blank=False,
-        default=0
-    )
-
-
-class MyUUIDModel(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False
-    )
 
 
 class Book_Rating(models.Model):
@@ -557,3 +358,44 @@ class Book_Rating(models.Model):
         default="Rate book",
         blank=False
     )
+
+    class Meta:
+        app_label = "clubs"
+
+
+class User_Book_History(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    class Meta:
+        app_label = "clubs"
+
+
+class User_Books(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    class Meta:
+        app_label = "clubs"
