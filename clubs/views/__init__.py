@@ -7,4 +7,5 @@ from .post_views import *
 from .recommender_views import *
 from .scheduler_views import *
 from .static_views import *
+from .user_summary_views import *
 from .user_views import *

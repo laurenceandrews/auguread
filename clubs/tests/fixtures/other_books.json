@@ -1,0 +1,13 @@
+[
+  {
+  "model": "clubs.Book",
+  "pk": 24,
+  "fields": {
+    "ISBN": "0241529719",
+    "title": "Why Has Nobody Told Me This Before?",
+    "author" : "Dr Julie Smith",
+    "publication_year": "2022",
+    "publisher" : "Michael Joseph"
+    }
+  }
+]

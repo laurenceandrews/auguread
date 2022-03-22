@@ -17,7 +17,7 @@ from schedule.models import Calendar, Event, Rule
 
 from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
                      Club_Books, MeetingAddress, MeetingLink, Post, User,
-                     User_Books)
+                     User_Book_History, User_Books)
 
 
 class LogInForm(forms.Form):
@@ -345,6 +345,12 @@ class BookRatingForm(forms.ModelForm):
 class ClubBookHistoryForm(forms.ModelForm):
     class Meta:
         model = Club_Book_History
+        fields = []
+
+
+class UserBookHistoryForm(forms.ModelForm):
+    class Meta:
+        model = User_Book_History
         fields = []
 
 
