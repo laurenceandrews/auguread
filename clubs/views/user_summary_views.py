@@ -1,5 +1,5 @@
 from clubs.models import (Book, Club, Club_Book_History, Club_Books,
-                          Club_Users, User, User_Books)
+                          Club_Users, User, User_Book_History, User_Books)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
@@ -23,6 +23,21 @@ class UserSummaryView(LoginRequiredMixin, View):
         """Render template."""
 
         return render(self.request, 'user_summary.html')
+
+
+@login_required
+def user_current_book(request):
+    """ View to display the current user's current book. """
+    user = request.user
+    user_book_history_exists = User_Book_History.objects.filter(user=user).exists()
+    if user_book_history_exists:
+        current_book = User_Book_History.objects.filter(user=user).last().book
+
+    return render(request, "partials/books_table.html",
+                  {
+                      'user': user,
+                      'books': [current_book],
+                  })
 
 
 @login_required
