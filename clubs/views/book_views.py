@@ -224,8 +224,13 @@ class CreateUserBooksView(LoginRequiredMixin, CreateView):
 @login_required
 def delete_user_book_favourite(request, user_id, book_id):
     """ View that handles user book delete requests. """
-    user = User.objects.get(id=user_id)
-    book = Book.objects.get(id=book_id)
+    try:
+        user = User.objects.get(id=user_id)
+        book = Book.objects.get(id=book_id)
+    except ObjectDoesNotExist:
+        messages.add_message(request, messages.ERROR, "Invalid user or book!")
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
     user_books_exists = User_Books.objects.filter(user=user, book=book).exists()
     if user_books_exists:
         user_book = User_Books.objects.get(user=user, book=book)

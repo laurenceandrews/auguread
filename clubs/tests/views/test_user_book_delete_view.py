@@ -1,4 +1,4 @@
-"""Tests of the user book create view."""
+"""Tests of the user book delete view."""
 
 from clubs.models import Book, User, User_Books
 from clubs.tests.helpers import reverse_with_next
@@ -6,8 +6,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 
-class CreateUserBookHistoryViewTest(TestCase):
-    """Tests of the user book create view."""
+class deleteUserBookHistoryViewTest(TestCase):
+    """Tests of the user book delete view."""
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
@@ -18,19 +18,20 @@ class CreateUserBookHistoryViewTest(TestCase):
         super(TestCase, self).setUp()
         self.user = User.objects.get(username='@johndoe')
         self.book = Book.objects.get(pk=20)
+        User_Books.objects.create(user=self.user, book=self.book)
 
         self.data = {
             "user": self.user,
             "book": self.book
         }
         self.url = reverse(
-            'create_user_book_favourite', kwargs={'user_id': self.user.id, 'book_id': self.book.id}
+            'delete_user_book_favourite', kwargs={'user_id': self.user.id, 'book_id': self.book.id}
         )
 
-    def test_create_user_books_url(self):
-        self.assertEqual(self.url, f'/user/{self.user.id}/book/{self.book.id}/favourite/')
+    def test_delete_user_books_url(self):
+        self.assertEqual(self.url, f'/user/{self.user.id}/book/{self.book.id}/favourite/delete/')
 
-    def test_create_user_books_redirects_when_not_logged_in(self):
+    def test_delete_user_books_redirects_when_not_logged_in(self):
         user_books_count_before = User_Books.objects.count()
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.post(self.url, self.data, follow=True)
@@ -40,20 +41,19 @@ class CreateUserBookHistoryViewTest(TestCase):
         user_books_count_after = User_Books.objects.count()
         self.assertEqual(user_books_count_after, user_books_count_before)
 
-    def test_get_create_user_books(self):
-        self.client.login(email=self.user.email, password="Password123")
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'user_books_create.html')
+    # def test_get_delete_user_books(self):
+    #     self.client.login(email=self.user.email, password="Password123")
+    #     response = self.client.get(self.url)
+    #     self.assertEqual(response.status_code, 200)
 
-    def test_successful_new_user_books(self):
+    def test_successful_delete_user_books(self):
         self.client.login(email=self.user.email, password="Password123")
         user_books_count_before = User_Books.objects.count()
         response = self.client.post(self.url, self.data, follow=True)
         user_books_count_after = User_Books.objects.count()
-        self.assertEqual(user_books_count_after, user_books_count_before + 1)
+        self.assertEqual(user_books_count_after + 1, user_books_count_before)
 
-    def test_unsuccessful_new_user_books(self):
+    def test_unsuccessful_delete_user_books(self):
         self.client.login(email=self.user.email, password="Password123")
         user_books_count_before = User_Books.objects.count()
         data = {
@@ -61,7 +61,7 @@ class CreateUserBookHistoryViewTest(TestCase):
             "book": 5
         }
         url = reverse(
-            'create_user_book_favourite', kwargs={'user_id': self.user.id, 'book_id': 5}
+            'delete_user_book_favourite', kwargs={'user_id': self.user.id, 'book_id': 5}
         )
         response = self.client.post(url, data, follow=True)
         user_books_count_after = User_Books.objects.count()
