@@ -254,7 +254,7 @@ class MeetingLinkForm(forms.ModelForm):
 class CreateEventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['title', 'rule']
+        fields = ['title']
 
     start = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
@@ -268,13 +268,6 @@ class CreateEventForm(forms.ModelForm):
     end = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
         initial=meeting_end)
-
-    end_recurring_period = forms.SplitDateTimeField(
-        widget=forms.SplitDateTimeWidget(),
-        initial=datetime.datetime.now,
-        help_text=_("This date is ignored for one time only events."),
-        required=False
-    )
 
     def clean(self):
         super().clean()
@@ -340,6 +333,12 @@ class BookRatingForm(forms.ModelForm):
     class Meta:
         model = Book_Rating
         fields = ['rating']
+
+    # def clean(self):
+    #     super().clean()
+    #     valid_ratings = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    #     if self.cleaned_data.get('rating') not in valid_ratings:
+    #         self.add_error('rating', 'Please select a rating from 1 to 10.')
 
 
 class ClubBookHistoryForm(forms.ModelForm):

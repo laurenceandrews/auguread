@@ -1,3 +1,4 @@
+
 from pickle import FALSE
 
 from clubs.models.book_models import Book
@@ -93,6 +94,8 @@ class User(AbstractUser):
     class Meta:
         """Model options"""
         app_label = "clubs"
+        verbose_name = "User"
+        verbose_name_plural = "Users"
         ordering = ['first_name', 'last_name']
 
     def full_name(self):
@@ -224,6 +227,8 @@ class Club(models.Model):
     class Meta:
         """Model options"""
         app_label = "clubs"
+        verbose_name = "Club"
+        verbose_name_plural = "Clubs"
         ordering = ['name']
 
     def applicants(self):
@@ -314,7 +319,8 @@ class Club_Users(models.Model):
 
     class Meta:
         app_label = "clubs"
-        verbose_name = "Club User"
+        verbose_name = "Club"
+        verbose_name_plural = "Club User"
 
 
 class Book_Rating(models.Model):
@@ -339,7 +345,6 @@ class Book_Rating(models.Model):
     )
 
     BOOK_RATING_CHOICES = [
-        ("Rate book", "Rate book"),
         ('1', '1'),
         ('2', '2'),
         ('3', '3'),
@@ -355,12 +360,13 @@ class Book_Rating(models.Model):
     rating = models.CharField(
         max_length=9,
         choices=BOOK_RATING_CHOICES,
-        default="Rate book",
         blank=False
     )
 
     class Meta:
         app_label = "clubs"
+        verbose_name = "User Book Rating"
+        verbose_name_plural = "User Book Ratings"
 
 
 class User_Book_History(models.Model):
@@ -380,6 +386,8 @@ class User_Book_History(models.Model):
 
     class Meta:
         app_label = "clubs"
+        verbose_name = "User Book History"
+        verbose_name_plural = "User Book Histories"
 
 
 class User_Books(models.Model):
@@ -399,3 +407,53 @@ class User_Books(models.Model):
 
     class Meta:
         app_label = "clubs"
+        verbose_name = "User Favourite Book"
+        verbose_name_plural = "User Favourite Books"
+
+
+class Club_Book_History(models.Model):
+    club = models.ForeignKey(
+        Club,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    average_rating = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        blank=False,
+        default=None
+    )
+
+    class Meta:
+        app_label = "clubs"
+        verbose_name = "Club Book History"
+        verbose_name_plural = "Club Book Histories"
+
+
+class Club_Books(models.Model):
+    club = models.ForeignKey(
+        Club,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    class Meta:
+        app_label = "clubs"
+        verbose_name = "Club Favourite Book"
+        verbose_name_plural = "Club Favourite Books"
