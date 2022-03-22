@@ -39,7 +39,7 @@ class ClubBookSelectViewTest(TestCase):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-    
+
     def test_get_club_book_select(self):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url)
@@ -48,8 +48,8 @@ class ClubBookSelectViewTest(TestCase):
         form = response.context['form']
         self.assertTrue(isinstance(form, ClubBookForm))
         self.assertFalse(form.is_bound)
-    
-    def test_unsuccesful_calendar_picker(self):
+
+    def test_unsuccesful_club_book_select(self):
         self.client.login(email=self.user.email, password="Password123")
         self.form_input['book'] = 'BAD_BOOK'
         response = self.client.post(self.url, self.form_input)

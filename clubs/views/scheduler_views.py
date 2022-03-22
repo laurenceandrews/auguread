@@ -86,7 +86,8 @@ class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
         if club.meeting_type == 'ONL':
             return redirect('create_event_link', calendar_slug=calendar.slug, event_id=event.id)
 
-        if club.meeting_type == 'INP':
+        # if club.meeting_type == 'INP':
+        else:
             return redirect('create_event_address', calendar_slug=calendar.slug, event_id=event.id)
 
     def get_success_url(self):

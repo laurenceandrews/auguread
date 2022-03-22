@@ -91,6 +91,30 @@ class EventLinkUpdateViewTest(TestCase):
                              status_code=302, target_status_code=200, fetch_redirect_response=True
                              )
 
+    def test_succesful_event_link_edit_update(self):
+        self.client.login(email=self.user.email, password="Password123")
+        before_count = MeetingLink.objects.count()
+        response = self.client.post(self.url, self.form_input)
+        after_count = MeetingLink.objects.count()
+        self.assertEqual(after_count, before_count)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'fullcalendar.html')
+
+    def test_succesful_event_link_edit_when_meeting_link_already_exists(self):
+        self.client.login(email=self.user.email, password="Password123")
+        before_count = Event.objects.count()
+        response = self.client.post(self.url, self.form_input)
+        after_count = Event.objects.count()
+        self.assertEqual(after_count, before_count)
+
+    def test_succesful_event_link_edit_when_meeting_link_does_not_already_exists(self):
+        self.meeting_link.delete()
+        self.client.login(email=self.user.email, password="Password123")
+        before_count = Event.objects.count()
+        response = self.client.post(self.url, self.form_input)
+        after_count = Event.objects.count()
+        self.assertEqual(after_count, before_count)
+
     def test_unsuccesful_event_link_edit_update(self):
         self.client.login(email=self.user.email, password="Password123")
         self.form_input['meeting_link'] = ''

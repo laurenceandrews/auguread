@@ -23,7 +23,7 @@ class CalendarPickerViewTestCase(TestCase, LogInTester):
         self.calendar = Calendar.objects.get(pk=5)
         self.club = Club.objects.get(pk=6)
         self.form_input = {
-            'calendar': self.calendar
+            'calendar': self.calendar.pk
         }
 
     def test_calendar_picker_url(self):
@@ -42,6 +42,12 @@ class CalendarPickerViewTestCase(TestCase, LogInTester):
         form = response.context['form']
         self.assertTrue(isinstance(form, CalendarPickerForm))
         self.assertFalse(form.is_bound)
+
+    def test_succesful_calendar_picker(self):
+        self.client.login(email=self.user.email, password="Password123")
+        response = self.client.post(self.url, self.form_input)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'fullcalendar.html')
 
     def test_unsuccesful_calendar_picker(self):
         self.client.login(email=self.user.email, password="Password123")
