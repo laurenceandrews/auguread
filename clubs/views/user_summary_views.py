@@ -33,11 +33,16 @@ def user_current_book(request):
     if user_book_history_exists:
         current_book = User_Book_History.objects.filter(user=user).last().book
 
-    return render(request, "partials/books_table.html",
-                  {
-                      'user': user,
-                      'books': [current_book],
-                  })
+        return render(request, "partials/books_table.html",
+                      {
+                          'user': user,
+                          'books': [current_book],
+                      })
+    else:
+        return render(request, "partials/books_table.html",
+                      {
+                          'user': user
+                      })
 
 
 @login_required
