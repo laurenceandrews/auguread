@@ -188,15 +188,19 @@ class CreateUserBookHistoryView(LoginRequiredMixin, CreateView):
         return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
 
-class CreateUserBooksView(CreateView):
+class CreateUserBooksView(LoginRequiredMixin, CreateView):
     model = User_Books
     template_name = 'user_books_create.html'
     form_class = UserBooksForm
 
     def form_valid(self, form):
         """Process a valid form."""
-        user = User.objects.get(id=self.kwargs['user_id'])
-        book = Book.objects.get(id=self.kwargs['book_id'])
+        try:
+            user = User.objects.get(id=self.kwargs['user_id'])
+            book = Book.objects.get(id=self.kwargs['book_id'])
+        except ObjectDoesNotExist:
+            messages.add_message(self.request, messages.ERROR, "Invalid user or book!")
+            return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
         user_books_exists = User_Books.objects.filter(user=user, book=book)
 
