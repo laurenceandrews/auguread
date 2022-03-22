@@ -84,13 +84,16 @@ def clubs_list(request, role_num):
         club_ids = club_users.filter(role_num="1").values_list('club', flat=True)
         clubs = Club.objects.filter(id__in=club_ids)
 
-    if role_num == "2":
+    elif role_num == "2":
         club_ids = club_users.filter(role_num="2").values_list('club', flat=True)
         clubs = Club.objects.filter(id__in=club_ids)
 
-    if role_num == "4":
+    elif role_num == "4":
         club_ids = club_users.filter(role_num="4").values_list('club', flat=True)
         clubs = Club.objects.filter(id__in=club_ids)
+
+    else:
+        clubs = Club.objects.none()
 
     return render(request, "partials/clubs_table.html",
                   {

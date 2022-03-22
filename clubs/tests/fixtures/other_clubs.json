@@ -20,5 +20,18 @@
       "club": 16,
       "role_num": "4"
     }
+  },
+  {
+    "model": "clubs.club",
+    "pk": 26,
+    "fields": {
+      "name": "Exciting Club",
+      "location": "London, GB",
+      "description": "A club that reads lots of exciting books.",
+      "avg_reading_speed": "200",
+      "owner": 2,
+      "calendar": 27,
+      "meeting_type": "ONL"
+    }
   }
 ]
