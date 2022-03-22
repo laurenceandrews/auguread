@@ -1,11 +1,26 @@
 {% extends 'base_content.html' %}
 {% block content %}
+{% load widget_tweaks %}
 
 <div class="">
   {% include 'partials/user_profile_and_club.html' with following=False followable=False %}
   
   <form action="{% url 'new_post' %}" method="post">
-    {% csrf_token %}
+    {% for field in form %}
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-50">
+        {{ field.label_tag }}
+      </label>
+      <div class="mt-1">
+        {{ field|add_class:"appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"}}
+        {{ field.errors }} 
+        {% if field.help_text %}
+        <p class="help">{{ field.help_text|safe }}</p>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+{% csrf_token %}
     {% include 'partials/bootstrap_form.html' with form=form %}
     <button type="submit" class="">Post</button>
   
