@@ -9,5 +9,16 @@
     "publication_year": "2022",
     "publisher" : "Michael Joseph"
     }
+  },
+  {
+  "model": "clubs.Book",
+  "pk": 27,
+  "fields": {
+    "ISBN": "1784881112",
+    "title": "365 Days of Art: A Creative Exercise for Every Day of the Year ",
+    "author" : "Lorna Scobie",
+    "publication_year": "2017",
+    "publisher" : "Hardie Grant Books"
+    }
   }
 ]
