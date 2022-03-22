@@ -70,6 +70,9 @@ class AddressTest(TestCase):
         self.address.country = 'x' + 'x' * 1024
         self._assert_address_is_invalid()
 
+    def test_full_name_returns_collated_address_data(self):
+        self.assertEqual(self.address.full_address(), f'{self.address.name}. {self.address.zip_code}, {self.address.address1}, {self.address.address2}. {self.address.city}, {self.address.country}.')
+
     def _assert_address_is_valid(self):
         try:
             self.address.full_clean()
