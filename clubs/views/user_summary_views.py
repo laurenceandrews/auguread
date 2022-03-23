@@ -51,6 +51,13 @@ def user_favourite_books(request):
     user = request.user
     book_ids = User_Books.objects.filter(user=user).values_list('book', flat=True)
     books = Book.objects.filter(id__in=book_ids)
+
+    query = request.GET.get('q')
+    if query:
+        books = books.filter(
+            Q(name__icontains=query) | Q(author__icontains=query)
+        ).distinct()
+
     return render(request, "partials/books_table.html",
                   {
                       'user': user,
