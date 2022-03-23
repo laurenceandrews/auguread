@@ -21,7 +21,7 @@ from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
                      MemberProhibitedMixin)
 
 
-class BookDetailView(DetailView):
+class BookDetailView(LoginRequiredMixin, DetailView):
 
     model = Book
     template_name = 'book_detail.html'
@@ -89,7 +89,7 @@ class BookPreferencesView(LoginRequiredMixin, View):
         return render(self.request, 'book_preferences.html', {'innerForm': self.innerForm, 'next': self.next, 'books_paginated': self.books_paginated})
 
 
-class CreateBookRatingView(CreateView):
+class CreateBookRatingView(LoginRequiredMixin, CreateView):
     model = Book_Rating
     template_name = 'book_rating_create.html'
     form_class = BookRatingForm
@@ -97,8 +97,12 @@ class CreateBookRatingView(CreateView):
     def form_valid(self, form):
         """Process a valid form."""
         current_user = self.request.user
-        book = Book.objects.get(id=self.kwargs['book_id'])
         rating = self.request.POST.get('rating')
+        try:
+            book = Book.objects.get(id=self.kwargs['book_id'])
+        except ObjectDoesNotExist:
+            messages.add_message(self.request, messages.ERROR, "Invalid user or book!")
+            return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
         book_rating_exists = Book_Rating.objects.filter(user=current_user, book=book)
 
