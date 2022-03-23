@@ -41,6 +41,9 @@ class PasswordViewTest(TestCase):
         self.assertRedirects(response, response_url,
                              status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'rec_page.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
         self.user.refresh_from_db()
         is_password_correct = check_password(
             'NewPassword123', self.user.password)
