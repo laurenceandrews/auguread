@@ -8,12 +8,13 @@ from django.urls import reverse
 class NewClubTest(TestCase):
 
     fixtures = [
-        'clubs/tests/fixtures/default_user.json'
+        'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/other_users.json'
     ]
 
     def setUp(self):
         super(TestCase, self).setUp()
-        self.user = User.objects.get(username='@johndoe')
+        self.user = User.objects.get(email='johndoe@example.org')
         self.url = reverse('new_club')
         self.club_city = 'London'
         self.club_country = 'GB'
@@ -42,7 +43,7 @@ class NewClubTest(TestCase):
         self.assertEqual(clubs_count_after, clubs_count_before)
 
     def test_successful_new_club(self):
-        self.client.login(username=self.user.email, password="Password123")
+        self.client.login(email=self.user.email, password="Password123")
         clubs_count_before = Club.objects.count()
         response = self.client.post(self.url, self.data, follow=True)
         clubs_count_after = Club.objects.count()
@@ -63,10 +64,52 @@ class NewClubTest(TestCase):
         self.assertTemplateUsed(response, 'club_list.html')
 
     def test_unsuccessful_new_club(self):
-        self.client.login(username=self.user.email, password='Password123')
+        self.client.login(email=self.user.email, password='Password123')
         clubs_count_before = Club.objects.count()
         self.data['name'] = ""
         response = self.client.post(self.url, self.data, follow=True)
         clubs_count_after = Club.objects.count()
         self.assertEqual(clubs_count_after, clubs_count_before)
         self.assertTemplateUsed(response, 'new_club.html')
+
+    def test_unsuccessful_new_club_creation_with_blank_name(self):
+        self.client.login(email="johndoe@example.org",
+                          password='Password123')
+        club_count_before = Club.objects.count()
+        self.data['name'] = ""
+        response = self.client.post(self.url, self.data, follow=True)
+        club_count_after = Club.objects.count()
+        self.assertEqual(club_count_after, club_count_before)
+        self.assertTemplateUsed(response, 'new_club.html')
+
+    def test_unsuccessful_new_club_creation_with_blank_calendar_name(self):
+        self.client.login(email="johndoe@example.org",
+                          password='Password123')
+        club_count_before = Club.objects.count()
+        self.data['calendar_name'] = ""
+        response = self.client.post(self.url, self.data, follow=True)
+        club_count_after = Club.objects.count()
+        self.assertEqual(club_count_after, club_count_before)
+        self.assertTemplateUsed(response, 'new_club.html')
+
+    def test_unsuccessful_new_club_creation_with_blank_description(self):
+        self.client.login(email="johndoe@example.org",
+                          password='Password123')
+        club_count_before = Club.objects.count()
+        self.data['description'] = ""
+        response = self.client.post(self.url, self.data, follow=True)
+        club_count_after = Club.objects.count()
+        self.assertEqual(club_count_after, club_count_before)
+        self.assertTemplateUsed(response, 'new_club.html')
+
+    def test_cannot_create_club_for_other_user(self):
+        self.client.login(email="johndoe@example.org",
+                          password='Password123')
+        other_user = User.objects.get(email="janedoe@example.org",)
+        self.data['owner'] = other_user.id
+        club_count_before = Club.objects.count()
+        response = self.client.post(self.url, self.data, follow=True)
+        club_count_after = Club.objects.count()
+        new_club = Club.objects.get(id=Club.objects.count())
+        self.assertEqual(club_count_after, club_count_before+1)
+        self.assertEqual(self.user, new_club.owner)
