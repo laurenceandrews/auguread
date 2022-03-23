@@ -6,40 +6,60 @@
   | Club List
   {% endblock %}
 </title>
-<form method="GET" >
-  <div class="input-field">
-      <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Enter club name or location">
-      <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Search</button>
-  </div>
-</form>
-<div class="container">
-  <div class="row">
-    <div class="col-12">
-      {% if not clubs %}
-        <pre>
 
-
-
-        </pre>
-        <h1 style="text-align:center">No existing clubs! Why not create your own book club!</h1>
-        <div class="row-12" style="text-align:center">
-          <h3 class="text-center"> Don't want to join an existing club? Why not create a new club yourself!</h1>
-            <a href='{% url 'new_club' %}' class="btn btn-lg btn-primary">
-              Create New Club
-            </a>
-        </div>
-      {% else %}
-      {% include "partials/temp_club_list.html" with clubs=clubs %}
-      <div class="row-12" style="text-align:center">
-        <h3 class="text-center"> Don't want to join an existing club? Why not create a new club yourself!</h1>
-          <a href='{% url 'new_club' %}' class="btn btn-lg btn-primary">
-            Create New Club
-          </a>
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-xl font-semibold text-gray-900">Clubs</h1>
+      <p class="mt-2 text-sm text-gray-700">A list of all the clubs on this site.</p>
+    </div>
+    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+      <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
+        <a href='{% url 'new_club' %}' class="">Create a new club</a>
       </div>
-      {% endif %}
+    </div>
+  </div>
+
+  <!-- Search... -->
+  <div class="mt-4">
+    <form method="GET" >
+      <div class="input-field">
+          <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Enter club name or location">
+          <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Search</button>
+      </div>
+    </form>
+  </div>
+
+
+  <div class="mt-8 flex flex-col">
+    <div class="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle">
+        <div class="shadow-sm ring-1 ring-black ring-opacity-5">
+          <table class="min-w-full border-separate" style="border-spacing: 0">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-gray-50 bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8">Name</th>
+                <th scope="col" class="sticky top-0 z-10 hidden border-b border-gray-300 bg-gray-50 bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:table-cell">Owner</th>
+                <th scope="col" class="sticky top-0 z-10 hidden border-b border-gray-300 bg-gray-50 bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter lg:table-cell">Meeting Type</th>
+                <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-gray-50 bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Location</th>
+                <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-gray-50 bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Description</th>
+                <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-gray-50 bg-opacity-75 py-3.5 pr-4 pl-3 backdrop-blur backdrop-filter sm:pr-6 lg:pr-8">
+                  <span class="sr-only">Edit</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white">
+              {% for club in clubs %}
+                {% include "partials/club_as_list_row.html" with club=club %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
 
 <div class="container">
   {% bootstrap_paginate page_obj range=10 show_first_last="true"%}
