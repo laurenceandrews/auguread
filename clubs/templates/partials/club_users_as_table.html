@@ -1,0 +1,3 @@
+{% for user in users %}
+    {% include 'partials/club_user_as_table_row.html' with user=user club=club club_owner=club_owner is_owner=is_owner list_of_applicants=list_of_applicants list_of_members=list_of_members%}
+{% endfor %}

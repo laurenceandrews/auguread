@@ -7,8 +7,8 @@ from clubs.book_to_club_recommender.book_to_club_recommender_author import \
     ClubBookAuthorRecommender
 from clubs.club_to_user_recommender.club_to_user_recommender import ClubUserRecommender
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.db.models import Subquery
 from django.template.defaultfilters import slugify
@@ -16,8 +16,9 @@ from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
 
-from .models import (Address, Book_Rating, Book, Club, Club_Books, MeetingAddress,
-                     MeetingLink, Post, User)
+from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
+                     Club_Books, Club_Users, MeetingAddress, MeetingLink, Post,
+                     User, User_Book_History, User_Books)
 
 
 class LogInForm(forms.Form):
@@ -98,6 +99,7 @@ class PasswordForm(NewPasswordMixin):
 
 
 class SignUpForm(NewPasswordMixin, forms.ModelForm):
+    """Form enabling users to sign up."""
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'age', 'username', 'email', 'bio', 'city', 'country']
@@ -207,6 +209,7 @@ class NewClubForm(forms.ModelForm):
             self.add_error('calendar_name',
                            'Calendar name is already taken.')
 
+
 class MeetingAddressForm(forms.ModelForm):
     class Meta:
         model = MeetingAddress
@@ -252,7 +255,7 @@ class MeetingLinkForm(forms.ModelForm):
 class CreateEventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['title', 'rule']
+        fields = ['title']
 
     start = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
@@ -261,18 +264,11 @@ class CreateEventForm(forms.ModelForm):
 
     default_meeting_start = datetime.datetime.now()
     default_meeting_lenth_in_hours = 1
-    default_meeting_lenth_delta = datetime.timedelta(hours=default_meeting_lenth_in_hours)
+    default_meeting_lenth_delta = abs(datetime.timedelta(hours=default_meeting_lenth_in_hours))
     meeting_end = default_meeting_start + default_meeting_lenth_delta
     end = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
         initial=meeting_end)
-
-    end_recurring_period = forms.SplitDateTimeField(
-        widget=forms.SplitDateTimeWidget(),
-        initial=datetime.datetime.now,
-        help_text=_("This date is ignored for one time only events."),
-        required=False
-    )
 
     def clean(self):
         super().clean()
@@ -283,6 +279,22 @@ class CreateEventForm(forms.ModelForm):
 
 class CalendarPickerForm(forms.Form):
     calendar = forms.ModelChoiceField(queryset=Calendar.objects.all().order_by('name'))
+
+    def __init__(self, *args, **kwargs):
+        """Give user option of all calendars used for clubs they are a member or user of."""
+        user_id = kwargs.pop('user_id', None)
+        super(CalendarPickerForm, self).__init__(*args, **kwargs)
+        if User.objects.filter(id=user_id).exists():
+            user = User.objects.get(id=user_id)
+            users_clubs = user.clubs_attended()
+            users_calendars = Calendar.objects.filter(club__in=users_clubs)
+            self.fields['calendar'].queryset = users_calendars.order_by('name')
+
+
+class CreateClubUserForm(forms.ModelForm):
+    class Meta:
+        model = Club_Users
+        fields = []
 
 
 class ClubBookForm(forms.ModelForm):
@@ -338,34 +350,33 @@ class BookRatingForm(forms.Form):
     )
 
 
+
 class UserDeleteForm(forms.ModelForm):
+    """Form enabling users to delete their profile."""
     class Meta:
         model = User
         fields = []
+
 
 class BookRatingForm(forms.ModelForm):
     class Meta:
         model = Book_Rating
         fields = ['rating']
 
-# class BookPreferencesOuterForm(forms.ModelForm):
 
-#     class Meta:
-#         ratings_made = 
-#         fields = 
+class ClubBookHistoryForm(forms.ModelForm):
+    class Meta:
+        model = Club_Book_History
+        fields = []
 
-#     def clean(self):
-#         """ Ensure that at least 10 ratings over 5 are made """
 
-#         positive_ratings_required = 10
+class UserBookHistoryForm(forms.ModelForm):
+    class Meta:
+        model = User_Book_History
+        fields = []
 
-#         super().clean()
-#         ratings_made = self.cleaned_data.get('ratings_made')
-#         for (rating in ratings_made):
-#             if rating > 5:
-#                 positive_ratings_made.add(ratings_made)
 
-#         if positive_ratings_made < 10:
-#             self.add_error("Please rate at least ten books over a 5/10 to ensure our recommenders can work their best for you.")
-#         else:
-#             # Allow user to continue
+class UserBooksForm(forms.ModelForm):
+    class Meta:
+        model = User_Books
+        fields = []

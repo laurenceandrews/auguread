@@ -2,13 +2,13 @@
 
 from clubs.forms import LogInForm
 from clubs.models import User
-from clubs.tests.helpers import LogInTester, reverse_with_next
+from clubs.tests.helpers import LogInTester, reverse_with_next, MenuTesterMixin
 from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
 
 
-class LogInViewTestCase(TestCase, LogInTester):
+class LogInViewTestCase(TestCase, LogInTester, MenuTesterMixin):
     """Tests of the log in view."""
 
     fixtures = ['clubs/tests/fixtures/default_user.json']
@@ -141,3 +141,11 @@ class LogInViewTestCase(TestCase, LogInTester):
         response = self.client.post(self.url, form_input)
         next = response.context['next']
         self.assertEqual(next, redirect_url)
+
+    def test_home_return_rec_when_logged_in(self):
+        self.client.login(email=self.user.email, password="Password123")
+        response = self.client.get(reverse('home'), follow=True)
+        redirect_url = reverse('rec')
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'rec_page.html')

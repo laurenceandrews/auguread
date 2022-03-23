@@ -1,0 +1,90 @@
+{% extends 'base_content.html' %}
+{% load i18n %}
+{% block content%}
+<div class="h-screen flex items-center justify-center">
+
+  <card class="flex flex-col rounded-lg shadow-lg w-1/2 p-10 bg-violet-100">
+
+    <!-- Title -->
+    <p class="text-center text-gray-800 text-4xl mt-8">{{book.title}}</p>
+
+    <!-- Description -->
+    <div class="text-gray-700 font-light mt-5">
+      <p>Authon: {{book.author}}</p>
+      <p>Publisher: {{book.publisher}}</p>
+      <p>Publication year: {{book.publication_year}}</p>
+      <p>ISBN: {{book.ISBN}}</p>
+      {% if rating_exists == True %}
+        <p>Rating: {{book_rating}}</p>
+      {% else %}
+        <p>Rating: You haven't rated this book yet.</p>
+      {% endif %}
+
+      {% if rating_exists == True %}
+      <br />
+      <form action="{% url 'rate_book' book.id%}" method="post">
+        {% csrf_token %}
+        <div class = "rating">
+            {{ book_rating_form }}
+            <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Change your rating</button>
+        </div>
+      </form>
+      {% else %}
+      <br />
+      <form action="{% url 'rate_book' book.id%}" method="post">
+        {% csrf_token %}
+        <div class = "rating">
+            {{ book_rating_form }}
+            <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Rate book</button>
+        </div>
+      </form>
+      {% endif %}
+    </div>
+
+
+
+    <!-- Buttons -->
+    <div class="flex flex-row-reverse mt-14 items-end gap-5">
+
+      <div>
+        <form action="{% url 'create_user_book_history' user_id=user.id book_id=book.id%}" method="post">
+          {% csrf_token %}
+          <div class = "rating">
+              {{ user_book_history_form }}
+              {% if user_book_history_exists == True %}
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Reread book</button>
+              {% else %}
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Read book</button>
+              {% endif %}
+          </div>
+        </form>
+      </div>
+
+      <div>
+        {% if user_books_exists == False %}
+        <form action="{% url 'create_user_book_favourite' user_id=user.id book_id=book.id%}" method="post">
+          {% csrf_token %}
+          <div class = "rating">
+              {{ user_book_form }}
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add to favourites</button>
+          </div>
+        </form>
+        {% else %}
+        <form action="{% url 'delete_user_book_favourite' user_id=user.id book_id=book.id%}" method="post">
+          {% csrf_token %}
+          <div class = "rating">
+              {{ user_book_form }}
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Remove from favourites</button>
+          </div>
+        </form>
+        {% endif %}
+      </div>
+
+
+
+    </div>
+
+  </card>
+
+</div>
+{% endblock %}

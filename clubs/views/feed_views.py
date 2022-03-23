@@ -10,7 +10,7 @@ from django.shortcuts import redirect
 from django.views.generic.edit import CreateView
 
 class FeedView(LoginRequiredMixin, ListView):
-    """Class-based generic view for displaying a view."""
+    """Class-based generic view for displaying the feed."""
 
     model = Post
     template_name = "feed.html"

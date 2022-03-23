@@ -1,15 +1,18 @@
 """Views related to the account."""
+from clubs.forms import LogInForm, PasswordForm, SignUpForm, UserForm, UserDeleteForm
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import FormView, UpdateView
-from django.urls import reverse
-from clubs.forms import PasswordForm, UserForm, SignUpForm, LogInForm
-from .mixins import LoginProhibitedMixin
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views import View
+from django.views.generic.edit import FormView, UpdateView
+
 from .helpers import login_prohibited
+from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
+                     MemberProhibitedMixin)
 
 
 class LogInView(LoginProhibitedMixin, View):
@@ -35,7 +38,7 @@ class LogInView(LoginProhibitedMixin, View):
                 'next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
             return redirect(redirect_url)
         messages.add_message(request, messages.ERROR,
-                             "The credentials provided are invalid!")
+                             "The credentials provided are invalid")
         return self.render()
 
     def render(self):
@@ -44,25 +47,29 @@ class LogInView(LoginProhibitedMixin, View):
         form = LogInForm()
         return render(self.request, 'log_in.html', {'form': form, 'next': self.next})
 
+
+class SignUpView(LoginProhibitedMixin, FormView):
+    """View that signs up user."""
+
+    form_class = SignUpForm
+    template_name = "sign_up.html"
+    redirect_when_logged_in_url = 'rec'
+
+    def form_valid(self, form):
+        self.object = form.save()
+        login(self.request, self.object)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('book_preferences')
+
+
 def log_out(request):
+    """View that handles log out."""
+
     logout(request)
     return redirect('home')
 
-@login_prohibited
-def sign_up(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('book_preferences')
-    else:
-        form = SignUpForm()
-    return render(request, 'sign_up.html', {'form': form})
-
-
-def home(request):
-    return render(request, 'home.html')
 
 class PasswordView(LoginRequiredMixin, FormView):
     """View that handles password change requests."""
@@ -91,6 +98,7 @@ class PasswordView(LoginRequiredMixin, FormView):
             self.request, messages.SUCCESS, "Password updated!")
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
 
+
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     """View to update logged-in user's profile."""
 
@@ -107,3 +115,22 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         """Return redirect URL after successful update."""
         messages.add_message(self.request, messages.SUCCESS, "Profile updated!")
         return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+
+
+@login_required
+def delete_account(request):
+    """View that handles deleting a user profile."""
+    if request.method == 'POST':
+        delete_form = UserDeleteForm(request.POST, instance=request.user)
+        user = request.user
+        user.delete()
+        messages.info(request, 'Your account has been deleted.')
+        return redirect('home')
+    else:
+        delete_form = UserDeleteForm(instance=request.user)
+
+    context = {
+        'delete_form': delete_form
+    }
+
+    return render(request, 'delete_account.html', context)

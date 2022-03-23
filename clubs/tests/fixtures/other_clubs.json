@@ -1,0 +1,37 @@
+[
+  {
+    "model": "clubs.club",
+    "pk": 16,
+    "fields": {
+      "name": "Green Club",
+      "location": "London, GB",
+      "description": "A club that reads lots of fun books about green.",
+      "avg_reading_speed": "200",
+      "owner": 2,
+      "calendar": 17,
+      "meeting_type": "ONL"
+    }
+  },
+  {
+    "model": "clubs.Club_Users",
+    "pk": 23,
+    "fields": {
+      "user": 2,
+      "club": 16,
+      "role_num": "4"
+    }
+  },
+  {
+    "model": "clubs.club",
+    "pk": 26,
+    "fields": {
+      "name": "Exciting Club",
+      "location": "London, GB",
+      "description": "A club that reads lots of exciting books.",
+      "avg_reading_speed": "200",
+      "owner": 2,
+      "calendar": 27,
+      "meeting_type": "ONL"
+    }
+  }
+]

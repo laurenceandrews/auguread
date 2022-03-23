@@ -191,3 +191,37 @@ class UserModelTestCase(TestCase):
     def _assert_user_is_invalid(self):
         with self.assertRaises(ValidationError):
             self.user.full_clean()
+
+    def test_toggle_follow_user(self):
+        jane = User.objects.get(username='@janedoe')
+        self.assertFalse(self.user.is_following(jane))
+        self.assertFalse(jane.is_following(self.user))
+        self.user.toggle_follow(jane)
+        self.assertTrue(self.user.is_following(jane))
+        self.assertFalse(jane.is_following(self.user))
+        self.user.toggle_follow(jane)
+        self.assertFalse(self.user.is_following(jane))
+        self.assertFalse(jane.is_following(self.user))
+
+    def test_follow_counters(self):
+        jane = User.objects.get(username='@janedoe')
+        petra = User.objects.get(username='@petrapickles')
+        peter = User.objects.get(username='@peterpickles')
+        self.user.toggle_follow(jane)
+        self.user.toggle_follow(petra)
+        self.user.toggle_follow(peter)
+        jane.toggle_follow(petra)
+        jane.toggle_follow(peter)
+        self.assertEqual(self.user.follower_count(), 0)
+        self.assertEqual(self.user.followee_count(), 3)
+        self.assertEqual(jane.follower_count(), 1)
+        self.assertEqual(jane.followee_count(), 2)
+        self.assertEqual(petra.follower_count(), 2)
+        self.assertEqual(petra.followee_count(), 0)
+        self.assertEqual(peter.follower_count(), 2)
+        self.assertEqual(peter.followee_count(), 0)
+
+    def test_user_cannot_follow_self(self):
+        self.user.toggle_follow(self.user)
+        self.assertEqual(self.user.follower_count(), 0)
+        self.assertEqual(self.user.followee_count(), 0)

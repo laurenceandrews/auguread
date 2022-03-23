@@ -1,58 +1,57 @@
 """Unit tests for the User model."""
+from clubs.models import Club, Club_Users, User
 from django.test import TestCase
-from clubs.models import User, Club
 
 
-class UserModelTestCase(TestCase):
-    """Unit tests for the User model."""
+class ClubModelTestCase(TestCase):
+    """Unit tests for the Club model."""
 
     fixtures = [
-        'clubs/tests/fixtures/db.json',
-        'clubs/tests/fixtures/default_user.json'
+        'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/other_users.json',
+        'clubs/tests/fixtures/default_calendar.json',
+        'clubs/tests/fixtures/default_club.json',
+        'clubs/tests/fixtures/default_rules.json',
     ]
 
     def setUp(self):
-        self.club = Club.objects.get(id=1)
-        self.owner_user = self.club.owner
-        self.member_user = Club.objects.get(id=1).members.all()[0]
-        self.owner_user = Club.objects.get(id=1).owner.all()[0]
-        self.applicant_user = Club.objects.get(id=1).applicants.all()[0]
-        self.user = User.objects.get(id=2)
+        self.user = User.objects.get(pk=4)
+        self.club = Club.objects.get(pk=6)
+        self._create_club_owner_members_and_applicants()
 
     def test_is_applicant(self):
-        self.assertTrue(self.applicant_user.is_applicant(self.club))
+        self.assertTrue(self.applicant.is_applicant(self.club))
 
     def test_is_owner(self):
-        self.assertTrue(self.owner_user.is_owner(self.club))
+        self.assertTrue(self.owner.is_owner(self.club))
 
     def test_member_membership_type(self):
-        self.assertEqual(self.member_user.membership_type(self.club), 'Member')
+        self.assertEqual(self.member.membership_type(self.club), 'Member')
 
     def test_applicant_membership_type(self):
-        self.assertEqual(self.applicant_user.membership_type(
+        self.assertEqual(self.applicant.membership_type(
             self.club), 'Applicant')
 
-    def test_user_membership_type(self):
-        self.assertEqual(self.user.membership_type(self.club), 'User')
-
-    # def test_demote_owner(self):
-    #     self.club.toggle_promote(self.owner_user)
-    #     self.assertTrue(self.owner_user in self.club.members.all())
-    #
-    # def test_promote_member(self):
-    #     self.club.toggle_promote(self.member_user)
-    #     self.assertTrue(self.member_user in self.club.owners.all())
+    def test_owner_membership_type(self):
+        self.assertEqual(self.owner.membership_type(self.club), 'Owner')
 
     def test_transfer(self):
-        self.club.transfer(self.owner_user)
-        self.assertEqual(self.club.owner, self.owner_user)
+        self.club.transfer(self.member)
+        self.assertEqual(self.club.owner, self.member)
 
-    def test_can_not_transfer_to_member(self):
-        self.club.transfer(self.member_user)
-        self.assertNotEqual(self.club.owner, self.owner_user)
+    def test_can_not_transfer_to_applicant(self):
+        self.club.transfer(self.applicant)
+        self.assertNotEqual(self.club.owner, self.applicant)
 
     def test_in_club(self):
-        self.assertTrue(self.club.in_club(self.owner_user))
-        self.assertTrue(self.club.in_club(self.member_user))
-        self.assertTrue(self.club.in_club(self.applicant_user))
+        self.assertTrue(self.club.in_club(self.owner))
+        self.assertTrue(self.club.in_club(self.member))
+        self.assertTrue(self.club.in_club(self.applicant))
         self.assertFalse(self.club.in_club(self.user))
+
+    def _create_club_owner_members_and_applicants(self):
+        self.owner = Club_Users.objects.get(club=self.club, role_num=4).user
+        self.applicant = User.objects.get(pk=2)
+        Club_Users.objects.create(user=self.applicant, club=self.club)
+        self.member = User.objects.get(pk=3)
+        Club_Users.objects.create(user=self.member, club=self.club, role_num=2)
