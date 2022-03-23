@@ -2,8 +2,11 @@ from clubs.models import Book, User, Book_Rating
 from clubs.views.mixins import TenPosRatingsRequiredMixin
 from django.test import TestCase
 from django.urls import reverse
+from clubs.tests.helpers import reverse_with_next
 from django.shortcuts import redirect
 from django.conf import settings
+from django.http import HttpRequest
+from django.test.client import Client
 
 
 class TenPosRatingsRequiredMixinTestCase(TestCase):
@@ -15,18 +18,32 @@ class TenPosRatingsRequiredMixinTestCase(TestCase):
     ]
 
     def setUp(self):
-        self.mixin = TenPosRatingsRequiredMixin()
-        self.user = User.objects.get(pk=1)
+        super(TestCase, self).setUp()
+        self.user = User.objects.get(username='@johndoe')
         self.book = Book.objects.get(pk=20)
-        self.redirect_when_less_than_ten_pos_ratings_url = settings.REDIRECT_URL_WHEN_NOT_ENOUGH_RATINGS
 
-    def test_dispatch(self):
-        pass
+        self.request = HttpRequest()
+        self.request.user = self.user
+
+        self.client = Client()
+        self.client.login(email="johndoe@example.org", password="Password123")
+
+        self.mixin = TenPosRatingsRequiredMixin()
+        self.redirect_when_less_than_ten_pos_ratings_url = reverse(settings.REDIRECT_URL_WHEN_NOT_ENOUGH_RATINGS)
+
+    def test_redirect(self):        
+        response = self.client.get(reverse('club_recommender'))
+        redirect_url = self.redirect_when_less_than_ten_pos_ratings_url
+
+        self.assertRedirects(
+            response,
+            redirect_url,
+            status_code=302,
+            target_status_code=200,
+            fetch_redirect_response=True)
 
     def test_handle_less_than_ten_pos_ratings(self):
         pass
-        # result = self.mixin.handle_less_than_ten_pos_ratings()
-        # self.assertEqual(result, redirect(self.redirect_when_less_than_ten_pos_ratings_url))
 
     def test_valid_input_for_at_least_ten_pos_ratings(self):
         book_ratings = []
