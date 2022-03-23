@@ -12,7 +12,7 @@ from clubs.models import User, Club, Club_Users, Club_Books, Book, User_Books
 pd.options.mode.chained_assignment = None  # default='warn'
 class ClubUserRecommender:
 
-    def __init__(self, club_id_to_query):
+    def __init__(self, user_id):
     # Load data
         self.book_df = pd.DataFrame(list(Book.objects.all().values()))
         self.user_df = pd.DataFrame(list(User.objects.all().values()))
@@ -20,7 +20,7 @@ class ClubUserRecommender:
         self.club_book_df = pd.DataFrame(list(Club_Books.objects.all().values()))
         self.club_user_df = pd.DataFrame(list(Club_Users.objects.all().values()))
         self.user_book_df = pd.DataFrame(list(User_Books.objects.all().values()))
-        self.club_id_to_query = club_id_to_query
+        self.user_id = user_id
 
 
     # # Junction tables must be filled when new user signed up!

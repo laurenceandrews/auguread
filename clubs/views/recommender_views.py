@@ -10,6 +10,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 from django.db.models import Q
+from clubs.club_to_user_recommender.club_to_user_recommender import ClubUserRecommender
 
 @login_required
 def RecommendationsView(request):
@@ -26,7 +27,12 @@ class ClubRecommenderView(LoginRequiredMixin, View):
     def get(self, request):
         """Display template."""
 
+        user_id = request.user.id
+
+        # recommended_clubs = ClubUserRecommender(user_id=user_id).get_best_clubs_in_person()
+        # self.all_clubs = Club.objects.all()
         self.clubs_queryset = Club.objects.all().order_by('name')
+        # self.sorted = set(recommended_clubs).intersection(self.clubs_queryset)
         query = request.GET.get('q')
         if query:
             self.clubs_queryset = Club.objects.filter(
@@ -40,17 +46,12 @@ class ClubRecommenderView(LoginRequiredMixin, View):
         self.next = request.GET.get('next') or ''
         return self.render()
 
-    def get_form_kwargs(self):
-        kwargs = super(ClubRecommenderView, self).get_form_kwargs()
-        kwargs['id'] = self.kwargs['id']
-        return kwargs
-
-    # def form_valid(self, form):
-    #     user = User.objects.get(id = self.kwargs['id'])
-    #     club = form.cleaned_data.get('club')
-    #     return render(self.request, 'club_recommender.html')
+    def form_valid(self, form):
+        user = User.objects.get(id = self.kwargs['id'])
+        club = form.cleaned_data.get('club')
+        return render(self.request, 'club_recommender.html')
     
-    def get_data(self, **kwargs):
+    def get_data(self, **kwargs):  
         data = super().get_data(**kwargs)
         user = User.objects.get(id = self.kwargs['id'])
         data['first_name'] = user.first_name
