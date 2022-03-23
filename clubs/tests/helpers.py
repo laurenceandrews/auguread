@@ -22,8 +22,10 @@ class LogInTester:
 class MenuTesterMixin(AssertHTMLMixin):
     menu_urls = [
         reverse('user_detail'),
-        reverse('profile'), reverse('log_out'),
+        reverse('log_out'),
         reverse('new_club'),
+        reverse('password'),
+        reverse('feed'),
     ]
 
     def assert_menu(self, response):
