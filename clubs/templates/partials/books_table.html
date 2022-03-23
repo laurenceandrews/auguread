@@ -14,20 +14,21 @@
       </div>
     </div>
   </div>
+
+  {% if not single_book %}
+  <form method="GET" >
+    <div class="input-field">
+        <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Enter book title or author">
+        <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Search</button>
+    </div>
+  </form>
+  {% endif %}
+  
   <div class="mt-8 flex flex-col">
     <div class="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle">
         <div class="shadow-sm ring-1 ring-black ring-opacity-5">
           {% if books %}
-
-          <form method="GET" >
-            <div class="input-field">
-                <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Enter book title or author">
-                <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Search</button>
-            </div>
-          </form>
-
-
           <table class="min-w-full border-separate" style="border-spacing: 0">
             <thead class="bg-gray-50">
               <tr>

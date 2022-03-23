@@ -38,11 +38,13 @@ def user_current_book(request):
                       {
                           'user': user,
                           'books': [current_book],
+                          'single_book': True,
                       })
     else:
         return render(request, "partials/books_table.html",
                       {
-                          'user': user
+                          'user': user,
+                          'single_book': True,
                       })
 
 
@@ -62,7 +64,7 @@ def user_favourite_books(request):
     return render(request, "partials/books_table.html",
                   {
                       'user': user,
-                      'books': books,
+                      'books': books
                   })
 
 
@@ -77,10 +79,17 @@ def user_clubs_books(request):
         if club.currently_reading() is not None:
             book_ids.append(club.currently_reading().id)
     books = Book.objects.filter(id__in=book_ids)
+
+    query = request.GET.get('q')
+    if query:
+        books = books.filter(
+            Q(title__icontains=query) | Q(author__icontains=query)
+        ).distinct()
+
     return render(request, "partials/books_table.html",
                   {
                       'user': user,
-                      'books': books,
+                      'books': books
                   })
 
 
@@ -105,6 +114,12 @@ def clubs_list(request, role_num):
 
     else:
         clubs = Club.objects.none()
+
+    query = request.GET.get('q')
+    if query:
+        clubs = clubs.filter(
+            Q(name__icontains=query) | Q(location__icontains=query)
+        ).distinct()
 
     return render(request, "partials/clubs_table.html",
                   {
