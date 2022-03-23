@@ -1,5 +1,5 @@
 """Views related to the clubs."""
-from clubs.forms import NewClubForm
+from clubs.forms import BookRatingForm, CreateClubUserForm, NewClubForm
 from clubs.models import Club, Club_Users, Post, User
 from django.conf import settings
 from django.contrib import messages
@@ -7,11 +7,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import slugify
+from django.urls import reverse
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import DeleteView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
@@ -59,6 +61,53 @@ def new_club(request):
             return render(request, "new_club.html", {"form": form})
     else:
         return render(request, "new_club.html", {"form": NewClubForm})
+
+
+class DeleteClubUserView(LoginRequiredMixin, DeleteView):
+    """ View that handles club user delete requests. """
+
+    model = Club_Users
+    template_name = 'club_user_delete.html'
+    form_class = CreateClubUserForm
+    pk_url_kwarg = "club_users_id"
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        messages.add_message(self.request, messages.SUCCESS, "Success!")
+        return reverse('user_summary')
+
+    def get_cancel_url(self):
+        """Return URL to redirect the user too after form handling cancelled."""
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        return context
+
+
+class ClubDetailView(LoginRequiredMixin, DetailView):
+
+    model = Club
+    template_name = 'club_detail.html'
+    pk_url_kwarg = "club_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['user'] = user
+        context['form'] = BookRatingForm()
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        """Handle get request, and redirect to user_list if book_id invalid."""
+
+        try:
+            return super().get(request, *args, **kwargs)
+        except Http404:
+            messages.add_message(self.request, messages.ERROR, "Invalid book!")
+            return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
 
 class ClubListView(LoginRequiredMixin, ListView):

@@ -57,6 +57,7 @@ urlpatterns = [
     # Club urls
     path('clubs/', views.ClubListView.as_view(), name='club_list'),
     path('new_club/', views.new_club, name='new_club'),
+    url(r"^club/detail/(?P<club_id>\d+)/$", views.ClubDetailView.as_view(), name='club_detail'),
     path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
 
     path('enter/<int:club_id>', views.enter, name='enter'),
@@ -64,6 +65,8 @@ urlpatterns = [
     path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
     path('<int:club_id>/transfer/<int:user_id>', views.transfer, name='transfer'),
     path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
+
+    re_path(r"^club/user/delete/(?P<club_users_id>\d+)/$", views.DeleteClubUserView.as_view(), name="delete_club_user"),
 
     path('<int:club_id>/applicants', views.applicants_list, name='applicant_list'),
     path('<int:club_id>/members', views.members_list, name='member_list'),
