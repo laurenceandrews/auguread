@@ -23,9 +23,9 @@
       <p>Average reading speed: {{club.avg_reading_speed}}</p>
     </div>
 
-    <div>
+    <div class="">
         <h3 class="text-lg leading-6 font-medium text-gray-900"></h3>
-        <dl class="mt-5 grid grid-cols-1 rounded-lg bg-white overflow-hidden shadow divide-y divide-gray-200 md:grid-cols-3 md:divide-y-0 md:divide-x">
+        <dl class="mt-5 grid grid-cols-1 rounded-lg bg-white overflow-hidden shadow divide-y divide-gray-200 md:grid-cols-1 md:divide-y-0 md:divide-x">
           <!-- Club actions -->
           <div class="px-4 py-5 sm:p-6">
             <dt class="text-base font-normal text-gray-900">Go to club's calendar</dt>
@@ -34,7 +34,7 @@
                 {{club.calendar}}
               </div>
 
-              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 md:mt-2 lg:mt-0">
+              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
                 <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
                   <a href='{%url 'full_calendar' club.calendar.slug%}' class="">Calendar</a>
                 </div>
@@ -50,7 +50,7 @@
                 Create application to {{club.name}}
               </div>
 
-              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 md:mt-2 lg:mt-0">
+              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
                 <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
                   <a href='{% url 'apply' club.id %}' class="">Apply</a>
                 </div>
@@ -67,7 +67,7 @@
                 Withdraw application to {{club.name}}
               </div>
 
-              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 md:mt-2 lg:mt-0">
+              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
                 <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
                   <a href='{% url 'delete_club_user' club_user_id %}' class="">Withdraw application</a>
                 </div>
@@ -85,7 +85,7 @@
                   {{club.currently_reading}}
                 </div>
 
-                <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 md:mt-2 lg:mt-0">
+                <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
                   <form action="{% url 'rate_book' club.currently_reading.id%}" method="post">
                     {% csrf_token %}
                     <div class = "rating">
@@ -106,7 +106,7 @@
                 View members
               </div>
 
-              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 md:mt-2 lg:mt-0">
+              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
                 <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
                   <a href='{%url 'member_list' club.id %}' class="">List of members</a>
                 </div>
@@ -121,7 +121,7 @@
                 Leave club {{club.name}}
               </div>
 
-              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 md:mt-2 lg:mt-0">
+              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
                 <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
                   <a href='{% url 'delete_club_user' club_user_id %}' class="">Leave</a>
                 </div>
@@ -138,7 +138,7 @@
                 Approve applications
               </div>
 
-              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 md:mt-2 lg:mt-0">
+              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
                 <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
                   <a href='{%url 'applicant_list' club.id %}' class="">List of applicants</a>
                 </div>
@@ -153,7 +153,7 @@
                 Transfer ownership
               </div>
 
-              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 md:mt-2 lg:mt-0">
+              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
                 <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
                   <a href='{%url 'member_list' club.id %}' class="">List of members</a>
                 </div>
@@ -169,7 +169,7 @@
                 {{club.currently_reading}}
               </div>
 
-              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 md:mt-2 lg:mt-0">
+              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
                 <form action="{% url 'rate_book' club.currently_reading.id%}" method="post">
                   {% csrf_token %}
                   <div class = "rating">
@@ -190,7 +190,7 @@
                 Select new book
               </div>
 
-              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 md:mt-2 lg:mt-0">
+              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
                 <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
                   <a href='' class="">Club's book recommendations</a>
                   <!-- <a href='{% url 'club_book_select' club.id %}' class="">Club's book recommendations</a> -->
