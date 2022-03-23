@@ -1,6 +1,21 @@
 {% extends 'user_summary.html' %}
 {% load i18n %}
 {% block summary_content%}
+<style>
+  .input-field {
+    padding: 0px 0px 10px;
+  }
+
+  input[type="text"] {
+    font-style: italic;
+    border: solid 1px #352fa9;
+    vertical-align: middle;
+    border-radius: 5px;
+    height: 40px;
+    width: 30%;
+  }
+</style>
+
 <div class="px-4 sm:px-6 lg:px-8">
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
