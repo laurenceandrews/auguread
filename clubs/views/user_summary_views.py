@@ -2,6 +2,7 @@ from clubs.models import (Book, Club, Club_Book_History, Club_Books,
                           Club_Users, User, User_Book_History, User_Books)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views import View
 
@@ -55,7 +56,7 @@ def user_favourite_books(request):
     query = request.GET.get('q')
     if query:
         books = books.filter(
-            Q(name__icontains=query) | Q(author__icontains=query)
+            Q(title__icontains=query) | Q(author__icontains=query)
         ).distinct()
 
     return render(request, "partials/books_table.html",
