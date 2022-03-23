@@ -18,3 +18,19 @@ def create_posts(author, from_count, to_count):
 class LogInTester:
     def _is_logged_in(self):
         return '_auth_user_id' in self.client.session.keys()
+
+class MenuTesterMixin(AssertHTMLMixin):
+    menu_urls = [
+        reverse('user_detail'),
+        reverse('profile'), reverse('log_out'),
+        reverse('new_club'),
+    ]
+
+    def assert_menu(self, response):
+        for url in self.menu_urls:
+            with self.assertHTML(response, f'a[href="{url}"]'):
+                pass
+
+    def assert_no_menu(self, response):
+        for url in self.menu_urls:
+            self.assertNotHTML(response, f'a[href="{url}"]')
