@@ -1,7 +1,7 @@
 """Tests of the book_detail view."""
 
 
-from clubs.models import Book, Club, User
+from clubs.models import Book, Book_Rating, Club, User
 from clubs.tests.helpers import reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
@@ -20,6 +20,7 @@ class BookDetailViewTest(TestCase):
         super(TestCase, self).setUp()
         self.user = User.objects.get(username='@johndoe')
         self.book = Book.objects.get(pk=20)
+        Book_Rating.objects.create(book=self.book, user=self.user, rating=1)
 
         self.url = reverse(
             'book_detail', kwargs={'book_id': self.book.id}

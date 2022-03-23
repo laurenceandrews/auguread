@@ -22,6 +22,7 @@ class CreateBookRatingViewTest(TestCase):
         super(TestCase, self).setUp()
         self.user = User.objects.get(username='@johndoe')
         self.book = Book.objects.get(pk=20)
+        Book_Rating.objects.create(book=self.book, user=self.user, rating=1)
 
         self.data = {
             'rating': 5
@@ -50,12 +51,14 @@ class CreateBookRatingViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'book_rating_create.html')
 
-    # def test_succesful_create_book_rating(self):
-    #     self.client.login(email=self.user.email, password="Password123")
-    #     book_rating_count_before = Book_Rating.objects.count()
-    #     response = self.client.post(self.url, self.data, follow=True)
-    #     book_rating_count_after = Book_Rating.objects.count()
-    #     self.assertEqual(book_rating_count_after, book_rating_count_before + 1)
+    def test_get_create_book_rating_with_invalid_book_id(self):
+        url = reverse(
+            'rate_book', kwargs={'book_id': 0}
+        )
+        self.client.login(email=self.user.email, password="Password123")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'book_rating_create.html')
 
     def test_succesful_create_book_rating(self):
         self.client.login(email=self.user.email, password="Password123")
