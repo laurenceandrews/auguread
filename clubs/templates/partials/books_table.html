@@ -27,11 +27,11 @@
               </tr>
             </thead>
             <tbody class="bg-white">
-
+              <tr>
                 {% for book in books %}
                     {% include 'partials/book_as_table_row.html' with book=book %}
                 {% endfor %}
-              
+              </tr>
             </tbody>
           </table>
           {% else %}
