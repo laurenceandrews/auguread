@@ -1,5 +1,5 @@
 """Views related to the account."""
-from clubs.forms import LogInForm, PasswordForm, SignUpForm, UserForm
+from clubs.forms import LogInForm, PasswordForm, SignUpForm, UserForm, UserDeleteForm
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
