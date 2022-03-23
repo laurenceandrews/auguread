@@ -53,6 +53,14 @@ class CreateUserBookHistoryViewTest(TestCase):
         user_book_history_count_after = User_Book_History.objects.count()
         self.assertEqual(user_book_history_count_after, user_book_history_count_before + 1)
 
+    def test_successful_new_user_book_history_if_user_book_history_exists(self):
+        User_Book_History.objects.create(book=self.book, user=self.user)
+        self.client.login(email=self.user.email, password="Password123")
+        user_book_history_count_before = User_Book_History.objects.count()
+        response = self.client.post(self.url, self.data, follow=True)
+        user_book_history_count_after = User_Book_History.objects.count()
+        self.assertEqual(user_book_history_count_after, user_book_history_count_before)
+
     def test_unsuccessful_new_user_book_history(self):
         self.client.login(email=self.user.email, password="Password123")
         user_book_history_count_before = User_Book_History.objects.count()
