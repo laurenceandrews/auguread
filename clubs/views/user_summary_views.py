@@ -66,7 +66,8 @@ def user_clubs_books(request):
     clubs = Club.objects.filter(id__in=clubs_ids)
     book_ids = []
     for club in clubs:
-        book_ids.append(club.currently_reading().id)
+        if club.currently_reading() is not None:
+            book_ids.append(club.currently_reading().id)
     books = Book.objects.filter(id__in=book_ids)
     return render(request, "partials/books_table.html",
                   {
