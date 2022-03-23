@@ -257,8 +257,7 @@ class Club(models.Model):
         club_user.save()
 
     def applied_by(self, user):
-        if not Club_Users.objects.filter(club=Club.objects.get(id=self.id), user=user).exists():
-            Club_Users.objects.create(club=Club.objects.get(id=self.id), user=user)
+        Club_Users.objects.create(club=Club.objects.get(id=self.id), user=user)
 
     def in_club(self, user):
         if user in self.members() or user in self.owners() or user in self.applicants() or user == self.owner:
