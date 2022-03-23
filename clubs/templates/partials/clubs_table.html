@@ -28,11 +28,9 @@
               </tr>
             </thead>
             <tbody class="bg-white">
-              <tr>
                 {% for club in clubs %}
                     {% include 'partials/club_as_table_row.html' with club=club role_num=role_num%}
                 {% endfor %}
-              </tr>
             </tbody>
           </table>
           {% else %}
