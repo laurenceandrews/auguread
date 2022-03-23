@@ -4,14 +4,11 @@ from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib import messages
+from clubs.forms import UserDeleteForm
 
 class DeleteAccountViewTestCase(TestCase):
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/other_users.json',
-        'clubs/tests/fixtures/default_calendar.json',
-        'clubs/tests/fixtures/default_club.json',
-        'clubs/tests/fixtures/default_rules.json',
     ]
 
     def setUp(self):
