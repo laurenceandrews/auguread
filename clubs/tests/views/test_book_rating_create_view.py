@@ -22,7 +22,6 @@ class CreateBookRatingViewTest(TestCase):
         super(TestCase, self).setUp()
         self.user = User.objects.get(username='@johndoe')
         self.book = Book.objects.get(pk=20)
-        Book_Rating.objects.create(book=self.book, user=self.user, rating=1)
 
         self.data = {
             'rating': 5
@@ -71,6 +70,21 @@ class CreateBookRatingViewTest(TestCase):
         self.assertEqual(response.status_code, 404)
         book_rating_count_after = Book_Rating.objects.count()
         self.assertEqual(book_rating_count_after, book_rating_count_before + 1)
+
+    def test_succesful_create_book_rating_when_book_rating_exists(self):
+        book_rating = Book_Rating.objects.create(book=self.book, user=self.user, rating=1)
+        self.client.login(email=self.user.email, password="Password123")
+        book_rating_count_before = Book_Rating.objects.count()
+        response = self.client.get(self.url, self.data, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(self.url, self.data, follow=True)
+        self.assertEqual(response.status_code, 404)
+        book_rating_count_after = Book_Rating.objects.count()
+        self.assertEqual(book_rating_count_after, book_rating_count_before)
+        book_rating = Book_Rating.objects.get(book=self.book, user=self.user)
+        self.assertEqual(book_rating.rating, str(self.data['rating']))
 
     def test_unsuccesful_create_book_rating(self):
         self.data = {}
