@@ -32,9 +32,10 @@ from django.views.generic.edit import (CreateView, DeleteView, FormView,
                                        UpdateView)
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
+from clubs.views.mixins import TenPosRatingsRequiredMixin
 
 
-class ClubRecommenderView(LoginRequiredMixin, View):
+class ClubRecommenderView(TenPosRatingsRequiredMixin, View):
     """View that handles the club recommendations."""
 
     http_method_names = ['get', 'post']
