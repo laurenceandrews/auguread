@@ -82,6 +82,10 @@ class DeleteClubUserView(LoginRequiredMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        club_user = Club_Users.objects.get(id=self.kwargs['club_users_id'])
+        context['membership_type'] = club_user.get_role_num_display
+        context['user'] = club_user.user.full_name
+        context['club'] = club_user.club.name
 
         return context
 
