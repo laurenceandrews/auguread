@@ -41,11 +41,6 @@ class deleteUserBookHistoryViewTest(TestCase):
         user_books_count_after = User_Books.objects.count()
         self.assertEqual(user_books_count_after, user_books_count_before)
 
-    # def test_get_delete_user_books(self):
-    #     self.client.login(email=self.user.email, password="Password123")
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, 200)
-
     def test_successful_delete_user_books(self):
         self.client.login(email=self.user.email, password="Password123")
         user_books_count_before = User_Books.objects.count()
