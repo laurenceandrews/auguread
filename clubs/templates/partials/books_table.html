@@ -2,6 +2,22 @@
 {% load i18n %}
 {% load widget_tweaks %}
 {% block summary_content%}
+
+<style>
+  .input-field {
+    padding: 0px 0px 10px;
+  }
+
+  input[type="text"] {
+    font-style: italic;
+    border: solid 1px #352fa9;
+    vertical-align: middle;
+    border-radius: 5px;
+    height: 40px;
+    width: 30%;
+  }
+</style>
+
 <div class="px-4 sm:px-6 lg:px-8">
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
@@ -23,7 +39,7 @@
     </div>
   </form>
   {% endif %}
-  
+
   <div class="mt-8 flex flex-col">
     <div class="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle">
