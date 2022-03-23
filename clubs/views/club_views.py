@@ -73,8 +73,12 @@ class DeleteClubUserView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
+        club_user = Club_Users.objects.get(id=self.kwargs['club_users_id'])
+        club = club_user.club.name
+        # club_user = self.response.context['club_users']
         messages.add_message(self.request, messages.SUCCESS, "Success!")
-        return reverse('user_summary')
+        return reverse('club_detail', kwargs={'club_id': club_user.club.id})
+        # return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
     def get_cancel_url(self):
         """Return URL to redirect the user too after form handling cancelled."""
@@ -83,10 +87,15 @@ class DeleteClubUserView(LoginRequiredMixin, DeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         club_user = Club_Users.objects.get(id=self.kwargs['club_users_id'])
+        confirmation_text = "Invalid request"
+        if club_user.role_num == '1':
+            confirmation_text = f'You will be deleting the application for {club_user.user.full_name()} in {club_user.club.name}.'
+        if club_user.role_num == '2':
+            confirmation_text = f'You will be deleting the membership for {club_user.user.full_name()} in {club_user.club.name}.'
+        if club_user.role_num == '4':
+            confirmation_text = f'You will be deleting the ownership for {club_user.user.full_name()} in {club_user.club.name}.'
         context['membership_type'] = club_user.get_role_num_display
-        context['user'] = club_user.user.full_name
-        context['club'] = club_user.club.name
-
+        context['confirmation_text'] = confirmation_text
         return context
 
 
@@ -123,25 +132,26 @@ class ClubListView(LoginRequiredMixin, ListView):
     context_object_name = "clubs"
 
 
-@login_required
-@member
+@ login_required
+@ member
 def enter(request, club_id):
     """View that handles entering a club."""
     user = request.user
     return redirect('show_user', user_id=user.id, club_id=club_id)
 
 
-@login_required
+@ login_required
 def apply(request, club_id):
     """View that handles applying for a club."""
     user = request.user
     club = Club.objects.get(id=club_id)
     club.applied_by(user)
-    return redirect('club_list')
+    messages.add_message(request, messages.SUCCESS, "Application created!")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-@login_required
-@owner
+@ login_required
+@ owner
 def approve(request, user_id, club_id):
     """View that handles approving applicants for a club."""
 
@@ -157,8 +167,8 @@ def approve(request, user_id, club_id):
         return redirect('applicant_list', club_id=club_id)
 
 
-@login_required
-@owner
+@ login_required
+@ owner
 def transfer(request, user_id, club_id):
     """View that handles transfering ownership of a club."""
 
@@ -219,8 +229,8 @@ class ShowUserView(LoginRequiredMixin, ApplicantProhibitedMixin, DetailView, Mul
             return redirect('user_list', club_id=self.kwargs['club_id'])
 
 
-@login_required
-@owner
+@ login_required
+@ owner
 def applicants_list(request, club_id):
     """ View to display a club's applicants list. """
     club = Club.objects.get(id=club_id)
@@ -238,8 +248,8 @@ def applicants_list(request, club_id):
                   })
 
 
-@login_required
-@member
+@ login_required
+@ member
 def members_list(request, club_id):
     """ View to display a club's applicants list. """
     club = Club.objects.get(id=club_id)
