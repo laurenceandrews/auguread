@@ -42,23 +42,6 @@
             </dd>
           </div>
 
-          {%if role_num == None%}
-          <div class="px-4 py-5 sm:p-6">
-            <dt class="text-base font-normal text-gray-900">Your application</dt>
-            <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-              <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-                Create application to {{club.name}}
-              </div>
-
-              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 md:mt-2 lg:mt-0">
-                <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                  <a href='{% url 'apply' club.id %}' class="">Apply</a>
-                </div>
-              </div>
-            </dd>
-          </div>
-          {%endif%}
-
           {%if role_num == '1'%}
           <div class="px-4 py-5 sm:p-6">
             <dt class="text-base font-normal text-gray-900">Your application</dt>
@@ -78,7 +61,7 @@
 
           {%if role_num == '2'%}
           <div class="px-4 py-5 sm:p-6">
-            <dt class="text-base font-normal text-gray-900">{{club.name}}'s currently reading</dt>
+            <dt class="text-base font-normal text-gray-900">{{club.name}}'s current reading</dt>
             <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
               <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
                 {{club.currently_reading}}
@@ -161,26 +144,6 @@
 
           <div class="px-4 py-5 sm:p-6">
             <dt class="text-base font-normal text-gray-900">{{club.name}}'s currently reading</dt>
-            <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-              <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-                {{club.currently_reading}}
-              </div>
-
-              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800 md:mt-2 lg:mt-0">
-                <form action="{% url 'rate_book' club.currently_reading.id%}" method="post">
-                  {% csrf_token %}
-                  <div class = "rating">
-                      <p>{% book_rated club.currently_reading user%}</p>
-                      {{ form }}
-                      <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
-                  </div>
-                </form>
-              </div>
-            </dd>
-          </div>
-
-          <div class="px-4 py-5 sm:p-6">
-            <dt class="text-base font-normal text-gray-900">{{club.name}}'s reading next</dt>
             <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
               <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
                 Select new book
