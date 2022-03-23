@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import slugify
@@ -130,6 +131,17 @@ class ClubListView(LoginRequiredMixin, ListView):
     model = Club
     template_name = "club_list.html"
     context_object_name = "clubs"
+
+    def get_queryset(self):
+
+        clubs = Club.objects.all()
+
+        query = self.request.GET.get('q')
+        if query:
+            clubs = clubs.filter(
+                Q(name__icontains=query) | Q(location__icontains=query)
+            ).distinct()
+        return clubs
 
 
 @ login_required
