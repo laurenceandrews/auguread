@@ -60,11 +60,13 @@ def user_favourite_books(request):
 
 @login_required
 def user_clubs_books(request):
-    """ View to display a list of the current user's book history. """
+    """ View to display a list of the current user's club's currently reading. """
     user = request.user
     clubs_ids = Club_Users.objects.filter(user=user).exclude(role_num="1").values_list('club', flat=True)
     clubs = Club.objects.filter(id__in=clubs_ids)
-    book_ids = Club_Books.objects.filter(club__in=clubs).values_list('book', flat=True)
+    book_ids = []
+    for club in clubs:
+        book_ids.append(club.currently_reading().id)
     books = Book.objects.filter(id__in=book_ids)
     return render(request, "partials/books_table.html",
                   {
