@@ -135,7 +135,7 @@
 
 <div class="px-4 sm:px-6 lg:px-8">
 
-  {%if role_num == '4'%}
+
   <div class="mt-4 sm:flex sm:items-center">
     <div class="sm:flex-auto">
       <h1 class="text-xl font-semibold text-gray-900"></h1>
@@ -143,11 +143,18 @@
     </div>
     <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
       <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
+        <a href='{% url 'club_recommender' %}' class="">Get club recommendations</a>
+      </div>
+    </div>
+    {%if role_num == '4'%}
+    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+      <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
         <a href='{% url 'new_club' %}' class="">Create a new club</a>
       </div>
     </div>
+    {%endif%}
   </div>
-  {%endif%}
+
 
   <!-- Search... -->
   <div class="mt-4">

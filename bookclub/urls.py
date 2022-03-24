@@ -32,7 +32,8 @@ urlpatterns = [
     path('rec/', views.RecommendationsView.as_view(), name='rec'),
     path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
     path('club_recommender/', ClubRecommenderView.as_view(), name='club_recommender'),
-    url(r"^club/book/edit/(?P<club_id>\d+)/$", views.ClubBookSelectionView.as_view(), name='club_book_select'),
+    url(r"^club/book/recommendations/(?P<club_id>\d+)/$", views.RecommendedClubBookListView.as_view(), name='club_book_recommendations'),
+    url(r"^club/(?P<club_id>\d+)/book/(?P<book_id>\d+)/select/$", views.club_book_select_view, name='club_book_select'),
 
     path('sign_up/', views.SignUpView.as_view(), name='sign_up'),
     path('log_in/', views.LogInView.as_view(), name='log_in'),
