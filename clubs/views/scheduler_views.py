@@ -2,8 +2,11 @@ from clubs.forms import (AddressForm, CalendarPickerForm, CreateEventForm,
                          MeetingAddressForm, MeetingLinkForm)
 from clubs.models import (Address, Club, Club_Book_History, MeetingAddress,
                           MeetingLink)
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -45,10 +48,22 @@ def events_list(request, calendar_id):
     """ View to display a calendar's event list. """
     calendar = Calendar.objects.get(id=calendar_id)
     events = calendar.event_set.all()
+
+    query = request.GET.get('q')
+    if query:
+        events = events.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        ).distinct()
+
+    paginator = Paginator(events, settings.NUMBER_PER_PAGE)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     return render(request, "events_list.html",
                   {
                       'calendar': calendar,
                       'events': events,
+                      'page_obj': page_obj
                   })
 
 
