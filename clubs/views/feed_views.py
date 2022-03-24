@@ -8,6 +8,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.views.generic.edit import CreateView
+from django.contrib import messages
+from django.http import Http404, HttpResponseRedirect
+
 
 class FeedView(LoginRequiredMixin, ListView):
     """Class-based generic view for displaying the feed."""
@@ -58,7 +61,7 @@ def follow_toggle(request, user_id):
         followee = User.objects.get(id=user_id)
         current_user.toggle_follow(followee)
     except ObjectDoesNotExist:
-        return redirect('user_list')
+        return redirect('user_detail_list')
     else:
         messages.add_message(request, messages.SUCCESS, "Success!")
         return redirect('user_detail', user_id=user_id)
