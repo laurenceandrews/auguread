@@ -1,5 +1,5 @@
 {% load humanize %}
-<div class="mb-6 last:mb-0 flex">
+<div class="flex py-4">
   <div class="flex-shrink-0">
     <img
       src="{{post.author.mini_gravatar}}"
@@ -12,7 +12,7 @@
       <span class="italic"> {{ post.author.full_name }} </span>
       <span class="text-indigo-400"> {{ post.author.username }} </span>
       &nbsp;&middot;&nbsp;
-      <span> {{ post.created_at|naturaltime }} </span>
+      <span class="whitespace-nowrap font-light text-gray-600"> {{ post.created_at|naturaltime }} </span>
     </p>
     <p class="text-lg">{{ post.text }}</p>
   </div>
