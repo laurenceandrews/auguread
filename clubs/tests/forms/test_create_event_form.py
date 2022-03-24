@@ -45,6 +45,18 @@ class CreateEventFormTestCase(TestCase):
         self.assertIn('end', form.fields)
 
     def test_end_must_be_later_than_start(self):
-        self.form_input['start'] = self.data['end']
+        self.form_input = {
+            "description": "description",
+            "title": "title",
+            "end_recurring_period_1": "10:22:00",
+            "end_recurring_period_0": "2008-10-30",
+            "end_recurring_period_2": "AM",
+            "end_1": "10:22:00",
+            "end_0": "2008-10-30",
+            "end_2": "AM",
+            "start_0": "10:22:00",
+            "start_1": "2008-10-30",
+            "start_2": "AM",
+        }
         form = CreateEventForm(data=self.form_input)
         self.assertFalse(form.is_valid())
