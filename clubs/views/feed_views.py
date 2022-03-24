@@ -60,4 +60,5 @@ def follow_toggle(request, user_id):
     except ObjectDoesNotExist:
         return redirect('user_list')
     else:
+        messages.add_message(request, messages.SUCCESS, "Success!")
         return redirect('user_detail', user_id=user_id)
