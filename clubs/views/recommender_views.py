@@ -14,7 +14,6 @@ from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
 from clubs.models import (Address, Book, Book_Rating, Club, Club_Book_History,
                           Club_Books, Club_Users, MeetingAddress, MeetingLink,
                           Post, User)
-from clubs.views.club_views import MemberListView
 from clubs.views.mixins import TenPosRatingsRequiredMixin
 from django.conf import settings
 from django.contrib import messages

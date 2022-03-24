@@ -280,37 +280,6 @@ def members_list(request, club_id):
                   })
 
 
-class MemberListView(LoginRequiredMixin, ApplicantProhibitedMixin, ListView, MultipleObjectMixin):
-    """View that shows a list of all the members."""
-
-    model = User
-    template_name = "club_users_list.html"
-    context_object_name = "users"
-    paginate_by = settings.NUMBER_PER_PAGE
-
-    def get_queryset(self):
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.members())
-        return users
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['club'] = Club.objects.get(id=self.kwargs['club_id'])
-        context['user'] = self.request.user
-        context['list_of_members'] = True
-
-        return context
-
-    def post(self, request, **kwargs):
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        emails = request.POST.getlist('check[]')
-        for email in emails:
-            user = User.objects.get(email=email)
-            club.promote(user)
-        users = club.members()
-        return redirect('club_users_list', club_id=club.id)
-
-
 class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
     """View that shows a list of all the owners."""
 
