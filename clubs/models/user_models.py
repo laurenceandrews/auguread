@@ -257,7 +257,8 @@ class Club(models.Model):
         club_user.save()
 
     def applied_by(self, user):
-        Club_Users.objects.create(club=Club.objects.get(id=self.id), user=user)
+        if not Club_Users.objects.filter(club=Club.objects.get(id=self.id), user=user).exists():
+            Club_Users.objects.create(club=Club.objects.get(id=self.id), user=user)
 
     def in_club(self, user):
         if user in self.members() or user in self.owners() or user in self.applicants() or user == self.owner:
@@ -283,6 +284,15 @@ class Club(models.Model):
         """Return all favourite books of this club."""
         club_books_ids = Club_Books.objects.filter(club=Club.objects.get(id=self.id)).values_list('book', flat=True)
         return Book.objects.filter(id__in=club_books_ids)
+
+    def currently_reading(self):
+        """Return the club's currently reading book, or None."""
+        currently_reading = None
+        club_book_history_exists = Club_Book_History.objects.filter(club=Club.objects.get(id=self.id)).exists()
+        if club_book_history_exists:
+            club_book_history = Club_Book_History.objects.filter(club=Club.objects.get(id=self.id)).last()
+            currently_reading = club_book_history.book
+        return currently_reading
 
 
 class Club_Users(models.Model):

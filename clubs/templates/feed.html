@@ -1,15 +1,41 @@
 {% extends 'base_content.html' %}
 {% block content %}
-<div class="">
-  {% include 'partials/user_profile_and_club.html' with following=False followable=False %}
-  <form action="{% url 'new_post' %}" method="post">
-    {% csrf_token %}
-    {% include 'partials/bootstrap_form.html' with form=form %}
-    <button type="submit" class="">Post</button>
-  </form>
+{% load widget_tweaks %}
+
+<div class="sm:flex sm:justify-center">
+
+  <div class="sm:p-12">
+    {% include 'partials/user_profile_and_club.html' with following=False followable=False %}
+  </div>
+
+  <div class="sm:p-12">
+    <form action="{% url 'new_post' %}" method="post" class="m-8 sm:m-0">
+      {% for field in form %}
+        <div class="">
+          <label class="block text-sm font-medium text-gray-700  dark:text-gray-50">
+            {{ field.label_tag }}
+          </label>
+          <div class="mt-1">
+            {{ field|add_class:"appearance-none block w-full sm:w-auto h-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"}}
+            {{ field.errors }} 
+            {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+      {% csrf_token %}
+      <button type="submit" class="mt-4 w-32 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Post</button>
+    </form>
+    
+    <div class="ml-8 mt-6 sm:ml-0 max-w-xl">
+      {% include 'partials/posts.html' with posts=posts %}
+    </div>
+    
+    <div class="m-4">
+      {% include 'partials/post_pager.html' with page_obj=page_obj %}
+    </div>
+  </div>
 </div>
-<div class="col-xs-12 col-lg-6 col-xl-8">
-  {% include 'partials/posts_as_table.html' with posts=posts %}
-  {% include 'partials/post_pager.html' with page_obj=page_obj%}
-</div>
+
 {% endblock %}

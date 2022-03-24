@@ -21,6 +21,7 @@ class ShowUserTest(TestCase, AssertHTMLMixin):
 
     def setUp(self):
         self.user = User.objects.get(pk=1)
+        self.target_user = User.objects.get(pk=2)
         self.club = Club.objects.get(pk=6)
         self._create_club_owner_members_and_applicants()
         self.url = reverse('show_user', kwargs={'club_id': self.club.id, 'user_id': self.member.id})

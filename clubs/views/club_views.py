@@ -1,5 +1,5 @@
 """Views related to the clubs."""
-from clubs.forms import NewClubForm
+from clubs.forms import BookRatingForm, CreateClubUserForm, NewClubForm
 from clubs.models import Club, Club_Users, Post, User
 from django.conf import settings
 from django.contrib import messages
@@ -7,11 +7,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
-from django.http import Http404
+from django.db.models import Q
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import slugify
+from django.urls import reverse
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
+from django.views.generic.edit import DeleteView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
@@ -54,11 +57,71 @@ def new_club(request):
             )
 
             Club_Users.objects.create(user=current_user, club=club, role_num=4)
-            return redirect("club_list")
+            return redirect('club_detail', club.id)
         else:
             return render(request, "new_club.html", {"form": form})
     else:
         return render(request, "new_club.html", {"form": NewClubForm})
+
+
+class DeleteClubUserView(LoginRequiredMixin, DeleteView):
+    """ View that handles club user delete requests. """
+
+    model = Club_Users
+    template_name = 'club_user_delete.html'
+    form_class = CreateClubUserForm
+    pk_url_kwarg = "club_users_id"
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        club_user = Club_Users.objects.get(id=self.kwargs['club_users_id'])
+        club = club_user.club.name
+        # club_user = self.response.context['club_users']
+        messages.add_message(self.request, messages.SUCCESS, "Success!")
+        return reverse('club_detail', kwargs={'club_id': club_user.club.id})
+        # return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+
+    def get_cancel_url(self):
+        """Return URL to redirect the user too after form handling cancelled."""
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        club_user = Club_Users.objects.get(id=self.kwargs['club_users_id'])
+        confirmation_text = "Invalid request"
+        if club_user.role_num == '1':
+            confirmation_text = f'You will be deleting the application for {club_user.user.full_name()} in {club_user.club.name}.'
+        if club_user.role_num == '2':
+            confirmation_text = f'You will be deleting the membership for {club_user.user.full_name()} in {club_user.club.name}.'
+        if club_user.role_num == '4':
+            confirmation_text = f'You will be deleting the ownership for {club_user.user.full_name()} in {club_user.club.name}.'
+        context['membership_type'] = club_user.get_role_num_display
+        context['confirmation_text'] = confirmation_text
+        return context
+
+
+class ClubDetailView(LoginRequiredMixin, DetailView):
+
+    model = Club
+    template_name = 'club_detail.html'
+    pk_url_kwarg = "club_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['user'] = user
+        context['form'] = BookRatingForm()
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        """Handle get request, and redirect to user_list if book_id invalid."""
+
+        try:
+            return super().get(request, *args, **kwargs)
+        except Http404:
+            messages.add_message(self.request, messages.ERROR, "Invalid book!")
+            return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
 
 class ClubListView(LoginRequiredMixin, ListView):
@@ -69,26 +132,38 @@ class ClubListView(LoginRequiredMixin, ListView):
     template_name = "club_list.html"
     context_object_name = "clubs"
 
+    def get_queryset(self):
 
-@login_required
-@member
+        clubs = Club.objects.all()
+
+        query = self.request.GET.get('q')
+        if query:
+            clubs = clubs.filter(
+                Q(name__icontains=query) | Q(location__icontains=query)
+            ).distinct()
+        return clubs
+
+
+@ login_required
+@ member
 def enter(request, club_id):
     """View that handles entering a club."""
     user = request.user
     return redirect('show_user', user_id=user.id, club_id=club_id)
 
 
-@login_required
+@ login_required
 def apply(request, club_id):
     """View that handles applying for a club."""
     user = request.user
     club = Club.objects.get(id=club_id)
     club.applied_by(user)
-    return redirect('club_list')
+    messages.add_message(request, messages.SUCCESS, "Application created!")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-@login_required
-@owner
+@ login_required
+@ owner
 def approve(request, user_id, club_id):
     """View that handles approving applicants for a club."""
 
@@ -104,8 +179,8 @@ def approve(request, user_id, club_id):
         return redirect('applicant_list', club_id=club_id)
 
 
-@login_required
-@owner
+@ login_required
+@ owner
 def transfer(request, user_id, club_id):
     """View that handles transfering ownership of a club."""
 
@@ -166,8 +241,8 @@ class ShowUserView(LoginRequiredMixin, ApplicantProhibitedMixin, DetailView, Mul
             return redirect('user_list', club_id=self.kwargs['club_id'])
 
 
-@login_required
-@owner
+@ login_required
+@ owner
 def applicants_list(request, club_id):
     """ View to display a club's applicants list. """
     club = Club.objects.get(id=club_id)
@@ -185,8 +260,8 @@ def applicants_list(request, club_id):
                   })
 
 
-@login_required
-@member
+@ login_required
+@ member
 def members_list(request, club_id):
     """ View to display a club's applicants list. """
     club = Club.objects.get(id=club_id)

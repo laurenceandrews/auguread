@@ -16,8 +16,8 @@ from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
 
 from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
-                     Club_Books, MeetingAddress, MeetingLink, Post, User,
-                     User_Book_History, User_Books)
+                     Club_Books, Club_Users, MeetingAddress, MeetingLink, Post,
+                     User, User_Book_History, User_Books)
 
 
 class LogInForm(forms.Form):
@@ -290,6 +290,12 @@ class CalendarPickerForm(forms.Form):
             self.fields['calendar'].queryset = users_calendars.order_by('name')
 
 
+class CreateClubUserForm(forms.ModelForm):
+    class Meta:
+        model = Club_Users
+        fields = []
+
+
 class ClubBookForm(forms.ModelForm):
     class Meta:
         model = Club_Books
@@ -333,12 +339,6 @@ class BookRatingForm(forms.ModelForm):
     class Meta:
         model = Book_Rating
         fields = ['rating']
-
-    # def clean(self):
-    #     super().clean()
-    #     valid_ratings = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    #     if self.cleaned_data.get('rating') not in valid_ratings:
-    #         self.add_error('rating', 'Please select a rating from 1 to 10.')
 
 
 class ClubBookHistoryForm(forms.ModelForm):

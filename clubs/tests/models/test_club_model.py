@@ -32,9 +32,6 @@ class ClubModelTestCase(TestCase):
         self.assertEqual(self.applicant.membership_type(
             self.club), 'Applicant')
 
-    # def test_officer_membership_type(self):
-    #     self.assertEqual(self.officer.membership_type(self.club), 'Officer')
-
     def test_owner_membership_type(self):
         self.assertEqual(self.owner.membership_type(self.club), 'Owner')
 
