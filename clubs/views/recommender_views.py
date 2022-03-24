@@ -7,9 +7,9 @@ from clubs.book_to_club_recommender.book_to_club_recommender_author import \
     ClubBookAuthorRecommender
 from clubs.book_to_user_recommender.book_to_user import BookToUserRecommender
 from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
-                         ClubBookForm, CreateEventForm, LogInForm,
-                         MeetingAddressForm, MeetingLinkForm, NewClubForm,
-                         PasswordForm, PostForm, SignUpForm)
+                         CreateEventForm, LogInForm, MeetingAddressForm,
+                         MeetingLinkForm, NewClubForm, PasswordForm, PostForm,
+                         SignUpForm)
 # from clubs.helpers import member, owner
 from clubs.models import (Address, Book, Book_Rating, Club, Club_Book_History,
                           Club_Books, Club_Users, MeetingAddress, MeetingLink,

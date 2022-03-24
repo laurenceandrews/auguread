@@ -296,12 +296,6 @@ class CreateClubUserForm(forms.ModelForm):
         fields = []
 
 
-class ClubBookForm(forms.ModelForm):
-    class Meta:
-        model = Club_Books
-        fields = ['club', 'book']
-
-
 class ClubRecommenderForm(forms.ModelForm):
     class Meta:
         model = Club
