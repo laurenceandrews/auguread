@@ -1,4 +1,4 @@
-"""Tests for the profile view."""
+"""Tests for the update profile view."""
 from clubs.forms import UserForm
 from clubs.models import User
 from clubs.tests.helpers import reverse_with_next
