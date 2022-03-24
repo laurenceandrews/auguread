@@ -1,29 +1,80 @@
-{% extends "base_content.html" %} {% block content %}
-<div class="w-full">
-  <div class="sm:flex mx-auto w-full">
-    <img
-      src="{{ user.gravatar }}"
-      alt="Gravatar of {{ user.username }}"
-      class="rounded-xl h-full bg-cover mx-auto sm:ml-8 mt-8"
-    />
-    <div class="mt-8 flex-grow">
-      <div class="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2">
-        <h4 class="font-semibold">Username:</h4>
-        <h3 class="">{{ user.username }}</h3>
+{% extends 'base_content.html' %}
+{% load i18n %}
+{% load bootstrap_pagination %}
+{% block content%}
+<div class="h-auto flex items-center justify-center">
 
-        <h4 class="font-semibold">First Name:</h4>
-        <h3 class="">{{ user.first_name }}</h3>
+  <card class="flex flex-col rounded-lg shadow-lg w-1/2 p-10 bg-violet-100">
 
-        <h4 class="font-semibold">Last Name:</h4>
-        <h3 class="">{{ user.last_name }}</h3>
+    <!-- Title -->
+    <p class="text-center text-gray-800 text-4xl mt-8">{{user.full_name}}</p>
 
-        <h4 class="font-semibold">Email Address:</h4>
-        <h3 class="">{{ user.email }}</h3>
+    <!-- Description -->
+    <div class="text-gray-700 font-light mt-5">
+      <p>Age: {{user.age}}</p>
+      <p>Email: {{user.email}}</p>
+      <p>Bio: {{user.bio}}</p>
+      <p>Location: {{user.location}}</p>
+    </div>
 
-        <h4 class="font-semibold">Bio:</h4>
-        <h3 class="">{{ user.bio }}</h3>
+    <!-- Buttons -->
+    <div class="flex flex-row-reverse mt-14 items-end gap-5">
+
+      {% if user_profile %}
+      <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="location.href='{%url 'edit_profile'  %}';" style="cursor: pointer;">
+        <p>Edit profile</p>
       </div>
+
+      {% else %}
+        <!-- Follow/unfollow -->
+        {% if current_user_is_following_user == True %}
+          <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="location.href='{%url 'follow_toggle' user.id %}';" style="cursor: pointer;">
+            <p>Unfollow</p>
+          </div>
+        {% else %}
+          <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="location.href='{%url 'follow_toggle' user.id %}';" style="cursor: pointer;">
+            <p>Follow</p>
+          </div>
+        {% endif %}
+
+      {% endif %}
+
+    </div>
+
+  </card>
+
+</div>
+
+  <!-- Clubs -->
+  {%if clubs%}
+  <div class="py-8 mx-8 mt-8 flex flex-col">
+    <div class="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle">
+        <div class="shadow-sm ring-1 ring-black ring-opacity-5">
+          <h1 class="text-xl font-semibold text-gray-900">Clubs {{user.full_name}} is in</h1>
+          {% include "partials/clubs_table.html" with clubs=clubs %}
+          <div class="flex justify-center">
+            <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0">
+              <div class="hidden md:-mt-px md:flex">
+                <div class="border-indigo-500 text-indigo-600 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium">
+
+                  <div class="block">
+                     {% bootstrap_paginate page_obj previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
+                  </div>
+
+                </div>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
+  {%else%}
+  <p>{{user.full_name}} is not in any clubs.</p>
+  {%endif%}
 
+  
 {% endblock %}
+
