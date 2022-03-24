@@ -1,12 +1,12 @@
-"""Tests of the user current book view."""
+"""Tests of the user clubs view."""
 from clubs.models import Club, Club_Users, User
 from clubs.tests.helpers import reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
 
 
-class UseCurrentBookViewTestCase(TestCase):
-    """Tests of the user current book view."""
+class UserClubsViewTestCase(TestCase):
+    """Tests of the user clubs view."""
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
