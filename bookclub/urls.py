@@ -45,6 +45,7 @@ urlpatterns = [
     path('user/delete/', views.delete_account, name='delete_account'),
     path('user/profile/', views.user_profile_view, name='user_profile'),
     path('user/detail/<int:user_id>/', views.UserDetailView.as_view(), name='user_detail'),
+    path('users/', views.UserDetailList.as_view(), name='user_detail_list'),
 
     path('summary/', views.UserSummaryView.as_view(), name='user_summary'),
     path('summary/clubs/<str:role_num>', views.clubs_list, name='user_clubs'),
