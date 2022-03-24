@@ -162,8 +162,8 @@ INTERNAL_IPS = [
 
 # Set up for windows, for mac/ubuntu change to r"/usr/local/bin/npm"
 # NPM_BIN_PATH = r"/usr/local/bin/npm"
-# NPM_BIN_PATH = "/usr/bin/npm"
-NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
+NPM_BIN_PATH = "/usr/bin/npm"
+# NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 
 
 # Page lengths
