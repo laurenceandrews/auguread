@@ -1,9 +1,112 @@
 {% extends 'user_summary.html' %}
 {% load i18n %}
 {% load widget_tweaks %}
+{% load bootstrap_pagination %}
 {% block summary_content%}
 
 <style>
+
+  a#continue-btn-disabled {
+      pointer-events: none;
+      background-color: #eee;
+      color: #999;
+  }
+
+  ul.pagination {
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+
+  form {
+    display: contents;
+  }
+
+  .row {
+    display: inline-flex;
+  }
+
+  ul.pagination li {
+    border: solid 1px #352fa9;
+    border-radius: 2px;
+    color: #352fa9;
+    height: 40px;
+    width: 50px;
+    vertical-align: middle;
+    background-color: #fff;
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    display: inline-block;
+  }
+
+ li.page-item.disabled li {
+    border: solid 1px #eee;
+    border-radius: 2px;
+    height: 40px;
+    width: 50px;
+    vertical-align: middle;
+    background-color: #eee;
+    color: #999;
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    display: inline-block;
+  }
+
+  ul.pagination li a {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+  }
+
+  li.page-item.disabled span.page-link {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+    background-color: #eee;
+    border-color: #eee;
+  }
+
+  li.page-item.disabled li:hover{
+    color: #999;
+  }
+
+  li.page-item.disabled span.page-link {
+    color: #999;
+  }
+
+  li.page-item.disabled {
+    border-color: #999;
+  }
+
+  li.page-item.active span.page-link {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+    background-color: #4941e5;
+    border: solid 1px #4941e5;
+  }
+
+  ul.pagination li:hover {
+    color: #fff;
+    background-color: #4941e5;
+  }
+
+  li.page-item.active {
+    color: #fff;
+    background-color: #4941e5;
+    border: solid 0.1px #4941e5!important;
+    border-radius: 2px;
+  }
+
   .input-field {
     padding: 0px 0px 10px;
   }
@@ -15,6 +118,16 @@
     border-radius: 5px;
     height: 40px;
     width: 30%;
+  }
+
+  .shadow-sm {
+    vertical-align: middle;
+    height: 40px;
+
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
   }
 </style>
 
@@ -61,6 +174,23 @@
 
             </tbody>
           </table>
+
+          {% if not single_book %}
+          <div class="flex justify-center">
+            <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0">
+              <div class="hidden md:-mt-px md:flex">
+                <div class="border-indigo-500 text-indigo-600 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium">
+
+                  <div class="block">
+                     {% bootstrap_paginate page_obj previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
+                  </div>
+
+                </div>
+              </div>
+            </nav>
+          </div>
+          {% endif %}
+
           {% else %}
           <p>No books to show.</p>
           {% endif %}

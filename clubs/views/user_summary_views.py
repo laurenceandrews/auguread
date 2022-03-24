@@ -52,7 +52,7 @@ def user_current_book(request):
 
 @login_required
 def user_favourite_books(request):
-    """ View to display a list of the current user's book history. """
+    """ View to display a list of the current user's favourite books. """
     user = request.user
     book_ids = User_Books.objects.filter(user=user).values_list('book', flat=True)
     books = Book.objects.filter(id__in=book_ids)
@@ -63,10 +63,16 @@ def user_favourite_books(request):
             Q(title__icontains=query) | Q(author__icontains=query)
         ).distinct()
 
+    paginator = Paginator(books, settings.NUMBER_PER_PAGE)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "partials/books_table.html",
                   {
                       'user': user,
-                      'books': books
+                      'books': books,
+                      'page_obj': page_obj
                   })
 
 
@@ -88,10 +94,16 @@ def user_clubs_books(request):
             Q(title__icontains=query) | Q(author__icontains=query)
         ).distinct()
 
+    paginator = Paginator(books, settings.NUMBER_PER_PAGE)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "partials/books_table.html",
                   {
                       'user': user,
-                      'books': books
+                      'books': books,
+                      'page_obj': page_obj
                   })
 
 
