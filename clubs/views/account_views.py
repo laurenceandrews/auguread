@@ -98,7 +98,11 @@ class PasswordView(LoginRequiredMixin, FormView):
 
         messages.add_message(
             self.request, messages.SUCCESS, "Password updated!")
-        return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+        return reverse('settings')
+
+    def get_cancel_url(self):
+        """Return redirect URL after cancelled update."""
+        return reverse('settings')
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
@@ -116,7 +120,11 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         """Return redirect URL after successful update."""
         messages.add_message(self.request, messages.SUCCESS, "Profile updated!")
-        return reverse('user_summary')
+        return reverse('user_profile')
+
+    def get_cancel_url(self):
+        """Return redirect URL after cancelled update."""
+        return reverse('user_profile')
 
 
 @login_required
@@ -143,6 +151,5 @@ def settings_view(request):
     """A view that shows user their settings."""
 
     return render(request, 'settings.html',
-                  {'user': request.user,
-                   'profile_form': UserForm(initial=model_to_dict(request.user))
+                  {'user': request.user
                    })
