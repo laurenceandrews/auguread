@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 
-class UseCurrentBookViewTestCase(TestCase):
+class UserCurrentBookViewTestCase(TestCase):
     """Tests of the user current book view."""
 
     fixtures = [

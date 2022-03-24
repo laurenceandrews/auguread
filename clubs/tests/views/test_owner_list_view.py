@@ -33,18 +33,11 @@ class OwnerListViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'owner_list.html')
 
-    # def test_owners_can_not_access_owner_list(self):
-    #     self.client.login(email=self.owner.email, password="Password123")
-    #     response = self.client.get(self.url)
-    #     redirect_url = reverse('club_list')
-    #     self.assertRedirects(response, redirect_url,
-    #                          status_code=302, target_status_code=200)
-
     def test_can_transfer_ownership_to_member(self):
         self.club.transfer(self.member)
         self.assertEqual(self.club.owner, self.member)
 
-    # def test_owner_can_transfer_ownership_to_not_exists_owners(self):
+    # def test_owner_can_transfer_ownership_to_not_exists_member(self):
     #     self.client.login(email='johndoe@example.org', password='Password123')
     #     self.assertTrue(self.club.owner == self.owner)
     #     transfer_url = reverse('transfer', kwargs={

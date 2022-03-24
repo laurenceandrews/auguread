@@ -45,6 +45,11 @@ class NewClubTestCase(TestCase):
         form = NewClubForm(data=self.form_input)
         self.assertFalse(form.is_valid())
 
+    def test_name_cannot_be_blank(self):
+        self.form_input['name'] = ''
+        form = NewClubForm(data=self.form_input)
+        self.assertFalse(form.is_valid())
+
     def test_city_cannot_exceed_250_characters(self):
         self.form_input['name'] = 'y' * 251
         form = NewClubForm(data=self.form_input)
@@ -57,5 +62,10 @@ class NewClubTestCase(TestCase):
 
     def test_calendar_name_must_be_unique(self):
         self.form_input['calendar_name'] = "Fun Club's Calendar"
+        form = NewClubForm(data=self.form_input)
+        self.assertFalse(form.is_valid())
+
+    def test_calendar_name_must_not_be_blank(self):
+        self.form_input['calendar_name'] = ''
         form = NewClubForm(data=self.form_input)
         self.assertFalse(form.is_valid())

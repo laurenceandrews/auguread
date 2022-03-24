@@ -15,7 +15,8 @@ def follow_toggle(request, user_id):
         followee = User.objects.get(id=user_id)
         current_user.toggle_follow(followee)
     except ObjectDoesNotExist:
-        return redirect('user_list')
+        return redirect('user_detail_list')
     else:
         messages.add_message(request, messages.SUCCESS, "Success!")
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+#         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        return redirect('user_detail', user_id=user_id)

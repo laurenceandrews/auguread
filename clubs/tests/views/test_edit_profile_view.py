@@ -1,13 +1,10 @@
-"""Tests for the profile view."""
+"""Tests for the update profile view."""
 from clubs.forms import UserForm
 from clubs.models import User
 from clubs.tests.helpers import reverse_with_next
 from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
-
-"""Test suite for the profile view."""
-
 
 class UpdateProfileViewTestCase(TestCase):
 
