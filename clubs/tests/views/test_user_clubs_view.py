@@ -52,7 +52,7 @@ class UseCurrentBookViewTestCase(TestCase):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'partials/clubs_table.html')
+        self.assertTemplateUsed(response, 'summary_clubs_table.html')
         self.assertContains(response, '<p>No clubs to show.</p>', status_code=200)
 
     def test_get_user_clubs__with_role_num_4(self):
@@ -70,7 +70,7 @@ class UseCurrentBookViewTestCase(TestCase):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'partials/clubs_table.html')
+        self.assertTemplateUsed(response, 'summary_clubs_table.html')
         self.assertContains(response, '<p>No clubs to show.</p>', status_code=200)
 
     def test_get_user_clubs_redirects_when_not_logged_in(self):

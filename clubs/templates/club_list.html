@@ -1,143 +1,11 @@
 {% extends "base_content.html" %}
 {% load bootstrap_pagination %}
 {% block content %}
-<style>
-
-  a#continue-btn-disabled {
-      pointer-events: none;
-      background-color: #eee;
-      color: #999;
-  }
-
-  ul.pagination {
-    display: inline-block;
-    margin-bottom: 20px;
-  }
-
-  form {
-    display: contents;
-  }
-
-  .row {
-    display: inline-flex;
-  }
-
-  ul.pagination li {
-    border: solid 1px #352fa9;
-    border-radius: 2px;
-    color: #352fa9;
-    height: 40px;
-    width: 50px;
-    vertical-align: middle;
-    background-color: #fff;
-    -moz-transition: all 0.2s ease-in;
-    -webkit-transition: all 0.2s ease-in;
-    -o-transition: all 0.2s ease-in;
-    transition: all 0.2s ease-in;
-    display: inline-block;
-  }
-
- li.page-item.disabled li {
-    border: solid 1px #eee;
-    border-radius: 2px;
-    height: 40px;
-    width: 50px;
-    vertical-align: middle;
-    background-color: #eee;
-    color: #999;
-    -moz-transition: all 0.2s ease-in;
-    -webkit-transition: all 0.2s ease-in;
-    -o-transition: all 0.2s ease-in;
-    transition: all 0.2s ease-in;
-    display: inline-block;
-  }
-
-  ul.pagination li a {
-    text-decoration: none;
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-    padding: 7px;
-  }
-
-  li.page-item.disabled span.page-link {
-    text-decoration: none;
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-    padding: 7px;
-    background-color: #eee;
-    border-color: #eee;
-  }
-
-  li.page-item.disabled li:hover{
-    color: #999;
-  }
-
-  li.page-item.disabled span.page-link {
-    color: #999;
-  }
-
-  li.page-item.disabled {
-    border-color: #999;
-  }
-
-  li.page-item.active span.page-link {
-    text-decoration: none;
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-    padding: 7px;
-    background-color: #4941e5;
-    border: solid 1px #4941e5;
-  }
-
-  ul.pagination li:hover {
-    color: #fff;
-    background-color: #4941e5;
-  }
-
-  li.page-item.active {
-    color: #fff;
-    background-color: #4941e5;
-    border: solid 0.1px #4941e5!important;
-    border-radius: 2px;
-  }
-
-  .input-field {
-    padding: 0px 0px 10px;
-  }
-
-  input[type="text"] {
-    font-style: italic;
-    border: solid 1px #352fa9;
-    vertical-align: middle;
-    border-radius: 5px;
-    height: 40px;
-    width: 30%;
-  }
-
-  .shadow-sm {
-    vertical-align: middle;
-    height: 40px;
-
-    -moz-transition: all 0.2s ease-in;
-    -webkit-transition: all 0.2s ease-in;
-    -o-transition: all 0.2s ease-in;
-    transition: all 0.2s ease-in;
-  }
-</style>
-<title>
-  {% block title %}
-  | Club List
-  {% endblock %}
-</title>
-
 <div class="px-4 sm:px-6 lg:px-8">
   <div class="sm:flex sm:items-center">
     <div class="sm:flex-auto">
       <h1 class="text-xl font-semibold text-gray-900">Clubs</h1>
-      <p class="mt-2 text-sm text-gray-700">A list of all the clubs on this site.</p>
+      <p class="mt-2 text-sm text-gray-700">A list of all existing clubs.</p>
     </div>
     <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
       <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
@@ -156,30 +24,12 @@
     </form>
   </div>
 
-
+  {%if clubs%}
   <div class="mt-8 flex flex-col">
     <div class="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle">
         <div class="shadow-sm ring-1 ring-black ring-opacity-5">
-          <table class="min-w-full border-separate" style="border-spacing: 0">
-            <thead class="bg-gray-50">
-              <tr>
-                <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-gray-50 bg-opacity-75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8">Name</th>
-                <th scope="col" class="sticky top-0 z-10 hidden border-b border-gray-300 bg-gray-50 bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:table-cell">Owner</th>
-                <th scope="col" class="sticky top-0 z-10 hidden border-b border-gray-300 bg-gray-50 bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter lg:table-cell">Meeting Type</th>
-                <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-gray-50 bg-opacity-75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter">Location</th>
-                <th scope="col" class="sticky top-0 z-10 border-b border-gray-300 bg-gray-50 bg-opacity-75 py-3.5 pr-4 pl-3 backdrop-blur backdrop-filter sm:pr-6 lg:pr-8">
-                  <span class="sr-only">More infor</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white">
-              {% for club in clubs %}
-                {% include "partials/club_as_list_row.html" with club=club %}
-              {% endfor %}
-            </tbody>
-          </table>
-
+          {% include "partials/clubs_table.html" with clubs=clubs %}
           <div class="flex justify-center">
             <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0">
               <div class="hidden md:-mt-px md:flex">
@@ -192,18 +42,15 @@
                 </div>
               </div>
             </nav>
-        </div>
+          </div>
         </div>
       </div>
 
     </div>
   </div>
-
+  {%else%}
+  <p>No clubs to show.</p>
+  {%endif%}
 
 </div>
-
-
-
-
-
-{% endblock %}
+{%endblock%}

@@ -55,13 +55,13 @@ class NewClubTest(TestCase):
         self.assertEqual(self.data['avg_reading_speed'], new_club.avg_reading_speed)
         self.assertEqual(self.data['calendar_name'], new_club.calendar.name)
         self.assertEqual(self.data['meeting_type'], new_club.meeting_type)
-        response_url = reverse('club_list')
+        response_url = reverse('club_detail', kwargs={'club_id': new_club.id})
         self.assertRedirects(
             response, response_url,
             status_code=302, target_status_code=200,
             fetch_redirect_response=True
         )
-        self.assertTemplateUsed(response, 'club_list.html')
+        self.assertTemplateUsed(response, 'club_detail.html')
 
     def test_unsuccessful_new_club(self):
         self.client.login(email=self.user.email, password='Password123')
@@ -111,5 +111,5 @@ class NewClubTest(TestCase):
         response = self.client.post(self.url, self.data, follow=True)
         club_count_after = Club.objects.count()
         new_club = Club.objects.get(id=Club.objects.count())
-        self.assertEqual(club_count_after, club_count_before+1)
+        self.assertEqual(club_count_after, club_count_before + 1)
         self.assertEqual(self.user, new_club.owner)
