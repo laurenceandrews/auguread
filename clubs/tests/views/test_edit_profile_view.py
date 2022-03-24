@@ -6,9 +6,6 @@ from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
 
-"""Test suite for the profile view."""
-
-
 class UpdateProfileViewTestCase(TestCase):
 
     fixtures = [
