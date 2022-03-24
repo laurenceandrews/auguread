@@ -45,32 +45,35 @@
 
 </div>
 
-{%if clubs%}
-<div class="py-8 mx-8 mt-8 flex flex-col">
-  <div class="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
-    <div class="inline-block min-w-full py-2 align-middle">
-      <div class="shadow-sm ring-1 ring-black ring-opacity-5">
-        <h1 class="text-xl font-semibold text-gray-900">Clubs {{user.full_name}} is in</h1>
-        {% include "partials/clubs_table.html" with clubs=clubs %}
-        <div class="flex justify-center">
-          <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0">
-            <div class="hidden md:-mt-px md:flex">
-              <div class="border-indigo-500 text-indigo-600 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium">
+  <!-- Clubs -->
+  {%if clubs%}
+  <div class="py-8 mx-8 mt-8 flex flex-col">
+    <div class="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle">
+        <div class="shadow-sm ring-1 ring-black ring-opacity-5">
+          <h1 class="text-xl font-semibold text-gray-900">Clubs {{user.full_name}} is in</h1>
+          {% include "partials/clubs_table.html" with clubs=clubs %}
+          <div class="flex justify-center">
+            <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0">
+              <div class="hidden md:-mt-px md:flex">
+                <div class="border-indigo-500 text-indigo-600 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium">
 
-                <div class="block">
-                   {% bootstrap_paginate page_obj previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
+                  <div class="block">
+                     {% bootstrap_paginate page_obj previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
+                  </div>
+
                 </div>
-
               </div>
-            </div>
-          </nav>
+            </nav>
+          </div>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
-</div>
-{%else%}
-<p>{{user.full_name}} is not in any clubs.</p>
-{%endif%}
+  {%else%}
+  <p>{{user.full_name}} is not in any clubs.</p>
+  {%endif%}
+
+  
 {% endblock %}

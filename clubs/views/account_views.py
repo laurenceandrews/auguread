@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.forms.models import model_to_dict
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
@@ -135,3 +136,13 @@ def delete_account(request):
     }
 
     return render(request, 'delete_account.html', context)
+
+
+@login_required
+def settings_view(request):
+    """A view that shows user their settings."""
+
+    return render(request, 'settings.html',
+                  {'user': request.user,
+                   'profile_form': UserForm(initial=model_to_dict(request.user))
+                   })
