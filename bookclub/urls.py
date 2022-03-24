@@ -42,6 +42,8 @@ urlpatterns = [
     path('password/', views.PasswordView.as_view(), name='password'),
     path('edit_profile/', views.ProfileUpdateView.as_view(), name='edit_profile'),
     path('delete_account/', views.delete_account, name='delete_account'),
+    path('user/profile/', views.user_profile_view, name='user_profile'),
+    path('user/detail/<int:user_id>/', views.UserDetailView.as_view(), name='user_detail'),
 
     path('summary/', views.UserSummaryView.as_view(), name='user_summary'),
     path('summary/clubs/<str:role_num>', views.clubs_list, name='user_clubs'),
@@ -53,7 +55,7 @@ urlpatterns = [
     path('feed/', views.FeedView.as_view(), name='feed'),
     path('new_post/', views.NewPostView.as_view(), name='new_post'),
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
-    path('user_detail/', views.user_detail, name='user_detail'),
+
 
     # Club urls
     path('clubs/', views.ClubListView.as_view(), name='club_list'),
