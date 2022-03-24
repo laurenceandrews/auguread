@@ -1,5 +1,5 @@
-from django.urls import reverse
 from clubs.models import Post
+from django.urls import reverse
 from with_asserts.mixin import AssertHTMLMixin
 
 
@@ -8,6 +8,7 @@ def reverse_with_next(url_name, next_url):
     url += f"?next={next_url}"
     return url
 
+
 def create_posts(author, from_count, to_count):
     """Create unique numbered posts for testing purposes."""
     for count in range(from_count, to_count):
@@ -15,13 +16,15 @@ def create_posts(author, from_count, to_count):
         post = Post(author=author, text=text)
         post.save()
 
+
 class LogInTester:
     def _is_logged_in(self):
         return '_auth_user_id' in self.client.session.keys()
 
+
 class MenuTesterMixin(AssertHTMLMixin):
     menu_urls = [
-        reverse('user_detail'),
+        reverse('settings'),
         reverse('log_out'),
         reverse('new_club'),
         reverse('password'),
