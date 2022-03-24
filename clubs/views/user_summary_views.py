@@ -1,7 +1,9 @@
 from clubs.models import (Book, Club, Club_Book_History, Club_Books,
                           Club_Users, User, User_Book_History, User_Books)
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views import View
@@ -121,9 +123,15 @@ def clubs_list(request, role_num):
             Q(name__icontains=query) | Q(location__icontains=query)
         ).distinct()
 
-    return render(request, "partials/clubs_table.html",
+    paginator = Paginator(clubs, settings.NUMBER_PER_PAGE)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "summary_clubs_table.html",
                   {
                       'user': user,
                       'clubs': clubs,
-                      'role_num': role_num
+                      'role_num': role_num,
+                      'page_obj': page_obj
                   })

@@ -57,7 +57,7 @@ def new_club(request):
             )
 
             Club_Users.objects.create(user=current_user, club=club, role_num=4)
-            return redirect("club_list")
+            return redirect("partials/clubs_table")
         else:
             return render(request, "new_club.html", {"form": form})
     else:
