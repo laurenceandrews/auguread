@@ -97,9 +97,14 @@ class RecommendedClubBookListView(LoginRequiredMixin, View):
         })
 
 
+@login_required
 def club_book_select_view(request, club_id, book_id):
-    club = Club.objects.get(id=club_id)
-    book = Book.objects.get(id=book_id)
+    try:
+        club = Club.objects.get(id=club_id)
+        book = Book.objects.get(id=book_id)
+    except ObjectDoesNotExist:
+        messages.add_message(request, messages.ERROR, "Invalid club or book!")
+        return redirect('user_summary')
 
     lastBookRead = Club_Book_History.objects.last()
     if lastBookRead:
