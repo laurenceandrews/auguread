@@ -9,8 +9,8 @@
 
   <form action="{% url 'follow_toggle' user_id=user.id %}" method="get">
       <div class="flex space-x-4 mx-auto justify-center">
-        <p>{{ user.followee_count }} Following</p>
-        <p>{{ user.follower_count }} Followers</p>
+        <p class="text-gray-600">{{ user.followee_count }} Following</p>
+        <p class="text-gray-600">{{ user.follower_count }} Followers</p>
       </div>
       <div>
         {% if followable %} 

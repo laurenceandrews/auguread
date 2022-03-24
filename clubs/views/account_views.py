@@ -1,10 +1,12 @@
 """Views related to the account."""
-from clubs.forms import LogInForm, PasswordForm, SignUpForm, UserForm, UserDeleteForm
+from clubs.forms import (LogInForm, PasswordForm, SignUpForm, UserDeleteForm,
+                         UserForm)
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.forms.models import model_to_dict
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
@@ -114,7 +116,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         """Return redirect URL after successful update."""
         messages.add_message(self.request, messages.SUCCESS, "Profile updated!")
-        return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+        return reverse('user_summary')
 
 
 @login_required
@@ -134,3 +136,13 @@ def delete_account(request):
     }
 
     return render(request, 'delete_account.html', context)
+
+
+@login_required
+def settings_view(request):
+    """A view that shows user their settings."""
+
+    return render(request, 'settings.html',
+                  {'user': request.user,
+                   'profile_form': UserForm(initial=model_to_dict(request.user))
+                   })

@@ -12,8 +12,10 @@
     </h1>
     <form method = "post">
       {% csrf_token %}
-      {% include 'partials/bootstrap_form.html' with form=form %}
-      <button type = submit class = "btn-btn-primary">
+      <table>
+        {{ form.as_table }}
+      </table>
+      <button type ="submit" class = "btn-btn-primary">
         Submit
       </button>
     </form>

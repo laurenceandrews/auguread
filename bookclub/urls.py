@@ -32,7 +32,8 @@ urlpatterns = [
     path('rec/', views.RecommendationsView.as_view(), name='rec'),
     path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
     path('club_recommender/', ClubRecommenderView.as_view(), name='club_recommender'),
-    url(r"^club/book/edit/(?P<club_id>\d+)/$", views.ClubBookSelectionView.as_view(), name='club_book_select'),
+    url(r"^club/book/recommendations/(?P<club_id>\d+)/$", views.RecommendedClubBookListView.as_view(), name='club_book_recommendations'),
+    url(r"^club/(?P<club_id>\d+)/book/(?P<book_id>\d+)/select/$", views.club_book_select_view, name='club_book_select'),
 
     path('sign_up/', views.SignUpView.as_view(), name='sign_up'),
     path('log_in/', views.LogInView.as_view(), name='log_in'),
@@ -40,7 +41,10 @@ urlpatterns = [
     path("__reload__/", include("django_browser_reload.urls")),
     path('password/', views.PasswordView.as_view(), name='password'),
     path('edit_profile/', views.ProfileUpdateView.as_view(), name='edit_profile'),
-    path('delete_account/', views.delete_account, name='delete_account'),
+    path('user/settings/', views.settings_view, name='settings'),
+    path('user/delete/', views.delete_account, name='delete_account'),
+    path('user/profile/', views.user_profile_view, name='user_profile'),
+    path('user/detail/<int:user_id>/', views.UserDetailView.as_view(), name='user_detail'),
 
     path('summary/', views.UserSummaryView.as_view(), name='user_summary'),
     path('summary/clubs/<str:role_num>', views.clubs_list, name='user_clubs'),
@@ -52,7 +56,7 @@ urlpatterns = [
     path('feed/', views.FeedView.as_view(), name='feed'),
     path('new_post/', views.NewPostView.as_view(), name='new_post'),
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
-    path('user_detail/', views.user_detail, name='user_detail'),
+
 
     # Club urls
     path('clubs/', views.ClubListView.as_view(), name='club_list'),
