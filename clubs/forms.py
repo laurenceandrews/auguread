@@ -296,26 +296,6 @@ class CreateClubUserForm(forms.ModelForm):
         fields = []
 
 
-class ClubBookForm(forms.ModelForm):
-    class Meta:
-        model = Club_Books
-        fields = ['book']
-
-    def __init__(self, *args, **kwargs):
-        """Give user option of books from the book-to-club-recommender-age recommender."""
-        club_id = kwargs.pop('club_id')
-        super(ClubBookForm, self).__init__(*args, **kwargs)
-
-        if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
-            book_ids = ClubBookAuthorRecommender(club_id).get_recommended_books()
-            if(len(book_ids) < 6):
-                book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
-        else:
-            book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
-        books = Book.objects.filter(id__in=book_ids)
-        self.fields['book'].queryset = books
-
-
 class ClubRecommenderForm(forms.ModelForm):
     class Meta:
         model = Club

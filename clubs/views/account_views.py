@@ -1,5 +1,6 @@
 """Views related to the account."""
-from clubs.forms import LogInForm, PasswordForm, SignUpForm, UserForm, UserDeleteForm
+from clubs.forms import (LogInForm, PasswordForm, SignUpForm, UserDeleteForm,
+                         UserForm)
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -114,7 +115,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         """Return redirect URL after successful update."""
         messages.add_message(self.request, messages.SUCCESS, "Profile updated!")
-        return reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+        return reverse('user_summary')
 
 
 @login_required
