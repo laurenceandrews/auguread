@@ -35,7 +35,6 @@ class NewClubTestCase(TestCase):
         self.assertIn('name', form.fields)
         self.assertIn('city', form.fields)
         self.assertIn('country', form.fields)
-        self.assertIn('avg_reading_speed', form.fields)
         self.assertIn('description', form.fields)
         self.assertIn('calendar_name', form.fields)
         self.assertIn('meeting_type', form.fields)

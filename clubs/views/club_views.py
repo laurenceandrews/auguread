@@ -36,7 +36,7 @@ def new_club(request):
             city = form.cleaned_data.get("city")
             country = form.cleaned_data.get("country")
             description = form.cleaned_data.get("description")
-            avg_reading_speed = form.cleaned_data.get("avg_reading_speed")
+            # avg_reading_speed = form.cleaned_data.get("avg_reading_speed")
             calendar_name = form.cleaned_data.get("calendar_name")
 
             location = city + ", " + country
@@ -51,7 +51,7 @@ def new_club(request):
                 name=name,
                 location=location,
                 description=description,
-                avg_reading_speed=avg_reading_speed,
+                # avg_reading_speed=avg_reading_speed,
                 owner=current_user,
                 calendar=cal,
                 meeting_type=meeting_type

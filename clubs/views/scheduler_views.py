@@ -55,6 +55,8 @@ def events_list(request, calendar_id):
             Q(title__icontains=query) | Q(description__icontains=query)
         ).distinct()
 
+    events = events.order_by('-id')
+
     paginator = Paginator(events, settings.NUMBER_PER_PAGE)
 
     page_number = request.GET.get('page')
