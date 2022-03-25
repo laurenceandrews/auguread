@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
 
+
 class UpdateProfileViewTestCase(TestCase):
 
     fixtures = [
@@ -90,9 +91,9 @@ class UpdateProfileViewTestCase(TestCase):
         response = self.client.post(self.url, self.form_input, follow=True)
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count)
-        response_url = reverse('user_summary')
+        response_url = reverse('user_profile')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'user_summary.html')
+        self.assertTemplateUsed(response, 'user_detail.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)

@@ -44,10 +44,10 @@ class PasswordViewTest(TestCase):
     def test_succesful_password_change(self):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.post(self.url, self.form_input, follow=True)
-        response_url = reverse('rec')
+        response_url = reverse('settings')
         self.assertRedirects(response, response_url,
                              status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'rec_page.html')
+        self.assertTemplateUsed(response, 'settings.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
