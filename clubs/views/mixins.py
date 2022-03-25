@@ -77,6 +77,25 @@ class MemberProhibitedMixin:
 class ClubOwnerRequiredMixin:
     """Mixin that redirects when a user is not the club owner."""
 
+    def dispatch(self, *args, **kwargs):
+        """Redirect when not a club_user, or dispatch as normal otherwise."""
+        club_id = kwargs['club_id']
+        club = Club.objects.get(id=club_id)
+        if self.request.user == club.owner:
+            return super().dispatch(*args, **kwargs)
+        return self.handle_not_a_club_owner(*args, **kwargs)
+
+    def handle_not_a_club_owner(self, *args, **kwargs):
+        club_id = kwargs['club_id']
+        club = Club.objects.get(id=club_id)
+        messages.add_message(self.request, messages.ERROR, "Only the club owner can perform this action!")
+        url = reverse('club_detail', kwargs={'club_id': club.id})
+        return redirect(url)
+
+
+class ClubOwnerRequiredSchedulerMixin:
+    """Mixin that redirects when a user is not the club owner."""
+
     redirect_when_not_a_club_owner_url = settings.REDIRECT_URL_WHEN_LOGGED_IN
 
     def dispatch(self, *args, **kwargs):
