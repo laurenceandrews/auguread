@@ -64,6 +64,8 @@ urlpatterns = [
     path('new_club/', views.new_club, name='new_club'),
     url(r"^club/detail/(?P<club_id>\d+)/$", views.ClubDetailView.as_view(), name='club_detail'),
     path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
+    path('club/update/<int:club_id>/this', views.ClubUpdateView.as_view(), name='club_update'),
+
 
     path('enter/<int:club_id>', views.enter, name='enter'),
     path('apply/<int:club_id>', views.apply, name='apply'),

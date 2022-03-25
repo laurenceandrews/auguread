@@ -173,6 +173,34 @@ class PostForm(forms.ModelForm):
         }
 
 
+class ClubUpdateForm(forms.ModelForm):
+    """Form for updating a club"""
+
+    class Meta:
+        model = Club
+        fields = ['name', 'description', 'meeting_type']
+        widgets = {
+            'description': forms.Textarea()
+        }
+
+    # city = forms.CharField(
+    #     label="City",
+    #     max_length=250
+    # )
+    #
+    # country = CountryField(blank_label='(Select country)').formfield()
+    #
+    # def __init__(self, *args, **kwargs):
+    #     """Pre fill the city and country fields."""
+    #     club_id = kwargs.pop('club_id', [])
+    #     super(ClubUpdateForm, self).__init__(*args, **kwargs)
+    #     club_exists = Club.objects.filter(id=club_id)
+    #     if club_exists:
+    #         club = Club.objects.get(id=club_id)
+    #         self.fields['city'].initial = club.city
+    #         self.fields['country'].initial = club.country
+
+
 class NewClubForm(forms.ModelForm):
     """Form for creating a new book club."""
 
@@ -181,7 +209,6 @@ class NewClubForm(forms.ModelForm):
         fields = [
             'name',
             'description',
-            'avg_reading_speed',
             'meeting_type',
         ]
 
@@ -195,9 +222,6 @@ class NewClubForm(forms.ModelForm):
     calendar_name = forms.CharField(
         label='Calendar name',
         max_length=250
-        # widget=forms.Textarea(
-        #     attrs={'placeholder': "It's a good idea to make it simple: easy to say and easy to remember."}
-        # )
     )
 
     def clean(self):
