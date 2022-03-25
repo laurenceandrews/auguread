@@ -42,7 +42,8 @@ class ClubUserRecommender:
         return club_user_location_df
 
     # Merge the club_user_age and club_user_location tables to have all in one table
-    def merge_age_and_location(self):
+    # NOT CALLED BY ANY OTHER METHOD
+    def merge_age_and_location(self): 
         club_user_age_location_df = self.get_user_age_df().merge(self.get_club_locations_df(), left_on = 'club_user_id', right_on = 'club_user_id')
         club_user_age_location_df = club_user_age_location_df[['club_user_id', 'club_id_x', 'user_id_x', 'age', 'location']]
         club_user_age_location_df = club_user_age_location_df.rename(columns={'user_id_x':'user_id', 'club_id_x':'club_id'})
@@ -68,6 +69,7 @@ class ClubUserRecommender:
         return closest_age_clubs_df
 
     # Merge closest aged club IDs with clubs CSV to get all details
+    # NOT CALLED BY ANY OTHER METHOD
     def get_closest_age_clubs_df(self):
         closest_age_clubs_df = self.get_top_10_by_closest_age().reset_index().rename(columns={'club_id':'id'})
         closest_age_clubs_df = pd.merge(self.get_top_10_by_closest_age(), self.club_df, left_on = 'club_id', right_on = 'id')
@@ -79,6 +81,7 @@ class ClubUserRecommender:
         return club_user_count_df
 
     # Return clubs with matching location (exact)
+    # NOT CALLED BY ANY OTHER METHOD
     def get_clubs_with_exact_location(self):
         user_location = self.get_user().city + ', ' + self.get_user().country
 
@@ -92,6 +95,7 @@ class ClubUserRecommender:
         return fuzz.token_sort_ratio(club_location, user_location)
 
     # Return clubs with matching location (using fuzzy search)
+    # NOT CALLED BY ANY OTHER METHOD
     def get_clubs_with_matching_loc_fuzzy(self):
         closest_club_location_fuzzy_df = self.club_df[self.club_df.apply(self.get_ratio_loc, axis=1) > 80]
         closest_club_location_fuzzy_df['location_fuzzy_score'] = self.club_df.apply(self.get_ratio_loc, axis=1)
@@ -127,6 +131,7 @@ class ClubUserRecommender:
         return my_favourite_books_df
 
     # Get the favourite books and authors of one club
+    # NOT CALLED BY ANY OTHER METHOD
     def get_fav_books_and_authors_per_club(self):
         club_id = Club.objects.get().id
         club_favourite_books_df = self.get_club_favourite_books()
