@@ -192,9 +192,10 @@ class NewClubForm(forms.ModelForm):
 
     calendar_name = forms.CharField(
         label='Calendar name',
-        widget=forms.Textarea(
-            attrs={'placeholder': "It's a good idea to make it simple: easy to say and easy to remember."}
-        )
+        max_length = 250
+        # widget=forms.Textarea(
+        #     attrs={'placeholder': "It's a good idea to make it simple: easy to say and easy to remember."}
+        # )
     )
 
     def clean(self):
