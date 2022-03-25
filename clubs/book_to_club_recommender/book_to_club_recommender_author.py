@@ -25,8 +25,8 @@ class ClubBookAuthorRecommender:
         # Make Rating count as a regular column
         df_rating_count.reset_index(level=0, inplace=True)
 
-        # Remove from the ratings table, all users with less than 20 ratings
-        df_rating_count.drop(df_rating_count[df_rating_count['Book-Rating'] < 20].index, inplace=True)
+        # Remove from the ratings table, all users with less than 10 ratings
+        df_rating_count.drop(df_rating_count[df_rating_count['Book-Rating'] < 10].index, inplace=True)
         df_rating_count.drop('Book-Rating', axis=1, inplace=True)
         return df_rating_count
 
