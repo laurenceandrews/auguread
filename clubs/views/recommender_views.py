@@ -46,12 +46,12 @@ class ClubRecommenderView(TenPosRatingsRequiredMixin, View):
 
     def get(self, request):
         """Display template."""
-        user_id = self.request.user.id
+        # user_id = self.request.user.id
 
-        club_ids_in_person = ClubUserRecommender(user_id).get_best_clubs_in_person()
-        club_ids_online = ClubUserRecommender(user_id).get_best_clubs_online()
-        self.club_recs_in_person = Club.objects.filter(id__in = club_ids_in_person)[0:11]
-        self.club_recs_online = Club.objects.filter(id__in  = club_ids_online)[0:11]
+        # club_ids_in_person = ClubUserRecommender(user_id).get_best_clubs_in_person()
+        # club_ids_online = ClubUserRecommender(user_id).get_best_clubs_online()
+        # self.club_recs_in_person = Club.objects.filter(id__in = club_ids_in_person)
+        # self.club_recs_online = Club.objects.filter(id__in  = club_ids_online)
 
         # get all the clubs and sort alphabetcally
         self.clubs_queryset = Club.objects.all().order_by('name')
@@ -87,9 +87,9 @@ class ClubRecommenderView(TenPosRatingsRequiredMixin, View):
             self.request, 'club_recommender.html',
             {
                 'next': self.next,
-                'clubs_paginated': self.clubs_paginated,
-                'club_recs_in_person': self.club_recs_in_person,
-                'club_recs_online': self.club_recs_online
+                'clubs_paginated': self.clubs_paginated
+                # 'club_recs_in_person': self.club_recs_in_person,
+                # 'club_recs_online': self.club_recs_online
             }
         )
 
