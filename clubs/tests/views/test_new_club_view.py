@@ -24,7 +24,6 @@ class NewClubTest(TestCase):
             'city': self.club_city,
             'country': self.club_country,
             'description': 'A book club that is fun.',
-            'avg_reading_speed': 200,
             'calendar_name': 'Fun Reading Clubs Calendar',
             'meeting_type': 'ONL'
         }
@@ -52,7 +51,6 @@ class NewClubTest(TestCase):
         self.assertEqual(self.data['name'], new_club.name)
         self.assertEqual(self.club_location, new_club.location)
         self.assertEqual(self.data['description'], new_club.description)
-        self.assertEqual(self.data['avg_reading_speed'], new_club.avg_reading_speed)
         self.assertEqual(self.data['calendar_name'], new_club.calendar.name)
         self.assertEqual(self.data['meeting_type'], new_club.meeting_type)
         response_url = reverse('club_detail', kwargs={'club_id': new_club.id})
