@@ -917,6 +917,14 @@ select{
   margin-bottom: 0.75rem;
 }
 
+.mt-7{
+  margin-top: 1.75rem;
+}
+
+.mb-16{
+  margin-bottom: 4rem;
+}
+
 .block{
   display: block;
 }
@@ -1101,6 +1109,10 @@ select{
 
 .max-w-3xl{
   max-width: 48rem;
+}
+
+.max-w-lg{
+  max-width: 32rem;
 }
 
 .flex-1{
@@ -1699,6 +1711,10 @@ select{
   padding-left: 0.25rem;
 }
 
+.pt-8{
+  padding-top: 2rem;
+}
+
 .text-left{
   text-align: left;
 }
@@ -2116,6 +2132,11 @@ select{
 .hover\:bg-indigo-50:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(238 242 255 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-indigo-400:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(129 140 248 / var(--tw-bg-opacity));
 }
 
 .hover\:text-white:hover{
