@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import slugify
@@ -56,7 +57,7 @@ def new_club(request):
             )
 
             Club_Users.objects.create(user=current_user, club=club, role_num=4)
-            return redirect("club_list")
+            return redirect('club_detail', club.id)
         else:
             return render(request, "new_club.html", {"form": form})
     else:
@@ -73,8 +74,12 @@ class DeleteClubUserView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
+        club_user = Club_Users.objects.get(id=self.kwargs['club_users_id'])
+        club = club_user.club.name
+        # club_user = self.response.context['club_users']
         messages.add_message(self.request, messages.SUCCESS, "Success!")
-        return reverse('user_summary')
+        return reverse('club_detail', kwargs={'club_id': club_user.club.id})
+        # return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
     def get_cancel_url(self):
         """Return URL to redirect the user too after form handling cancelled."""
@@ -83,10 +88,15 @@ class DeleteClubUserView(LoginRequiredMixin, DeleteView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         club_user = Club_Users.objects.get(id=self.kwargs['club_users_id'])
+        confirmation_text = "Invalid request"
+        if club_user.role_num == '1':
+            confirmation_text = f'You will be deleting the application for {club_user.user.full_name()} in {club_user.club.name}.'
+        if club_user.role_num == '2':
+            confirmation_text = f'You will be deleting the membership for {club_user.user.full_name()} in {club_user.club.name}.'
+        if club_user.role_num == '4':
+            confirmation_text = f'You will be deleting the ownership for {club_user.user.full_name()} in {club_user.club.name}.'
         context['membership_type'] = club_user.get_role_num_display
-        context['user'] = club_user.user.full_name
-        context['club'] = club_user.club.name
-
+        context['confirmation_text'] = confirmation_text
         return context
 
 
@@ -122,26 +132,38 @@ class ClubListView(LoginRequiredMixin, ListView):
     template_name = "club_list.html"
     context_object_name = "clubs"
 
+    def get_queryset(self):
 
-@login_required
-@member
+        clubs = Club.objects.all()
+
+        query = self.request.GET.get('q')
+        if query:
+            clubs = clubs.filter(
+                Q(name__icontains=query) | Q(location__icontains=query)
+            ).distinct()
+        return clubs
+
+
+@ login_required
+@ member
 def enter(request, club_id):
     """View that handles entering a club."""
     user = request.user
     return redirect('show_user', user_id=user.id, club_id=club_id)
 
 
-@login_required
+@ login_required
 def apply(request, club_id):
     """View that handles applying for a club."""
     user = request.user
     club = Club.objects.get(id=club_id)
     club.applied_by(user)
-    return redirect('club_list')
+    messages.add_message(request, messages.SUCCESS, "Application created!")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-@login_required
-@owner
+@ login_required
+@ owner
 def approve(request, user_id, club_id):
     """View that handles approving applicants for a club."""
 
@@ -157,8 +179,8 @@ def approve(request, user_id, club_id):
         return redirect('applicant_list', club_id=club_id)
 
 
-@login_required
-@owner
+@ login_required
+@ owner
 def transfer(request, user_id, club_id):
     """View that handles transfering ownership of a club."""
 
@@ -219,8 +241,8 @@ class ShowUserView(LoginRequiredMixin, ApplicantProhibitedMixin, DetailView, Mul
             return redirect('user_list', club_id=self.kwargs['club_id'])
 
 
-@login_required
-@owner
+@ login_required
+@ owner
 def applicants_list(request, club_id):
     """ View to display a club's applicants list. """
     club = Club.objects.get(id=club_id)
@@ -238,8 +260,8 @@ def applicants_list(request, club_id):
                   })
 
 
-@login_required
-@member
+@ login_required
+@ member
 def members_list(request, club_id):
     """ View to display a club's applicants list. """
     club = Club.objects.get(id=club_id)
@@ -256,37 +278,6 @@ def members_list(request, club_id):
                       'users': members,
                       'page_obj': page_obj
                   })
-
-
-class MemberListView(LoginRequiredMixin, ApplicantProhibitedMixin, ListView, MultipleObjectMixin):
-    """View that shows a list of all the members."""
-
-    model = User
-    template_name = "club_users_list.html"
-    context_object_name = "users"
-    paginate_by = settings.NUMBER_PER_PAGE
-
-    def get_queryset(self):
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.members())
-        return users
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['club'] = Club.objects.get(id=self.kwargs['club_id'])
-        context['user'] = self.request.user
-        context['list_of_members'] = True
-
-        return context
-
-    def post(self, request, **kwargs):
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        emails = request.POST.getlist('check[]')
-        for email in emails:
-            user = User.objects.get(email=email)
-            club.promote(user)
-        users = club.members()
-        return redirect('club_users_list', club_id=club.id)
 
 
 class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):

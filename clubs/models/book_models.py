@@ -46,6 +46,7 @@ class Book(models.Model):
 
     class Meta:
         app_label = "clubs"
+        ordering = ['title']
 
     def __str__(self):
         return self.title

@@ -1,17 +1,24 @@
 """Tests for the password view."""
+from clubs.forms import PasswordForm
+from clubs.models import User
+from clubs.tests.helpers import reverse_with_next
+from django.contrib import messages
 from django.contrib.auth.hashers import check_password
 from django.test import TestCase
 from django.urls import reverse
-from clubs.forms import PasswordForm
-from clubs.models import User
-from django.contrib import messages
-from clubs.tests.helpers import reverse_with_next
+
 
 class PasswordViewTest(TestCase):
     """Test suite for the password view."""
 
     fixtures = [
-        'clubs/tests/fixtures/default_user.json'
+        'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/default_calendar.json',
+        'clubs/tests/fixtures/default_club.json',
+        'clubs/tests/fixtures/default_book.json',
+        'clubs/tests/fixtures/default_rating.json',
+        'clubs/tests/fixtures/default_club_book.json',
+        'clubs/tests/fixtures/default_club_user.json'
     ]
 
     def setUp(self):
@@ -37,10 +44,10 @@ class PasswordViewTest(TestCase):
     def test_succesful_password_change(self):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.post(self.url, self.form_input, follow=True)
-        response_url = reverse('rec')
+        response_url = reverse('settings')
         self.assertRedirects(response, response_url,
                              status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'rec_page.html')
+        self.assertTemplateUsed(response, 'settings.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)

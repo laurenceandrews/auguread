@@ -10,7 +10,15 @@ from django.urls import reverse
 class SignUpViewTestCase(TestCase, LogInTester):
     """Tests of the sign up view."""
 
-    fixtures = ['clubs/tests/fixtures/default_user.json']
+    fixtures = [
+        'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/default_calendar.json',
+        'clubs/tests/fixtures/default_club.json',
+        'clubs/tests/fixtures/default_book.json',
+        'clubs/tests/fixtures/default_rating.json',
+        'clubs/tests/fixtures/default_club_book.json',
+        'clubs/tests/fixtures/default_club_user.json'
+    ]
 
     def setUp(self):
         self.url = reverse('sign_up')

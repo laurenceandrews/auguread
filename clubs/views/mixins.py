@@ -126,14 +126,14 @@ class TenPosRatingsRequiredMixin:
 
     def dispatch(self, *args, **kwargs):
         """Redirect when ten pos ratings not met, or dispatch as normal otherwise."""
-        if self.has_less_than_ten_pos_ratings():
+        user = self.request.user
+        if self.has_less_than_ten_pos_ratings(user):
             return self.handle_less_than_ten_pos_ratings(*args, **kwargs)
         return super().dispatch(*args, **kwargs)
 
-    def has_less_than_ten_pos_ratings(self, *args, **kwargs):
+    def has_less_than_ten_pos_ratings(self, user, *args, **kwargs):
         less_than_ten_pos_ratings = True
 
-        user = self.request.user
         POSITIVE_RATINGS = [6, 7, 8, 9, 10]
 
         positive_book_rating_count = Book_Rating.objects.filter(user=user, rating__in=POSITIVE_RATINGS).count()

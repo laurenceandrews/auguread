@@ -1,23 +1,38 @@
 {% extends 'base_content.html' %}
 {% block content %}
-<div class="container">
-  <div class="row content">
-    <div class="col-xs-12 col-lg-6 col-xl-4">
-      <h1>Delete User Account</h1>
-      <form method="POST">
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+  <div class="px-4 py-5 sm:px-6">
+    <h3 class="text-lg leading-6 font-medium text-gray-900">Delete your account</h3>
+     <p class="mt-1 max-w-2xl text-sm text-gray-500">Are you sure you want to delete your account? This will permanently delete your profile and any content you have generated.</p>
+  </div>
+
+  <div class="">
+    <div class="">
+      <div class="mx-14 my-14">
+        <form action="" method="post">
           {% csrf_token %}
-          <fieldset class="form-group">
-                <p>Are you sure you want to delete your account?</p>
-                <p>This will permanently delete your profile and any content you have generated.</p>
-                {{ form }}
-          </fieldset>
-          <div class="form-group">
-              <button class="btn btn-danger" type="submit">Delete Account</button>
-                  <a class="btn btn-primary-custom" style="float:right;"
-                     href="{% url 'user_detail' %}">Cancel</a>
+          <table>
+            {{ form.as_table }}
+          </table>
+          <br>
+          <!-- Buttons -->
+          <div class="flex flex-row-reverse items-end gap-5">
+
+            <div class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" style="cursor: pointer;">
+              <a href="{% url 'settings' %}" class="">Cancel</a>
+            </div>
+
+
+            <div class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" style="cursor: pointer;">
+              <input type="submit" value="Confirm">
+            </div>
           </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
 </div>
+
+
+
 {% endblock %}

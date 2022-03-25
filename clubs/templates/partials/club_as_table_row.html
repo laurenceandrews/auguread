@@ -1,16 +1,9 @@
-<td class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">{{club.name}}</td>
-<td class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500 hidden sm:table-cell">{{club.meeting_type}}</td>
-<td class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500 hidden sm:table-cell">{{club.location}}</td>
-<td class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500 hidden lg:table-cell">{{club.description}}</td>
-<td class="relative whitespace-nowrap border-b border-gray-200 py-4 pr-4 pl-3 text-right text-sm font-medium sm:pr-6 lg:pr-8">
-  <a href="{% url 'club_detail' club.id %}" class="text-indigo-600 hover:text-indigo-900">More info</a>
-</td>
-<!--{% if role_num == "1"%}
-<td class="relative whitespace-nowrap border-b border-gray-200 py-4 pr-4 pl-3 text-right text-sm font-medium sm:pr-6 lg:pr-8">
-  <a href="" class="text-indigo-600 hover:text-indigo-900">Withdraw application</a>
-</td>
-{% elif role_num == "2"%}
-<td class="relative whitespace-nowrap border-b border-gray-200 py-4 pr-4 pl-3 text-right text-sm font-medium sm:pr-6 lg:pr-8">
-  <a href="" class="text-indigo-600 hover:text-indigo-900">Leave</a>
-</td>
-{% endif %} -->
+<tr>
+  <td class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">{{ club.name }}</td>
+  <td class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500 hidden sm:table-cell">{{club.owner.full_name}}</td>
+  <td class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500 hidden lg:table-cell">{{ club.get_meeting_type_display }}</td>
+  <td class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500">{{ club.location }}</td>
+  <td class="relative whitespace-nowrap border-b border-gray-200 py-4 pr-4 pl-3 text-right text-sm font-medium sm:pr-6 lg:pr-8">
+    <a href="{% url 'club_detail' club.id %}" class="text-indigo-600 hover:text-indigo-900">More info</a>
+  </td>
+</tr>
