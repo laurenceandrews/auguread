@@ -53,15 +53,3 @@ class NewPostView(LoginRequiredMixin, CreateView):
 
     def handle_no_permission(self):
         return redirect('log_in')
-
-@login_required
-def follow_toggle(request, user_id):
-    current_user = request.user
-    try:
-        followee = User.objects.get(id=user_id)
-        current_user.toggle_follow(followee)
-    except ObjectDoesNotExist:
-        return redirect('user_detail_list')
-    else:
-        messages.add_message(request, messages.SUCCESS, "Success!")
-        return redirect('user_detail', user_id=user_id)

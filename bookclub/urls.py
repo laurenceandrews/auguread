@@ -28,6 +28,7 @@ urlpatterns = [
     # Admin urls
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
+    path('accounts/', include('django.contrib.auth.urls')),
 
     path('rec/', views.RecommendationsView.as_view(), name='rec'),
     path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
