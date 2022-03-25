@@ -4,7 +4,7 @@
     alt="Gravatar of {{ target.email }}"
     class="rounded mx-auto mt-4"
   />
-  <h3 class="mx-auto text-center pt-4 font-bold text-gray-700">{{ user.full_name }}</h3>
+  <h3 class="mx-auto text-center pt-4 font-semibold text-gray-700 text-xl">{{ user.full_name }}</h3>
   <p class="mx-auto text-center text-indigo-600">{{ user.username }}</p>
 
   <form action="{% url 'follow_toggle' user_id=user.id %}" method="get">
@@ -22,9 +22,6 @@
         {% endif %}
       </div>
   </form>
-
-  <!-- TODO: show this when logged in as the user only?-->
-  <p class="text-center">{{ user.email }}</p>
 
   {% if club %}
     <a

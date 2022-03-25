@@ -20,7 +20,6 @@
       <p>Calendar: {{club.calendar}}</p>
       <p>Meeting type: {{club.get_meeting_type_display}}</p>
       <p>Owner: {{club.owner.full_name}}</p>
-      <p>Average reading speed: {{club.avg_reading_speed}}</p>
     </div>
 
     <div class="">
@@ -207,7 +206,7 @@
 
               <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
                 <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                  <a href='' class="">Edit club</a>
+                  <a href='{% url 'club_update' club.id %}' class="">Edit club</a>
                 </div>
               </div>
             </dd>
@@ -222,7 +221,7 @@
 
               <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
                 <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                  <a href='' class="">Delete club</a>
+                  <a href='{% url 'club_delete' club.id %}' class="">Delete club</a>
                 </div>
               </div>
             </dd>

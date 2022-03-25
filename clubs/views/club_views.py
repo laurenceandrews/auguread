@@ -1,5 +1,6 @@
 """Views related to the clubs."""
-from clubs.forms import BookRatingForm, CreateClubUserForm, NewClubForm
+from clubs.forms import (BookRatingForm, ClubUpdateForm, CreateClubUserForm,
+                         NewClubForm)
 from clubs.models import Club, Club_Users, Post, User
 from django.conf import settings
 from django.contrib import messages
@@ -8,18 +9,19 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import DeleteView
+from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
 from .helpers import login_prohibited, member, owner
-from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
+from .mixins import (ApplicantProhibitedMixin, ClubOwnerRequiredMixin,
+                     ClubUserRequiredMixin, LoginProhibitedMixin,
                      MemberProhibitedMixin)
 
 """View that handles creating a new club."""
@@ -35,7 +37,7 @@ def new_club(request):
             city = form.cleaned_data.get("city")
             country = form.cleaned_data.get("country")
             description = form.cleaned_data.get("description")
-            avg_reading_speed = form.cleaned_data.get("avg_reading_speed")
+            # avg_reading_speed = form.cleaned_data.get("avg_reading_speed")
             calendar_name = form.cleaned_data.get("calendar_name")
 
             location = city + ", " + country
@@ -50,7 +52,7 @@ def new_club(request):
                 name=name,
                 location=location,
                 description=description,
-                avg_reading_speed=avg_reading_speed,
+                # avg_reading_speed=avg_reading_speed,
                 owner=current_user,
                 calendar=cal,
                 meeting_type=meeting_type
@@ -62,6 +64,73 @@ def new_club(request):
             return render(request, "new_club.html", {"form": form})
     else:
         return render(request, "new_club.html", {"form": NewClubForm})
+
+
+class ClubUpdateView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
+    """ View that handles club edit requests. """
+
+    model = Club
+    template_name = 'club_update_view.html'
+    form_class = ClubUpdateForm
+    pk_url_kwarg = "club_id"
+
+    # def get_form_kwargs(self):
+    #     kwargs = super(ClubUpdateView, self).get_form_kwargs()
+    #     kwargs['club_id'] = self.kwargs['club_id']
+    #     return kwargs
+
+    def form_valid(self, form):
+        """Handle valid form by saving the new password."""
+        club = Club.objects.get(id=self.kwargs['club_id'])
+
+        name = form.cleaned_data.get("name")
+        # city = form.cleaned_data.get("city")
+        # country = form.cleaned_data.get("country")
+        description = form.cleaned_data.get("description")
+
+        # location = city + ", " + country
+
+        meeting_type = form.cleaned_data.get("meeting_type")
+
+        club.name = name
+        # club.location = location
+        club.description = description
+        club.meeting_type = meeting_type
+        club.save()
+
+        return redirect('club_detail', club_id=club.id)
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        club = Club.objects.get(id=self.kwargs['club_id'])
+        return reverse('club_detail', kwargs={'club_id': club.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        club = Club.objects.get(id=self.kwargs['club_id'])
+        context['club'] = club
+
+        return context
+
+
+class DeleteClubView(LoginRequiredMixin, ClubOwnerRequiredMixin, DeleteView):
+    """ View that handles club delete requests. """
+
+    model = Club
+    template_name = 'club_delete.html'
+    form_class = NewClubForm
+    pk_url_kwarg = "club_id"
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        return reverse('user_clubs', kwargs={'role_num': '4'})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        club = Club.objects.get(id=self.kwargs['club_id'])
+        context['club'] = club
+
+        return context
 
 
 class DeleteClubUserView(LoginRequiredMixin, DeleteView):
@@ -76,10 +145,8 @@ class DeleteClubUserView(LoginRequiredMixin, DeleteView):
         """Return URL to redirect the user too after valid form handling."""
         club_user = Club_Users.objects.get(id=self.kwargs['club_users_id'])
         club = club_user.club.name
-        # club_user = self.response.context['club_users']
         messages.add_message(self.request, messages.SUCCESS, "Success!")
         return reverse('club_detail', kwargs={'club_id': club_user.club.id})
-        # return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
     def get_cancel_url(self):
         """Return URL to redirect the user too after form handling cancelled."""
