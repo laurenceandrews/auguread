@@ -41,7 +41,7 @@ class NewPasswordMixin(forms.Form):
     """Form mixin for new_password and password_confirmation fields."""
 
     new_password = forms.CharField(
-        label='Password',
+        label='New Password',
         widget=forms.PasswordInput(),
         validators=[RegexValidator(
             regex=r'^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$',
@@ -50,7 +50,7 @@ class NewPasswordMixin(forms.Form):
         )]
     )
     password_confirmation = forms.CharField(
-        label='Password confirmation', widget=forms.PasswordInput())
+        label='Confirm new Password', widget=forms.PasswordInput())
 
     def clean(self):
         """ Ensure that new_password and password_confirmation contain the same password."""
@@ -101,7 +101,8 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
     """Form enabling users to sign up."""
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'age', 'username', 'email', 'bio', 'city', 'country']
+        fields = ['first_name', 'last_name', 'age',
+                  'username', 'email', 'bio', 'city', 'country']
         widgets = {'bio': forms.Textarea()}
 
     country = CountryField(blank_label='(Select country)').formfield()
@@ -126,7 +127,8 @@ class SignUpForm(NewPasswordMixin, forms.ModelForm):
         new_password = self.cleaned_data.get('new_password')
         password_confirmation = self.cleaned_data.get('password_confirmation')
         if new_password != password_confirmation:
-            self.add_error('password_confirmation', 'Confirmation does not match password.')
+            self.add_error('password_confirmation',
+                           'Confirmation does not match password.')
 
     def save(self):
         super().save(commit=False)
@@ -192,7 +194,7 @@ class NewClubForm(forms.ModelForm):
 
     calendar_name = forms.CharField(
         label='Calendar name',
-        max_length = 250
+        max_length=250
         # widget=forms.Textarea(
         #     attrs={'placeholder': "It's a good idea to make it simple: easy to say and easy to remember."}
         # )
@@ -224,7 +226,8 @@ class MeetingAddressForm(forms.ModelForm):
             calendar = Calendar.objects.get(slug=calendar_slug)
             events = Event.objects.filter(calendar=calendar)
             meeting_addresses = MeetingAddress.objects.filter(event__in=events)
-            address_ids = meeting_addresses.values_list('address_id', flat=True)
+            address_ids = meeting_addresses.values_list(
+                'address_id', flat=True)
             addresses = Address.objects.filter(id__in=address_ids)
             self.fields['address'].queryset = addresses.order_by('name')
         else:
@@ -235,7 +238,8 @@ class MeetingAddressForm(forms.ModelForm):
 
         super().clean()
         if self.cleaned_data.get('address') is None:
-            self.add_error('address', 'You must select an existing address or create a new one.')
+            self.add_error(
+                'address', 'You must select an existing address or create a new one.')
 
 
 class AddressForm(forms.ModelForm):
@@ -264,7 +268,8 @@ class CreateEventForm(forms.ModelForm):
 
     default_meeting_start = datetime.datetime.now()
     default_meeting_lenth_in_hours = 1
-    default_meeting_lenth_delta = abs(datetime.timedelta(hours=default_meeting_lenth_in_hours))
+    default_meeting_lenth_delta = abs(
+        datetime.timedelta(hours=default_meeting_lenth_in_hours))
     meeting_end = default_meeting_start + default_meeting_lenth_delta
     end = forms.SplitDateTimeField(
         widget=forms.SplitDateTimeWidget(),
@@ -274,11 +279,13 @@ class CreateEventForm(forms.ModelForm):
         super().clean()
         if (self.cleaned_data.get('end') is not None and self.cleaned_data.get('start') is not None):
             if self.cleaned_data.get('end') <= self.cleaned_data.get('start'):
-                self.add_error('end', 'The end time must be later than start time.')
+                self.add_error(
+                    'end', 'The end time must be later than start time.')
 
 
 class CalendarPickerForm(forms.Form):
-    calendar = forms.ModelChoiceField(queryset=Calendar.objects.all().order_by('name'))
+    calendar = forms.ModelChoiceField(
+        queryset=Calendar.objects.all().order_by('name'))
 
     def __init__(self, *args, **kwargs):
         """Give user option of all calendars used for clubs they are a member or user of."""
