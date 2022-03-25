@@ -112,36 +112,24 @@ class ClubUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
 
-# class DeleteEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, DeleteView):
-#     """ View that handles event delete requests. """
-#
-#     model = Event
-#     template_name = 'event_delete.html'
-#     form_class = CreateEventForm
-#     pk_url_kwarg = "event_id"
-#
-#     def get_success_url(self):
-#         """Return URL to redirect the user too after valid form handling."""
-#         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
-#         return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
-#
-#     def get_cancel_url(self):
-#         """Return URL to redirect the user too after valid form handling."""
-#         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
-#         return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
-#         event = Event.objects.get(id=self.kwargs['event_id'])
-#         context['calendar'] = calendar
-#         context['calendar_id'] = calendar.id
-#         context['calendar_slug'] = calendar.slug
-#         context['calendar_name'] = calendar.name
-#         context['user'] = self.request.user
-#         context['event_title'] = event.title
-#
-#         return context
+class DeleteClubView(LoginRequiredMixin, DeleteView):
+    """ View that handles club delete requests. """
+
+    model = Club
+    template_name = 'club_delete.html'
+    form_class = NewClubForm
+    pk_url_kwarg = "club_id"
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        return reverse('user_clubs', kwargs={'role_num': '4'})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        club = Club.objects.get(id=self.kwargs['club_id'])
+        context['club'] = club
+
+        return context
 
 
 class DeleteClubUserView(LoginRequiredMixin, DeleteView):

@@ -221,7 +221,7 @@
 
               <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
                 <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                  <a href='' class="">Delete club</a>
+                  <a href='{% url 'club_delete' club.id %}' class="">Delete club</a>
                 </div>
               </div>
             </dd>
