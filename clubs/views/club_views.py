@@ -112,6 +112,38 @@ class ClubUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
 
+# class DeleteEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, DeleteView):
+#     """ View that handles event delete requests. """
+#
+#     model = Event
+#     template_name = 'event_delete.html'
+#     form_class = CreateEventForm
+#     pk_url_kwarg = "event_id"
+#
+#     def get_success_url(self):
+#         """Return URL to redirect the user too after valid form handling."""
+#         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+#         return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+#
+#     def get_cancel_url(self):
+#         """Return URL to redirect the user too after valid form handling."""
+#         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+#         return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+#         event = Event.objects.get(id=self.kwargs['event_id'])
+#         context['calendar'] = calendar
+#         context['calendar_id'] = calendar.id
+#         context['calendar_slug'] = calendar.slug
+#         context['calendar_name'] = calendar.name
+#         context['user'] = self.request.user
+#         context['event_title'] = event.title
+#
+#         return context
+
+
 class DeleteClubUserView(LoginRequiredMixin, DeleteView):
     """ View that handles club user delete requests. """
 
@@ -124,10 +156,8 @@ class DeleteClubUserView(LoginRequiredMixin, DeleteView):
         """Return URL to redirect the user too after valid form handling."""
         club_user = Club_Users.objects.get(id=self.kwargs['club_users_id'])
         club = club_user.club.name
-        # club_user = self.response.context['club_users']
         messages.add_message(self.request, messages.SUCCESS, "Success!")
         return reverse('club_detail', kwargs={'club_id': club_user.club.id})
-        # return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
     def get_cancel_url(self):
         """Return URL to redirect the user too after form handling cancelled."""
