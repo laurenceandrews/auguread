@@ -58,9 +58,9 @@ class ClubUpdateViewTestCase(TestCase):
         club_count_before = Club.objects.count()
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(url)
-        redirect_url = reverse('user_clubs', kwargs={'role_num': 4})
+        redirect_url = reverse('club_detail', kwargs={'club_id': club_not_owner.id})
         response = self.client.post(url, form_input, follow=True)
-        self.assertTemplateUsed(response, 'summary_clubs_table.html')
+        self.assertTemplateUsed(response, 'club_detail.html')
         self.assertRedirects(response, redirect_url,
                              status_code=302, target_status_code=200, fetch_redirect_response=True
                              )

@@ -86,8 +86,10 @@ class ClubOwnerRequiredMixin:
         return self.handle_not_a_club_owner(*args, **kwargs)
 
     def handle_not_a_club_owner(self, *args, **kwargs):
+        club_id = kwargs['club_id']
+        club = Club.objects.get(id=club_id)
         messages.add_message(self.request, messages.ERROR, "Only the club owner can perform this action!")
-        url = reverse('user_clubs', kwargs={'role_num': 4})
+        url = reverse('club_detail', kwargs={'club_id': club.id})
         return redirect(url)
 
 
