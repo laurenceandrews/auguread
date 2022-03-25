@@ -419,6 +419,26 @@ class User_Books(models.Model):
         verbose_name = "User Favourite Book"
         verbose_name_plural = "User Favourite Books"
 
+class User_Clubs(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    club = models.ForeignKey(
+        Club,
+        on_delete=models.CASCADE,
+        blank=False,
+        default=0
+    )
+
+    class Meta:
+        app_label = "clubs"
+        verbose_name = "User Recommended Club"
+        verbose_name_plural = "User Recommended Clubs"
+
 
 class Club_Book_History(models.Model):
     club = models.ForeignKey(

@@ -1,11 +1,11 @@
 """Views related to the recommender."""
 from clubs.forms import ClubRecommenderForm
 # from clubs.helpers import member, owner
-from clubs.models import Club, User, Club_Users
 from django.conf import settings
 from statistics import mean
 
 from clubs.book_to_user_recommender.book_to_user import BookToUserRecommender
+from clubs.club_to_user_recommender.club_to_user_recommender import ClubUserRecommender
 from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
                          ClubBookForm, CreateEventForm, LogInForm,
                          MeetingAddressForm, MeetingLinkForm, NewClubForm,
@@ -14,6 +14,7 @@ from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
 from clubs.models import (Address, Book, Book_Rating, Club, Club_Book_History,
                           Club_Books, Club_Users, MeetingAddress, MeetingLink,
                           Post, User)
+
 from clubs.views.club_views import MemberListView
 from clubs.views.mixins import TenPosRatingsRequiredMixin
 from django.conf import settings
@@ -39,20 +40,21 @@ def RecommendationsView(request):
 
 class ClubRecommenderView(LoginRequiredMixin, View):
     """View that handles the club recommendations."""
-    model = Club_Users
-    template_name = 'club_recommender.html'
-    form_class = ClubRecommenderForm
-    # http_method_names = ['get', 'post']
+    http_method_names = ['get', 'post']
 
     def get(self, request):
         """Display template."""
+        user_id = self.request.user.id
 
-        user_id = request.user.id
+        club_ids_in_person = ClubUserRecommender(user_id).get_best_clubs_in_person()
+        club_ids_online = ClubUserRecommender(user_id).get_best_clubs_online()
+        self.club_recs_in_person = Club.objects.filter(id__in = club_ids_in_person)[0:11]
+        self.club_recs_online = Club.objects.filter(id__in  = club_ids_online)[0:11]
 
-        # recommended_clubs = ClubUserRecommender(user_id=user_id).get_best_clubs_in_person()
-        # self.all_clubs = Club.objects.all()
+        # get all the clubs and sort alphabetcally
         self.clubs_queryset = Club.objects.all().order_by('name')
-        # self.sorted = set(recommended_clubs).intersection(self.clubs_queryset)
+
+        # query the list of clubs by name or location
         query = request.GET.get('q')
         if query:
             self.clubs_queryset = Club.objects.filter(
@@ -66,23 +68,31 @@ class ClubRecommenderView(LoginRequiredMixin, View):
         self.next = request.GET.get('next') or ''
         return self.render()
 
-    def form_valid(self, form):
-        user = User.objects.get(id = self.kwargs['id'])
-        club = form.cleaned_data.get('club')
-        return render(self.request, 'club_recommender.html')
+    # def form_valid(self, form):
+    #     user = User.objects.get(id = self.kwargs['id'])
+    #     club = form.cleaned_data.get('club')
+    #     return render(self.request, 'club_recommender.html')
     
-    def get_data(self, **kwargs):  
-        data = super().get_data(**kwargs)
-        user = User.objects.get(id = self.kwargs['id'])
-        data['first_name'] = user.first_name
+    # def get_data(self, **kwargs):  
+    #     data = super().get_data(**kwargs)
+    #     user = User.objects.get(id = self.kwargs['id'])
+    #     data['first_name'] = user.first_name
 
     def render(self):
         """Render template with blank form."""
 
-        return render(self.request, 'club_recommender.html', {'next': self.next, 'clubs_paginated': self.clubs_paginated})
+        return render(
+            self.request, 'club_recommender.html',
+            {
+                'next': self.next,
+                'clubs_paginated': self.clubs_paginated,
+                'club_recs_in_person': self.club_recs_in_person,
+                'club_recs_online': self.club_recs_online
+            }
+        )
 
 
-class ClubBookSelectionView(LoginRequiredMixin, CreateView):
+class ClubBookSelectionView(LoginRequiredMixin, View):
     """Class-based generic view for club book selection handling."""
 
     model = Club_Books

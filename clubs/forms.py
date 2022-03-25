@@ -19,6 +19,7 @@ from schedule.models import Calendar, Event, Rule
 from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
                      Club_Books, Club_Users, MeetingAddress, MeetingLink, Post,
                      User, User_Book_History, User_Books)
+from .models.user_models import User_Clubs
 
 
 class LogInForm(forms.Form):
@@ -318,8 +319,10 @@ class ClubBookForm(forms.ModelForm):
 
 class ClubRecommenderForm(forms.ModelForm):
     class Meta:
-        model = Club
-        fields = ['name', 'location', 'description']
+        model = User_Clubs
+        fields = []
+        # fields = ['name', 'location', 'description']
+        
 
     online = forms.BooleanField(
         label = 'Online only', 
@@ -327,16 +330,18 @@ class ClubRecommenderForm(forms.ModelForm):
         disabled = False,
         widget=forms.widgets.CheckboxInput(attrs={'class': 'checkbox-inline'}),)
 
-    def __init__(self, *args, **kwargs):
-        user_id = kwargs.pop('id')
-        super(ClubRecommenderForm, self).__init__(*args, **kwargs)
+    
 
-        if not self.online:
-            club_ids = ClubUserRecommender(user_id).get_best_clubs_in_person()
-        else:
-            club_ids = ClubUserRecommender(user_id).get_best_clubs_online()
-        clubs = Club.objects.filter(id__in=club_ids)
-        self.fields['club'].queryset = clubs
+    # def __init__(self, *args, **kwargs):
+    #     user_id = kwargs.pop('id')
+    #     super(ClubRecommenderForm, self).__init__(*args, **kwargs)
+
+    #     if not self.online:
+    #         club_ids = ClubUserRecommender(user_id).get_best_clubs_in_person()
+    #     else:
+    #         club_ids = ClubUserRecommender(user_id).get_best_clubs_online()
+    #     clubs = Club.objects.filter(id__in=club_ids)
+    #     self.fields['club'].queryset = clubs
     
 
 
