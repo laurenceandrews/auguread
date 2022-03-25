@@ -1,20 +1,50 @@
-{% extends 'base_content.html' %}
+
+{% extends "base_content.html" %}
+{% block title %}
+| Create a New Club
+{% endblock %}
+
 {% block content %}
-<title>
-  {% block title %}
-  | Create Club
-  {% endblock %}
-</title>
-<div class="container">
-  <div class="row">
-    <div class="col-12">
-      <h1 class="text-center">Create New Club</h1>
-      <form action="{% url 'new_club' %}" method="post">
-        {% csrf_token %}
-        {% include 'partials/bootstrap_form.html' with form=form %}
-        <input type="submit" value="Create Club" class="btn btn-primary mb-3">
-      </form>
-    </div>
+<div class="h-full flex">
+  <div class="flex-1 min-w-0 flex flex-col overflow-hidden">
+    <main class="flex-1 flex overflow-hidden">
+      <div class="flex-1 flex flex-col overflow-y-auto xl:overflow-hidden">
+        <div class="flex-1 flex xl:overflow-hidden">
+
+          <div class="flex-1 xl:overflow-y-auto">
+            <div class=" mx-auto py-10 px-4 sm:px-6 lg:py-12 lg:px-8">
+              <h1 class="text-3xl font-extrabold text-blue-gray-900">Create A New Club</h1>
+              <!-- Create Club -->
+
+              <div class="mt-4 sm:col-span-6">
+                <form action="{% url 'new_club' %}" method="post">
+                  {% csrf_token %}
+                  {% include 'partials/bootstrap_form.html' with form=form %}
+
+                  <!-- Buttons -->
+                  <div class="flex flex-row-reverse items-end gap-5">
+
+                    <div class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" style="cursor: pointer;">
+                      <a href="{{ view.get_cancel_url }}" class="">Cancel</a>
+                    </div>
+
+
+                    <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
+                      <input type="submit" value="Confirm">
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 </div>
+
+
+
 {% endblock %}
