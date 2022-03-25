@@ -11,8 +11,11 @@ class ClubUpdateViewTestCase(TestCase):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/other_users.json',
         'clubs/tests/fixtures/default_calendar.json',
-        'clubs/tests/fixtures/default_club.json'
+        'clubs/tests/fixtures/default_rules.json',
+        'clubs/tests/fixtures/default_club.json',
+        'clubs/tests/fixtures/other_clubs.json',
     ]
 
     def setUp(self):
@@ -44,6 +47,25 @@ class ClubUpdateViewTestCase(TestCase):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+
+    def test_update_club_redirects_when_not_a_club_owner(self):
+        club_not_owner = Club.objects.get(pk=16)
+        form_input = {}
+        url = reverse(
+            'club_update', kwargs={'club_id': club_not_owner.id}
+        )
+
+        club_count_before = Club.objects.count()
+        self.client.login(email=self.user.email, password="Password123")
+        response = self.client.get(url)
+        redirect_url = reverse('user_clubs', kwargs={'role_num': 4})
+        response = self.client.post(url, form_input, follow=True)
+        self.assertTemplateUsed(response, 'summary_clubs_table.html')
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200, fetch_redirect_response=True
+                             )
+        club_count_after = Club.objects.count()
+        self.assertEqual(club_count_after, club_count_before)
 
     def test_unsuccesful_club_update(self):
         self.client.login(email=self.user.email, password="Password123")

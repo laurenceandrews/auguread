@@ -20,7 +20,8 @@ from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
 from .helpers import login_prohibited, member, owner
-from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
+from .mixins import (ApplicantProhibitedMixin, ClubOwnerRequiredMixin,
+                     ClubUserRequiredMixin, LoginProhibitedMixin,
                      MemberProhibitedMixin)
 
 """View that handles creating a new club."""
@@ -65,7 +66,7 @@ def new_club(request):
         return render(request, "new_club.html", {"form": NewClubForm})
 
 
-class ClubUpdateView(LoginRequiredMixin, UpdateView):
+class ClubUpdateView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
     """ View that handles club edit requests. """
 
     model = Club
@@ -112,7 +113,7 @@ class ClubUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
 
-class DeleteClubView(LoginRequiredMixin, DeleteView):
+class DeleteClubView(LoginRequiredMixin, ClubOwnerRequiredMixin, DeleteView):
     """ View that handles club delete requests. """
 
     model = Club
