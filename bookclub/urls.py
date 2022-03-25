@@ -17,8 +17,6 @@ Including another URLconf
 from clubs import views
 from clubs.views.recommender_views import ClubRecommenderView
 from clubs.views.password_reset import ResetPasswordView
-# from clubs import views
-# from password_reset.views import
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
@@ -28,40 +26,11 @@ from schedule.views import (DeleteEventView, EditEventView, EventView,
                             api_move_or_resize_by_code, api_occurrences,
                             api_select_create)
 
-app_name = "clubs"
 
 urlpatterns = [
     # Admin urls
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
-    # path('accounts/', include('django.contrib.auth.urls')),
-    # path('accounts/', include('accounts.urls')),
-    #
-
-    path('password_reset/',auth_views.PasswordResetView.as_view(),name='password_reset'),
-    path('password_reset/done/',auth_views.PasswordResetDoneView.as_view(),name='password_reset_done'),
-    path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(),name='password_reset_confirm'),
-    path('reset/done/',auth_views.PasswordResetCompleteView.as_view(),name='password_reset_complete'),
-
-    # path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
-    # path('password-reset-confirm/<uidb64>/<token>/',
-    #      auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'),
-    #      name='password_reset_confirm'),
-    # path('password-reset-complete/',
-    #      auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),
-    #      name='password_reset_complete'),
-
-
-    # accounts/password_reset/ [name='password_reset']
-    # accounts/password_reset/done/ [name='password_reset_done']
-    # accounts/reset/<uidb64>/<token>/ [name='password_reset_confirm']
-    # accounts/reset/done/ [name='password_reset_complete']
-
-    # path('accounts/reset_password/', auth_views.PasswordResetView.as_view(template_name='password_reset.html'), name="password_reset"),
-    # path("password_reset", views.password_reset_request, name="password_reset"),
-    # path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset_done.html'), name='password_reset_done'),
-    # path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name="password_reset_confirm.html"), name='password_reset_confirm'),
-    # path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'), name='password_reset_complete'),
 
     path('rec/', views.RecommendationsView.as_view(), name='rec'),
     path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
@@ -86,6 +55,12 @@ urlpatterns = [
     path('summary/books/favourite', views.user_favourite_books, name='user_favourite_books'),
     path('summary/books/clubs', views.user_clubs_books, name='user_clubs_books'),
     path('summary/books/current', views.user_current_book, name='user_current_book'),
+
+    # Forgot Password urls
+    path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
     # Feed urls
     path('feed/', views.FeedView.as_view(), name='feed'),
