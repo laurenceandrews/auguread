@@ -56,7 +56,12 @@
     <div class="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle">
         <div class="shadow-sm ring-1 ring-black ring-opacity-5">
+          {% if user_profile %}
+          <h1 class="text-xl font-semibold text-gray-900">Your clubs</h1>
+          {% else %}
           <h1 class="text-xl font-semibold text-gray-900">Clubs {{user.full_name}} is in</h1>
+          {% endif %}
+          
           {% include "partials/clubs_table.html" with clubs=clubs %}
           <div class="flex justify-center">
             <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0">
