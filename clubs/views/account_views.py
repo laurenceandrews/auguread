@@ -1,6 +1,5 @@
 """Views related to the account."""
-from clubs.forms import (LogInForm, PasswordForm, SignUpForm, UserDeleteForm,
-                         UserForm)
+from clubs.forms import (LogInForm, PasswordForm, SignUpForm, UserDeleteForm, UserForm)
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -11,7 +10,6 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
-
 from .helpers import login_prohibited
 from .mixins import LoginProhibitedMixin
 

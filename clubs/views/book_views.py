@@ -1,7 +1,5 @@
-from clubs.forms import (BookRatingForm, ClubBookHistoryForm,
-                         UserBookHistoryForm, UserBooksForm)
-from clubs.models import (Book, Book_Rating, Club, Club_Book_History, User,
-                          User_Book_History, User_Books)
+from clubs.forms import (BookRatingForm, ClubBookHistoryForm, UserBookHistoryForm, UserBooksForm)
+from clubs.models import (Book, Book_Rating, Club, Club_Book_History, User, User_Book_History, User_Books)
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -15,7 +13,6 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView
-
 from .helpers import login_prohibited
 from .mixins import LoginProhibitedMixin
 

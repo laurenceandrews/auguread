@@ -1,6 +1,5 @@
 """Views related to the recommender."""
 from statistics import mean
-
 from clubs.book_to_club_recommender.book_to_club_recommender_age import \
     ClubBookAgeRecommender
 from clubs.book_to_club_recommender.book_to_club_recommender_author import \

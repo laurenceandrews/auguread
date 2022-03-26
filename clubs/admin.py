@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
                      Club_Books, Club_Users, MeetingAddress, MeetingLink, Post,
                      User, User_Book_History, User_Books)

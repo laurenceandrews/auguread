@@ -15,7 +15,6 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from django.views.generic.list import MultipleObjectMixin
-
 from .helpers import login_prohibited
 from .mixins import LoginProhibitedMixin
 

@@ -14,7 +14,6 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import (CreateView, DeleteView, FormView,
                                        UpdateView)
 from schedule.models import Calendar, Event, Rule
-
 from .helpers import login_prohibited
 from .mixins import ClubOwnerRequiredSchedulerMixin, LoginProhibitedMixin
 
