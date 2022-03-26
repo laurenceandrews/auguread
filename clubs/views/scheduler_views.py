@@ -440,7 +440,7 @@ class DeleteEventView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, Delet
         return context
 
 
-class EventDetailView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, DetailView):
+class EventDetailView(LoginRequiredMixin, DetailView):
     """ View that shows event details and links to edit and delete event functions. """
 
     model = Event
