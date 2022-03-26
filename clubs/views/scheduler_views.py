@@ -469,6 +469,15 @@ class EventDetailView(LoginRequiredMixin, DetailView):
             if meeting_address_object.exists():
                 context['meeting_at'] = MeetingAddress.objects.get(event=event).address
 
+        user_is_owner = False
+        user = self.request.user
+        club_user_exists = Club_Users.objects.filter(club=club, user=user).exists()
+        if club_user_exists:
+            club_user_role_num = Club_Users.objects.get(club=club, user=user).role_num
+            if club_user_role_num == '4':
+                user_is_owner = True
+        context['user_is_owner'] = user_is_owner
+
         return context
 
     def get(self, request, *args, **kwargs):
