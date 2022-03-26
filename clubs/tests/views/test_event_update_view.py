@@ -93,6 +93,7 @@ class EventUpdateViewTest(TestCase):
         self.client.login(email=self.user.email, password="Password123")
         self.club.meeting_type = 'ONL'
         self.club.save()
+        self.club.refresh_from_db()
         before_count = Event.objects.count()
         form_input = {
             "title": "title",
@@ -112,6 +113,7 @@ class EventUpdateViewTest(TestCase):
         club = Club.objects.get(pk=12)
         club.meeting_type = 'INP'
         club.save()
+        self.club.refresh_from_db()
         data = {
             'title': 'Exercise',
             'start': datetime.datetime(2008, 11, 3, 8, 0),
