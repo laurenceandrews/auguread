@@ -17,29 +17,8 @@ from django.views.generic.edit import FormView
 from django.views.generic.list import MultipleObjectMixin
 
 from .helpers import login_prohibited
-from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
-                     MemberProhibitedMixin)
+from .mixins import LoginProhibitedMixin
 
-
-class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
-    """View that shows a list of all users"""
-    model = User
-    template_name = "user_list.html"
-    context_object_name = "users"
-    paginate_by = settings.NUMBER_PER_PAGE
-
-    def get_queryset(self):
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.members()) + list(club.officers()) + list(club.owners())
-        return users
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        context['club'] = club
-        context['user'] = self.request.user
-
-        return context
 
 class UserDetailList(LoginRequiredMixin, ListView):
     """View that shows a list of all users."""
@@ -48,6 +27,7 @@ class UserDetailList(LoginRequiredMixin, ListView):
     template_name = "user_detail_list.html"
     context_object_name = "users"
     paginate_by = settings.USERS_PER_PAGE
+
 
 class UserDetailView(LoginRequiredMixin, DetailView):
 

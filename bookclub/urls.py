@@ -63,7 +63,6 @@ urlpatterns = [
     path('clubs/', views.ClubListView.as_view(), name='club_list'),
     path('new_club/', views.new_club, name='new_club'),
     url(r"^club/detail/(?P<club_id>\d+)/$", views.ClubDetailView.as_view(), name='club_detail'),
-    path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
     path('club/update/<int:club_id>', views.ClubUpdateView.as_view(), name='club_update'),
     path('club/delete/<int:club_id>', views.DeleteClubView.as_view(), name='club_delete'),
 
@@ -73,18 +72,15 @@ urlpatterns = [
     path('apply/<int:club_id>', views.apply, name='apply'),
     path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
     path('<int:club_id>/transfer/<int:user_id>', views.transfer, name='transfer'),
-    path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
 
     re_path(r"^club/user/delete/(?P<club_users_id>\d+)/$", views.DeleteClubUserView.as_view(), name="delete_club_user"),
 
     path('<int:club_id>/applicants', views.applicants_list, name='applicant_list'),
     path('<int:club_id>/members', views.members_list, name='member_list'),
-    path('<int:club_id>/owners', views.OwnerListView.as_view(), name='owner_list'),
 
 
     path('book/rating/<int:book_id>/', views.CreateBookRatingView.as_view(), name='rate_book'),
 
-    path('club/<int:club_id>/book/<int:book_id>/history/', views.CreateClubBookHistoryView.as_view(), name='create_club_book_history'),
     path('user/<int:user_id>/book/<int:book_id>/history/', views.CreateUserBookHistoryView.as_view(), name='create_user_book_history'),
 
     path('user/<int:user_id>/book/<int:book_id>/favourite/', views.CreateUserBooksView.as_view(), name='create_user_book_favourite'),

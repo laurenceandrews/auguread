@@ -16,9 +16,7 @@ from django.views.generic.edit import (CreateView, DeleteView, FormView,
 from schedule.models import Calendar, Event, Rule
 
 from .helpers import login_prohibited
-from .mixins import (ApplicantProhibitedMixin, ClubOwnerRequiredSchedulerMixin,
-                     ClubUserRequiredMixin, LoginProhibitedMixin,
-                     MemberProhibitedMixin)
+from .mixins import ClubOwnerRequiredSchedulerMixin, LoginProhibitedMixin
 
 
 class CalendarPickerView(LoginRequiredMixin, FormView):
@@ -35,7 +33,7 @@ class CalendarPickerView(LoginRequiredMixin, FormView):
         return kwargs
 
 
-@login_required
+@ login_required
 def full_calendar(request, calendar_slug):
     """ View to display a calendar's full calendar. """
 
@@ -43,7 +41,7 @@ def full_calendar(request, calendar_slug):
     return render(request, 'fullcalendar.html', {'calendar': calendar})
 
 
-@login_required
+@ login_required
 def events_list(request, calendar_id):
     """ View to display a calendar's event list. """
     calendar = Calendar.objects.get(id=calendar_id)
@@ -338,6 +336,10 @@ class EditEventLinkView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, Upd
         context['event_name'] = event.title
         context['user'] = self.request.user
 
+        meeting_link_object = MeetingLink.objects.filter(event=event)
+        if meeting_link_object.exists():
+            context['meeting_link'] = MeetingLink.objects.get(event=event)
+
         return context
 
 
@@ -389,6 +391,10 @@ class EditEventAddressView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, 
         context['event_name'] = event.title
         context['user'] = self.request.user
 
+        meeting_address_object = MeetingAddress.objects.filter(event=event)
+        if meeting_address_object.exists():
+            context['meeting_address'] = MeetingAddress.objects.get(event=event)
+
         return context
 
 
@@ -435,12 +441,23 @@ class EventDetailView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, Detai
         context = super().get_context_data(**kwargs)
         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
         event = Event.objects.get(id=self.kwargs['event_id'])
+        club = Club.objects.get(calendar=calendar)
         context['calendar'] = calendar
         context['calendar_id'] = calendar.id
         context['calendar_slug'] = calendar.slug
         context['calendar_name'] = calendar.name
         context['event_name'] = event.title
         context['user'] = self.request.user
+
+        context['meeting_at'] = 'Not set.'
+        if club.meeting_type == 'ONL':
+            meeting_link_object = MeetingLink.objects.filter(event=event)
+            if meeting_link_object.exists():
+                context['meeting_at'] = MeetingLink.objects.get(event=event).meeting_link
+        elif club.meeting_type == 'INP':
+            meeting_address_object = MeetingAddress.objects.filter(event=event)
+            if meeting_address_object.exists():
+                context['meeting_at'] = MeetingAddress.objects.get(event=event).address
 
         return context
 

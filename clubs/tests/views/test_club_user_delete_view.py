@@ -45,12 +45,48 @@ class DeleteClubUsersViewTest(TestCase):
         club_users_count_after = Club_Users.objects.count()
         self.assertEqual(club_users_count_after, club_users_count_before)
 
-    def test_get_delete_club_user(self):
+    def test_get_delete_club_user_with_role_num_1(self):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'club_user_delete.html')
         self.assertEqual(response.context['club_users'], self.club_user)
+
+    def test_get_delete_club_user_with_role_num_2(self):
+        self.client.login(email=self.user.email, password="Password123")
+        user = User.objects.get(username='@janedoe')
+        club_user = Club_Users.objects.create(user=user, club=self.club, role_num='2')
+        url = reverse(
+            'delete_club_user', kwargs={'club_users_id': club_user.id}
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'club_user_delete.html')
+        self.assertEqual(response.context['club_users'], club_user)
+
+    def test_get_delete_club_user_with_role_num_3(self):
+        self.client.login(email=self.user.email, password="Password123")
+        user = User.objects.get(username='@janedoe')
+        club_user = Club_Users.objects.create(user=user, club=self.club, role_num='3')
+        url = reverse(
+            'delete_club_user', kwargs={'club_users_id': club_user.id}
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'club_user_delete.html')
+        self.assertEqual(response.context['club_users'], club_user)
+
+    def test_get_delete_club_user_with_role_num_4(self):
+        self.client.login(email=self.user.email, password="Password123")
+        user = User.objects.get(username='@janedoe')
+        club_user = Club_Users.objects.create(user=user, club=self.club, role_num='4')
+        url = reverse(
+            'delete_club_user', kwargs={'club_users_id': club_user.id}
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'club_user_delete.html')
+        self.assertEqual(response.context['club_users'], club_user)
 
     def test_post_delete_club_user(self):
         self.client.login(email=self.user.email, password="Password123")
