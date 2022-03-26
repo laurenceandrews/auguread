@@ -1,7 +1,7 @@
 from clubs.forms import (AddressForm, CalendarPickerForm, CreateEventForm,
                          MeetingAddressForm, MeetingLinkForm)
-from clubs.models import (Address, Club, Club_Book_History, MeetingAddress,
-                          MeetingLink)
+from clubs.models import (Address, Club, Club_Book_History, Club_Users,
+                          MeetingAddress, MeetingLink)
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -38,7 +38,17 @@ def full_calendar(request, calendar_slug):
     """ View to display a calendar's full calendar. """
 
     calendar = Calendar.objects.get(slug=calendar_slug)
-    return render(request, 'fullcalendar.html', {'calendar': calendar})
+
+    user_is_owner = False
+    club = Club.objects.get(calendar=calendar)
+    user = request.user
+    club_user_exists = Club_Users.objects.filter(club=club, user=user).exists()
+    if club_user_exists:
+        club_user_role_num = Club_Users.objects.get(club=club, user=user).role_num
+        if club_user_role_num == '4':
+            user_is_owner = True
+
+    return render(request, 'fullcalendar.html', {'calendar': calendar, 'user_is_owner': user_is_owner})
 
 
 @ login_required
