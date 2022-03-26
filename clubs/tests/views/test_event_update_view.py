@@ -89,6 +89,61 @@ class EventUpdateViewTest(TestCase):
                              status_code=302, target_status_code=200, fetch_redirect_response=True
                              )
 
+    def test_succesful_event_edit_update_for_online_club(self):
+        self.client.login(email=self.user.email, password="Password123")
+        self.club.meeting_type = 'ONL'
+        self.club.save()
+        self.club.refresh_from_db()
+        before_count = Event.objects.count()
+        form_input = {
+            "title": "title",
+            "end_1": "10:22:00",
+            "end_0": "2008-10-30",
+            "end_2": "AM",
+            "start_0": "2008-10-30",
+            "start_1": "09:21:57",
+            "start_2": "AM",
+        }
+        response = self.client.post(self.url, form_input)
+        after_count = Event.objects.count()
+        self.assertEqual(after_count, before_count)
+
+    def test_succesful_event_edit_update_for_in_person_club(self):
+        calendar = Calendar.objects.get(pk=13)
+        club = Club.objects.get(pk=12)
+        club.meeting_type = 'INP'
+        club.save()
+        self.club.refresh_from_db()
+        data = {
+            'title': 'Exercise',
+            'start': datetime.datetime(2008, 11, 3, 8, 0),
+            'end': datetime.datetime(2008, 11, 3, 9, 0),
+            'end_recurring_period': datetime.datetime(2009, 6, 1, 0, 0),
+            'rule': Rule.objects.get(pk=9),
+            'calendar': calendar
+        }
+        event = Event(**data)
+        event.save()
+
+        url = reverse(
+            'edit_event', kwargs={'calendar_slug': calendar.slug, 'event_id': event.id}
+        )
+
+        self.client.login(email=self.user.email, password="Password123")
+        before_count = Event.objects.count()
+        form_input = {
+            "title": "title",
+            "end_1": "10:22:00",
+            "end_0": "2008-10-30",
+            "end_2": "AM",
+            "start_0": "2008-10-30",
+            "start_1": "09:21:57",
+            "start_2": "AM",
+        }
+        response = self.client.post(url, form_input)
+        after_count = Event.objects.count()
+        self.assertEqual(after_count, before_count)
+
     def test_unsuccesful_event_edit_update(self):
         self.client.login(email=self.user.email, password="Password123")
         self.form_input['title'] = ''

@@ -5,6 +5,13 @@
   <div class="px-4 py-5 sm:px-6">
     <h3 class="text-lg leading-6 font-medium text-gray-900">Select New Meeting Address</h3>
     <p class="mt-1 max-w-2xl text-sm text-gray-500">This meeting address will be set for event: {{event.title}}.</p>
+
+    {% if meeting_address %}
+    <p class="mt-1 max-w-2xl text-sm text-gray-500">This current meeting address set for the event: {{meeting_address}}.</p>
+    {%else%}
+    <p class="mt-1 max-w-2xl text-sm text-gray-500">There is currently no meeting address set for the event.</p>
+    {% endif %}
+
   </div>
 
   <div class="">

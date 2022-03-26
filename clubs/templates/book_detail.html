@@ -46,17 +46,41 @@
     <!-- Buttons -->
     <div class="flex flex-row-reverse mt-14 items-end gap-5">
 
-      <form action="{% url 'create_user_books' user_id=user.id book_id=book.id%}" method="post">
-        {% csrf_token %}
-        <div class = "rating">
-            {{ user_book_form }}
-            {% if user_books_exists == True %}
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Reread book</button>
-            {% else %}
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Read book</button>
-            {% endif %}
-        </div>
-      </form>
+      <div>
+        <form action="{% url 'create_user_book_history' user_id=user.id book_id=book.id%}" method="post">
+          {% csrf_token %}
+          <div class = "rating">
+              {{ user_book_history_form }}
+              {% if user_book_history_exists == True %}
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Set as your currently reading (again)</button>
+              {% else %}
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Set as your currently reading</button>
+              {% endif %}
+          </div>
+        </form>
+      </div>
+
+      <div>
+        {% if user_books_exists == False %}
+        <form action="{% url 'create_user_book_favourite' user_id=user.id book_id=book.id%}" method="post">
+          {% csrf_token %}
+          <div class = "rating">
+              {{ user_book_form }}
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add to favourites</button>
+          </div>
+        </form>
+        {% else %}
+        <form action="{% url 'delete_user_book_favourite' user_id=user.id book_id=book.id%}" method="post">
+          {% csrf_token %}
+          <div class = "rating">
+              {{ user_book_form }}
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Remove from favourites</button>
+          </div>
+        </form>
+        {% endif %}
+      </div>
+
+
 
     </div>
 

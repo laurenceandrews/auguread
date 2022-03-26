@@ -21,25 +21,26 @@ class EnterViewTestCase(TestCase):
         self.url = reverse('enter', kwargs={'club_id': self.club.id})
 
     def test_enter_club(self):
-        self.client.login(email=self.owner.email, password='Password123')
+        self.client.login(email=self.club_owner.email, password='Password123')
         response = self.client.get(self.url)
-        redirect_url = reverse('show_user', kwargs={
-                               'club_id': self.club.id, 'user_id': self.owner.id})
+        redirect_url = reverse('club_detail', kwargs={
+                               'club_id': self.club.id})
         self.assertRedirects(response, redirect_url,
                              status_code=302, target_status_code=200)
 
     def test_applicant_should_not_be_able_to_enter_club(self):
         self.client.login(email=self.applicant.email, password='Password123')
         response = self.client.get(self.url)
-        redirect_url = reverse(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+        redirect_url = reverse('club_list')
         self.assertRedirects(response, redirect_url,
                              status_code=302, target_status_code=200)
 
     def _create_club_owner_members_and_applicants(self):
-        self.owner = self.club.owner
+        self.club_owner = self.club.owner
         self.applicant = User.objects.get(pk=2)
-        self.club.applicants.add(self.applicant)
-        self.club_applicants = self.club.applicants.all()
+        self.club.applied_by(self.applicant)
+        self.club_applicants = self.club.applicants
         self.member = User.objects.get(pk=3)
-        self.club.members.add(self.member)
-        self.club_members = self.club.members.all()
+        self.club.applied_by(self.member)
+        self.club.accept(self.member)
+        self.club_members = self.club.members

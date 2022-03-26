@@ -1,0 +1,36 @@
+<div class="w-screen">
+  <div class="bg-slate-100">
+      <div class="px-4 max-w-md mx-auto">
+        <div class="h-auto my-4 bg-gradient-to-r from-fuchsia-700 to-purple-800 flex justify-center items-center p-3 rounded-xl border-2 border-slate-100 shadow-lg transition-all transform-all hover:scale-105 relative" >
+          <div class="text-slate-200 text-center">
+            <div class="mt-2 mb-4">{{user.full_name}}</div>
+
+
+            <!-- Buttons-->
+            <div class="flex flex-row-reverse items-end gap-5">
+
+              {% if list_of_applicants == True%}
+              <form action="{% url 'approve' club.id user.id %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Accept" class="bg-white hover:bg-slate-200 cursor-pointer text-blue-500 font-bold py-2 px-4 rounded">
+              </form>
+              {%elif list_of_members == True%}
+                {%if is_owner == True%}
+                <form action="{% url 'transfer' club.id user.id %}" method="post">
+                  {% csrf_token %}
+                  <input type="submit" value="Transfer" class="bg-white hover:bg-slate-200 cursor-pointer text-blue-500 font-bold py-2 px-4 rounded">
+                </form>
+                {%endif%}
+              {%endif%}
+
+
+              <a href="{% url 'user_detail' user.id %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">{{user.full_name}}'s profile</a>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+  </div>
+</div>

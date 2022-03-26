@@ -2,21 +2,42 @@
 {% block title %}
 | Edit Profile
 {% endblock %}
+{% load widget_tweaks %}
 
 {% block content %}
+<div class="mx-auto py-10 font-poppins">
+  <h1 class="text-3xl font-semibold text-blue-gray-900 text-center">Update Profile Information</h1>
+  <!-- Edit Profile -->
+  <p class="mt-2 text-sm text-indigo-500 text-center">This information will be displayed publicly so be careful what you share.</p>
 
-<div class = "row-edit-profile">
-  <div class = "col-xs-11 col-md-8 col-lg-6" my-auto>
-    <h1 class = "edit-profle">
-      Edit Profile
-    </h1>
-    <form method = "post">
+  <div class="mt-6 max-w-md mx-auto">
+    <form method="post">
       {% csrf_token %}
-      {% include 'partials/bootstrap_form.html' with form=form %}
-      <button type = submit class = "btn-btn-primary">
-        Submit
-      </button>
+      {% for field in form %}
+      <div class="mt-4">
+        <label class="block text-sm font-medium text-gray-500 dark:text-gray-50">
+          {{ field.label_tag }}
+        </label>
+        <div class="mt-1">
+          {{ field|add_class:"appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"}}
+          {{ field.errors }} 
+          {% if field.help_text %}
+          <p class="help">{{ field.help_text|safe }}</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+              <!-- Buttons -->
+      <div class="flex flex-row-reverse items-end gap-5 pt-5 border-t mt-5 border-gray-400/50">
+
+        <a href="{{ view.get_cancel_url }}" class="bg-transparent hover:bg-blue-100 text-blue-600 py-2 px-4 border border-blue-500/50 hover:text-blue-800 rounded">Cancel</a>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">Confirm</button>
+      </div>
     </form>
+    
   </div>
 </div>
+
+
+
 {% endblock %}

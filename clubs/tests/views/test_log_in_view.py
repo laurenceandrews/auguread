@@ -2,16 +2,24 @@
 
 from clubs.forms import LogInForm
 from clubs.models import User
-from clubs.tests.helpers import LogInTester, reverse_with_next
+from clubs.tests.helpers import LogInTester, MenuTesterMixin, reverse_with_next
 from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
 
 
-class LogInViewTestCase(TestCase, LogInTester):
+class LogInViewTestCase(TestCase, LogInTester, MenuTesterMixin):
     """Tests of the log in view."""
 
-    fixtures = ['clubs/tests/fixtures/default_user.json']
+    fixtures = [
+        'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/default_calendar.json',
+        'clubs/tests/fixtures/default_club.json',
+        'clubs/tests/fixtures/default_book.json',
+        'clubs/tests/fixtures/default_rating.json',
+        'clubs/tests/fixtures/default_club_book.json',
+        'clubs/tests/fixtures/default_club_user.json'
+    ]
 
     def setUp(self):
         self.url = reverse('log_in')

@@ -1,10 +1,12 @@
-from clubs.forms import BookRatingForm, ClubBookHistoryForm, UserBooksForm
+from clubs.forms import (BookRatingForm, ClubBookHistoryForm,
+                         UserBookHistoryForm, UserBooksForm)
 from clubs.models import (Book, Book_Rating, Club, Club_Book_History, User,
-                          User_Books)
+                          User_Book_History, User_Books)
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import Http404, HttpResponseRedirect
@@ -12,14 +14,13 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, DeleteView
 
 from .helpers import login_prohibited
-from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
-                     MemberProhibitedMixin)
+from .mixins import LoginProhibitedMixin
 
 
-class BookDetailView(DetailView):
+class BookDetailView(LoginRequiredMixin, DetailView):
 
     model = Book
     template_name = 'book_detail.html'
@@ -37,6 +38,10 @@ class BookDetailView(DetailView):
             context['book_rating'] = Book_Rating.objects.get(user=self.request.user, book=book).rating
 
         context['book_rating_form'] = BookRatingForm()
+
+        user_book_history_exists = User_Book_History.objects.filter(user=user, book=book).exists()
+        context['user_book_history_exists'] = user_book_history_exists
+        context['user_book_history_form'] = UserBookHistoryForm()
 
         user_books_exists = User_Books.objects.filter(user=user, book=book).exists()
         context['user_books_exists'] = user_books_exists
@@ -83,7 +88,7 @@ class BookPreferencesView(LoginRequiredMixin, View):
         return render(self.request, 'book_preferences.html', {'innerForm': self.innerForm, 'next': self.next, 'books_paginated': self.books_paginated})
 
 
-class CreateBookRatingView(CreateView):
+class CreateBookRatingView(LoginRequiredMixin, CreateView):
     model = Book_Rating
     template_name = 'book_rating_create.html'
     form_class = BookRatingForm
@@ -91,8 +96,8 @@ class CreateBookRatingView(CreateView):
     def form_valid(self, form):
         """Process a valid form."""
         current_user = self.request.user
-        book = Book.objects.get(id=self.kwargs['book_id'])
         rating = self.request.POST.get('rating')
+        book = Book.objects.get(id=self.kwargs['book_id'])
 
         book_rating_exists = Book_Rating.objects.filter(user=current_user, book=book)
 
@@ -119,53 +124,27 @@ class CreateBookRatingView(CreateView):
         return reverse('book_preferences')
 
 
-class CreateClubBookHistoryView(CreateView):
-    model = Club_Book_History
-    template_name = 'club_book_history_create.html'
-    form_class = ClubBookHistoryForm
+class CreateUserBookHistoryView(LoginRequiredMixin, CreateView):
+    model = User_Book_History
+    template_name = 'user_book_history_create.html'
+    form_class = UserBookHistoryForm
 
     def form_valid(self, form):
         """Process a valid form."""
-        current_user = self.request.user
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        book = Book.objects.get(id=self.kwargs['book_id'])
+        try:
+            user = User.objects.get(id=self.kwargs['user_id'])
+            book = Book.objects.get(id=self.kwargs['book_id'])
+        except ObjectDoesNotExist:
+            messages.add_message(self.request, messages.ERROR, "Invalid user or book!")
+            return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
-        club_book_history_exists = Club_Book_History.objects.filter(club=club, book=book)
+        user_book_history_exists = User_Book_History.objects.filter(user=user, book=book)
 
-        if club_book_history_exists.exists():
-            club_book_history = Club_Book_History.objects.get(club=club, book=book)
-            club_book_history.delete()
+        if user_book_history_exists.exists():
+            user_book_history_object = User_Book_History.objects.get(user=user, book=book)
+            user_book_history_object.delete()
 
-        club_book_history = Club_Book_History.objects.create(
-            club=club,
-            book=book
-        )
-        messages.add_message(self.request, messages.SUCCESS, "Book set as club's currently reading!")
-
-        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
-
-    def get_success_url(self):
-        """Return URL to redirect the user too after valid form handling."""
-        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
-
-
-class CreateUserBooksView(CreateView):
-    model = User_Books
-    template_name = 'user_books_create.html'
-    form_class = UserBooksForm
-
-    def form_valid(self, form):
-        """Process a valid form."""
-        user = User.objects.get(id=self.kwargs['user_id'])
-        book = Book.objects.get(id=self.kwargs['book_id'])
-
-        user_books_exists = User_Books.objects.filter(user=user, book=book)
-
-        if user_books_exists.exists():
-            user_books_object = User_Books.objects.get(user=user, book=book)
-            user_books_object.delete()
-
-        user_books_object = User_Books.objects.create(
+        user_book_history_object = User_Book_History.objects.create(
             user=user,
             book=book
         )
@@ -176,3 +155,56 @@ class CreateUserBooksView(CreateView):
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
         return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+
+
+class CreateUserBooksView(LoginRequiredMixin, CreateView):
+    model = User_Books
+    template_name = 'user_books_create.html'
+    form_class = UserBooksForm
+
+    def form_valid(self, form):
+        """Process a valid form."""
+        try:
+            user = User.objects.get(id=self.kwargs['user_id'])
+            book = Book.objects.get(id=self.kwargs['book_id'])
+        except ObjectDoesNotExist:
+            messages.add_message(self.request, messages.ERROR, "Invalid user or book!")
+            return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+
+        user_books_exists = User_Books.objects.filter(user=user, book=book)
+
+        if user_books_exists.exists():
+            messages.add_message(self.request, messages.SUCCESS, "Book is already one of your favourites!")
+            return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+
+        user_books_object = User_Books.objects.create(
+            user=user,
+            book=book
+        )
+        messages.add_message(self.request, messages.SUCCESS, "Book set as one of your favourites!")
+
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+
+
+@login_required
+def delete_user_book_favourite(request, user_id, book_id):
+    """ View that handles user book delete requests. """
+    try:
+        user = User.objects.get(id=user_id)
+        book = Book.objects.get(id=book_id)
+    except ObjectDoesNotExist:
+        messages.add_message(request, messages.ERROR, "Invalid user or book!")
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+    user_books_exists = User_Books.objects.filter(user=user, book=book).exists()
+    if user_books_exists:
+        user_book = User_Books.objects.get(user=user, book=book)
+        user_book.delete()
+        messages.add_message(request, messages.SUCCESS, "Book removed from your favourites!")
+    else:
+        messages.add_message(request, messages.SUCCESS, "This book was not found in your favourites!")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

@@ -16,9 +16,9 @@ from schedule.models import Calendar, Event, Rule
 class Command(BaseCommand):
 
     HOW_MANY_CLUBS_TO_ADD = 10
-    HOW_MANY_USERS_TO_ADD = 500
-    HOW_MANY_BOOKS_TO_ADD = 500
-    HOW_MANY_RATINGS_TO_ADD = 500
+    HOW_MANY_USERS_TO_ADD = 50
+    HOW_MANY_BOOKS_TO_ADD = 50
+    HOW_MANY_RATINGS_TO_ADD = 50
     USER_ID = 0
     first_name = ""
     last_name = ""
@@ -138,7 +138,7 @@ class Command(BaseCommand):
             club_location = self.get_random_location()
             club_description = self.faker.text(max_nb_chars=520)
             club_reading_speed = random.randint(50, 500)
-
+            club_meeting_type = self.get_random_meeting_type()
             calendar_name = club_name + "\'s Calendar"
             calendar_slug = slugify(calendar_name)
             cal = Calendar(name=calendar_name, slug=calendar_slug)
@@ -150,10 +150,18 @@ class Command(BaseCommand):
                 location=club_location,
                 description=club_description,
                 avg_reading_speed=club_reading_speed,
+                meeting_type = club_meeting_type,
                 owner=user,
                 calendar=cal
             )
             club.save()
+
+            # Set owner's Club User object
+            Club_Users.objects.create(
+                user=user,
+                club=club,
+                role_num="4"
+            )
 
             # self.clubs_made.append(club)
             self.club_count += 1
@@ -287,6 +295,10 @@ class Command(BaseCommand):
             "Cairo, Egypt", "Aswan, Egypt", "Luxor, Egypt", "Alexandria, Egypt", "Sharm El Sheikh, Egypt"
         ]
         return random.choice(city)
+    
+    def get_random_meeting_type(self):
+        meeting_types = ['Online', 'In-person']
+        return random.choice(meeting_types)
 
     # get a random index from the list of users in the dataset
     def get_random_user(self):

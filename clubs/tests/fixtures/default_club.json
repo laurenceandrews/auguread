@@ -13,6 +13,15 @@
     }
   },
   {
+    "model": "clubs.Club_Users",
+    "pk": 21,
+    "fields": {
+      "user": 1,
+      "club": 6,
+      "role_num": "4"
+    }
+  },
+  {
     "model": "clubs.club",
     "pk": 12,
     "fields": {
@@ -23,6 +32,15 @@
       "owner": 1,
       "calendar": 13,
       "meeting_type": "INP"
+    }
+  },
+  {
+    "model": "clubs.Club_Users",
+    "pk": 22,
+    "fields": {
+      "user": 1,
+      "club":12,
+      "role_num": "4"
     }
   }
 ]

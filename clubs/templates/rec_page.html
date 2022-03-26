@@ -27,11 +27,15 @@
          <h2 class="text-2xl font-extrabold tracking-tight text-gray-900">
            <a id="we_think_youll_like">We think you'll like...</a>
          </h2>
-
-        <p>This page is still in progress. Check back soon!</p>
-        <!--  <div class="max-h-[24rem] overflow-scroll mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-            {% include 'partials/books_as_list.html' with books=books %}
-        </div>  -->
+         {% if club_favourites_exist is True %}
+         <div class="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+             {% include 'partials/books_as_list.html' with books=user_rec_books %}
+         </div>
+         {% else %}
+           <div class="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+             <p>There are currently no recommendations for you. Check back later.</p>
+           </div>
+         {% endif %}
       </div>
 
       <div class="max-w-2xl mx-auto py-4 px-4 sm:py-6 sm:px-6 lg:max-w-7xl lg:px-8">
@@ -39,11 +43,11 @@
           <a id="other_clubs_favourites">Other clubs' favourites...</a>
         </h2>
         {% if club_favourites_exist is True %}
-        <div class="max-h-[24rem] overflow-scroll mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+        <div class="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
             {% include 'partials/books_as_list.html' with books=club_favourites %}
         </div>
         {% else %}
-          <div class="max-h-[24rem] overflow-scroll mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+          <div class="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
             <p>There are currently no clubs with favourites. Check back later.</p>
           </div>
         {% endif %}

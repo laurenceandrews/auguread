@@ -52,6 +52,17 @@ class EventDetailViewTest(TestCase):
         event = response.context['event']
         self.assertEquals(event, self.event)
 
+    def test_get_event_detail_with_valid_id_and_in_person(self):
+        self.client.login(email=self.user.email, password="Password123")
+        self.club.meeting_type = 'INP'
+        self.club.save()
+        self.club.refresh_from_db()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'event_detail.html')
+        event = response.context['event']
+        self.assertEquals(event, self.event)
+
     def test_get_event_detail_with_invalid_id(self):
         self.client.login(email=self.user.email, password="Password123")
         url = reverse('event_detail', kwargs={'calendar_slug': self.calendar.slug, 'event_id': 0})
