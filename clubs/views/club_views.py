@@ -21,8 +21,7 @@ from schedule.models import Calendar, Event, Rule
 
 from .helpers import login_prohibited, member, owner
 from .mixins import (ApplicantProhibitedMixin, ClubOwnerRequiredMixin,
-                     ClubUserRequiredMixin, LoginProhibitedMixin,
-                     MemberProhibitedMixin)
+                     LoginProhibitedMixin, MemberProhibitedMixin)
 
 """View that handles creating a new club."""
 

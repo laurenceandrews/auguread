@@ -115,29 +115,6 @@ class ClubOwnerRequiredSchedulerMixin:
         return redirect(url)
 
 
-class ClubUserRequiredMixin:
-    """Mixin that redirects when a user does not have a Club_Users relationship."""
-
-    redirect_when_not_a_club_user_url = settings.REDIRECT_URL_WHEN_LOGGED_IN
-
-    def dispatch(self, *args, **kwargs):
-        """Redirect when not a club_user, or dispatch as normal otherwise."""
-        calendar_slug = kwargs['calendar_slug']
-        calendar = Calendar.objects.get(slug=calendar_slug)
-        club = Club.objects.get(calendar=calendar)
-        club_user_relationship_exists = Club_Users.objects.filter(club=club, user=self.request.user)
-        if not club_user_relationship_exists:
-            return self.handle_not_a_club_user(*args, **kwargs)
-        return super().dispatch(*args, **kwargs)
-
-    def handle_not_a_club_user(self, *args, **kwargs):
-        calendar_slug = kwargs['calendar_slug']
-        calendar = Calendar.objects.get(slug=calendar_slug)
-        url = reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
-        messages.add_message(self.request, messages.ERROR, "You are not a user of this club!")
-        return redirect(url)
-
-
 class TenPosRatingsRequiredMixin:
     """Mixin that redirects when a user has not yet made ten positive book ratings."""
 

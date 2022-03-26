@@ -17,8 +17,7 @@ from schedule.models import Calendar, Event, Rule
 
 from .helpers import login_prohibited
 from .mixins import (ApplicantProhibitedMixin, ClubOwnerRequiredSchedulerMixin,
-                     ClubUserRequiredMixin, LoginProhibitedMixin,
-                     MemberProhibitedMixin)
+                     LoginProhibitedMixin, MemberProhibitedMixin)
 
 
 class CalendarPickerView(LoginRequiredMixin, FormView):

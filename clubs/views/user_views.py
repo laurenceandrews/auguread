@@ -41,6 +41,7 @@ class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantP
 
         return context
 
+
 class UserDetailList(LoginRequiredMixin, ListView):
     """View that shows a list of all users."""
 
@@ -48,6 +49,7 @@ class UserDetailList(LoginRequiredMixin, ListView):
     template_name = "user_detail_list.html"
     context_object_name = "users"
     paginate_by = settings.USERS_PER_PAGE
+
 
 class UserDetailView(LoginRequiredMixin, DetailView):
 
