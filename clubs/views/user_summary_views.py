@@ -9,8 +9,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 
 from .helpers import login_prohibited
-from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
-                     MemberProhibitedMixin)
+from .mixins import LoginProhibitedMixin
 
 
 class UserSummaryView(LoginRequiredMixin, View):

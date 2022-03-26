@@ -20,14 +20,13 @@ from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
 from .helpers import login_prohibited, member, owner
-from .mixins import (ApplicantProhibitedMixin, ClubOwnerRequiredMixin,
-                     LoginProhibitedMixin, MemberProhibitedMixin)
-
-"""View that handles creating a new club."""
+from .mixins import ClubOwnerRequiredMixin, LoginProhibitedMixin
 
 
-@login_required()
+@ login_required()
 def new_club(request):
+    """View that handles creating a new club."""
+
     if request.method == "POST":
         current_user = request.user
         form = NewClubForm(request.POST)
@@ -215,7 +214,7 @@ class ClubListView(LoginRequiredMixin, ListView):
 def enter(request, club_id):
     """View that handles entering a club."""
     user = request.user
-    return redirect('show_user', user_id=user.id, club_id=club_id)
+    return redirect('club_detail', club_id=club_id)
 
 
 @ login_required
@@ -264,49 +263,6 @@ def transfer(request, user_id, club_id):
         return redirect('member_list', club_id=club_id)
 
 
-class ShowUserView(LoginRequiredMixin, ApplicantProhibitedMixin, DetailView, MultipleObjectMixin):
-    """View that shows individual user details."""
-
-    model = User
-    template_name = 'show_user.html'
-    paginate_by = settings.NUMBER_PER_PAGE
-    pk_url_kwarg = 'user_id'
-
-    def get_context_data(self, **kwargs):
-        """Generate context data to be shown in the template."""
-        # user = self.get_object() #new
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        target = self.get_object()
-        user = self.request.user
-        users = User.objects.all()
-        target_type = target.membership_type(club)
-        is_owner = target_type == 'Owner'
-        user_type = user.membership_type(club)
-        posts = Post.objects.filter(author=user)
-        context = super().get_context_data(object_list=users, **kwargs)
-        context = super().get_context_data(object_list=posts, **kwargs)  # new
-        context['can_approve'] = ((user != target) and (user_type == 'Owner'
-                                                        or user == club.owner) and target_type == 'Applicant')
-        context['is_owner'] = target_type == 'Owner'
-        context['can_transfer'] = ((user != target) and user == club.owner
-                                   and is_owner)
-        context['type'] = target_type
-        context['user'] = user
-        context['posts'] = context['object_list']
-        context['following'] = self.request.user.is_following(user)
-        context['followable'] = (self.request.user != user)
-        context['target'] = target
-        context['club'] = club
-        return context
-
-    def get(self, request, *args, **kwargs):
-        """Handle get request, and redirect to user_list if user_id invalid."""
-        try:
-            return super().get(request, *args, **kwargs)
-        except Http404:
-            return redirect('user_list', club_id=self.kwargs['club_id'])
-
-
 @ login_required
 @ owner
 def applicants_list(request, club_id):
@@ -344,35 +300,6 @@ def members_list(request, club_id):
                       'users': members,
                       'page_obj': page_obj
                   })
-
-
-class OwnerListView(LoginRequiredMixin, ListView, MultipleObjectMixin):
-    """View that shows a list of all the owners."""
-
-    model = User
-    template_name = "owner_list.html"
-    context_object_name = "users"
-    paginate_by = settings.NUMBER_PER_PAGE
-
-    def get_queryset(self):
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.owners())
-        return users
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['club'] = Club.objects.get(id=self.kwargs['club_id'])
-        context['user'] = self.request.user
-
-        return context
-
-    def post(self, request, **kwargs):
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        emails = request.POST.getlist('check[]')
-        for email in emails:
-            user = User.objects.get(email=email)
-            club.demote(user)
-        return redirect('owner_list', club_id=club.id)
 
 
 def club_recommender(request):

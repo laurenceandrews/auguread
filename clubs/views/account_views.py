@@ -13,8 +13,7 @@ from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 
 from .helpers import login_prohibited
-from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
-                     MemberProhibitedMixin)
+from .mixins import LoginProhibitedMixin
 
 
 class LogInView(LoginProhibitedMixin, View):

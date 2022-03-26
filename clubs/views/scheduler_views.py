@@ -16,8 +16,7 @@ from django.views.generic.edit import (CreateView, DeleteView, FormView,
 from schedule.models import Calendar, Event, Rule
 
 from .helpers import login_prohibited
-from .mixins import (ApplicantProhibitedMixin, ClubOwnerRequiredSchedulerMixin,
-                     LoginProhibitedMixin, MemberProhibitedMixin)
+from .mixins import ClubOwnerRequiredSchedulerMixin, LoginProhibitedMixin
 
 
 class CalendarPickerView(LoginRequiredMixin, FormView):
@@ -34,7 +33,7 @@ class CalendarPickerView(LoginRequiredMixin, FormView):
         return kwargs
 
 
-@login_required
+@ login_required
 def full_calendar(request, calendar_slug):
     """ View to display a calendar's full calendar. """
 
@@ -42,7 +41,7 @@ def full_calendar(request, calendar_slug):
     return render(request, 'fullcalendar.html', {'calendar': calendar})
 
 
-@login_required
+@ login_required
 def events_list(request, calendar_id):
     """ View to display a calendar's event list. """
     calendar = Calendar.objects.get(id=calendar_id)

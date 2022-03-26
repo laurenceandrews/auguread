@@ -23,8 +23,8 @@ class EnterViewTestCase(TestCase):
     def test_enter_club(self):
         self.client.login(email=self.club_owner.email, password='Password123')
         response = self.client.get(self.url)
-        redirect_url = reverse('show_user', kwargs={
-                               'club_id': self.club.id, 'user_id': self.club_owner.id})
+        redirect_url = reverse('club_detail', kwargs={
+                               'club_id': self.club.id})
         self.assertRedirects(response, redirect_url,
                              status_code=302, target_status_code=200)
 
