@@ -43,11 +43,6 @@ Migrate the database:
 ```
 $ python3 manage.py migrate
 ```
-Collect static files:
-
-```
-$ python manage.py collectstatic
-```
 
 Seed the development database with:
 

@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from .models import (Book, Book_Rating, Club, Club_Book_History, Club_Books,
-                     Club_Users, MeetingAddress, MeetingLink, Post, User,
-                     User_Book_History, User_Books)
+from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
+                     Club_Books, Club_Users, MeetingAddress, MeetingLink, Post,
+                     User, User_Book_History, User_Books)
 
 
 @admin.register(User)
@@ -91,6 +91,15 @@ class User_Book_History(admin.ModelAdmin):
 
     list_display = [
         'user', 'book'
+    ]
+
+
+@admin.register(Address)
+class AddressAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for addresses."""
+
+    list_display = [
+        'name', 'zip_code', 'city', 'country'
     ]
 
 
