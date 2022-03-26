@@ -1,6 +1,5 @@
 {% extends 'base_content.html' %}
 {% load i18n %}
-{% load event_meeting %}
 {% block content%}
 <div class="h-screen flex items-center justify-center">
 
@@ -14,7 +13,7 @@
       <p>Start: {{event.start}}</p>
       <p>End: {{event.end}}</p>
       <p>Calendar: {{event.calendar}}</p>
-      <p>Event meeting at: {% event_meeting event %}</p>
+      <p>Event meeting at: {{meeting_at}}</p>
       <p>Description: {{event.description}}</p>
     </div>
 

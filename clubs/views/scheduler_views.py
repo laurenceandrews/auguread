@@ -337,6 +337,10 @@ class EditEventLinkView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, Upd
         context['event_name'] = event.title
         context['user'] = self.request.user
 
+        meeting_link_object = MeetingLink.objects.filter(event=event)
+        if meeting_link_object.exists():
+            context['meeting_link'] = MeetingLink.objects.get(event=event)
+
         return context
 
 
@@ -388,6 +392,10 @@ class EditEventAddressView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, 
         context['event_name'] = event.title
         context['user'] = self.request.user
 
+        meeting_address_object = MeetingAddress.objects.filter(event=event)
+        if meeting_address_object.exists():
+            context['meeting_address'] = MeetingAddress.objects.get(event=event)
+
         return context
 
 
@@ -434,12 +442,23 @@ class EventDetailView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, Detai
         context = super().get_context_data(**kwargs)
         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
         event = Event.objects.get(id=self.kwargs['event_id'])
+        club = Club.objects.get(calendar=calendar)
         context['calendar'] = calendar
         context['calendar_id'] = calendar.id
         context['calendar_slug'] = calendar.slug
         context['calendar_name'] = calendar.name
         context['event_name'] = event.title
         context['user'] = self.request.user
+
+        context['meeting_at'] = 'Not set.'
+        if club.meeting_type == 'ONL':
+            meeting_link_object = MeetingLink.objects.filter(event=event)
+            if meeting_link_object.exists():
+                context['meeting_at'] = MeetingLink.objects.get(event=event).meeting_link
+        elif club.meeting_type == 'INP':
+            meeting_address_object = MeetingAddress.objects.filter(event=event)
+            if meeting_address_object.exists():
+                context['meeting_at'] = MeetingAddress.objects.get(event=event).address
 
         return context
 

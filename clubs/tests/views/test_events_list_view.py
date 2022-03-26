@@ -21,6 +21,7 @@ class EventsListTest(TestCase):
         self.calendar = Calendar.objects.get(pk=5)
         self.club = Club.objects.get(pk=6)
         self.data = {'calendar_id': self.calendar.id}
+
         self.url = reverse(
             'events_list', kwargs={'calendar_id': self.data['calendar_id']}
         )
@@ -40,6 +41,17 @@ class EventsListTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'events_list.html')
         self.assertEqual(len(response.context['events']), 7)
+
+    def test_get_club_list_with_query(self):
+        self.client.login(email=self.user.email, password="Password123")
+        self._create_test_events()
+        event = Event.objects.get(title='Christmas Party')
+        data_with_q = {'calendar_id': self.calendar.id, 'q': event.title}
+        response = self.client.get(self.url, data_with_q, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events_list.html')
+        self.assertEqual(len(response.context['events']), 1)
+        self.assertTrue(event in response.context['events'])
 
     def _create_test_events(self):
         data = {
