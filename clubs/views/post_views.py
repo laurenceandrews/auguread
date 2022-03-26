@@ -7,8 +7,7 @@ from django.urls import reverse
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from .helpers import login_prohibited
-from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
-                     MemberProhibitedMixin)
+from .mixins import LoginProhibitedMixin
 
 
 class NewPostView(LoginRequiredMixin, CreateView):

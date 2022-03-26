@@ -13,8 +13,7 @@ from django.views import View
 from django.views.generic.edit import FormView, UpdateView
 
 from .helpers import login_prohibited
-from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
-                     MemberProhibitedMixin)
+from .mixins import LoginProhibitedMixin
 
 
 class LogInView(LoginProhibitedMixin, View):
@@ -32,7 +31,8 @@ class LogInView(LoginProhibitedMixin, View):
         """Handles log in attempt."""
 
         form = LogInForm(request.POST)
-        self.next = request.POST.get('next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
+        self.next = request.POST.get(
+            'next') or settings.REDIRECT_URL_WHEN_LOGGED_IN
         user = form.get_user()
         if user is not None:
             login(request, user)
@@ -119,12 +119,13 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         """Return redirect URL after successful update."""
-        messages.add_message(self.request, messages.SUCCESS, "Profile updated!")
-        return reverse('user_profile')
+        messages.add_message(
+            self.request, messages.SUCCESS, "Profile updated!")
+        return reverse('settings')
 
     def get_cancel_url(self):
         """Return redirect URL after cancelled update."""
-        return reverse('user_profile')
+        return reverse('settings')
 
 
 @login_required

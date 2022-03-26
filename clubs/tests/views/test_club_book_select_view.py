@@ -14,6 +14,7 @@ class ClubBookSelectViewTest(TestCase):
         'clubs/tests/fixtures/default_calendar.json',
         'clubs/tests/fixtures/default_club.json',
         'clubs/tests/fixtures/default_book.json',
+        'clubs/tests/fixtures/other_books.json',
         'clubs/tests/fixtures/default_rating.json',
         'clubs/tests/fixtures/default_club_book.json',
         'clubs/tests/fixtures/default_club_user.json'
@@ -24,6 +25,7 @@ class ClubBookSelectViewTest(TestCase):
         self.calendar = Calendar.objects.get(pk=5)
         self.club = Club.objects.get(pk=6)
         self.book = Book.objects.get(pk=20)
+        self.book_with_no_rating = Book.objects.get(pk=24)
 
         self.url = reverse('club_book_select', kwargs={'club_id': self.club.id, 'book_id': self.book.id})
 
@@ -37,6 +39,22 @@ class ClubBookSelectViewTest(TestCase):
 
     def test_get_club_book_select_with_valid_club_and_book_ids(self):
         self.client.login(email=self.user.email, password="Password123")
+        club_book_history_count_before = Club_Book_History.objects.count()
+        response = self.client.get(self.url)
+        club_book_history_count_after = Club_Book_History.objects.count()
+        self.assertEqual(club_book_history_count_after, club_book_history_count_before + 1)
+
+    def test_get_club_book_select_with_existing_club_book_history(self):
+        self.client.login(email=self.user.email, password="Password123")
+        Club_Book_History.objects.create(club=self.club, book=self.book, average_rating=5)
+        club_book_history_count_before = Club_Book_History.objects.count()
+        response = self.client.get(self.url)
+        club_book_history_count_after = Club_Book_History.objects.count()
+        self.assertEqual(club_book_history_count_after, club_book_history_count_before + 1)
+
+    def test_get_club_book_select_with_existing_club_book_history_and_rating(self):
+        self.client.login(email=self.user.email, password="Password123")
+        Club_Book_History.objects.create(club=self.club, book=self.book_with_no_rating, average_rating=5)
         club_book_history_count_before = Club_Book_History.objects.count()
         response = self.client.get(self.url)
         club_book_history_count_after = Club_Book_History.objects.count()

@@ -2,8 +2,8 @@
 {% block content %}
 <div class="border border-gray-100/50 shadow-lg m-8 bg-white rounded-xl">
   <div class="px-4 py-5 sm:px-6">
-    <h3 class="py-4 text-2xl leading-6 font-bold text-gray-900 border-b mb-4">Delete your account</h3>
-     <p class="mt-1 max-w-2xl text-xl text-gray-700">Are you sure you want to delete your account? This will permanently delete your profile and any content you have generated.</p>
+    <h3 class="py-4 text-2xl leading-6 font-bold text-gray-900 border-b mb-4">Delete {{club.name}}</h3>
+     <p class="mt-1 max-w-2xl text-xl text-gray-700">Are you sure you want to delete your club? This will permanently delete your club and any related content.</p>
   </div>
 
   <div class="my-4 mx-4 border-t px-4 pb-1">
@@ -15,7 +15,7 @@
       <br>
       <!-- Buttons -->
       <div class="flex flex-row-reverse items-end gap-10">
-        <a href="{% url 'settings' %}" class="bg-transparent hover:bg-blue-500 text-blue-700 font-bold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Cancel</a>
+        <a href="{% url 'club_detail' club.id %}" class="bg-transparent hover:bg-blue-500 text-blue-700 font-bold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Cancel</a>
         <input class="font-extrabold cursor-pointer ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" type="submit" value="Confirm">
       </div>
     </form>

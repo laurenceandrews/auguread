@@ -82,7 +82,7 @@ class EventAddressUpdateViewTest(TestCase):
                              status_code=302, target_status_code=200, fetch_redirect_response=True
                              )
 
-    def test_unsuccesful_event_address_edit_update(self):
+    def test_unsuccesful_event_address_edit(self):
         self.client.login(email=self.user.email, password="Password123")
         self.form_input['address'] = ''
         before_count = MeetingAddress.objects.count()
@@ -97,13 +97,20 @@ class EventAddressUpdateViewTest(TestCase):
         self.meeting_address.refresh_from_db()
         self.assertEqual(self.meeting_address.address, self.first_address)
 
-    def test_succesful_calendar_picker(self):
+    def test_succesful_event_address_edit(self):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.post(self.url, self.form_input)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'fullcalendar.html')
 
-    def test_post_event_link_address_redirects_when_not_logged_in(self):
+    def test_succesful_event_address_edit_with_no_existing_meeting_address(self):
+        self.meeting_address.delete()
+        self.client.login(email=self.user.email, password="Password123")
+        response = self.client.post(self.url, self.form_input)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'fullcalendar.html')
+
+    def test_post_event_address_edit_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.post(self.url, self.form_input)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)

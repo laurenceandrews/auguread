@@ -21,25 +21,37 @@ class EventsListTest(TestCase):
         self.calendar = Calendar.objects.get(pk=5)
         self.club = Club.objects.get(pk=6)
         self.data = {'calendar_id': self.calendar.id}
+
         self.url = reverse(
             'events_list', kwargs={'calendar_id': self.data['calendar_id']}
         )
 
-    def test_club_list_url(self):
+    def test_event_list_url(self):
         self.assertEqual(self.url,  f'/events_list/{self.calendar.id}')
 
-    def test_get_club_list_redirects_when_not_logged_in(self):
+    def test_get_event_list_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
-    def test_get_club_list(self):
+    def test_get_event_list(self):
         self.client.login(email=self.user.email, password="Password123")
         self._create_test_events()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'events_list.html')
         self.assertEqual(len(response.context['events']), 7)
+
+    def test_get_club_list_with_query(self):
+        self.client.login(email=self.user.email, password="Password123")
+        self._create_test_events()
+        event = Event.objects.get(title='Christmas Party')
+        data_with_q = {'calendar_id': self.calendar.id, 'q': event.title}
+        response = self.client.get(self.url, data_with_q, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'events_list.html')
+        self.assertEqual(len(response.context['events']), 1)
+        self.assertTrue(event in response.context['events'])
 
     def _create_test_events(self):
         data = {

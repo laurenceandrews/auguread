@@ -17,8 +17,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView
 
 from .helpers import login_prohibited
-from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
-                     MemberProhibitedMixin)
+from .mixins import LoginProhibitedMixin
 
 
 class BookDetailView(LoginRequiredMixin, DetailView):
@@ -98,11 +97,7 @@ class CreateBookRatingView(LoginRequiredMixin, CreateView):
         """Process a valid form."""
         current_user = self.request.user
         rating = self.request.POST.get('rating')
-        try:
-            book = Book.objects.get(id=self.kwargs['book_id'])
-        except ObjectDoesNotExist:
-            messages.add_message(self.request, messages.ERROR, "Invalid user or book!")
-            return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+        book = Book.objects.get(id=self.kwargs['book_id'])
 
         book_rating_exists = Book_Rating.objects.filter(user=current_user, book=book)
 
@@ -127,36 +122,6 @@ class CreateBookRatingView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
         return reverse('book_preferences')
-
-
-class CreateClubBookHistoryView(CreateView):
-    model = Club_Book_History
-    template_name = 'club_book_history_create.html'
-    form_class = ClubBookHistoryForm
-
-    def form_valid(self, form):
-        """Process a valid form."""
-        current_user = self.request.user
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        book = Book.objects.get(id=self.kwargs['book_id'])
-
-        club_book_history_exists = Club_Book_History.objects.filter(club=club, book=book)
-
-        if club_book_history_exists.exists():
-            club_book_history = Club_Book_History.objects.get(club=club, book=book)
-            club_book_history.delete()
-
-        club_book_history = Club_Book_History.objects.create(
-            club=club,
-            book=book
-        )
-        messages.add_message(self.request, messages.SUCCESS, "Book set as club's currently reading!")
-
-        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
-
-    def get_success_url(self):
-        """Return URL to redirect the user too after valid form handling."""
-        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
 
 class CreateUserBookHistoryView(LoginRequiredMixin, CreateView):
