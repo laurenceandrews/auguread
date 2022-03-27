@@ -1,5 +1,6 @@
 """Views related to the clubs."""
-from clubs.forms import (BookRatingForm, ClubUpdateForm, CreateClubUserForm, NewClubForm)
+from clubs.forms import (BookRatingForm, ClubUpdateForm, CreateClubUserForm,
+                         NewClubForm)
 from clubs.models import Club, Club_Users, Post, User
 from django.conf import settings
 from django.contrib import messages
@@ -17,6 +18,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
+
 from .helpers import login_prohibited, member, owner
 from .mixins import ClubOwnerRequiredMixin, LoginProhibitedMixin
 
@@ -48,13 +50,13 @@ def new_club(request):
                 name=name,
                 location=location,
                 description=description,
-                # avg_reading_speed=avg_reading_speed,
                 owner=current_user,
                 calendar=cal,
                 meeting_type=meeting_type
             )
 
             Club_Users.objects.create(user=current_user, club=club, role_num=4)
+
             return redirect('club_detail', club.id)
         else:
             return render(request, "new_club.html", {"form": form})
@@ -70,21 +72,12 @@ class ClubUpdateView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
     form_class = ClubUpdateForm
     pk_url_kwarg = "club_id"
 
-    # def get_form_kwargs(self):
-    #     kwargs = super(ClubUpdateView, self).get_form_kwargs()
-    #     kwargs['club_id'] = self.kwargs['club_id']
-    #     return kwargs
-
     def form_valid(self, form):
         """Handle valid form by saving the new password."""
         club = Club.objects.get(id=self.kwargs['club_id'])
 
         name = form.cleaned_data.get("name")
-        # city = form.cleaned_data.get("city")
-        # country = form.cleaned_data.get("country")
         description = form.cleaned_data.get("description")
-
-        # location = city + ", " + country
 
         meeting_type = form.cleaned_data.get("meeting_type")
 

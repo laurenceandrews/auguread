@@ -1,7 +1,7 @@
 from schedule.models import Calendar, Event, Rule
 
 from .book_models import Book
-from .post_models import Post
+from .post_models import ClubFeedPost, Post
 from .recommender_models import MyUUIDModel
 from .scheduler_models import Address, MeetingAddress, MeetingLink
 from .user_models import (Book_Rating, Club, Club_Book_History, Club_Books,
