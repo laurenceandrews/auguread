@@ -104,6 +104,21 @@
             {% endif %}
 
           <div class="px-4 py-5 sm:p-6">
+            <dt class="text-base font-normal text-gray-900">{{club.name}}'s Message Board</dt>
+            <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
+              <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+                Make and view posts
+              </div>
+
+              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
+                <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
+                  <a href='{%url 'club_feed' club.id %}' class="">{{club.name}}'s Message Board</a>
+                </div>
+              </div>
+            </dd>
+          </div>
+
+          <div class="px-4 py-5 sm:p-6">
             <dt class="text-base font-normal text-gray-900">{{club.name}}'s members</dt>
             <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
               <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
@@ -135,6 +150,22 @@
           {%endif%}
 
           {%if role_num == '4'%}
+
+          <div class="px-4 py-5 sm:p-6">
+            <dt class="text-base font-normal text-gray-900">{{club.name}}'s Message Board</dt>
+            <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
+              <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+                Make and view posts
+              </div>
+
+              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
+                <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
+                  <a href='{%url 'club_feed' club.id %}' class="">{{club.name}}'s Message Board</a>
+                </div>
+              </div>
+            </dd>
+          </div>
+          
           <div class="px-4 py-5 sm:p-6">
             <dt class="text-base font-normal text-gray-900">{{club.name}}'s applications</dt>
             <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
