@@ -1,5 +1,6 @@
 """Views related to the clubs."""
-from clubs.forms import (BookRatingForm, ClubUpdateForm, CreateClubUserForm, NewClubForm)
+from clubs.forms import (BookRatingForm, ClubUpdateForm, CreateClubUserForm,
+                         NewClubForm)
 from clubs.models import Club, Club_Users, Post, User
 from django.conf import settings
 from django.contrib import messages
@@ -17,6 +18,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
+
 from .helpers import login_prohibited, member, owner
 from .mixins import ClubOwnerRequiredMixin, LoginProhibitedMixin
 
@@ -55,6 +57,8 @@ def new_club(request):
             )
 
             Club_Users.objects.create(user=current_user, club=club, role_num=4)
+
+            ClubFeed.objects.create(club=club)
             return redirect('club_detail', club.id)
         else:
             return render(request, "new_club.html", {"form": form})

@@ -25,7 +25,6 @@ from schedule.views import (DeleteEventView, EditEventView, EventView,
                             api_move_or_resize_by_code, api_occurrences,
                             api_select_create)
 
-
 urlpatterns = [
     # Admin urls
     path('admin/', admin.site.urls),
@@ -65,6 +64,10 @@ urlpatterns = [
     path('feed/', views.FeedView.as_view(), name='feed'),
     path('new_post/', views.NewPostView.as_view(), name='new_post'),
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
+
+
+    path('club/<int:club_id>/feed/create', views.ClubFeedPostCreateView.as_view(), name='club_vieed_create'),
+
 
 
     # Club urls
