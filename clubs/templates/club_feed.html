@@ -1,0 +1,43 @@
+{% extends 'base_content.html' %}
+{% block content %}
+{% load widget_tweaks %}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+  <div class="lg:text-center">
+    <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Chat with {{club.name}}'s members</h2>
+    <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">{{club.name}}'s Message Board</p>
+    <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">Scroll through the posts to see what your club members are talking about.</p>
+  </div>
+
+  <div class="">
+    <form action="{% url 'club_feed_create' club.id %}" method="post" class="m-8 sm:m-0">
+      {% for field in form %}
+        <div class="">
+          <label class="block text-sm font-medium text-gray-700  dark:text-gray-50">
+            {{ field.label_tag }}
+          </label>
+          <div class="mt-1">
+            {{ field|add_class:"appearance-none block w-full sm:w-auto h-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"}}
+            {{ field.errors }}
+            {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+      {% csrf_token %}
+      <button type="submit" class="mt-4 w-32 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Post</button>
+    </form>
+
+    <div class="ml-8 mt-6 sm:ml-0 max-w-xl">
+      {% include 'partials/posts.html' with posts=posts %}
+    </div>
+
+    <div class="m-4">
+      {% include 'partials/post_pager.html' with page_obj=page_obj %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -23,15 +23,16 @@ class Post(models.Model):
         ordering = ['-created_at']
 
 
-class ClubFeed(models.Model):
+class ClubFeedPost(models.Model):
     """ClubFeed model used for recording posts made for a club's feed."""
-    club = models.OneToOneField(
-        Club,
-        on_delete=models.CASCADE,
-        primary_key=True,
-    )
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
 
-    posts = models.ManyToManyField(Post)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
 
     class Meta:
         """Model options."""
+
+    def post_count(self):
+        """Returns the number of posts of self."""
+
+        return self.posts.count()

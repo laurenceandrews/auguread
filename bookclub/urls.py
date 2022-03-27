@@ -66,7 +66,8 @@ urlpatterns = [
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
 
 
-    path('club/<int:club_id>/feed/create', views.ClubFeedPostCreateView.as_view(), name='club_vieed_create'),
+    path('club/<int:club_id>/feed/create', views.ClubFeedPostCreateView.as_view(), name='club_feed_create'),
+    path('club/<int:club_id>/feed/', views.CLubFeedView.as_view(), name='club_feed'),
 
 
 

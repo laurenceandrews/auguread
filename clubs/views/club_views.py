@@ -50,7 +50,6 @@ def new_club(request):
                 name=name,
                 location=location,
                 description=description,
-                # avg_reading_speed=avg_reading_speed,
                 owner=current_user,
                 calendar=cal,
                 meeting_type=meeting_type
@@ -58,7 +57,6 @@ def new_club(request):
 
             Club_Users.objects.create(user=current_user, club=club, role_num=4)
 
-            ClubFeed.objects.create(club=club)
             return redirect('club_detail', club.id)
         else:
             return render(request, "new_club.html", {"form": form})

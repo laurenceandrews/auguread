@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
-                     Club_Books, Club_Users, ClubFeed, MeetingAddress,
+                     Club_Books, Club_Users, ClubFeedPost, MeetingAddress,
                      MeetingLink, Post, User, User_Book_History, User_Books)
 
 
@@ -76,16 +76,21 @@ class PostAdmin(admin.ModelAdmin):
         return post.author.username
 
 
-@admin.register(ClubFeed)
-class ClubFeedAdmin(admin.ModelAdmin):
-    """Configuration of the admin interface for club feeds."""
+@admin.register(ClubFeedPost)
+class ClubFeedPostAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for club feed posts."""
 
     list_display = [
-        'club', 'posts_count'
+        'club_name', 'post_text'
     ]
 
-    def posts_count(self, club_feed):
-        return club_feed.posts.all().count()
+    def club_name(self, club_feed_post):
+        """Return the name of the club."""
+        return club_feed_post.club.name
+
+    def post_text(self, club_feed_post):
+        """Return the author of a given post."""
+        return club_feed_post.post.text
 
 
 @admin.register(Book)

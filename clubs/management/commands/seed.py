@@ -193,9 +193,6 @@ class Command(BaseCommand):
                 meeting_address = MeetingAddress(**data)
                 meeting_address.save()
 
-            # create a feed for the club
-            ClubFeed.objects.create(club=club)
-
     def _create_default_address(self):
         self.default_address = Address.objects.create(
             name="City Library",
