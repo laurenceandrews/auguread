@@ -94,7 +94,7 @@ class EventLinkUpdateViewTest(TestCase):
     def test_succesful_event_link_edit_update(self):
         self.client.login(email=self.user.email, password="Password123")
         before_count = MeetingLink.objects.count()
-        response = self.client.post(self.url, self.form_input)
+        response = self.client.post(self.url, self.form_input, follow=True)
         after_count = MeetingLink.objects.count()
         self.assertEqual(after_count, before_count)
         self.assertEqual(response.status_code, 200)
@@ -103,17 +103,21 @@ class EventLinkUpdateViewTest(TestCase):
     def test_succesful_event_link_edit_when_meeting_link_already_exists(self):
         self.client.login(email=self.user.email, password="Password123")
         before_count = Event.objects.count()
-        response = self.client.post(self.url, self.form_input)
+        response = self.client.post(self.url, self.form_input, follow=True)
         after_count = Event.objects.count()
         self.assertEqual(after_count, before_count)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'fullcalendar.html')
 
     def test_succesful_event_link_edit_when_meeting_link_does_not_already_exists(self):
         self.meeting_link.delete()
         self.client.login(email=self.user.email, password="Password123")
         before_count = Event.objects.count()
-        response = self.client.post(self.url, self.form_input)
+        response = self.client.post(self.url, self.form_input, follow=True)
         after_count = Event.objects.count()
         self.assertEqual(after_count, before_count)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'fullcalendar.html')
 
     def test_unsuccesful_event_link_edit_update(self):
         self.client.login(email=self.user.email, password="Password123")

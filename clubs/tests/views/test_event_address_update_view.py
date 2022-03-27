@@ -99,14 +99,14 @@ class EventAddressUpdateViewTest(TestCase):
 
     def test_succesful_event_address_edit(self):
         self.client.login(email=self.user.email, password="Password123")
-        response = self.client.post(self.url, self.form_input)
+        response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'fullcalendar.html')
 
     def test_succesful_event_address_edit_with_no_existing_meeting_address(self):
         self.meeting_address.delete()
         self.client.login(email=self.user.email, password="Password123")
-        response = self.client.post(self.url, self.form_input)
+        response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'fullcalendar.html')
 
