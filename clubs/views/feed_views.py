@@ -1,6 +1,7 @@
 """Views related to the Feed."""
 from clubs.forms import PostForm
 from clubs.models import Club, ClubFeedPost, Post, User
+from clubs.views.mixins import ClubMemberOrOwnerRequiredMixin
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -57,7 +58,7 @@ class NewPostView(LoginRequiredMixin, CreateView):
         return redirect('log_in')
 
 
-class ClubFeedPostCreateView(CreateView):
+class ClubFeedPostCreateView(LoginRequiredMixin, ClubMemberOrOwnerRequiredMixin, CreateView):
     model = Post
     template_name = 'club_feed.html'
     form_class = PostForm
@@ -79,7 +80,7 @@ class ClubFeedPostCreateView(CreateView):
         return redirect('club_feed', club.id)
 
 
-class CLubFeedView(ListView):
+class CLubFeedView(LoginRequiredMixin, ClubMemberOrOwnerRequiredMixin, ListView):
     """Class-based generic view for displaying a club's feed."""
 
     model = Post
