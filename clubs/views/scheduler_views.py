@@ -25,7 +25,7 @@ class CalendarPickerView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         calendar = form.cleaned_data.get('calendar')
-        return render(self.request, 'fullcalendar.html', {'calendar': calendar})
+        return redirect('full_calendar', calendar_slug=calendar.slug)
 
     def get_form_kwargs(self):
         kwargs = super(CalendarPickerView, self).get_form_kwargs()
@@ -111,8 +111,7 @@ class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, Creat
         if club.meeting_type == 'ONL':
             return redirect('create_event_link', calendar_slug=calendar.slug, event_id=event.id)
 
-        # if club.meeting_type == 'INP':
-        else:
+        elif club.meeting_type == 'INP':
             return redirect('create_event_address', calendar_slug=calendar.slug, event_id=event.id)
 
     def get_success_url(self):
