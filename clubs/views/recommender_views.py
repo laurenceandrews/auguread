@@ -1,16 +1,17 @@
 """Views related to the recommender."""
 from statistics import mean
-
+from clubs.book_to_club_recommender.book_to_club_recommender_age import \
+    ClubBookAgeRecommender
+from clubs.book_to_club_recommender.book_to_club_recommender_author import \
+    ClubBookAuthorRecommender
 from clubs.book_to_user_recommender.book_to_user import BookToUserRecommender
 from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
-                         ClubBookForm, CreateEventForm, LogInForm,
-                         MeetingAddressForm, MeetingLinkForm, NewClubForm,
-                         PasswordForm, PostForm, SignUpForm)
-# from clubs.helpers import member, owner
+                         CreateEventForm, LogInForm, MeetingAddressForm,
+                         MeetingLinkForm, NewClubForm, PasswordForm, PostForm,
+                         SignUpForm)
 from clubs.models import (Address, Book, Book_Rating, Club, Club_Book_History,
                           Club_Books, Club_Users, MeetingAddress, MeetingLink,
                           Post, User)
-from clubs.views.club_views import MemberListView
 from clubs.views.mixins import TenPosRatingsRequiredMixin
 from django.conf import settings
 from django.contrib import messages
@@ -32,7 +33,6 @@ from django.views.generic.edit import (CreateView, DeleteView, FormView,
                                        UpdateView)
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
-from clubs.views.mixins import TenPosRatingsRequiredMixin
 
 
 class ClubRecommenderView(TenPosRatingsRequiredMixin, View):
@@ -63,57 +63,70 @@ class ClubRecommenderView(TenPosRatingsRequiredMixin, View):
         return render(self.request, 'club_recommender.html', {'next': self.next, 'clubs_paginated': self.clubs_paginated})
 
 
-class ClubBookSelectionView(LoginRequiredMixin, CreateView):
-    """Class-based generic view for club book selection handling."""
+class RecommendedClubBookListView(LoginRequiredMixin, View):
+    """View to display a list of recommended books for clubs."""
 
-    model = Club_Books
-    template_name = 'club_book_select.html'
-    form_class = ClubBookForm
+    http_method_names = ['get', 'post']
 
-    def get_form_kwargs(self):
-        kwargs = super(ClubBookSelectionView, self).get_form_kwargs()
-        kwargs['club_id'] = self.kwargs['club_id']
-        return kwargs
+    def get(self, request, *args, **kwargs):
+        """Display template."""
 
-    def form_valid(self, form):
-        """Process a valid form."""
-        club = Club.objects.get(id=self.kwargs['club_id'])
+        club_id = self.kwargs['club_id']
+        self.club = Club.objects.get(id=club_id)
 
-        book = form.cleaned_data.get('book')
+        if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
+            book_ids = ClubBookAuthorRecommender(club_id).get_recommended_books()
+            if(len(book_ids) < 6):
+                book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
+        else:
+            book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
 
-        lastBookRead = Club_Book_History.objects.last()
-        if lastBookRead:
+        self.books = Book.objects.filter(id__in=book_ids)
 
-            # Verify applicant number below
-            club_users = Club_Users.objects.filter(club=club).exclude(role_num=1).values('user')
-            book_ratings = Book_Rating.objects.filter(book=lastBookRead.book, user__in=club_users)
+        return self.render()
+
+    def render(self):
+        """Render template."""
+
+        return render(self.request, 'recommended_books_for_club_list.html', {
+            'books': self.books,
+            'club': self.club
+        })
+
+
+@login_required
+def club_book_select_view(request, club_id, book_id):
+    try:
+        club = Club.objects.get(id=club_id)
+        book = Book.objects.get(id=book_id)
+    except ObjectDoesNotExist:
+        messages.add_message(request, messages.ERROR, "Invalid club or book!")
+        return redirect('user_summary')
+
+    lastBookRead = Club_Book_History.objects.last()
+    if lastBookRead:
+        club_users = Club_Users.objects.filter(club=club).exclude(role_num=1).values('user')
+        book_ratings = Book_Rating.objects.filter(book=lastBookRead.book, user__in=club_users)
+        if book_ratings.exists():
             all_ratings = map(int, list(book_ratings.values_list('rating', flat=True)))
             average_rating = mean(all_ratings)
+        else:
+            average_rating = 0
 
-            lastBookRead.average_rating = average_rating
+        lastBookRead.average_rating = average_rating
 
-            if lastBookRead.average_rating >= 6:
-                Club_Books.objects.create(
-                    club=club,
-                    book=lastBookRead.book
-                )
+        if lastBookRead.average_rating >= 6:
+            Club_Books.objects.create(
+                club=club,
+                book=lastBookRead.book
+            )
 
-        Club_Book_History.objects.create(
-            club=club,
-            book=book,
-            average_rating=1
-        )
-        return render(self.request, 'home.html')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        context['club_name'] = club.name
-        return context
-
-    def get_success_url(self):
-        """Return URL to redirect the user to after valid form handling."""
-        return redirect('home')
+    Club_Book_History.objects.create(
+        club=club,
+        book=book,
+        average_rating=1
+    )
+    return redirect('club_detail', club.id)
 
 
 class RecommendationsView(LoginRequiredMixin, View):
@@ -124,16 +137,17 @@ class RecommendationsView(LoginRequiredMixin, View):
         """Display template."""
 
         # returns the collaborative filtering of ratings between users
-        # user_rec_book_ids = BookToUserRecommender().get_collaborative_filtering()
-        # self.user_rec_books = Book.objects.filter(id__in=user_rec_book_ids)[0:11]
+        user_rec_book_ids = BookToUserRecommender().get_collaborative_filtering()
+        self.user_rec_books = Book.objects.filter(id__in=user_rec_book_ids)[0:10]
 
-        club_favourites = Club_Books.objects.all()
+        club_favourites = Club_Books.objects.all().order_by('-id')
+
         if club_favourites.count() == 0:
             self.club_favourites_exist = False
         else:
             self.club_favourites_exist = True
 
-        self.club_favourites_book_ids = Club_Books.objects.values('book')[0:11]
+        self.club_favourites_book_ids = club_favourites.values('book')[0:10]
         self.club_favourites = Book.objects.filter(id__in=self.club_favourites_book_ids)
 
         return self.render()
@@ -143,8 +157,8 @@ class RecommendationsView(LoginRequiredMixin, View):
 
         return render(self.request, 'rec_page.html',
                       {
-                          # 'user_rec_books_exists': self.user_rec_books.exists(),
-                          # 'user_rec_books': self.user_rec_books,
+                          'user_rec_books_exists': self.user_rec_books.exists(),
+                          'user_rec_books': self.user_rec_books,
                           'club_favourites_exist': self.club_favourites_exist,
                           'club_favourites': self.club_favourites}
                       )

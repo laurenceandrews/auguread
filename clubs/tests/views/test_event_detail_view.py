@@ -52,6 +52,17 @@ class EventDetailViewTest(TestCase):
         event = response.context['event']
         self.assertEquals(event, self.event)
 
+    def test_get_event_detail_with_valid_id_and_in_person(self):
+        self.client.login(email=self.user.email, password="Password123")
+        self.club.meeting_type = 'INP'
+        self.club.save()
+        self.club.refresh_from_db()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'event_detail.html')
+        event = response.context['event']
+        self.assertEquals(event, self.event)
+
     def test_get_event_detail_with_invalid_id(self):
         self.client.login(email=self.user.email, password="Password123")
         url = reverse('event_detail', kwargs={'calendar_slug': self.calendar.slug, 'event_id': 0})
@@ -64,29 +75,15 @@ class EventDetailViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
-    def test_get_event_detail_redirects_when_not_club_owner(self):
-        calendar = Calendar.objects.get(pk=17)
-        club = Club.objects.get(pk=16)
-
-        data = {
-            'title': 'Exercise',
-            'start': datetime.datetime(2008, 11, 3, 8, 0),
-            'end': datetime.datetime(2008, 11, 3, 9, 0),
-            'end_recurring_period': datetime.datetime(2009, 6, 1, 0, 0),
-            'rule': Rule.objects.get(pk=9),
-            'calendar': self.calendar
-        }
-        event = Event(**data)
-        event.save()
-
-        url = reverse(
-            'event_detail', kwargs={'calendar_slug': calendar.slug, 'event_id': event.id}
-        )
-
+    def test_get_full_calendar_as_owner(self):
         self.client.login(email=self.user.email, password="Password123")
-        redirect_url = reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
-        response = self.client.post(url, data, follow=True)
-        self.assertTemplateUsed(response, 'fullcalendar.html')
-        self.assertRedirects(response, redirect_url,
-                             status_code=302, target_status_code=200, fetch_redirect_response=True
-                             )
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'event_detail.html')
+
+    def test_get_full_calendar_as_non_owner(self):
+        user = User.objects.get(pk=2)
+        self.client.login(email=user.email, password="Password123")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'event_detail.html')

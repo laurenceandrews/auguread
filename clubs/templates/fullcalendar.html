@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-{% include 'partials/fullcalendar_menu.html' with calendar=calendar%}
+{% include 'partials/fullcalendar_menu.html' with calendar=calendar user_is_owner=user_is_owner%}
 
 <div class="flex items-center justify-center">
 

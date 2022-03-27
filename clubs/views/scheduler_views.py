@@ -1,9 +1,12 @@
 from clubs.forms import (AddressForm, CalendarPickerForm, CreateEventForm,
                          MeetingAddressForm, MeetingLinkForm)
-from clubs.models import (Address, Club, Club_Book_History, MeetingAddress,
-                          MeetingLink)
+from clubs.models import (Address, Club, Club_Book_History, Club_Users,
+                          MeetingAddress, MeetingLink)
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -11,11 +14,8 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import (CreateView, DeleteView, FormView,
                                        UpdateView)
 from schedule.models import Calendar, Event, Rule
-
 from .helpers import login_prohibited
-from .mixins import (ApplicantProhibitedMixin, ClubOwnerRequiredMixin,
-                     ClubUserRequiredMixin, LoginProhibitedMixin,
-                     MemberProhibitedMixin)
+from .mixins import ClubOwnerRequiredSchedulerMixin, LoginProhibitedMixin
 
 
 class CalendarPickerView(LoginRequiredMixin, FormView):
@@ -24,7 +24,7 @@ class CalendarPickerView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         calendar = form.cleaned_data.get('calendar')
-        return render(self.request, 'fullcalendar.html', {'calendar': calendar})
+        return redirect('full_calendar', calendar_slug=calendar.slug)
 
     def get_form_kwargs(self):
         kwargs = super(CalendarPickerView, self).get_form_kwargs()
@@ -32,27 +32,51 @@ class CalendarPickerView(LoginRequiredMixin, FormView):
         return kwargs
 
 
-@login_required
+@ login_required
 def full_calendar(request, calendar_slug):
     """ View to display a calendar's full calendar. """
 
     calendar = Calendar.objects.get(slug=calendar_slug)
-    return render(request, 'fullcalendar.html', {'calendar': calendar})
+
+    user_is_owner = False
+    club = Club.objects.get(calendar=calendar)
+    user = request.user
+    club_user_exists = Club_Users.objects.filter(club=club, user=user).exists()
+    if club_user_exists:
+        club_user_role_num = Club_Users.objects.get(club=club, user=user).role_num
+        if club_user_role_num == '4':
+            user_is_owner = True
+
+    return render(request, 'fullcalendar.html', {'calendar': calendar, 'user_is_owner': user_is_owner})
 
 
-@login_required
+@ login_required
 def events_list(request, calendar_id):
     """ View to display a calendar's event list. """
     calendar = Calendar.objects.get(id=calendar_id)
     events = calendar.event_set.all()
+
+    query = request.GET.get('q')
+    if query:
+        events = events.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        ).distinct()
+
+    events = events.order_by('-start')
+
+    paginator = Paginator(events, settings.NUMBER_PER_PAGE)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     return render(request, "events_list.html",
                   {
                       'calendar': calendar,
                       'events': events,
+                      'page_obj': page_obj
                   })
 
 
-class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
+class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, CreateView):
     """ View to handle creating events. """
 
     model = Event
@@ -86,8 +110,7 @@ class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
         if club.meeting_type == 'ONL':
             return redirect('create_event_link', calendar_slug=calendar.slug, event_id=event.id)
 
-        # if club.meeting_type == 'INP':
-        else:
+        elif club.meeting_type == 'INP':
             return redirect('create_event_address', calendar_slug=calendar.slug, event_id=event.id)
 
     def get_success_url(self):
@@ -107,7 +130,7 @@ class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
         return context
 
 
-class CreateEventLinkView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
+class CreateEventLinkView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, CreateView):
     """ View to handle createing event links for online clubs. """
 
     model = MeetingLink
@@ -125,7 +148,7 @@ class CreateEventLinkView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView
             event=event,
             meeting_link=meeting_link
         )
-        return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
+        return redirect('full_calendar', calendar_slug=calendar.slug)
 
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
@@ -140,7 +163,7 @@ class CreateEventLinkView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView
         return context
 
 
-class CreateEventAddressView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
+class CreateEventAddressView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, CreateView):
     """ View to handle creating event addresses for in-person clubs. """
 
     model = MeetingAddress
@@ -158,7 +181,7 @@ class CreateEventAddressView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateV
             event=event,
             address=address
         )
-        return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
+        return redirect('full_calendar', calendar_slug=calendar.slug)
 
     def get_form_kwargs(self):
         kwargs = super(CreateEventAddressView, self).get_form_kwargs()
@@ -186,7 +209,7 @@ class CreateEventAddressView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateV
         return context
 
 
-class CreateAddressView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
+class CreateAddressView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, CreateView):
     """ View to handle requests to create a new address. """
 
     model = Address
@@ -232,7 +255,8 @@ class CreateAddressView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
 
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
-        return reverse('full_calendar', kwargs={'calendar_slug': self.kwargs['calendar_slug']})
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        return redirect('full_calendar', calendar_slug=calendar.slug)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -246,7 +270,7 @@ class CreateAddressView(LoginRequiredMixin, ClubOwnerRequiredMixin, CreateView):
         return context
 
 
-class EditEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
+class EditEventView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, UpdateView):
     """ View that handles event edit requests. """
 
     model = Event
@@ -268,7 +292,8 @@ class EditEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
 
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
-        return reverse('full_calendar', kwargs={'calendar_slug': self.kwargs['calendar_slug']})
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        return redirect('full_calendar', calendar_slug=calendar.slug)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -282,7 +307,7 @@ class EditEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
         return context
 
 
-class EditEventLinkView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
+class EditEventLinkView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, UpdateView):
     """ View that handles event edit link requests. """
 
     model = Event
@@ -304,11 +329,13 @@ class EditEventLinkView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
             meeting_link_object.save()
         else:
             meeting_link_object = MeetingLink.objects.create(event=event, meeting_link=meeting_link)
-        return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
+
+        return redirect('full_calendar', calendar_slug=calendar.slug)
 
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
-        return reverse('full_calendar', kwargs={'calendar_slug': self.kwargs['calendar_slug']})
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        return redirect('full_calendar', calendar_slug=calendar.slug)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -321,10 +348,14 @@ class EditEventLinkView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
         context['event_name'] = event.title
         context['user'] = self.request.user
 
+        meeting_link_object = MeetingLink.objects.filter(event=event)
+        if meeting_link_object.exists():
+            context['meeting_link'] = MeetingLink.objects.get(event=event)
+
         return context
 
 
-class EditEventAddressView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
+class EditEventAddressView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, UpdateView):
     """ View that handles event address edit requests. """
 
     model = Event
@@ -351,11 +382,12 @@ class EditEventAddressView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateVie
             meeting_address_object.save()
         else:
             meeting_address_object = MeetingAddress.objects.create(event=event, address=address)
-        return render(self.request, 'fullcalendar.html', {'calendar': event.calendar})
+        return redirect('full_calendar', calendar_slug=calendar.slug)
 
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
-        return reverse('full_calendar', kwargs={'calendar_slug': self.kwargs['calendar_slug']})
+        calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+        return redirect('full_calendar', calendar_slug=calendar.slug)
 
     def get_create_address_url(self):
         """Return URl to redirect the user to if selected to create a new address"""
@@ -372,10 +404,14 @@ class EditEventAddressView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateVie
         context['event_name'] = event.title
         context['user'] = self.request.user
 
+        meeting_address_object = MeetingAddress.objects.filter(event=event)
+        if meeting_address_object.exists():
+            context['meeting_address'] = MeetingAddress.objects.get(event=event)
+
         return context
 
 
-class DeleteEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, DeleteView):
+class DeleteEventView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, DeleteView):
     """ View that handles event delete requests. """
 
     model = Event
@@ -407,7 +443,7 @@ class DeleteEventView(LoginRequiredMixin, ClubOwnerRequiredMixin, DeleteView):
         return context
 
 
-class EventDetailView(LoginRequiredMixin, ClubOwnerRequiredMixin, DetailView):
+class EventDetailView(LoginRequiredMixin, DetailView):
     """ View that shows event details and links to edit and delete event functions. """
 
     model = Event
@@ -418,12 +454,32 @@ class EventDetailView(LoginRequiredMixin, ClubOwnerRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
         event = Event.objects.get(id=self.kwargs['event_id'])
+        club = Club.objects.get(calendar=calendar)
         context['calendar'] = calendar
         context['calendar_id'] = calendar.id
         context['calendar_slug'] = calendar.slug
         context['calendar_name'] = calendar.name
         context['event_name'] = event.title
         context['user'] = self.request.user
+
+        context['meeting_at'] = 'Not set.'
+        if club.meeting_type == 'ONL':
+            meeting_link_object = MeetingLink.objects.filter(event=event)
+            if meeting_link_object.exists():
+                context['meeting_at'] = MeetingLink.objects.get(event=event).meeting_link
+        elif club.meeting_type == 'INP':
+            meeting_address_object = MeetingAddress.objects.filter(event=event)
+            if meeting_address_object.exists():
+                context['meeting_at'] = MeetingAddress.objects.get(event=event).address.full_address
+
+        user_is_owner = False
+        user = self.request.user
+        club_user_exists = Club_Users.objects.filter(club=club, user=user).exists()
+        if club_user_exists:
+            club_user_role_num = Club_Users.objects.get(club=club, user=user).role_num
+            if club_user_role_num == '4':
+                user_is_owner = True
+        context['user_is_owner'] = user_is_owner
 
         return context
 
@@ -433,4 +489,6 @@ class EventDetailView(LoginRequiredMixin, ClubOwnerRequiredMixin, DetailView):
         try:
             return super().get(request, *args, **kwargs)
         except Http404:
-            return render(request, 'fullcalendar.html', {'calendar': Calendar.objects.get(slug=self.kwargs['calendar_slug'])})
+            calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
+            return redirect('full_calendar', calendar_slug=calendar.slug)
+            # return reverse('full_calendar', kwargs={'calendar_slug': Calendar.objects.get(slug=self.kwargs['calendar_slug']).slug})

@@ -1,7 +1,9 @@
-# Team Sick Legends
-SEG - Major Group Project
+# Auguread
+Software Engineering Major Group Project
 
-## Team Members
+Book Club
+
+## Team Sick Legends
 The authors of the software are:
 - Laurence Andrews
 - Surya Brunton
@@ -40,11 +42,6 @@ Migrate the database:
 
 ```
 $ python3 manage.py migrate
-```
-Collect static files:
-
-```
-$ python manage.py collectstatic
 ```
 
 Seed the development database with:

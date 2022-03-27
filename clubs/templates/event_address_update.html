@@ -5,6 +5,13 @@
   <div class="px-4 py-5 sm:px-6">
     <h3 class="text-lg leading-6 font-medium text-gray-900">Select New Meeting Address</h3>
     <p class="mt-1 max-w-2xl text-sm text-gray-500">This meeting address will be set for event: {{event.title}}.</p>
+
+    {% if meeting_address %}
+    <p class="mt-1 max-w-2xl text-sm text-gray-500">This current meeting address set for the event: {{meeting_address.address.full_address}}.</p>
+    {%else%}
+    <p class="mt-1 max-w-2xl text-sm text-gray-500">There is currently no meeting address set for the event.</p>
+    {% endif %}
+
   </div>
 
   <div class="">
@@ -20,7 +27,7 @@
           <div class="flex flex-row-reverse items-end gap-5">
 
             <div class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" style="cursor: pointer;">
-              <a href="{{ view.get_success_url }}" class="">Cancel</a>
+              <a href="{% url 'full_calendar' calendar_slug=event.calendar.slug%}" class="">Cancel</a>
             </div>
 
             <div class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" style="cursor: pointer;">

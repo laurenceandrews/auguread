@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'clubs',
     'bootstrap_pagination',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'clubs',
     'tailwind',
     'theme',
     'django_browser_reload',
@@ -193,3 +193,6 @@ BOWER_INSTALLED_APPS = (
     'bootstrap',
     'fullcalendar#3.8.2'
 )
+
+# Forgot Password
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

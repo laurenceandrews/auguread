@@ -8,6 +8,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect
 from django.views.generic.edit import CreateView
+from django.contrib import messages
+from django.http import Http404, HttpResponseRedirect
+
 
 class FeedView(LoginRequiredMixin, ListView):
     """Class-based generic view for displaying the feed."""
@@ -50,14 +53,3 @@ class NewPostView(LoginRequiredMixin, CreateView):
 
     def handle_no_permission(self):
         return redirect('log_in')
-
-@login_required
-def follow_toggle(request, user_id):
-    current_user = request.user
-    try:
-        followee = User.objects.get(id=user_id)
-        current_user.toggle_follow(followee)
-    except ObjectDoesNotExist:
-        return redirect('user_list')
-    else:
-        return redirect('show_user', user_id=user_id)

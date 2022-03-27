@@ -36,7 +36,7 @@ class CalendarPickerViewTestCase(TestCase, LogInTester):
 
     def test_get_calendar_picker(self):
         self.client.login(email=self.user.email, password="Password123")
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'calendar_picker.html')
         form = response.context['form']
@@ -45,7 +45,7 @@ class CalendarPickerViewTestCase(TestCase, LogInTester):
 
     def test_succesful_calendar_picker(self):
         self.client.login(email=self.user.email, password="Password123")
-        response = self.client.post(self.url, self.form_input)
+        response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'fullcalendar.html')
 

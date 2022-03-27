@@ -1,6 +1,5 @@
 {% extends 'base_content.html' %}
 {% load i18n %}
-{% load event_meeting %}
 {% block content%}
 <div class="h-screen flex items-center justify-center">
 
@@ -14,13 +13,13 @@
       <p>Start: {{event.start}}</p>
       <p>End: {{event.end}}</p>
       <p>Calendar: {{event.calendar}}</p>
-      <p>Event meeting at: {% event_meeting event %}</p>
+      <p>Event meeting at: {{meeting_at}}</p>
       <p>Description: {{event.description}}</p>
     </div>
 
     <!-- Buttons -->
     <div class="flex flex-row-reverse mt-14 items-end gap-5">
-
+      {% if user_is_owner %}
       <div class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded" onclick="location.href='{%url 'delete_event' calendar_slug=event.calendar.slug event_id=event.id %}';" style="cursor: pointer;">
         <p>Delete event</p>
       </div>
@@ -28,6 +27,7 @@
       <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="location.href='{%url 'edit_event' calendar_slug=event.calendar.slug event_id=event.id %}';" style="cursor: pointer;">
         <p>Edit event</p>
       </div>
+      {% endif %}
 
     </div>
 

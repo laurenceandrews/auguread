@@ -44,6 +44,18 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        bitter: ["Bitter", "serif"],
+        jost: ["Jost", "serif"],
+        karla: ["Karla", "serif"],
+        manrope: ["Manrope", "serif"],
+        montserrat: ["Montserrat", "serif"],
+        nunito: ["Nunito", "serif"],
+        overpass: ["Overpass", "serif"],
+        poppins: ["Poppins", "serif"],
+        quantico: ["Quantico", "serif"],
+        roboto: ["Roboto", "serif"],
+      },
       // that is animation class
       animation: {
         fade: "fadeOut 3s ease-in-out",
