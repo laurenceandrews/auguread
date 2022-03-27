@@ -41,14 +41,6 @@ class ClubUserRecommender:
         club_user_location_df = club_user_location_df.rename(columns={'id_x':'club_user_id'}).sort_values('club_user_id', ascending=True)
         return club_user_location_df
 
-    # Merge the club_user_age and club_user_location tables to have all in one table
-    # NOT CALLED BY ANY OTHER METHOD - NOT REQUIRED
-    def merge_age_and_location(self): 
-        club_user_age_location_df = self.get_user_age_df().merge(self.get_club_locations_df(), left_on = 'club_user_id', right_on = 'club_user_id')
-        club_user_age_location_df = club_user_age_location_df[['club_user_id', 'club_id_x', 'user_id_x', 'age', 'location']]
-        club_user_age_location_df = club_user_age_location_df.rename(columns={'user_id_x':'user_id', 'club_id_x':'club_id'})
-        return club_user_age_location_df
-
     # Get location and average age of each club
     def get_average_club_age(self):
         average_club_age_df = pd.merge(self.get_user_age_df(), self.club_df, left_on='club_id', right_on='id').groupby(['club_id', 'name', 'location'])['age'].mean().reset_index(name = 'average_age')
@@ -68,34 +60,17 @@ class ClubUserRecommender:
         closest_age_clubs_df = average_club_age_difference_df['club_id'].iloc[0:5]
         return closest_age_clubs_df
 
-    # Merge closest aged club IDs with clubs CSV to get all details
-    # NOT CALLED BY ANY OTHER METHOD - NOT REQUIRED
-    def get_closest_age_clubs_df(self):
-        closest_age_clubs_df = self.get_top_10_by_closest_age().reset_index().rename(columns={'club_id':'id'})
-        closest_age_clubs_df = pd.merge(self.get_top_10_by_closest_age(), self.club_df, left_on = 'club_id', right_on = 'id')
-        return closest_age_clubs_df
-
     # Get user count of each club
     def get_user_count_per_club(self):
         club_user_count_df = pd.merge(self.get_user_age_df(), self.club_df, left_on='club_id', right_on='id').groupby(['club_id', 'name'])['user_id'].count().reset_index(name = 'user_count')
         return club_user_count_df
 
-    # Return clubs with matching location (exact)
-    # NOT CALLED BY ANY OTHER METHOD - NOT REQUIRED
-    def get_clubs_with_exact_location(self):
-        user_location = self.get_user().city + ', ' + self.get_user().country
-
-        location_match = self.club_df['location'] == user_location
-        closest_location_clubs_df = self.club_df[location_match]
-        return closest_location_clubs_df
-
     def get_ratio_loc(self, row):
-        club_location = row['location']
+        club_location = row[2]
         user_location = self.get_user().city + ', ' + self.get_user().country
         return fuzz.token_sort_ratio(club_location, user_location)
 
     # Return clubs with matching location (using fuzzy search)
-    # NOT CALLED BY ANY OTHER METHOD - SHOULD BE MERGED INTO BEST_CLUBS_DF
     def get_clubs_with_matching_loc_fuzzy(self):
         closest_club_location_fuzzy_df = self.club_df[self.club_df.apply(self.get_ratio_loc, axis=1) > 80]
         closest_club_location_fuzzy_df['location_fuzzy_score'] = self.club_df.apply(self.get_ratio_loc, axis=1)
@@ -130,30 +105,30 @@ class ClubUserRecommender:
         my_favourite_books_df = user_favourite_books_df.loc[user_favourite_books_df['user_id'] == current_user_id]
         return my_favourite_books_df
 
-    # Get the favourite books and authors of one club
-    # NOT CALLED BY ANY OTHER METHOD - NOT REQUIRED
-    def get_fav_books_and_authors_per_club(self):
-        club_id = Club.objects.get().id
-        club_favourite_books_df = self.get_club_favourite_books()
-        single_club_favourite_books_df = club_favourite_books_df.loc[club_favourite_books_df['club_id'] == club_id]
-        return single_club_favourite_books_df
-
     # Return all matching favourite books between a single user and multiple clubs (using fuzzy search)
 
-    def get_ratio_title(self, row, my_favourite_book):
-        book_title = row['title']
-        return fuzz.token_sort_ratio(book_title, my_favourite_book)
+# MIGHT NOT NEED THIS
+    # def get_ratio_title(self, row, my_favourite_book):
+    #     book_title = row[3]
+    #     return fuzz.token_sort_ratio(book_title, my_favourite_book)
 
     def get_all_favourite_book_matches_fuzzy(self):
         club_favourite_books_df = self.get_club_favourite_books()
-        author_match_df = pd.DataFrame()
+        book_match_df = pd.DataFrame()
         all_book_matches_df = pd.DataFrame()
+        matching_books = []
 
         for i in range(5):
             my_favourite_book = self.get_fav_books_and_authors_per_user().iloc[i]['title']
-            author_match_df = club_favourite_books_df[club_favourite_books_df.apply(self.get_ratio_title(i, my_favourite_book), axis=1) > 80]
-            author_match_df['book_fuzzy_match_score'] = club_favourite_books_df.apply(self.get_ratio_title(i, my_favourite_book), axis=1)
-            all_book_matches_df = pd.concat([all_book_matches_df, author_match_df])
+
+            for title in club_favourite_books_df['title']:
+                match_value = int(fuzz.token_sort_ratio(my_favourite_book, title))
+                if match_value > 70:
+                    matching_books.append(match_value)
+
+            # author_match_df = club_favourite_books_df[club_favourite_books_df.apply(self.get_ratio_title(i, my_favourite_book), axis=1) > 80]
+            # author_match_df['book_fuzzy_match_score'] = club_favourite_books_df.apply(self.get_ratio_title(i, my_favourite_book), axis=1)
+            # all_book_matches_df = pd.concat([all_book_matches_df, author_match_df])
 
         all_book_matches_df = all_book_matches_df.sort_values('book_fuzzy_match_score', ascending=False).dropna(how='any',axis=0)
 
@@ -169,7 +144,7 @@ class ClubUserRecommender:
     # This works by checking the authors of all of a club's favourite books agains the authors of all of a user's favourite books
 
     def get_ratio_author(self, row, my_favourite_author):
-        book_author = row['author']
+        book_author = row[4]
         return fuzz.token_sort_ratio(book_author, my_favourite_author)
 
     def get_all_favourite_author_matches_fuzzy(self):
@@ -202,11 +177,11 @@ class ClubUserRecommender:
     # Favourite authors: club_average_author_match_df
     def get_best_clubs_df(self):
         best_clubs_df = self.get_user_count_per_club().merge(self.get_age_difference_df(), how = 'left', left_on = 'club_id', right_on = 'club_id')
-        best_clubs_df = best_clubs_df.merge(self.closest_club_location_fuzzy_df(), how = 'left', left_on = 'club_id', right_on = 'club_id')
         best_clubs_df = best_clubs_df.merge(self.get_average_book_match_df(), how = 'left', left_on = 'club_id', right_on = 'club_id')
         best_clubs_df = best_clubs_df.merge(self.get_club_average_author_match_df(), how = 'left', left_on = 'club_id', right_on = 'club_id')
+        best_clubs_df = best_clubs_df.merge(self.get_clubs_with_matching_loc_fuzzy(), how = 'left', left_on = 'club_id', right_on = 'club_id')
 
-        best_clubs_df = best_clubs_df[['club_id', 'club_author_name', 'location', 'age_difference', 'user_count', 'book_match_count', 'author_match_count']]
+        best_clubs_df = best_clubs_df[['club_id', 'club_author_name', 'location', 'age_difference', 'user_count', 'book_match_count', 'author_match_count', 'matching_location']]
         best_clubs_df = best_clubs_df.rename(columns={'club_author_name':'club_name'})
 
         best_clubs_df['book_match_count'] = best_clubs_df['book_match_count'].fillna(0)
@@ -214,7 +189,7 @@ class ClubUserRecommender:
 
         # Dirty way of getting name back...
         best_clubs_df = best_clubs_df.merge(self.get_age_difference_df(), on = 'club_id')
-        best_clubs_df = best_clubs_df[['club_id', 'name', 'location_x', 'age_difference_y', 'user_count', 'book_match_count', 'author_match_count']]
+        best_clubs_df = best_clubs_df[['club_id', 'name', 'location_x', 'age_difference_y', 'user_count', 'book_match_count', 'author_match_count', 'matching_location']]
         best_clubs_df = best_clubs_df.rename(columns={'location_x':'location', 'age_difference_y':'age_difference'}, )
 
         return best_clubs_df
@@ -246,7 +221,7 @@ class ClubUserRecommender:
 
     # TO DO: Find a way to convert location to distance
     def get_best_clubs_in_person(self):
-        best_clubs_in_person_df = self.get_best_clubs_df().sort_values(["location_fuzzy_score", "book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, False, True, False])
+        best_clubs_in_person_df = self.get_best_clubs_df().sort_values(["matching_location", "book_match_count", "author_match_count", "age_difference", "user_count"], ascending = [False, False, False, True, False])
         best_clubs_in_person_list = best_clubs_in_person_df['club_id'].tolist()
         return best_clubs_in_person_list
 
