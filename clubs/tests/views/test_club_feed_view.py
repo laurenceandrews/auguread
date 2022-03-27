@@ -1,14 +1,13 @@
-"""Tests of the feed view."""
+"""Tests of the club feed view."""
 from clubs.forms import PostForm
 from clubs.models import Club, ClubFeedPost, Post, User
-from clubs.tests.helpers import create_posts, reverse_with_next
-from django.conf import settings
+from clubs.tests.helpers import reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
 
 
-class FeedViewTestCase(TestCase):
-    """Tests of the feed view."""
+class ClubFeedViewTestCase(TestCase):
+    """Tests of the club feed view."""
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',

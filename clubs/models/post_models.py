@@ -31,8 +31,3 @@ class ClubFeedPost(models.Model):
 
     class Meta:
         """Model options."""
-
-    def post_count(self):
-        """Returns the number of posts of self."""
-
-        return self.posts.count()
