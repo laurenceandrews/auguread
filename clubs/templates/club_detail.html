@@ -19,7 +19,12 @@
       <p>Description: {{club.description}}</p>
       <p>Calendar: {{club.calendar}}</p>
       <p>Meeting type: {{club.get_meeting_type_display}}</p>
-      <p>Owner: {{club.owner.full_name}}</p>
+      <p>
+        Owner:
+        <span>
+          <a href="{% url 'user_detail' club.owner.id %}" class="text-indigo-600 hover:text-indigo-900">{{club.owner.full_name}}</a>
+        </span>
+      </p>
     </div>
 
     <div class="">

@@ -15,6 +15,7 @@ from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from django.views.generic.list import MultipleObjectMixin
+
 from .helpers import login_prohibited
 from .mixins import LoginProhibitedMixin
 
@@ -56,6 +57,11 @@ class UserDetailView(LoginRequiredMixin, DetailView):
         """Handle get request, and redirect if user_id invalid."""
 
         try:
+            user = self.get_object()
+            current_user = self.request.user
+            if current_user == user:
+                return redirect('user_profile')
+
             return super().get(request, *args, **kwargs)
         except Http404:
             messages.add_message(self.request, messages.ERROR, "Invalid user!")
