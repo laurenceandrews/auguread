@@ -163,7 +163,7 @@ class Command(BaseCommand):
 
             # Seed a first meeting for every club
             datetime_now = datetime.datetime.now()
-            default_interval_to_meeting_start = datetime.timedelta(days=4)
+            default_interval_to_meeting_start = datetime.timedelta(days=2)
             default_meeting_start = datetime_now + default_interval_to_meeting_start
             default_interval_to_meeting_end = datetime.timedelta(hours=1)
             default_meeting_end = default_meeting_start + default_interval_to_meeting_end
