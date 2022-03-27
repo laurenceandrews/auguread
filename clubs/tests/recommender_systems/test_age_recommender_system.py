@@ -2,8 +2,7 @@
 
 from django.test import TestCase
 from numpy import empty
-import pandas as pd
-from clubs.models import User, Club, Book, Club_Books
+from clubs.models import User, Club, Club_Books
 from clubs.book_to_club_recommender.book_to_club_recommender_age import ClubBookAgeRecommender
 
 class AgeRecommenderSystemTestCase(TestCase):

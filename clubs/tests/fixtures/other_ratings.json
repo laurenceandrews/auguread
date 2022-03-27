@@ -1,0 +1,92 @@
+[
+    {
+      "model": "clubs.Book_Rating",
+      "pk": 2,
+      "fields": {
+        "user" : 1,
+        "book" : 21,
+        "rating" : "8"
+      }
+    },
+    {
+        "model": "clubs.Book_Rating",
+        "pk": 3,
+        "fields": {
+          "user" : 1,
+          "book" : 22,
+          "rating" : "8"
+        }
+      },
+      {
+        "model": "clubs.Book_Rating",
+        "pk": 4,
+        "fields": {
+          "user" : 1,
+          "book" : 23,
+          "rating" : "8"
+        }
+      },
+      {
+        "model": "clubs.Book_Rating",
+        "pk": 5,
+        "fields": {
+          "user" : 1,
+          "book" : 24,
+          "rating" : "8"
+        }
+      },
+      {
+        "model": "clubs.Book_Rating",
+        "pk": 6,
+        "fields": {
+          "user" : 1,
+          "book" : 25,
+          "rating" : "7"
+        }
+      },
+      {
+        "model": "clubs.Book_Rating",
+        "pk": 7,
+        "fields": {
+          "user" : 1,
+          "book" : 26,
+          "rating" : "6"
+        }
+      },
+      {
+        "model": "clubs.Book_Rating",
+        "pk": 8,
+        "fields": {
+          "user" : 1,
+          "book" : 27,
+          "rating" : "9"
+        }
+      },
+      {
+        "model": "clubs.Book_Rating",
+        "pk": 9,
+        "fields": {
+          "user" : 1,
+          "book" : 28,
+          "rating" : "9"
+        }
+      },
+      {
+        "model": "clubs.Book_Rating",
+        "pk": 9,
+        "fields": {
+          "user" : 1,
+          "book" : 29,
+          "rating" : "6"
+        }
+      },
+      {
+        "model": "clubs.Book_Rating",
+        "pk": 10,
+        "fields": {
+          "user" : 1,
+          "book" : 30,
+          "rating" : "7"
+        }
+      }
+  ]
