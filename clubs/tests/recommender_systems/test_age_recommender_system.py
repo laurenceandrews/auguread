@@ -3,7 +3,7 @@
 from django.test import TestCase
 from numpy import empty
 import pandas as pd
-from clubs.models import User, Club, Book, Club_Books, Club_Users
+from clubs.models import User, Club, Book, Club_Books
 from clubs.book_to_club_recommender.book_to_club_recommender_age import ClubBookAgeRecommender
 
 class AgeRecommenderSystemTestCase(TestCase):
@@ -23,8 +23,6 @@ class AgeRecommenderSystemTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.get(pk=1)
         self.club = Club.objects.get(pk=6)
-        self.book = Book.objects.get(pk=20)
-        self.club_user = Club_Users.objects.get(pk=1)
         self.recommender = ClubBookAgeRecommender(club_id_to_query=self.club.id)
 
     def test_clubs_average_ages(self):
@@ -49,4 +47,7 @@ class AgeRecommenderSystemTestCase(TestCase):
         self.assertEqual(closest_clubs_in_age['id'].iloc[0], Club.objects.get(pk=12).id)
         self.assertEqual(closest_clubs_in_age['id'].iloc[1], Club.objects.get(pk=23).id)
 
-
+    def test_recommended_books(self):
+        recommended_books = self.recommender.get_recommended_books()
+        for book in recommended_books:
+            self.assertTrue(Club_Books.objects.exists(book=book))
