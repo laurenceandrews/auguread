@@ -1,4 +1,5 @@
 {% extends 'base_content.html' %}
+{% load bootstrap_pagination %}
 {% block content %}
 {% load widget_tweaks %}
 
@@ -11,6 +12,7 @@
   </div>
 
   <div class="">
+    <!-- New post form -->
     <form action="{% url 'club_feed_create' club.id %}" method="post" class="m-8 sm:m-0">
       {% for field in form %}
         <div class="">
@@ -31,11 +33,22 @@
     </form>
 
     <div class="ml-8 mt-6 sm:ml-0 max-w-xl">
+        <!-- List of club posts -->
       {% include 'partials/posts.html' with posts=posts %}
-    </div>
+        <!-- Pagination  -->
+      <div class="flex justify-center">
+        <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0">
+          <div class="hidden md:-mt-px md:flex">
+            <div class="border-indigo-500 text-indigo-600 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium">
 
-    <div class="m-4">
-      {% include 'partials/post_pager.html' with page_obj=page_obj %}
+              <div class="block">
+                 {% bootstrap_paginate page_obj previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
+              </div>
+
+            </div>
+          </div>
+        </nav>
+      </div>
     </div>
   </div>
 </div>

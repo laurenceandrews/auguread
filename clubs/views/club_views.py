@@ -72,21 +72,12 @@ class ClubUpdateView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
     form_class = ClubUpdateForm
     pk_url_kwarg = "club_id"
 
-    # def get_form_kwargs(self):
-    #     kwargs = super(ClubUpdateView, self).get_form_kwargs()
-    #     kwargs['club_id'] = self.kwargs['club_id']
-    #     return kwargs
-
     def form_valid(self, form):
         """Handle valid form by saving the new password."""
         club = Club.objects.get(id=self.kwargs['club_id'])
 
         name = form.cleaned_data.get("name")
-        # city = form.cleaned_data.get("city")
-        # country = form.cleaned_data.get("country")
         description = form.cleaned_data.get("description")
-
-        # location = city + ", " + country
 
         meeting_type = form.cleaned_data.get("meeting_type")
 
