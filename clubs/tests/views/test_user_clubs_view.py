@@ -14,6 +14,7 @@ class UseCurrentBookViewTestCase(TestCase):
         'clubs/tests/fixtures/default_calendar.json',
         'clubs/tests/fixtures/default_club.json',
         'clubs/tests/fixtures/other_clubs.json',
+        'clubs/tests/fixtures/other_club_users.json',
         'clubs/tests/fixtures/detailed_club.json',
         'clubs/tests/fixtures/default_rules.json',
     ]
