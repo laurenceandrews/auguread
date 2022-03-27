@@ -72,6 +72,17 @@ class UserFavouriteBooksViewTestCase(TestCase):
         self.assertNotContains(response, f'{self.second_book.title}', status_code=200)
         self.assertNotContains(response, f'{self.third_book.title}', status_code=200)
 
+    def test_user_clubs_books_with_query(self):
+        self.client.login(email=self.user.email, password="Password123")
+        data_with_q = {'q': self.first_book.title}
+        response = self.client.get(self.url, data_with_q, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'partials/books_table.html')
+        self.assertEqual(len(response.context['books']), 1)
+        self.assertContains(response, f'{self.first_book.title}', status_code=200)
+        self.assertNotContains(response, f'{self.second_book.title}', status_code=200)
+        self.assertNotContains(response, f'{self.third_book.title}', status_code=200)
+
     def _create_club_books(self):
         self.club_as_owner = Club.objects.get(pk=6)
         Club_Book_History.objects.create(club=self.club_as_owner, book=self.first_book, average_rating=5)

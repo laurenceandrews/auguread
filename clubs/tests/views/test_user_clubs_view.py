@@ -78,6 +78,20 @@ class UserClubsViewTestCase(TestCase):
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
+    def test_user_favourite_books_with_query(self):
+        self.client.login(email=self.user.email, password="Password123")
+        role_num = 1
+        url = reverse('user_clubs', kwargs={'role_num': role_num})
+        data_with_q = {'q': self.club_as_owner.name}
+        self.client.login(email=self.user.email, password="Password123")
+        response = self.client.get(self.url, data_with_q, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'summary_clubs_table.html')
+        self.assertEqual(len(response.context['clubs']), 0)
+        self.assertFalse(self.club_as_owner in response.context['clubs'])
+        self.assertFalse(self.club_as_member in response.context['clubs'])
+        self.assertFalse(self.club_as_applicant in response.context['clubs'])
+
     def _create_clubs_as_owner_member_applicant_and_none(self):
         self.first_club_as_owner = Club.objects.get(pk=6)
         self.club_as_owner = Club.objects.get(pk=12)
