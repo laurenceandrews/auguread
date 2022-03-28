@@ -13,12 +13,16 @@
     }
   },
   {
-    "model": "clubs.Club_Users",
+    "model": "clubs.club",
     "pk": 23,
     "fields": {
-      "user": 2,
-      "club": 16,
-      "role_num": "4"
+      "name": "Amazing Club",
+      "location": "London, GB",
+      "description": "A club that reads lots of fun books.",
+      "avg_reading_speed": "200",
+      "owner": 2,
+      "calendar": 10,
+      "meeting_type": "ONL"
     }
   },
   {

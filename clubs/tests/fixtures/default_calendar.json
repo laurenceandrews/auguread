@@ -38,5 +38,13 @@
       "name": "Exciting Club's Calendar",
       "slug": "exciting-clubs-calendar"
     }
+  },
+  {
+    "model": "schedule.Calendar",
+    "pk": 10,
+    "fields": {
+      "name": "Amazing Club's Calendar",
+      "slug": "amazing-clubs-calendar"
+    }
   }
 ]
