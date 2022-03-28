@@ -889,6 +889,10 @@ select{
   margin-bottom: 4rem;
 }
 
+.mt-12{
+  margin-top: 3rem;
+}
+
 .-mb-px{
   margin-bottom: -1px;
 }
@@ -1001,12 +1005,6 @@ select{
 
 .h-32{
   height: 8rem;
-}
-
-.h-min{
-  height: -webkit-min-content;
-  height: -moz-min-content;
-  height: min-content;
 }
 
 .min-h-full{
@@ -1310,14 +1308,6 @@ select{
 
 .overflow-y-auto{
   overflow-y: auto;
-}
-
-.overflow-x-scroll{
-  overflow-x: scroll;
-}
-
-.overflow-y-scroll{
-  overflow-y: scroll;
 }
 
 .whitespace-nowrap{
@@ -2317,10 +2307,6 @@ select{
     align-items: center;
   }
 
-  .sm\:justify-center{
-    justify-content: center;
-  }
-
   .sm\:gap-x-6{
     -moz-column-gap: 1.5rem;
          column-gap: 1.5rem;
@@ -2332,10 +2318,6 @@ select{
 
   .sm\:p-6{
     padding: 1.5rem;
-  }
-
-  .sm\:p-12{
-    padding: 3rem;
   }
 
   .sm\:px-6{
@@ -2388,14 +2370,14 @@ select{
     line-height: 1.75rem;
   }
 
-  .sm\:text-4xl{
-    font-size: 2.25rem;
-    line-height: 2.5rem;
-  }
-
   .sm\:text-sm{
     font-size: 0.875rem;
     line-height: 1.25rem;
+  }
+
+  .sm\:text-4xl{
+    font-size: 2.25rem;
+    line-height: 2.5rem;
   }
 }
 
@@ -2539,11 +2521,6 @@ select{
     left: auto;
   }
 
-  .lg\:mx-auto{
-    margin-left: auto;
-    margin-right: auto;
-  }
-
   .lg\:-mx-8{
     margin-left: -2rem;
     margin-right: -2rem;
@@ -2552,6 +2529,11 @@ select{
   .lg\:mx-0{
     margin-left: 0px;
     margin-right: 0px;
+  }
+
+  .lg\:mx-auto{
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .lg\:mt-0{
