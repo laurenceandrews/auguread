@@ -18,23 +18,6 @@ class ClubBookAuthorRecommender:
 
         self.club_id_to_query = club_id_to_query
 
-    def getUserRatingCount(self):
-        # Find the number of ratings made by each user
-        df_rating_count = pd.DataFrame(self.df_book_ratings.groupby('User-ID')['Book-Rating'].count())
-
-        # Make Rating count as a regular column
-        df_rating_count.reset_index(level=0, inplace=True)
-
-        # Remove from the ratings table, all users with less than 10 ratings
-        df_rating_count.drop(df_rating_count[df_rating_count['Book-Rating'] < 10].index, inplace=True)
-        df_rating_count.drop('Book-Rating', axis=1, inplace=True)
-        return df_rating_count
-
-    def getRatingInfo(self):
-        df_rating_count = self.getUserRatingCount()
-        self.self.df_book_ratings = pd.merge(self.df_book_ratings, df_rating_count, on='User-ID')
-        return self.df_book_ratings
-
     def getClubFavBooks(self):
         # Get the favourite books of the club specified
         df_favourite_books = self.df_club_books[self.df_club_books['club_id'] == int(self.club_id_to_query)]
@@ -66,12 +49,12 @@ class ClubBookAuthorRecommender:
         df_author_book_ratings = pd.merge(self.df_book_ratings, df_author_books, left_on='book_id', right_on='id')
         df_author_books_rating_count = pd.DataFrame(df_author_book_ratings.groupby('book_id')['rating'].count())
 
-        # Make Rating count as a regular column and sort
+        # Make Rating count as a regular column
         df_author_books_rating_count.reset_index(level=0, inplace=True)
-        df_author_books_rating_count.sort_values('rating', ascending=False)
 
-        recommended_books = pd.DataFrame(df_author_books_rating_count['book_id'].iloc[0:10])
-        recommended_books = pd.merge(recommended_books, self.df_books, left_on='book_id', right_on='id')
+       # recommended_books = pd.DataFrame(df_author_books_rating_count['book_id'])
+        recommended_books = pd.merge(df_author_books_rating_count, self.df_books, left_on='book_id', right_on='id')
+        recommended_books = recommended_books.sort_values('rating', ascending=False)
 
         recommended_books_list = recommended_books['id'].tolist()
         return recommended_books_list

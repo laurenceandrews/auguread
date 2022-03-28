@@ -23,15 +23,26 @@
   },
   {
     "model": "clubs.Book",
-    "pk": 20,
+    "pk": 19,
     "fields": {
       "ISBN": "1111111111",
       "title": "This is a book 1",
-      "author" : "Dr Julie Smith",
+      "author" : "Graham Greene",
       "publication_year": "2022",
       "publisher" : "Michael Joseph"
       }
-    },
+  },
+  {
+    "model": "clubs.Book",
+    "pk": 39,
+    "fields": {
+      "ISBN": "1111111122",
+      "title": "Welcome to life",
+      "author" : "Graham Greene",
+      "publication_year": "2022",
+      "publisher" : "Michael Joseph"
+      }
+    }, 
   {
   "model": "clubs.Book",
   "pk": 21,
