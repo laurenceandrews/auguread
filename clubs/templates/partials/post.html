@@ -10,7 +10,7 @@
   <div class="p-2">
     <p class="text-sm">
       <span class="italic"> {{ post.author.full_name }} </span>
-      <span class="text-indigo-400"> {{ post.author.username }} </span>
+      <a class="text-indigo-400" href="{% url 'user_detail' post.author.id %}"> {{ post.author.username }} </a>
       &nbsp;&middot;&nbsp;
       <span class="whitespace-nowrap font-light text-gray-600"> {{ post.created_at|naturaltime }} </span>
     </p>
