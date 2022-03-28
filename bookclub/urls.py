@@ -69,7 +69,7 @@ urlpatterns = [
 
     # Club urls
     path('clubs/', views.ClubListView.as_view(), name='club_list'),
-    path('new_club/', views.new_club, name='new_club'),
+    path('new_club/', views.CreateClubView.as_view(), name='new_club'),
     url(r"^club/detail/(?P<club_id>\d+)/$", views.ClubDetailView.as_view(), name='club_detail'),
     path('club/update/<int:club_id>', views.ClubUpdateView.as_view(), name='club_update'),
     path('club/delete/<int:club_id>', views.DeleteClubView.as_view(), name='club_delete'),

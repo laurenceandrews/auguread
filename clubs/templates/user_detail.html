@@ -65,7 +65,11 @@
     </div>
   </div>
   {%else%}
-  <h1 class="text-xl font-semibold text-gray-900">Clubs {{user.full_name}} is in</h1>
+    {% if user_profile %}
+    <h1 class="text-xl font-semibold text-gray-900">Your clubs</h1>
+    {% else %}
+    <h1 class="text-xl font-semibold text-gray-900">Clubs {{user.full_name}} is in</h1>
+    {% endif %}
   <p>{{user.full_name}} is not in any clubs.</p>
   {%endif%}
 </div>
@@ -98,7 +102,11 @@
     </div>
   </div>
   {%else%}
-  <h1 class="mt-8 text-xl font-semibold text-gray-900">{{user.full_name}}'s friends</h1>
+  {% if user_profile %}
+    <h1 class="mt-8 text-xl font-semibold text-gray-900">Your friends</h1>
+    {% else %}
+    <h1 class="mt-8 text-xl font-semibold text-gray-900">{{user.full_name}}'s friends</h1>
+    {% endif %}
   <p>{{user.full_name}} has not followed any friends yet.</p>
   {%endif%}
 </div>
