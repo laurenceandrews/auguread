@@ -28,7 +28,6 @@ class MenuTesterMixin(AssertHTMLMixin):
         reverse('log_out'),
         reverse('new_club'),
         reverse('password'),
-        reverse('feed'),
     ]
 
     def assert_menu(self, response):
