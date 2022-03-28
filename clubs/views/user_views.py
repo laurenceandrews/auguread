@@ -45,6 +45,9 @@ class UserDetailView(LoginRequiredMixin, DetailView):
         clubs = user.clubs_attended()
         context['clubs'] = clubs
 
+        friends = user.friends_list
+        context['friends'] = friends
+
         paginator = Paginator(clubs, settings.NUMBER_PER_PAGE)
 
         page_number = self.request.GET.get('page')
@@ -73,6 +76,8 @@ def user_profile_view(request):
     user = request.user
     clubs = user.clubs_attended()
 
+    friends = user.friends_list
+
     paginator = Paginator(clubs, settings.NUMBER_PER_PAGE)
 
     page_number = request.GET.get('page')
@@ -81,5 +86,6 @@ def user_profile_view(request):
                   {'target': user,
                    'user_profile': True,
                    'clubs': clubs,
+                   'friends': friends,
                    'page_obj': page_obj
                    })

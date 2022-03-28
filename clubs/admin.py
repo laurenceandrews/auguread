@@ -12,7 +12,8 @@ class UserAdmin(admin.ModelAdmin):
     list_display = [
         'id',
         'username',
-        'clubs_attended'
+        'clubs_attended',
+        'friends_list'
     ]
 
 
