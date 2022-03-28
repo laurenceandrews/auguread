@@ -2,53 +2,180 @@
 {% load bootstrap_pagination %}
 {% block content %}
 {% load widget_tweaks %}
+<style>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  a#continue-btn-disabled {
+      pointer-events: none;
+      background-color: #eee;
+      color: #999;
+  }
 
-  <div class="lg:text-center">
-    <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Chat with {{club.name}}'s members</h2>
-    <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">{{club.name}}'s Message Board</p>
-    <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">Scroll through the posts to see what your club members are talking about.</p>
-  </div>
+  ul.pagination {
+    display: inline-block;
+    margin-bottom: 20px;
+  }
 
-  <div class="">
-    <!-- New post form -->
-    <form action="{% url 'club_feed_create' club.id %}" method="post" class="m-8 sm:m-0">
-      {% for field in form %}
-        <div class="">
-          <label class="block text-sm font-medium text-gray-700  dark:text-gray-50">
-            {{ field.label_tag }}
-          </label>
-          <div class="mt-1">
-            {{ field|add_class:"appearance-none block w-full sm:w-auto h-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"}}
-            {{ field.errors }}
-            {% if field.help_text %}
-            <p class="help">{{ field.help_text|safe }}</p>
-            {% endif %}
+  form {
+    display: contents;
+  }
+
+  .row {
+    display: inline-flex;
+  }
+
+  ul.pagination li {
+    border: solid 1px #352fa9;
+    border-radius: 2px;
+    color: #352fa9;
+    height: 40px;
+    width: 50px;
+    vertical-align: middle;
+    background-color: #fff;
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    display: inline-block;
+  }
+
+ li.page-item.disabled li {
+    border: solid 1px #eee;
+    border-radius: 2px;
+    height: 40px;
+    width: 50px;
+    vertical-align: middle;
+    background-color: #eee;
+    color: #999;
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    display: inline-block;
+  }
+
+  ul.pagination li a {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+  }
+
+  li.page-item.disabled span.page-link {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+    background-color: #eee;
+    border-color: #eee;
+  }
+
+  li.page-item.disabled li:hover{
+    color: #999;
+  }
+
+  li.page-item.disabled span.page-link {
+    color: #999;
+  }
+
+  li.page-item.disabled {
+    border-color: #999;
+  }
+
+  li.page-item.active span.page-link {
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    padding: 7px;
+    background-color: #4941e5;
+    border: solid 1px #4941e5;
+  }
+
+  ul.pagination li:hover {
+    color: #fff;
+    background-color: #4941e5;
+  }
+
+  li.page-item.active {
+    color: #fff;
+    background-color: #4941e5;
+    border: solid 0.1px #4941e5!important;
+    border-radius: 2px;
+  }
+
+  .input-field {
+    padding: 0px 0px 10px;
+  }
+
+  input[type="text"] {
+    font-style: italic;
+    border: solid 1px #352fa9;
+    vertical-align: middle;
+    border-radius: 5px;
+    height: 40px;
+    width: 30%;
+  }
+
+  .shadow-sm {
+    vertical-align: middle;
+    height: 40px;
+
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+  }
+</style>
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      {% if not posts %}
+        <h1 style="text-align:center">
+          No posts made yet!
+        </h1>
+      {% else %}
+        <!-- New post form -->
+        <form action="{% url 'club_feed_create' club.id %}" method="post" class="m-8 sm:m-0">
+          {% for field in form %}
+            <div class="">
+              <label class="block text-sm font-medium text-gray-700  dark:text-gray-50">
+                {{ field.label_tag }}
+              </label>
+              <div class="mt-1">
+                {{ field|add_class:"appearance-none block w-full sm:w-auto h-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"}}
+                {{ field.errors }}
+                {% if field.help_text %}
+                <p class="help">{{ field.help_text|safe }}</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+          {% csrf_token %}
+          <button type="submit" class="mt-4 w-32 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Post</button>
+        </form>
+
+        <div class="ml-8 mt-6 sm:ml-0 max-w-xl">
+            <!-- List of club posts -->
+          {% include 'partials/posts.html' with posts=posts %}
+            <!-- Pagination  -->
+          <div class="flex justify-center">
+            <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0">
+              <div class="hidden md:-mt-px md:flex">
+                <div class="border-indigo-500 text-indigo-600 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium">
+
+                  <div class="block">
+                     {% bootstrap_paginate page_obj previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
+                  </div>
+
+                </div>
+              </div>
+            </nav>
           </div>
         </div>
-      {% endfor %}
-      {% csrf_token %}
-      <button type="submit" class="mt-4 w-32 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Post</button>
-    </form>
 
-    <div class="ml-8 mt-6 sm:ml-0 max-w-xl">
-        <!-- List of club posts -->
-      {% include 'partials/posts.html' with posts=posts %}
-        <!-- Pagination  -->
-      <div class="flex justify-center">
-        <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0">
-          <div class="hidden md:-mt-px md:flex">
-            <div class="border-indigo-500 text-indigo-600 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium">
-
-              <div class="block">
-                 {% bootstrap_paginate page_obj previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
-              </div>
-
-            </div>
-          </div>
-        </nav>
-      </div>
+      {% endif %}
     </div>
   </div>
 </div>
