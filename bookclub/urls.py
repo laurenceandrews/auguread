@@ -61,13 +61,9 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
     # Feed urls
-    path('feed/', views.FeedView.as_view(), name='feed'),
-    path('new_post/', views.NewPostView.as_view(), name='new_post'),
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
-
-
     path('club/<int:club_id>/feed/create', views.ClubFeedPostCreateView.as_view(), name='club_feed_create'),
-    path('club/<int:club_id>/feed/', views.CLubFeedView.as_view(), name='club_feed'),
+    path('club/<int:club_id>/feed/', views.ClubFeedView.as_view(), name='club_feed'),
 
 
 
