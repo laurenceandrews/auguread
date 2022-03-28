@@ -204,14 +204,14 @@
         <span class="block lg:inline">Find the club</span>
         <span class="block text-indigo-600 lg:inline dark:text-indigo-400">for you</span>
       </h1>
-      
+
       <div class="mt-6 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-100 dark:text-gray-300">
         <div class="pt-4">
           <p>Based on what we know about you, we recommend the following clubs</p>
           <p>Will you be participating online only? <input type="checkbox"></p>
         </div>
       </div>
-      
+
       <div class="mt-8 lg:mr-50">
 
         <form method="GET">
@@ -233,7 +233,9 @@
                     <span class = "club-avg-reading-speed">Avg reading speed: {{ club.avg_reading_speed }}wpm</span>
                     <span class = "club-description"> {{ club.description }}</span>
                   <div>
-                    <button id = "visit-btn" type="Book" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Visit club</button>
+                    <a href="{% url 'club_detail' club.id %}" id="visit-btn" type=Book class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                      Visit club
+                    </a>
                   </div>
                 </div>
               </div>
