@@ -107,58 +107,60 @@ class ClubUserRecommender:
 
     # Return all matching favourite books between a single user and multiple clubs (using fuzzy search)
 
-# MIGHT NOT NEED THIS
-    # def get_ratio_title(self, row, my_favourite_book):
-    #     book_title = row[3]
-    #     return fuzz.token_sort_ratio(book_title, my_favourite_book)
-
     def get_all_favourite_book_matches_fuzzy(self):
         club_favourite_books_df = self.get_club_favourite_books()
+        # user_favourite_books = self.get_fav_books_and_authors_per_user()
         book_match_df = pd.DataFrame()
+        book_match_df['book_title'] = club_favourite_books_df['title']
         all_book_matches_df = pd.DataFrame()
-        matching_books = []
+        match_values = []
 
         for i in range(5):
-            my_favourite_book = self.get_fav_books_and_authors_per_user().iloc[i]['title']
+            my_favourite_book = self.get_fav_books_and_authors_per_user().iloc[0]['title']
 
             for title in club_favourite_books_df['title']:
                 match_value = int(fuzz.token_sort_ratio(my_favourite_book, title))
-                if match_value > 70:
-                    matching_books.append(match_value)
-
-            # author_match_df = club_favourite_books_df[club_favourite_books_df.apply(self.get_ratio_title(i, my_favourite_book), axis=1) > 80]
-            # author_match_df['book_fuzzy_match_score'] = club_favourite_books_df.apply(self.get_ratio_title(i, my_favourite_book), axis=1)
-            # all_book_matches_df = pd.concat([all_book_matches_df, author_match_df])
-
-        all_book_matches_df = all_book_matches_df.sort_values('book_fuzzy_match_score', ascending=False).dropna(how='any',axis=0)
+                if match_value > 50:
+                    match_values.append(match_value)
+            
+        matching_books = pd.DataFrame()
+        matching_books['match_score'] = match_values
+            
+        all_book_matches_df = pd.concat([book_match_df, matching_books], axis = 1)
+        all_book_matches_df = all_book_matches_df.sort_values('match_score', ascending=False).dropna(how='any',axis=0)
 
         return all_book_matches_df
 
     # Return a list of clubs in order of which have the most matching favourite books with the user
     def get_average_book_match_df(self):
-        club_average_book_match_df = self.get_all_favourite_book_matches_fuzzy().groupby(['club_id', 'name'])['book_fuzzy_match_score'].count().reset_index(name = 'book_match_count').sort_values('book_match_count', ascending=False).rename(columns={'name':'club_book_name'})
+        club_average_book_match_df = self.get_all_favourite_book_matches_fuzzy().groupby(['club_id', 'name'])['match_score'].count().reset_index(name = 'book_match_count').sort_values('book_match_count', ascending=False).rename(columns={'name':'club_book_name'})
 
         return club_average_book_match_df
 
     # Return all matching favourite authors between a single user and multiple clubs (using fuzzy search)
     # This works by checking the authors of all of a club's favourite books agains the authors of all of a user's favourite books
 
-    def get_ratio_author(self, row, my_favourite_author):
-        book_author = row[4]
-        return fuzz.token_sort_ratio(book_author, my_favourite_author)
-
     def get_all_favourite_author_matches_fuzzy(self):
-        club_favourite_books_df = self.get_club_favourite_books()
+        club_favourite_authors_df = self.get_club_favourite_books()
+        # user_favourite_books = self.get_fav_books_and_authors_per_user()
         author_match_df = pd.DataFrame()
+        author_match_df['author'] = club_favourite_authors_df['author']
         all_author_matches_df = pd.DataFrame()
+        match_values = []
 
         for i in range(5):
-            my_favourite_author = self.get_fav_books_and_authors_per_user().iloc[i]['author']
-            author_match_df = club_favourite_books_df[club_favourite_books_df.apply(self.get_ratio_author(i, my_favourite_author), axis=1) > 80]
-            author_match_df['author_fuzzy_match_score'] = club_favourite_books_df.apply(self.get_ratio_author(i, my_favourite_author), axis=1)
-            all_author_matches_df = pd.concat([all_author_matches_df, author_match_df])
+            my_favourite_author = self.get_fav_books_and_authors_per_user().iloc[0]['author']
 
-        all_author_matches_df = all_author_matches_df.sort_values('author_fuzzy_match_score', ascending=False).dropna(how='any',axis=0)
+            for author in club_favourite_authors_df['author']:
+                match_value = int(fuzz.token_sort_ratio(my_favourite_author, author))
+                if match_value > 50:
+                    match_values.append(match_value)
+            
+        matching_authors = pd.DataFrame()
+        matching_authors['match_score'] = match_values
+            
+        all_author_matches_df = pd.concat([author_match_df, matching_authors], axis = 1)
+        all_author_matches_df = all_author_matches_df.sort_values('match_score', ascending=False).dropna(how='any',axis=0)
 
         return all_author_matches_df
 

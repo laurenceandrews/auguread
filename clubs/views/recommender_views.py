@@ -63,7 +63,7 @@ class ClubRecommenderView(TenPosRatingsRequiredMixin, View):
                 Q(name__icontains=query) | Q(location__icontains=query)
             ).distinct()
 
-        paginator = Paginator(self.clubs_queryset, settings.CLUBS_PER_PAGE)
+        paginator = Paginator(self.club_recs_in_person, settings.CLUBS_PER_PAGE)
         page_number = request.GET.get('page')
         self.clubs_paginated = paginator.get_page(page_number)
 
