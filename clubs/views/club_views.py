@@ -139,7 +139,9 @@ class DeleteClubUserView(LoginRequiredMixin, DeleteView):
 
     def get_cancel_url(self):
         """Return URL to redirect the user too after form handling cancelled."""
-        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
+        club_user = Club_Users.objects.get(id=self.kwargs['club_users_id'])
+        club = club_user.club.name
+        return reverse('club_detail', kwargs={'club_id': club_user.club.id})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
