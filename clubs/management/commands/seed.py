@@ -6,8 +6,8 @@ from random import randint
 
 import pandas as pd
 from clubs.models import (Address, Book, Book_Rating, Club, Club_Books,
-                          Club_Users, MeetingAddress, MeetingLink, User,
-                          User_Books)
+                          Club_Users, ClubFeedPost, MeetingAddress,
+                          MeetingLink, Post, User, User_Books)
 from django.core.management.base import BaseCommand, CommandError
 from django.template.defaultfilters import slugify
 from faker import Faker
@@ -148,6 +148,9 @@ class Command(BaseCommand):
                 role_num="4"
             )
 
+            # try to make a club feed post
+            self.try_to_make_a_club_feed_post(club, user, 4)
+
             # self.clubs_made.append(club)
             self.club_count += 1
             self.clubs_seeded += 1
@@ -229,9 +232,13 @@ class Command(BaseCommand):
         user_role = Club_Users.objects.create(
             user=user,
             club=club_choice,
-            role_num=randint(1, 3)
+            role_num=randint(1, 2)
         )
         user_role.save()
+
+        # Make the club_user make a post on their club's feed
+        # try to make a club feed post
+        self.try_to_make_a_club_feed_post(club_choice, user, user_role.role_num)
 
         self.user_count += 1
 
@@ -327,6 +334,24 @@ class Command(BaseCommand):
     def get_random_meeting_type(self):
         meeting_types = ['ONL', 'INP']
         return random.choice(meeting_types)
+
+    def try_to_make_a_club_feed_post(self, club, user, role_num):
+        probabilities = [1, 2, 3]
+        probabality = random.choice(probabilities)
+        if probabality == 1:
+            probabality_of_making_a_post = True
+        else:
+            probabality_of_making_a_post = False
+
+        if probabality_of_making_a_post:
+            if role_num == 2:
+                text = "Hi, I'm " + user.first_name + ". I am a new member of " + club.name + "!"
+                post = Post.objects.create(author=user, text=text)
+                ClubFeedPost.objects.create(post=post, club=club)
+            if role_num == 4:
+                text = "Hi, I'm " + user.first_name + ". I am the current owner of " + club.name + "!"
+                post = Post.objects.create(author=user, text=text)
+                ClubFeedPost.objects.create(post=post, club=club)
 
     # get a random index from the list of users in the dataset
     def get_random_user(self):
