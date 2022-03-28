@@ -31,3 +31,5 @@ class ClubFeedPost(models.Model):
 
     class Meta:
         """Model options."""
+        verbose_name = "Club Feed Post"
+        verbose_name_plural = "Club Feed Posts"
