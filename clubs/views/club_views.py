@@ -15,7 +15,7 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
@@ -23,45 +23,52 @@ from .helpers import login_prohibited, member, owner
 from .mixins import ClubOwnerRequiredMixin, LoginProhibitedMixin
 
 
-@ login_required()
-def new_club(request):
+class CreateClubView(LoginRequiredMixin, CreateView):
     """View that handles creating a new club."""
 
-    if request.method == "POST":
-        current_user = request.user
-        form = NewClubForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data.get("name")
-            city = form.cleaned_data.get("city")
-            country = form.cleaned_data.get("country")
-            description = form.cleaned_data.get("description")
-            # avg_reading_speed = form.cleaned_data.get("avg_reading_speed")
-            calendar_name = form.cleaned_data.get("calendar_name")
+    model = Club
+    template_name = 'club_create.html'
+    form_class = NewClubForm
 
-            location = city + ", " + country
+    def form_valid(self, form):
+        """Process a valid form."""
+        name = form.cleaned_data.get("name")
+        city = form.cleaned_data.get("city")
+        country = form.cleaned_data.get("country")
+        description = form.cleaned_data.get("description")
+        calendar_name = form.cleaned_data.get("calendar_name")
 
-            calendar_slug = slugify(calendar_name)
-            cal = Calendar(name=calendar_name, slug=calendar_slug)
-            cal.save()
+        location = city + ", " + country
 
-            meeting_type = form.cleaned_data.get("meeting_type")
+        calendar_slug = slugify(calendar_name)
+        cal = Calendar(name=calendar_name, slug=calendar_slug)
+        cal.save()
 
-            club = Club.objects.create(
-                name=name,
-                location=location,
-                description=description,
-                owner=current_user,
-                calendar=cal,
-                meeting_type=meeting_type
-            )
+        meeting_type = form.cleaned_data.get("meeting_type")
 
-            Club_Users.objects.create(user=current_user, club=club, role_num=4)
+        current_user = self.request.user
 
-            return redirect('club_detail', club.id)
-        else:
-            return render(request, "new_club.html", {"form": form})
-    else:
-        return render(request, "new_club.html", {"form": NewClubForm})
+        club = Club.objects.create(
+            name=name,
+            location=location,
+            description=description,
+            owner=current_user,
+            calendar=cal,
+            meeting_type=meeting_type
+        )
+
+        Club_Users.objects.create(user=current_user, club=club, role_num=4)
+
+        return redirect('club_detail', club.id)
+
+    def get_success_url(self):
+        """Return URL to redirect the user too after valid form handling."""
+        return reverse('user_clubs', kwargs={'role_num': 4})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        return context
 
 
 class ClubUpdateView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
