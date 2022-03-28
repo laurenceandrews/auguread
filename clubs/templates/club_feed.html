@@ -131,30 +131,33 @@
 <div class="container">
   <div class="row">
     <div class="col-12">
-      {% if not posts %}
-        <h1 style="text-align:center">
-          No posts made yet!
-        </h1>
-      {% else %}
-        <!-- New post form -->
-        <form action="{% url 'club_feed_create' club.id %}" method="post" class="m-8 sm:m-0">
-          {% for field in form %}
-            <div class="">
-              <label class="block text-sm font-medium text-gray-700  dark:text-gray-50">
-                {{ field.label_tag }}
-              </label>
-              <div class="mt-1">
-                {{ field|add_class:"appearance-none block w-full sm:w-auto h-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"}}
-                {{ field.errors }}
-                {% if field.help_text %}
-                <p class="help">{{ field.help_text|safe }}</p>
-                {% endif %}
-              </div>
+
+      <!-- New post form -->
+      <form action="{% url 'club_feed_create' club.id %}" method="post" class="m-8 sm:m-0">
+        {% for field in form %}
+          <div class="">
+            <label class="block text-sm font-medium text-gray-700  dark:text-gray-50">
+              {{ field.label_tag }}
+            </label>
+            <div class="mt-1">
+              {{ field|add_class:"appearance-none block w-full sm:w-auto h-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"}}
+              {{ field.errors }}
+              {% if field.help_text %}
+              <p class="help">{{ field.help_text|safe }}</p>
+              {% endif %}
             </div>
-          {% endfor %}
-          {% csrf_token %}
-          <button type="submit" class="mt-4 w-32 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Post</button>
-        </form>
+          </div>
+        {% endfor %}
+        {% csrf_token %}
+        <button type="submit" class="mt-4 w-32 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Post</button>
+      </form>
+      
+        {% if not posts %}
+          <h1 style="text-align:center">
+            No posts made yet!
+          </h1>
+        {% else %}
+
 
         <div class="ml-8 mt-6 sm:ml-0 max-w-xl">
             <!-- List of club posts -->
