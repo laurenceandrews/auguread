@@ -6,8 +6,8 @@ from random import randint
 
 import pandas as pd
 from clubs.models import (Address, Book, Book_Rating, Club, Club_Books,
-                          Club_Users, ClubFeed, MeetingAddress, MeetingLink,
-                          User, User_Books)
+                          Club_Users, MeetingAddress, MeetingLink, User,
+                          User_Books)
 from django.core.management.base import BaseCommand, CommandError
 from django.template.defaultfilters import slugify
 from faker import Faker
