@@ -5,6 +5,7 @@ from clubs.tests.helpers import reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
 
+
 class BookPreferencesViewTest(TestCase):
     """Tests of the book_preferences view."""
 
@@ -35,7 +36,7 @@ class BookPreferencesViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'book_preferences.html')
-        self.assertEqual(len(response.context['books_paginated']), 3)
+        self.assertEqual(len(response.context['books_paginated']), 12)
 
     def test_get_book_list_with_query(self):
         self.client.login(email=self.user.email, password="Password123")
