@@ -1,13 +1,10 @@
 """Tests of the book rating create view."""
-import datetime
 
-import pytz
 from clubs.models import Book, Book_Rating, User
 from clubs.tests.helpers import reverse_with_next
+from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
-from django.utils import timezone
-from schedule.models import Calendar, Event, Rule
 
 
 class CreateBookRatingViewTest(TestCase):
@@ -58,6 +55,9 @@ class CreateBookRatingViewTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'book_rating_create.html')
+        # messages_list = list(response.context['messages'])
+        # self.assertEqual(len(messages_list), 1)
+        # self.assertEqual(messages_list[0].level, messages.ERROR)
 
     def test_succesful_create_book_rating(self):
         self.client.login(email=self.user.email, password="Password123")
@@ -94,7 +94,7 @@ class CreateBookRatingViewTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        esponse = self.client.post(self.url, self.data, follow=True)
+        response = self.client.post(self.url, self.data, follow=True)
         self.assertEqual(response.status_code, 200)
         book_rating_count_after = Book_Rating.objects.count()
         self.assertEqual(book_rating_count_after, book_rating_count_before)

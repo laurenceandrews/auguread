@@ -68,7 +68,7 @@ class NewClubTest(TestCase):
         response = self.client.post(self.url, self.data, follow=True)
         clubs_count_after = Club.objects.count()
         self.assertEqual(clubs_count_after, clubs_count_before)
-        self.assertTemplateUsed(response, 'new_club.html')
+        self.assertTemplateUsed(response, 'club_create.html')
 
     def test_unsuccessful_new_club_creation_with_blank_name(self):
         self.client.login(email="johndoe@example.org",
@@ -78,7 +78,7 @@ class NewClubTest(TestCase):
         response = self.client.post(self.url, self.data, follow=True)
         club_count_after = Club.objects.count()
         self.assertEqual(club_count_after, club_count_before)
-        self.assertTemplateUsed(response, 'new_club.html')
+        self.assertTemplateUsed(response, 'club_create.html')
 
     def test_unsuccessful_new_club_creation_with_blank_calendar_name(self):
         self.client.login(email="johndoe@example.org",
@@ -88,7 +88,7 @@ class NewClubTest(TestCase):
         response = self.client.post(self.url, self.data, follow=True)
         club_count_after = Club.objects.count()
         self.assertEqual(club_count_after, club_count_before)
-        self.assertTemplateUsed(response, 'new_club.html')
+        self.assertTemplateUsed(response, 'club_create.html')
 
     def test_unsuccessful_new_club_creation_with_blank_description(self):
         self.client.login(email="johndoe@example.org",
@@ -98,7 +98,7 @@ class NewClubTest(TestCase):
         response = self.client.post(self.url, self.data, follow=True)
         club_count_after = Club.objects.count()
         self.assertEqual(club_count_after, club_count_before)
-        self.assertTemplateUsed(response, 'new_club.html')
+        self.assertTemplateUsed(response, 'club_create.html')
 
     def test_cannot_create_club_for_other_user(self):
         self.client.login(email="johndoe@example.org",

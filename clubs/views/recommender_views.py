@@ -3,7 +3,6 @@ from clubs.forms import ClubRecommenderForm
 # from clubs.helpers import member, owner
 from django.conf import settings
 from statistics import mean
-
 from clubs.book_to_club_recommender.book_to_club_recommender_age import \
     ClubBookAgeRecommender
 from clubs.book_to_club_recommender.book_to_club_recommender_author import \
@@ -14,7 +13,6 @@ from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
                          CreateEventForm, LogInForm, MeetingAddressForm,
                          MeetingLinkForm, NewClubForm, PasswordForm, PostForm,
                          SignUpForm)
-# from clubs.helpers import member, owner
 from clubs.models import (Address, Book, Book_Rating, Club, Club_Book_History,
                           Club_Books, Club_Users, MeetingAddress, MeetingLink,
                           Post, User)
@@ -136,7 +134,6 @@ def club_book_select_view(request, club_id, book_id):
 
     lastBookRead = Club_Book_History.objects.last()
     if lastBookRead:
-        # Verify applicant number below
         club_users = Club_Users.objects.filter(club=club).exclude(role_num=1).values('user')
         book_ratings = Book_Rating.objects.filter(book=lastBookRead.book, user__in=club_users)
         if book_ratings.exists():
@@ -170,15 +167,16 @@ class RecommendationsView(LoginRequiredMixin, View):
 
         # returns the collaborative filtering of ratings between users
         user_rec_book_ids = BookToUserRecommender().get_collaborative_filtering()
-        self.user_rec_books = Book.objects.filter(id__in=user_rec_book_ids)[0:11]
+        self.user_rec_books = Book.objects.filter(id__in=user_rec_book_ids)[0:10]
 
-        club_favourites = Club_Books.objects.all()
+        club_favourites = Club_Books.objects.all().order_by('-id')
+
         if club_favourites.count() == 0:
             self.club_favourites_exist = False
         else:
             self.club_favourites_exist = True
 
-        self.club_favourites_book_ids = Club_Books.objects.values('book')[0:11]
+        self.club_favourites_book_ids = club_favourites.values('book')[0:10]
         self.club_favourites = Book.objects.filter(id__in=self.club_favourites_book_ids)
 
         return self.render()

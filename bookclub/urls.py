@@ -18,6 +18,7 @@ from clubs import views
 from clubs.views.recommender_views import ClubRecommenderView
 from django.conf.urls import url
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 from schedule.views import (DeleteEventView, EditEventView, EventView,
@@ -53,17 +54,23 @@ urlpatterns = [
     path('summary/books/clubs', views.user_clubs_books, name='user_clubs_books'),
     path('summary/books/current', views.user_current_book, name='user_current_book'),
 
+    # Forgot Password urls
+    path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
     # Feed urls
-    path('feed/', views.FeedView.as_view(), name='feed'),
-    path('new_post/', views.NewPostView.as_view(), name='new_post'),
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
+    path('club/<int:club_id>/feed/create', views.ClubFeedPostCreateView.as_view(), name='club_feed_create'),
+    path('club/<int:club_id>/feed/', views.ClubFeedView.as_view(), name='club_feed'),
+
 
 
     # Club urls
     path('clubs/', views.ClubListView.as_view(), name='club_list'),
-    path('new_club/', views.new_club, name='new_club'),
+    path('new_club/', views.CreateClubView.as_view(), name='new_club'),
     url(r"^club/detail/(?P<club_id>\d+)/$", views.ClubDetailView.as_view(), name='club_detail'),
-    path('<int:club_id>/users', views.UserListView.as_view(), name='user_list'),
     path('club/update/<int:club_id>', views.ClubUpdateView.as_view(), name='club_update'),
     path('club/delete/<int:club_id>', views.DeleteClubView.as_view(), name='club_delete'),
 
@@ -73,18 +80,15 @@ urlpatterns = [
     path('apply/<int:club_id>', views.apply, name='apply'),
     path('<int:club_id>/approve/<int:user_id>', views.approve, name='approve'),
     path('<int:club_id>/transfer/<int:user_id>', views.transfer, name='transfer'),
-    path('<int:club_id>/user/<int:user_id>', views.ShowUserView.as_view(), name='show_user'),
 
     re_path(r"^club/user/delete/(?P<club_users_id>\d+)/$", views.DeleteClubUserView.as_view(), name="delete_club_user"),
 
     path('<int:club_id>/applicants', views.applicants_list, name='applicant_list'),
     path('<int:club_id>/members', views.members_list, name='member_list'),
-    path('<int:club_id>/owners', views.OwnerListView.as_view(), name='owner_list'),
 
 
     path('book/rating/<int:book_id>/', views.CreateBookRatingView.as_view(), name='rate_book'),
 
-    path('club/<int:club_id>/book/<int:book_id>/history/', views.CreateClubBookHistoryView.as_view(), name='create_club_book_history'),
     path('user/<int:user_id>/book/<int:book_id>/history/', views.CreateUserBookHistoryView.as_view(), name='create_user_book_history'),
 
     path('user/<int:user_id>/book/<int:book_id>/favourite/', views.CreateUserBooksView.as_view(), name='create_user_book_favourite'),

@@ -1,4 +1,3 @@
-
 """Static views of the clubs app."""
 from clubs.views.helpers import login_prohibited
 from django.shortcuts import render

@@ -1,6 +1,5 @@
 """Forms for the book club app"""
 import datetime
-
 from clubs.book_to_club_recommender.book_to_club_recommender_age import \
     ClubBookAgeRecommender
 from clubs.book_to_club_recommender.book_to_club_recommender_author import \
@@ -15,7 +14,6 @@ from django.template.defaultfilters import slugify
 from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
-
 from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
                      Club_Books, Club_Users, MeetingAddress, MeetingLink, Post,
                      User, User_Book_History, User_Books)

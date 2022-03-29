@@ -12,13 +12,13 @@
     <form action="{% url 'new_club' %}" method="post">
       {% csrf_token %}
       {% include 'partials/bootstrap_form.html' with form=form %}
-      
+
       <!-- Buttons -->
       <div class="flex flex-row-reverse items-end gap-5 mt-6 border-t pt-6 mb-16">
-        
-        <a href="{{ view.get_cancel_url }}" class="bg-transparent hover:bg-blue-100 text-blue-600 py-2 px-4 border border-blue-500/50 hover:text-blue-800 rounded">Cancel</a>
+
+        <a href="{{ view.get_success_url }}" class="bg-transparent hover:bg-blue-100 text-blue-600 py-2 px-4 border border-blue-500/50 hover:text-blue-800 rounded">Cancel</a>
         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 border border-blue-500/50  rounded">Submit</button>
-        
+
       </div>
     </form>
   </div>

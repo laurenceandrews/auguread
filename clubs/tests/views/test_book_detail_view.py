@@ -36,6 +36,33 @@ class BookDetailViewTest(TestCase):
         self.assertTemplateUsed(response, 'book_detail.html')
         book = response.context['book']
         self.assertEquals(book, self.book)
+        self.assertEquals(Book_Rating.objects.filter(
+            book=book, user=self.user).exists(), True)
+        self.assertContains(response,
+                            'Update Rating',
+                            status_code=200)
+
+    def test_get_book_detail_where_no_rating_exists(self):
+        self.client.login(email=self.user.email, password="Password123")
+        new_book = Book.objects.create(
+            ISBN="9781904605287",
+            title="The Third ManThe Third Man",
+            author="Graham Greene ",
+            publication_year="1950",
+            publisher="CSA WORD")
+        self.url = reverse(
+            'book_detail', kwargs={'book_id': new_book.id}
+        )
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'book_detail.html')
+        book = response.context['book']
+        self.assertEquals(book, new_book)
+        self.assertNotEquals(Book_Rating.objects.filter(
+            book=book, user=self.user).exists(), True)
+        self.assertContains(response,
+                            'Rate Book',
+                            status_code=200)
 
     def test_get_book_detail_with_invalid_id(self):
         self.client.login(email=self.user.email, password="Password123")
@@ -46,4 +73,5 @@ class BookDetailViewTest(TestCase):
     def test_get_book_detail_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertRedirects(response, redirect_url,
+                             status_code=302, target_status_code=200)

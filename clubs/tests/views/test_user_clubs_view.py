@@ -14,6 +14,7 @@ class UserClubsViewTestCase(TestCase):
         'clubs/tests/fixtures/default_calendar.json',
         'clubs/tests/fixtures/default_club.json',
         'clubs/tests/fixtures/other_clubs.json',
+        'clubs/tests/fixtures/other_club_users.json',
         'clubs/tests/fixtures/detailed_club.json',
         'clubs/tests/fixtures/default_rules.json',
     ]
@@ -77,6 +78,20 @@ class UserClubsViewTestCase(TestCase):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+
+    def test_user_favourite_books_with_query(self):
+        self.client.login(email=self.user.email, password="Password123")
+        role_num = 1
+        url = reverse('user_clubs', kwargs={'role_num': role_num})
+        data_with_q = {'q': self.club_as_owner.name}
+        self.client.login(email=self.user.email, password="Password123")
+        response = self.client.get(self.url, data_with_q, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'summary_clubs_table.html')
+        self.assertEqual(len(response.context['clubs']), 0)
+        self.assertFalse(self.club_as_owner in response.context['clubs'])
+        self.assertFalse(self.club_as_member in response.context['clubs'])
+        self.assertFalse(self.club_as_applicant in response.context['clubs'])
 
     def _create_clubs_as_owner_member_applicant_and_none(self):
         self.first_club_as_owner = Club.objects.get(pk=6)

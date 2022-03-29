@@ -48,6 +48,15 @@ class deleteUserBookHistoryViewTest(TestCase):
         user_books_count_after = User_Books.objects.count()
         self.assertEqual(user_books_count_after + 1, user_books_count_before)
 
+    def test_successful_delete_user_books_if_user_books_does_not_exist(self):
+        self.client.login(email=self.user.email, password="Password123")
+        user_books = User_Books.objects.get(user=self.user, book=self.book)
+        user_books.delete()
+        user_books_count_before = User_Books.objects.count()
+        response = self.client.post(self.url, self.data, follow=True)
+        user_books_count_after = User_Books.objects.count()
+        self.assertEqual(user_books_count_after, user_books_count_before)
+
     def test_unsuccessful_delete_user_books(self):
         self.client.login(email=self.user.email, password="Password123")
         user_books_count_before = User_Books.objects.count()

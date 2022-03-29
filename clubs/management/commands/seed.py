@@ -5,8 +5,9 @@ import time
 from random import randint
 
 import pandas as pd
-from clubs.models import (Book, Book_Rating, Club, Club_Books, Club_Users,
-                          User, User_Books)
+from clubs.models import (Address, Book, Book_Rating, Club, Club_Books,
+                          Club_Users, ClubFeedPost, MeetingAddress,
+                          MeetingLink, Post, User, User_Books)
 from django.core.management.base import BaseCommand, CommandError
 from django.template.defaultfilters import slugify
 from faker import Faker
@@ -98,28 +99,12 @@ class Command(BaseCommand):
         self.books_from_file = self.read_books_from_file()
         self.users_from_file = self.read_users_from_file()
 
+        self._create_default_address()
+
     def __del__(self):
         self.file1_append.close()
         self.file2_append.close()
         self.file3_append.close()
-
-    # create rules for calendars
-    rule = Rule(frequency="YEARLY", name="Yearly",
-                description="will recur once every Year")
-    rule.save()
-    print("YEARLY recurrence created")
-    rule = Rule(frequency="MONTHLY", name="Monthly",
-                description="will recur once every Month")
-    rule.save()
-    print("Monthly recurrence created")
-    rule = Rule(frequency="WEEKLY", name="Weekly",
-                description="will recur once every Week")
-    rule.save()
-    print("Weekly recurrence created")
-    rule = Rule(frequency="DAILY", name="Daily",
-                description="will recur once every Day")
-    rule.save()
-    print("Daily recurrence created")
 
     # took some code from our old seed.py file from grasshopper
     def create_club(self):
@@ -150,7 +135,7 @@ class Command(BaseCommand):
                 location=club_location,
                 description=club_description,
                 avg_reading_speed=club_reading_speed,
-                meeting_type = club_meeting_type,
+                meeting_type=club_meeting_type,
                 owner=user,
                 calendar=cal
             )
@@ -162,6 +147,9 @@ class Command(BaseCommand):
                 club=club,
                 role_num="4"
             )
+
+            # try to make a club feed post
+            self.try_to_make_a_club_feed_post(club, user, 4)
 
             # self.clubs_made.append(club)
             self.club_count += 1
@@ -176,7 +164,50 @@ class Command(BaseCommand):
                 )
                 fav_book.save()
 
+            # Seed a first meeting for every club
+            datetime_now = datetime.datetime.now()
+            default_interval_to_meeting_start = datetime.timedelta(days=2)
+            default_meeting_start = datetime_now + default_interval_to_meeting_start
+            default_interval_to_meeting_end = datetime.timedelta(hours=1)
+            default_meeting_end = default_meeting_start + default_interval_to_meeting_end
+
+            data = {
+                'title': 'Introductions',
+                'start': default_meeting_start,
+                'end': default_meeting_end,
+                'description': 'This club has no books. When a book is selected, it will show here.',
+                'calendar': club.calendar
+            }
+            event = Event(**data)
+            event.save()
+
+            if club.meeting_type == 'ONL':
+                data = {
+                    'event': event,
+                    'meeting_link': 'https://zoom.us/test'
+                }
+                meeting_link = MeetingLink(**data)
+                meeting_link.save()
+            elif club.meeting_type == 'INP':
+                data = {
+                    'event': event,
+                    'address': self.default_address
+                }
+                meeting_address = MeetingAddress(**data)
+                meeting_address.save()
+
+    def _create_default_address(self):
+        self.default_address = Address.objects.create(
+            name="City Library",
+            address1="New Concordia Wharf",
+            address2="3 Mill St",
+            zip_code="SE1 2BB",
+            city="London",
+            country="GB"
+        )
+
     # seed users and add to clubs
+
     def seed_user_in_club(self):
 
         user = random.choice(self.users)
@@ -201,9 +232,13 @@ class Command(BaseCommand):
         user_role = Club_Users.objects.create(
             user=user,
             club=club_choice,
-            role_num=randint(1, 3)
+            role_num=randint(1, 2)
         )
         user_role.save()
+
+        # Make the club_user make a post on their club's feed
+        # try to make a club feed post
+        self.try_to_make_a_club_feed_post(club_choice, user, user_role.role_num)
 
         self.user_count += 1
 
@@ -295,10 +330,28 @@ class Command(BaseCommand):
             "Cairo, Egypt", "Aswan, Egypt", "Luxor, Egypt", "Alexandria, Egypt", "Sharm El Sheikh, Egypt"
         ]
         return random.choice(city)
-    
+
     def get_random_meeting_type(self):
-        meeting_types = ['Online', 'In-person']
+        meeting_types = ['ONL', 'INP']
         return random.choice(meeting_types)
+
+    def try_to_make_a_club_feed_post(self, club, user, role_num):
+        probabilities = [1, 2, 3]
+        probabality = random.choice(probabilities)
+        if probabality == 1:
+            probabality_of_making_a_post = True
+        else:
+            probabality_of_making_a_post = False
+
+        if probabality_of_making_a_post:
+            if role_num == 2:
+                text = "Hi, I'm " + user.first_name + ". I am a new member of " + club.name + "!"
+                post = Post.objects.create(author=user, text=text)
+                ClubFeedPost.objects.create(post=post, club=club)
+            if role_num == 4:
+                text = "Hi, I'm " + user.first_name + ". I am the current owner of " + club.name + "!"
+                post = Post.objects.create(author=user, text=text)
+                ClubFeedPost.objects.create(post=post, club=club)
 
     # get a random index from the list of users in the dataset
     def get_random_user(self):

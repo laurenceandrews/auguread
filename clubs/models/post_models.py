@@ -1,4 +1,4 @@
-from clubs.models.user_models import User
+from clubs.models.user_models import Club, User
 from django.db import models
 
 
@@ -21,3 +21,15 @@ class Post(models.Model):
         """Model options."""
         app_label = "clubs"
         ordering = ['-created_at']
+
+
+class ClubFeedPost(models.Model):
+    """ClubFeed model used for recording posts made for a club's feed."""
+    club = models.ForeignKey(Club, on_delete=models.CASCADE)
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+
+    class Meta:
+        """Model options."""
+        verbose_name = "Club Feed Post"
+        verbose_name_plural = "Club Feed Posts"

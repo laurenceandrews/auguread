@@ -51,3 +51,14 @@ class UserFavouriteBooksViewTestCase(TestCase):
         self.assertContains(response, '<p>No books to show.</p>', status_code=200)
         self.assertNotContains(response, f'{self.first_book.title}', status_code=200)
         self.assertNotContains(response, f'{self.second_book.title}', status_code=200)
+
+    def test_user_favourite_books_with_query(self):
+        self.client.login(email=self.user.email, password="Password123")
+        user_books = User_Books.objects.create(user=self.user, book=self.first_book)
+        data_with_q = {'q': user_books.book.title}
+        response = self.client.get(self.url, data_with_q, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'partials/books_table.html')
+        self.assertEqual(len(response.context['books']), 1)
+        self.assertContains(response, f'{self.first_book.title}', status_code=200)
+        self.assertNotContains(response, f'{self.second_book.title}', status_code=200)

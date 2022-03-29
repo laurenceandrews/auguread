@@ -1,0 +1,47 @@
+[
+    {
+      "model": "clubs.Book_Rating",
+      "pk": 2,
+      "fields": {
+        "user" : 1,
+        "book" : 21,
+        "rating" : "8"
+      }
+    },
+    {
+        "model": "clubs.Book_Rating",
+        "pk": 3,
+        "fields": {
+          "user" : 2,
+          "book" : 19,
+          "rating" : "8"
+        }
+      },
+      {
+        "model": "clubs.Book_Rating",
+        "pk": 4,
+        "fields": {
+          "user" : 3,
+          "book" : 19,
+          "rating" : "8"
+        }
+      },
+      {
+        "model": "clubs.Book_Rating",
+        "pk": 5,
+        "fields": {
+          "user" : 4,
+          "book" : 19,
+          "rating" : "8"
+        }
+      },
+      {
+        "model": "clubs.Book_Rating",
+        "pk": 6,
+        "fields": {
+          "user" : 1,
+          "book" : 39,
+          "rating" : "7"
+        }
+      }
+  ]

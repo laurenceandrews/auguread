@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from .models import (Book, Book_Rating, Club, Club_Book_History, Club_Books,
-                     Club_Users, MeetingAddress, MeetingLink, Post, User,
-                     User_Book_History, User_Books)
+from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
+                     Club_Books, Club_Users, ClubFeedPost, MeetingAddress,
+                     MeetingLink, Post, User, User_Book_History, User_Books)
 
 
 @admin.register(User)
@@ -12,7 +12,8 @@ class UserAdmin(admin.ModelAdmin):
     list_display = [
         'id',
         'username',
-        'clubs_attended'
+        'clubs_attended',
+        'friends_list'
     ]
 
 
@@ -76,6 +77,23 @@ class PostAdmin(admin.ModelAdmin):
         return post.author.username
 
 
+@admin.register(ClubFeedPost)
+class ClubFeedPostAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for club feed posts."""
+
+    list_display = [
+        'club_name', 'post_text'
+    ]
+
+    def club_name(self, club_feed_post):
+        """Return the name of the club."""
+        return club_feed_post.club.name
+
+    def post_text(self, club_feed_post):
+        """Return the author of a given post."""
+        return club_feed_post.post.text
+
+
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for books."""
@@ -91,6 +109,15 @@ class User_Book_History(admin.ModelAdmin):
 
     list_display = [
         'user', 'book'
+    ]
+
+
+@admin.register(Address)
+class AddressAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for addresses."""
+
+    list_display = [
+        'name', 'zip_code', 'city', 'country'
     ]
 
 

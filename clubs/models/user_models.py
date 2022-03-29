@@ -171,6 +171,10 @@ class User(AbstractUser):
 
         return self.followees.count()
 
+    def friends_list(self):
+        """Returns the users self is following."""
+        return self.followees.all()
+
 
 class Club(models.Model):
     """Club model used for all the functions of a club."""

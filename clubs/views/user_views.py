@@ -17,29 +17,8 @@ from django.views.generic.edit import FormView
 from django.views.generic.list import MultipleObjectMixin
 
 from .helpers import login_prohibited
-from .mixins import (ApplicantProhibitedMixin, LoginProhibitedMixin,
-                     MemberProhibitedMixin)
+from .mixins import LoginProhibitedMixin
 
-
-class UserListView(LoginRequiredMixin, ListView, MultipleObjectMixin, ApplicantProhibitedMixin):
-    """View that shows a list of all users"""
-    model = User
-    template_name = "user_list.html"
-    context_object_name = "users"
-    paginate_by = settings.NUMBER_PER_PAGE
-
-    def get_queryset(self):
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        users = list(club.members()) + list(club.officers()) + list(club.owners())
-        return users
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        club = Club.objects.get(id=self.kwargs['club_id'])
-        context['club'] = club
-        context['user'] = self.request.user
-
-        return context
 
 class UserDetailList(LoginRequiredMixin, ListView):
     """View that shows a list of all users."""
@@ -48,6 +27,7 @@ class UserDetailList(LoginRequiredMixin, ListView):
     template_name = "user_detail_list.html"
     context_object_name = "users"
     paginate_by = settings.USERS_PER_PAGE
+
 
 class UserDetailView(LoginRequiredMixin, DetailView):
 
@@ -65,6 +45,9 @@ class UserDetailView(LoginRequiredMixin, DetailView):
         clubs = user.clubs_attended()
         context['clubs'] = clubs
 
+        friends = user.friends_list
+        context['friends'] = friends
+
         paginator = Paginator(clubs, settings.NUMBER_PER_PAGE)
 
         page_number = self.request.GET.get('page')
@@ -77,6 +60,11 @@ class UserDetailView(LoginRequiredMixin, DetailView):
         """Handle get request, and redirect if user_id invalid."""
 
         try:
+            user = self.get_object()
+            current_user = self.request.user
+            if current_user == user:
+                return redirect('user_profile')
+
             return super().get(request, *args, **kwargs)
         except Http404:
             messages.add_message(self.request, messages.ERROR, "Invalid user!")
@@ -88,6 +76,8 @@ def user_profile_view(request):
     user = request.user
     clubs = user.clubs_attended()
 
+    friends = user.friends_list
+
     paginator = Paginator(clubs, settings.NUMBER_PER_PAGE)
 
     page_number = request.GET.get('page')
@@ -96,5 +86,6 @@ def user_profile_view(request):
                   {'target': user,
                    'user_profile': True,
                    'clubs': clubs,
+                   'friends': friends,
                    'page_obj': page_obj
                    })
