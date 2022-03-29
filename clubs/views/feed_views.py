@@ -87,6 +87,7 @@ class PostCommentsView(LoginRequiredMixin, ClubMemberOrOwnerRequiredMixin, ListV
         context['club'] = club
         post = Post.objects.get(id=self.kwargs['post_id'])
         context['post'] = post
+        context['original_post'] = [post]
         return context
 
 
