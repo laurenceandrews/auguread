@@ -1,14 +1,25 @@
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 
-import numpy as np
-import pandas as pd
+from surprise import KNNBasic
+from surprise import Dataset
+from surprise import Reader
+from surprise.model_selection import cross_validate
+
+from collections import defaultdict
+from operator import itemgetter
+import heapq
+
+import os
+import csv
+
 from clubs.models import Book, Book_Rating, User
 
 
 class BookToUserRecommender:
     def __init__(self):
 
-        # load datasets
-
+        # Old way of loading dataset
         self.df_books = pd.DataFrame(list(Book.objects.all().values()))
         self.df_users = pd.DataFrame(list(User.objects.all().values()))
         self.df_ratings = pd.DataFrame(list(Book_Rating.objects.all().values()))
@@ -17,85 +28,99 @@ class BookToUserRecommender:
         self.df_books = self.df_books.dropna(how='any')
         self.df_ratings = self.df_ratings.dropna(how='any')
 
-    # experimental layout for implementation
+        # New way of loading dataset
+        self.dataset, self.bookID_to_name = self.load_dataset()
 
-    def get_top_books(self):
-        # get the top 20 highest rated books
-        top_20_books = pd.DataFrame(self.df_ratings.groupby('id').agg(['mean', 'count'])['rating'].reset_index())
+        # Build a full Surprise training set from dataset
+        self.trainset = self.dataset.build_full_trainset()
 
-        # generate score based on mean rating and total number of times the book is rated
-        min_votes = top_20_books['count'].quantile(0.10)  # minimum votes required
-        top_20_books = top_20_books[top_20_books['count'] > min_votes]
-        print('minimum votes for books = ', min_votes)
-        print(top_20_books.shape)
-        rating_mean = top_20_books['mean']  # average for the book (mean) = (Rating)
-        vote_count = top_20_books['count']  # number of votes for the book = (votes)
-        vote_mean = top_20_books['mean'].mean()  # mean vote across all books
-        top_20_books['weighted rating'] = ((vote_count / (vote_count + min_votes)) * rating_mean +
-                                           (min_votes / (vote_count + min_votes)) * vote_mean)
+        # Set no of items to recommender
+        self.k = 10
 
-        top_20_books = top_20_books.sort_values('weighted rating', ascending=False).reset_index(drop=True)
+        # Set user as test subject
+        self.get_test_subject = 
 
-        # get title of books
-        top_books_to_recommend = pd.merge(top_20_books, self.df_books, on='id')[['title', 'author', 'mean',
-                                                                                 'count', 'weighted rating', 'publication_year']].drop_duplicates('title').iloc[:10]
-        # breakpoint()
-        print(top_books_to_recommend)
-        return top_books_to_recommend
+    # Load in the book ratings and return a dataset
+    def load_dataset():
+        reader = Reader(line_format='user item rating', sep=';', skip_lines=1)
+        ratings_dataset = Dataset.load_from_file('./ratings_no_quotes_smallest.csv', reader=reader)
 
-    def get_top_authors(self):
-        # top 10 highest rated authors
+        # Lookup a book's name with it's bookID as key
+        bookID_to_name = {}
+        with open('./clubs_book.csv', newline='', encoding='Latin1') as csvfile:
+                book_reader = csv.reader(csvfile)
+                next(book_reader)
+                for row in book_reader:
+                    bookID = int(row[0]) 
+                    book_name = row[1]
+                    bookID_to_name[bookID] = book_name
+        # Return both the dataset and lookup dict in tuple
+        return (ratings_dataset, bookID_to_name)
 
-        # drop any duplicates
-        self.df_books = self.df_books.drop_duplicates(['author', 'title'])
+    def create_similarity_matrix(self):
+        self.similarity_matrix = KNNBasic(sim_options={
+        'name': 'cosine',
+        'user_based': False
+        })\
+        .fit(self.trainset)\
+        .compute_similarities()
 
-        # get book-author and title
-        highest_rated_author = pd.merge(self.df_books, self.df_ratings, on='id')[['author', 'rating', 'title', 'id']]
-        highest_rated_author = highest_rated_author.groupby('author').agg(['mean', 'count'])['rating'].reset_index()
+    def create_inner_id(self):
+        # When using Surprise, there are RAW and INNER IDs.
+        # Raw IDs are the IDs, strings or numbers, you use when
+        # creating the trainset. The raw ID will be converted to
+        # an unique integer Surprise can more easily manipulate
+        # for computations.
+        #
+        # So in order to find an user inside the trainset, you
+        # need to convert their RAW ID to the INNER Id. Read
+        # here for more info https://surprise.readthedocs.io/en/stable/FAQ.html#what-are-raw-and-inner-ids
+        self.test_subject_iid = self.trainset.to_inner_uid(self.test_subject)
 
-        # generate score based on mean rating and total number of times the author is rated
-        min_votes_author = highest_rated_author['count'].quantile(0.4)  # minimum votes required to be listed in the top
-        highest_rated_author = highest_rated_author[highest_rated_author['count'] > min_votes_author]
+    def get_top_k_items_rated(self):
+        # Get the top K items we rated
+        self.test_subject_ratings = self.trainset.ur[self.test_subject_iid]
+        self.k_neighbors = heapq.nlargest(self.k, self.test_subject_ratings, key=lambda t: t[1])
 
-        print('minimum votes for authors =', min_votes_author)
-        print(highest_rated_author.shape)
+    def create_default_dict(self):
+        # Default dict is basically a standard dictionary,
+        # the difference beeing that it doesn't throw an error
+        # when trying to access a key which does not exist,
+        # instead a new entry, with that key, is created.
+        self.candidates = defaultdict(float)
 
-        rating_mean_author = highest_rated_author['mean']  # average for the author (mean) = (Rating)
-        vote_count_author = highest_rated_author['count']  # number of votes for the author = (votes)
-        vote_mean_author = highest_rated_author['mean'].mean()  # mean vote across all authors
-        highest_rated_author['weighted rating'] = ((vote_count_author / (vote_count_author + min_votes_author)) *
-                                                   rating_mean_author + (min_votes_author / (vote_count_author + min_votes_author)) * vote_mean_author)
+        for itemID, rating in self.k_neighbors:
+            try:
+                self.similaritities = self.similarity_matrix[itemID]
+                for innerID, score in enumerate(self.similaritities):
+                    self.candidates[innerID] += score * (rating / 5.0)
+            except:
+                continue
 
-        highest_rated_author = highest_rated_author.sort_values('weighted rating', ascending=False).reset_index(drop=True)
+    # Utility we'll use later.
+    def get_book_name(self, bookID):
+        if (bookID) in self.bookID_to_name:
+            return self.bookID_to_name[bookID]
+        else:
+            return ""
 
-        authors_to_recommend_list = list(highest_rated_author.iloc[:10])
+    def build_dictionary(self):
+        # Build a dictionary of books the user has read
+        read = {}
+        for self.itemID, self.rating in self.trainset.ur[self.test_subject_iid]:
+            self.read[self.itemID] = 1
 
-        # breakpoint()
-        print('get_top_authors return list count: ', len(authors_to_recommend_list))
+        # Add items to list of user's recommendations
+        # If they are similar to their favorite books,
+        # AND have not already been read.
+        recommendations = []
 
-        return authors_to_recommend_list
+        position = 0
+        for self.itemID, self.rating_sum in sorted(self.candidates.items(), key=itemgetter(1), reverse=True):
+            if not self.itemID in read:
+                recommendations.append(self.get_book_namee(self, self.itemID))
+                position += 1
+                if (position > 10): break # We only want top 10
 
-    def get_collaborative_filtering(self):
-        # merge ratings and books to get book titles and drop rows for which title is not available
-
-        df_books_ratings = pd.merge(self.df_ratings, self.df_books, left_on='book_id', right_on='id')
-
-        # get total counts of no. of occurrence of book
-        df_books_ratings['count'] = df_books_ratings.groupby('book_id').transform('count')['user_id']
-
-        # fetch top 100 books based on count
-        isbn = df_books_ratings.drop_duplicates('book_id').sort_values('count', ascending=False).iloc[:100]['book_id']
-        # filter out data as per the ISBN
-        df_books_ratings = df_books_ratings[df_books_ratings['book_id'].isin(isbn)].reset_index(drop=True)
-
-        # remove columns
-        # df_books_ratings = df_books_ratings.drop(['image_small', "image_medium", "image_large"])
-
-        books_ratings_list = df_books_ratings['book_id'].tolist()
-
-        # breakpoint()
-        # print('collaborative filtering output =', df_books_ratings.head(15))
-        # print('df shape: ', df_books_ratings.shape)
-        # print('get_collaborative_filtering list count: ', len(books_ratings_list))
-
-        return books_ratings_list
+        for rec in self.recommendations:
+            print("book: ", rec)
