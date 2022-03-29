@@ -90,8 +90,10 @@
         <div class="mt-8 shadow-sm ring-1 ring-black ring-opacity-5">
           {% if user_profile %}
           <h1 class="mt-8 text-xl font-semibold text-gray-900">Your friends</h1>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">You have {{friends.count}} friends.</p>
           {% else %}
           <h1 class="mt-8 text-xl font-semibold text-gray-900">{{user.full_name}}'s friends</h1>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">{{user.full_name}}'s has {{friends.count}} friends.</p>
           {% endif %}
 
           {% include "partials/users_table.html" with users=friends %}
