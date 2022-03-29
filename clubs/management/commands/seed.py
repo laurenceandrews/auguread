@@ -348,13 +348,16 @@ class Command(BaseCommand):
                 text = "Hi, I'm " + user.first_name + ". I am a new member of " + club.name + "!"
                 post = Post.objects.create(author=user, text=text)
                 ClubFeedPost.objects.create(post=post, club=club)
-                comment_text = "This is a comment."
+                comment_text = "I'm excited to start reading books with you all."
                 comment = Post.objects.create(author=user, text=comment_text)
                 PostComment.objects.create(post=post, comment=comment)
             if role_num == 4:
                 text = "Hi, I'm " + user.first_name + ". I am the current owner of " + club.name + "!"
                 post = Post.objects.create(author=user, text=text)
                 ClubFeedPost.objects.create(post=post, club=club)
+                comment_text = "I'm excited to start making meeting with you all."
+                comment = Post.objects.create(author=user, text=comment_text)
+                PostComment.objects.create(post=post, comment=comment)
 
     # get a random index from the list of users in the dataset
     def get_random_user(self):
