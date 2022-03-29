@@ -33,3 +33,15 @@ class ClubFeedPost(models.Model):
         """Model options."""
         verbose_name = "Club Feed Post"
         verbose_name_plural = "Club Feed Posts"
+
+
+class PostComment(models.Model):
+    """Comment model used for recording posts made as comments to other posts."""
+    post = models.ForeignKey(Post, related_name='post', on_delete=models.CASCADE)
+
+    comment = models.ForeignKey(Post, related_name='comment', on_delete=models.CASCADE)
+
+    class Meta:
+        """Model options."""
+        verbose_name = "Post Comment"
+        verbose_name_plural = "Post Comments"
