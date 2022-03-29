@@ -7,7 +7,7 @@ from random import randint
 import pandas as pd
 from clubs.models import (Address, Book, Book_Rating, Club, Club_Books,
                           Club_Users, ClubFeedPost, MeetingAddress,
-                          MeetingLink, Post, User, User_Books)
+                          MeetingLink, Post, PostComment, User, User_Books)
 from django.core.management.base import BaseCommand, CommandError
 from django.template.defaultfilters import slugify
 from faker import Faker
@@ -348,6 +348,9 @@ class Command(BaseCommand):
                 text = "Hi, I'm " + user.first_name + ". I am a new member of " + club.name + "!"
                 post = Post.objects.create(author=user, text=text)
                 ClubFeedPost.objects.create(post=post, club=club)
+                comment_text = "This is a comment."
+                comment = Post.objects.create(author=user, text=comment_text)
+                PostComment.objects.create(post=post, comment=comment)
             if role_num == 4:
                 text = "Hi, I'm " + user.first_name + ". I am the current owner of " + club.name + "!"
                 post = Post.objects.create(author=user, text=text)

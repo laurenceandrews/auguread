@@ -1,22 +1,17 @@
 """Forms for the book club app"""
 import datetime
-from clubs.book_to_club_recommender.book_to_club_recommender_age import \
-    ClubBookAgeRecommender
-from clubs.book_to_club_recommender.book_to_club_recommender_author import \
-    ClubBookAuthorRecommender
-from clubs.club_to_user_recommender.club_to_user_recommender import ClubUserRecommender
+
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
-from django.db.models import Subquery
 from django.template.defaultfilters import slugify
-from django.utils.translation import ugettext_lazy as _
 from django_countries.fields import CountryField
 from schedule.models import Calendar, Event, Rule
+
 from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
                      Club_Books, Club_Users, MeetingAddress, MeetingLink, Post,
-                     User, User_Book_History, User_Books)
+                     PostComment, User, User_Book_History, User_Books)
 from .models.user_models import User_Clubs
 
 
@@ -333,15 +328,12 @@ class ClubRecommenderForm(forms.ModelForm):
         model = User_Clubs
         fields = []
         # fields = ['name', 'location', 'description']
-        
 
     online = forms.BooleanField(
-        label = 'Online only', 
-        required = False,  
-        disabled = False,
+        label='Online only',
+        required=False,
+        disabled=False,
         widget=forms.widgets.CheckboxInput(attrs={'class': 'checkbox-inline'}),)
-
-    
 
     # def __init__(self, *args, **kwargs):
     #     user_id = kwargs.pop('id')
@@ -353,18 +345,16 @@ class ClubRecommenderForm(forms.ModelForm):
     #         club_ids = ClubUserRecommender(user_id).get_best_clubs_online()
     #     clubs = Club.objects.filter(id__in=club_ids)
     #     self.fields['club'].queryset = clubs
-    
 
 
 class BookRatingForm(forms.Form):
-    # user = forms.ForeignKey(User, on_delete=forms.CASCADE) 
+    # user = forms.ForeignKey(User, on_delete=forms.CASCADE)
     rating = forms.ChoiceField(
-        required = False,
-        label = 'Rate book',
-        error_messages = {},
+        required=False,
+        label='Rate book',
+        error_messages={},
         choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
     )
-
 
 
 class UserDeleteForm(forms.ModelForm):
