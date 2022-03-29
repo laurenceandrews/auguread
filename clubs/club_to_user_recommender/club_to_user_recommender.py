@@ -110,13 +110,13 @@ class ClubUserRecommender:
     def get_all_favourite_book_matches_fuzzy(self):
         club_favourite_books_df = self.get_club_favourite_books()
         # user_favourite_books = self.get_fav_books_and_authors_per_user()
-        book_match_df = pd.DataFrame()
-        book_match_df['book_title'] = club_favourite_books_df['title']
+        book_matches_df = pd.DataFrame()
+        book_matches_df['book_title'] = club_favourite_books_df['title']
         all_book_matches_df = pd.DataFrame()
         match_values = []
 
         for i in range(5):
-            my_favourite_book = self.get_fav_books_and_authors_per_user().iloc[0]['title']
+            my_favourite_book = self.get_fav_books_and_authors_per_user().iloc[:, i-1]['title']
 
             for title in club_favourite_books_df['title']:
                 match_value = int(fuzz.token_sort_ratio(my_favourite_book, title))
@@ -125,8 +125,10 @@ class ClubUserRecommender:
             
         matching_books = pd.DataFrame()
         matching_books['match_score'] = match_values
+
+        club_recs = pd.concat([book_matches_df, club_favourite_books_df], axis=1).drop('title', axis=1)
             
-        all_book_matches_df = pd.concat([book_match_df, matching_books], axis = 1)
+        all_book_matches_df = pd.concat([club_recs, matching_books], axis = 1)
         all_book_matches_df = all_book_matches_df.sort_values('match_score', ascending=False).dropna(how='any',axis=0)
 
         return all_book_matches_df
@@ -149,7 +151,7 @@ class ClubUserRecommender:
         match_values = []
 
         for i in range(5):
-            my_favourite_author = self.get_fav_books_and_authors_per_user().iloc[0]['author']
+            my_favourite_author = self.get_fav_books_and_authors_per_user().iloc[:, i-1]['author']
 
             for author in club_favourite_authors_df['author']:
                 match_value = int(fuzz.token_sort_ratio(my_favourite_author, author))
@@ -158,8 +160,10 @@ class ClubUserRecommender:
             
         matching_authors = pd.DataFrame()
         matching_authors['match_score'] = match_values
-            
-        all_author_matches_df = pd.concat([author_match_df, matching_authors], axis = 1)
+
+        club_recs = pd.concat([author_match_df, club_favourite_authors_df], axis=1).drop('author', axis=1)
+
+        all_author_matches_df = pd.concat([club_recs, matching_authors], axis=1) 
         all_author_matches_df = all_author_matches_df.sort_values('match_score', ascending=False).dropna(how='any',axis=0)
 
         return all_author_matches_df
