@@ -1,10 +1,14 @@
 """Views related to the recommender."""
+from clubs.forms import ClubRecommenderForm
+# from clubs.helpers import member, owner
+from django.conf import settings
 from statistics import mean
 from clubs.book_to_club_recommender.book_to_club_recommender_age import \
     ClubBookAgeRecommender
 from clubs.book_to_club_recommender.book_to_club_recommender_author import \
     ClubBookAuthorRecommender
 from clubs.book_to_user_recommender.book_to_user import BookToUserRecommender
+from clubs.club_to_user_recommender.club_to_user_recommender import ClubUserRecommender
 from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
                          CreateEventForm, LogInForm, MeetingAddressForm,
                          MeetingLinkForm, NewClubForm, PasswordForm, PostForm,
@@ -24,43 +28,68 @@ from django.db.models import Q
 from django.http import (Http404, HttpResponse, HttpResponseForbidden,
                          HttpResponseRedirect)
 from django.shortcuts import redirect, render
-from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.views import View
-from django.views.generic import ListView
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import (CreateView, DeleteView, FormView,
-                                       UpdateView)
-from django.views.generic.list import MultipleObjectMixin
-from schedule.models import Calendar, Event, Rule
+from django.db.models import Q
+from clubs.club_to_user_recommender.club_to_user_recommender import ClubUserRecommender
 
+@login_required
+def RecommendationsView(request):
+    """View that shows a list of all recommended books."""
+    return render(request, 'rec_page.html')
 
 class ClubRecommenderView(TenPosRatingsRequiredMixin, View):
     """View that handles the club recommendations."""
-
     http_method_names = ['get', 'post']
 
     def get(self, request):
         """Display template."""
+        user_id = self.request.user.id
 
+        club_ids_in_person = ClubUserRecommender(user_id).get_best_clubs_in_person()
+        # club_ids_online = ClubUserRecommender(user_id).get_best_clubs_online()
+        self.club_recs_in_person = Club.objects.filter(id__in = club_ids_in_person)
+        # self.club_recs_online = Club.objects.filter(id__in  = club_ids_online)
+
+        # get all the clubs and sort alphabetcally
         self.clubs_queryset = Club.objects.all().order_by('name')
+
+        # query the list of clubs by name or location
         query = request.GET.get('q')
         if query:
             self.clubs_queryset = Club.objects.filter(
                 Q(name__icontains=query) | Q(location__icontains=query)
             ).distinct()
 
-        paginator = Paginator(self.clubs_queryset, settings.CLUBS_PER_PAGE)
+        paginator = Paginator(self.club_recs_in_person, settings.CLUBS_PER_PAGE)
         page_number = request.GET.get('page')
         self.clubs_paginated = paginator.get_page(page_number)
 
         self.next = request.GET.get('next') or ''
         return self.render()
 
+    # def form_valid(self, form):
+    #     user = User.objects.get(id = self.kwargs['id'])
+    #     club = form.cleaned_data.get('club')
+    #     return render(self.request, 'club_recommender.html')
+    
+    # def get_data(self, **kwargs):  
+    #     data = super().get_data(**kwargs)
+    #     user = User.objects.get(id = self.kwargs['id'])
+    #     data['first_name'] = user.first_name
+
     def render(self):
         """Render template with blank form."""
 
-        return render(self.request, 'club_recommender.html', {'next': self.next, 'clubs_paginated': self.clubs_paginated})
+        return render(
+            self.request, 'club_recommender.html',
+            {
+                'next': self.next,
+                'clubs_paginated': self.clubs_paginated,
+                'club_recs_in_person': self.club_recs_in_person
+                # 'club_recs_online': self.club_recs_online
+            }
+        )
 
 
 class RecommendedClubBookListView(LoginRequiredMixin, View):
