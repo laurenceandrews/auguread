@@ -339,11 +339,11 @@ class Command(BaseCommand):
         probabilities = [1, 2, 3]
         probabality = random.choice(probabilities)
         if probabality == 1:
-            probabality_of_making_a_post = True
+            can_make_a_post = True
         else:
-            probabality_of_making_a_post = False
+            can_make_a_post = False
 
-        if probabality_of_making_a_post:
+        if can_make_a_post:
             if role_num == 2:
                 text = "Hi, I'm " + user.first_name + ". I am a new member of " + club.name + "!"
                 post = Post.objects.create(author=user, text=text)
@@ -355,7 +355,7 @@ class Command(BaseCommand):
                 text = "Hi, I'm " + user.first_name + ". I am the current owner of " + club.name + "!"
                 post = Post.objects.create(author=user, text=text)
                 ClubFeedPost.objects.create(post=post, club=club)
-                comment_text = "I'm excited to start making meeting with you all."
+                comment_text = "I'm excited to start organizing meetings with you all."
                 comment = Post.objects.create(author=user, text=comment_text)
                 PostComment.objects.create(post=post, comment=comment)
 
