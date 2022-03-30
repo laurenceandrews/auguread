@@ -1,7 +1,11 @@
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 
+from surprise import SVD
 from surprise import KNNBasic
+from surprise import BaselineOnly
+from surprise import NormalPredictor
+
 from surprise import Dataset
 from surprise import Reader
 from surprise.model_selection import cross_validate
@@ -35,7 +39,6 @@ class BookToUserRecommender:
         self.reader = Reader(rating_scale=(1, 10))
         self.dataset = Dataset.load_from_df(self.df_ratings[['user_id', 'book_id', 'rating']], self.reader)
 
-
         # Build a full Surprise training set from dataset
         self.trainset = self.dataset.build_full_trainset()
 
@@ -43,10 +46,19 @@ class BookToUserRecommender:
         self.k = 10
 
     def create_similarity_matrix(self):
-        similarity_matrix = KNNBasic(sim_options={
-        'name': 'cosine',
-        'user_based': False
-        })\
+        # similarity_matrix = BaselineOnly()\
+        # .fit(self.trainset)\
+        # .compute_similarities()
+
+        # similarity_matrix = NormalPredictor()\
+        # .fit(self.trainset)\
+        # .compute_similarities()
+
+        # similarity_matrix = SVD()\
+        # .fit(self.trainset)\
+        # .compute_similarities()
+
+        similarity_matrix = KNNBasic()\
         .fit(self.trainset)\
         .compute_similarities()
 
