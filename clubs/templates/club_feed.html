@@ -118,69 +118,64 @@
     width: 30%;
   }
 
-  .shadow-sm {
-    vertical-align: middle;
-    height: 40px;
-
-    -moz-transition: all 0.2s ease-in;
-    -webkit-transition: all 0.2s ease-in;
-    -o-transition: all 0.2s ease-in;
-    transition: all 0.2s ease-in;
-  }
 </style>
-<div class="container">
-  <div class="row">
-    <div class="col-12">
 
-      <!-- New post form -->
-      <form action="{% url 'club_feed_create' club.id %}" method="post" class="m-8 sm:m-0">
+<div class="max-w-xl mx-auto lg:mx-0 lg:flex lg:max-w-none lg:-[24rem] mt-8">
+  <div class="lg:flex-auto lg:relative lg:mx-8">
+    <!-- New post form -->
+    <div class="lg:absolute lg:right-0 lg:max-w-sm">
+      <form action="{% url 'club_feed_create' club.id %}" method="post" class="">
         {% for field in form %}
-          <div class="">
-            <label class="block text-sm font-medium text-gray-700  dark:text-gray-50">
-              {{ field.label_tag }}
-            </label>
-            <div class="mt-1">
-              {{ field|add_class:"appearance-none block w-full sm:w-auto h-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"}}
-              {{ field.errors }}
-              {% if field.help_text %}
-              <p class="help">{{ field.help_text|safe }}</p>
-              {% endif %}
-            </div>
+        <div class="">
+          <label class="block text-sm font-medium text-gray-700  dark:text-gray-50">
+            {{ field.label_tag }}
+          </label>
+          <div class="mt-1">
+            {{ field|add_class:"w-full h-24 block px-3 py-2 shadow-sm border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"}}
+            {{ field.errors }}
+            {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %}
           </div>
+        </div>
         {% endfor %}
         {% csrf_token %}
         <button type="submit" class="mt-4 w-32 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Post</button>
       </form>
-      
-        {% if not posts %}
-          <h1 style="text-align:center">
-            No posts made yet!
-          </h1>
-        {% else %}
-
-
-        <div class="ml-8 mt-6 sm:ml-0 max-w-xl">
-            <!-- List of club posts -->
-          {% include 'partials/posts.html' with posts=posts %}
-            <!-- Pagination  -->
-          <div class="flex justify-center">
-            <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0">
-              <div class="hidden md:-mt-px md:flex">
-                <div class="border-indigo-500 text-indigo-600 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium">
-
-                  <div class="block">
-                     {% bootstrap_paginate page_obj previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
-                  </div>
-
-                </div>
-              </div>
-            </nav>
-          </div>
-        </div>
-
-      {% endif %}
     </div>
   </div>
-</div>
 
+  <div class="mt-12 lg:mt-0 lg:flex-auto lg:max-w-lg">
+    {% if not posts %}
+    <h1 class="text-center">
+      No posts made yet!
+    </h1>
+
+    {% else %}
+    <div class="">
+      <!-- List of club posts -->
+      {% include 'partials/posts.html' with posts=posts %}
+      <!-- Pagination  -->
+      <div class="flex justify-center">
+        <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0">
+          <div class="hidden md:-mt-px md:flex">
+            <div class="border-indigo-500 text-indigo-600 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium">
+              
+              
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+    {% endif %}
+    
+  </div>
+  
+  <div class="lg:flex-auto lg:w--[24rem]"></div>
+</div>
+<div class="block mx-auto max-w-fit">
+  {% bootstrap_paginate page_obj previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
+</div>
+  
 {% endblock %}
+  
