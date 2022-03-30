@@ -207,7 +207,7 @@ class ClubUserRecommender:
         # Dirty way of getting name back...
         best_clubs_df = best_clubs_df.merge(self.get_age_difference_df(), on = 'club_id')
         best_clubs_df = best_clubs_df[['club_id', 'name', 'location_x', 'age_difference_y', 'user_count', 'book_match_count', 'author_match_count', 'matching_location']]
-        best_clubs_df = best_clubs_df.rename(columns={'location_x':'location', 'age_difference_y':'age_difference'}, )
+        best_clubs_df = best_clubs_df.rename(columns={'location_x':'location', 'age_difference_y':'age_difference'} )
 
         return best_clubs_df
 
