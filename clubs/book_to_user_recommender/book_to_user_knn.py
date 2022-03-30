@@ -1,6 +1,9 @@
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 
+import sys
+print(sys.prefix)
+
 from surprise import KNNBasic
 from surprise import Dataset
 from surprise import Reader
@@ -28,34 +31,19 @@ class BookToUserRecommender:
         self.df_books = self.df_books.dropna(how='any')
         self.df_ratings = self.df_ratings.dropna(how='any')
 
-        # New way of loading dataset
-        self.dataset, self.bookID_to_name = self.load_dataset()
+        reader = Reader(rating_scale=(1, 10))
+
+        # Loading the dataset from the dataframe
+        self.dataset = Dataset.load_from_df(self.df_ratings[['id', 'book_id', 'user_id', 'rating']], reader)
 
         # Build a full Surprise training set from dataset
         self.trainset = self.dataset.build_full_trainset()
 
-        # Set no of items to recommender
+        # Set no of items to recommend
         self.k = 10
 
         # Set user as test subject
-        self.get_test_subject = 
-
-    # Load in the book ratings and return a dataset
-    def load_dataset():
-        reader = Reader(line_format='user item rating', sep=';', skip_lines=1)
-        ratings_dataset = Dataset.load_from_file('./ratings_no_quotes_smallest.csv', reader=reader)
-
-        # Lookup a book's name with it's bookID as key
-        bookID_to_name = {}
-        with open('./clubs_book.csv', newline='', encoding='Latin1') as csvfile:
-                book_reader = csv.reader(csvfile)
-                next(book_reader)
-                for row in book_reader:
-                    bookID = int(row[0]) 
-                    book_name = row[1]
-                    bookID_to_name[bookID] = book_name
-        # Return both the dataset and lookup dict in tuple
-        return (ratings_dataset, bookID_to_name)
+        self.get_test_subject = 12345
 
     def create_similarity_matrix(self):
         self.similarity_matrix = KNNBasic(sim_options={

@@ -1,9 +1,5 @@
 """Forms for the book club app"""
 import datetime
-from clubs.book_to_club_recommender.book_to_club_recommender_age import \
-    ClubBookAgeRecommender
-from clubs.book_to_club_recommender.book_to_club_recommender_author import \
-    ClubBookAuthorRecommender
 from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
