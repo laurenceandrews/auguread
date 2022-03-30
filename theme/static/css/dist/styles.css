@@ -1750,6 +1750,10 @@ select{
   background-origin: border-box;
 }
 
+.stroke-indigo-400{
+  stroke: #818cf8;
+}
+
 .object-cover{
   -o-object-fit: cover;
      object-fit: cover;
