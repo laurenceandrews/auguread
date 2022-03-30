@@ -114,82 +114,67 @@
     border: solid 1px #352fa9;
     vertical-align: middle;
     border-radius: 5px;
-    height: 40px;
     width: 30%;
   }
 
   .shadow-sm {
     vertical-align: middle;
-    height: 40px;
-
     -moz-transition: all 0.2s ease-in;
     -webkit-transition: all 0.2s ease-in;
     -o-transition: all 0.2s ease-in;
     transition: all 0.2s ease-in;
   }
 </style>
-<div class="container">
-  <div class="row">
-    <div class="col-12">
 
-      <!-- Original post -->
+<div class="max-w-xl mx-auto lg:mx-0 lg:flex lg:max-w-none mt-8 p-4 lg:p-0">
+  <div class="lg:flex-auto lg:relative lg:mx-8">
+    <div class="lg:absolute lg:right-0 lg:max-w-sm">
+        <!-- Original post -->
       {% include 'partials/comments.html' with comments=original_post %}
-
-
+      
       <!-- New comment form -->
-      <form action="{% url 'club_feed_post_create' club.id post.id%}" method="post" class="m-8 sm:m-0">
+      <form action="{% url 'club_feed_post_create' club.id post.id%}" method="post" class="">
         {% for field in form %}
-          <div class="">
-            <label class="block text-sm font-medium text-gray-700  dark:text-gray-50">
-              {{ field.label_tag }}
-            </label>
-            <div class="mt-1">
-              {{ field|add_class:"appearance-none block w-full sm:w-auto h-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"}}
-              {{ field.errors }}
-              {% if field.help_text %}
-              <p class="help">{{ field.help_text|safe }}</p>
-              {% endif %}
-            </div>
+        <div class="">
+          <label class="block text-sm font-medium text-gray-700  dark:text-gray-50">
+            {{ field.label_tag }}
+          </label>
+          <div class="mt-1">
+            {{ field|add_class:"appearance-none block w-full h-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"}}
+            {{ field.errors }}
+            {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+            {% endif %}
           </div>
+        </div>
         {% endfor %}
         {% csrf_token %}
         <button type="submit" class="mt-4 w-32 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Comment</button>
       </form>
-
-
-        {% if not comments %}
-          <h1 style="text-align:center">
-            No comments made yet!
-          </h1>
-        {% else %}
-
-
-        <div class="ml-8 mt-6 sm:ml-0 max-w-xl">
-            <!-- List of post comments -->
-          {% include 'partials/comments.html' with comments=comments %}
-
-          <!-- Pagination  -->
-          <div class="flex justify-center">
-            <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0">
-              <div class="hidden md:-mt-px md:flex">
-                <div class="border-indigo-500 text-indigo-600 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium">
-
-                  <div class="block">
-                     {% bootstrap_paginate page_obj previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
-                  </div>
-
-                </div>
-              </div>
-            </nav>
-          </div>
-
-        </div>
-
-      {% endif %}
-
-
     </div>
   </div>
+  
+  <div class="mt-12 lg:mt-0 lg:flex-auto lg:max-w-lg lg:pt-2">
+    {% if not comments %}
+    <h1 style="text-align:center">
+      No comments made yet!
+    </h1>
+
+    {% else %}
+    <div class="">
+        <!-- List of post comments -->
+      {% include 'partials/comments.html' with comments=comments %}
+
+      <!-- Pagination  -->
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="lg:flex-auto lg:w--[24rem]"></div>
+</div>
+
+<div class="block mx-auto max-w-fit">
+  {% bootstrap_paginate page_obj previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
 </div>
 
 {% endblock %}

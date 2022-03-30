@@ -2825,6 +2825,10 @@ select{
     width: 12rem;
   }
 
+  .lg\:w-\[24rem\]{
+    width: 24rem;
+  }
+
   .lg\:max-w-lg{
     max-width: 32rem;
   }
@@ -2887,6 +2891,10 @@ select{
     padding: 1rem;
   }
 
+  .lg\:p-0{
+    padding: 0px;
+  }
+
   .lg\:px-8{
     padding-left: 2rem;
     padding-right: 2rem;
@@ -2924,6 +2932,10 @@ select{
 
   .lg\:pl-24{
     padding-left: 6rem;
+  }
+
+  .lg\:pl-0{
+    padding-left: 0px;
   }
 
   .lg\:text-left{

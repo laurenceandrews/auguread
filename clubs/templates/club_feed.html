@@ -120,7 +120,7 @@
 
 </style>
 
-<div class="max-w-xl mx-auto lg:mx-0 lg:flex lg:max-w-none lg:-[24rem] mt-8">
+<div class="max-w-xl mx-auto lg:mx-0 lg:flex lg:max-w-none mt-8 p-4 lg:p-0">
   <div class="lg:flex-auto lg:relative lg:mx-8">
     <!-- New post form -->
     <div class="lg:absolute lg:right-0 lg:max-w-sm">
@@ -145,7 +145,7 @@
     </div>
   </div>
 
-  <div class="mt-12 lg:mt-0 lg:flex-auto lg:max-w-lg">
+  <div class="mt-12 lg:mt-0 lg:flex-auto lg:max-w-lg lg:pt-2">
     {% if not posts %}
     <h1 class="text-center">
       No posts made yet!
@@ -156,16 +156,6 @@
       <!-- List of club posts -->
       {% include 'partials/posts.html' with posts=posts %}
       <!-- Pagination  -->
-      <div class="flex justify-center">
-        <nav class="border-t border-gray-200 px-4 flex items-center justify-between sm:px-0">
-          <div class="hidden md:-mt-px md:flex">
-            <div class="border-indigo-500 text-indigo-600 border-t-2 pt-4 px-4 inline-flex items-center text-sm font-medium">
-              
-              
-            </div>
-          </div>
-        </nav>
-      </div>
     </div>
     {% endif %}
     
@@ -173,6 +163,7 @@
   
   <div class="lg:flex-auto lg:w--[24rem]"></div>
 </div>
+
 <div class="block mx-auto max-w-fit">
   {% bootstrap_paginate page_obj previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
 </div>
