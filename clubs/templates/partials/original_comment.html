@@ -1,11 +1,11 @@
 {% load humanize %}
-
-<div class="flex py-4">
+{% for comment in comments %}
+<div class="flex py-4 bg-indigo-200/50 rounded p-4 m-4 border border-indigo-500/10">
   <div class="flex-shrink-0">
     <img
       src="{{comment.author.mini_gravatar}}"
       alt="Gravatar of author {{ comment.author.username }}"
-      class="rounded"
+      class="rounded w-20 h-20"
     />
   </div>
   <div class="p-2">
@@ -15,6 +15,7 @@
       &nbsp;&middot;&nbsp;
       <span class="whitespace-nowrap font-light text-gray-600"> {{ comment.created_at|naturaltime }} </span>
     </p>
-    <p class="text-lg">{{ comment.text }}</p>
+    <p class="text-lg font-semibold text-gray-700">{{ comment.text }}</p>
   </div>
 </div>
+{% endfor %}
