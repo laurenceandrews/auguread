@@ -777,6 +777,10 @@ select{
   z-index: 50;
 }
 
+.-z-20{
+  z-index: -20;
+}
+
 .col-span-1{
   grid-column: span 1 / span 1;
 }
@@ -1051,6 +1055,10 @@ select{
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;
+}
+
+.h-44{
+  height: 11rem;
 }
 
 .max-h-\[24rem\]{
@@ -1790,6 +1798,10 @@ select{
   background-clip: border-box;
 }
 
+.bg-clip-content{
+  background-clip: content-box;
+}
+
 .bg-center{
   background-position: center;
 }
@@ -1826,9 +1838,24 @@ select{
   stroke: #e11d48;
 }
 
+.object-contain{
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+
 .object-cover{
   -o-object-fit: cover;
      object-fit: cover;
+}
+
+.object-fill{
+  -o-object-fit: fill;
+     object-fit: fill;
+}
+
+.object-scale-down{
+  -o-object-fit: scale-down;
+     object-fit: scale-down;
 }
 
 .object-center{
