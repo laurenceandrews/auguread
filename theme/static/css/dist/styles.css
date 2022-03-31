@@ -1616,6 +1616,11 @@ select{
   --tw-gradient-to: #6b21a8;
 }
 
+.decoration-slice{
+  -webkit-box-decoration-break: slice;
+          box-decoration-break: slice;
+}
+
 .bg-cover{
   background-size: cover;
 }
@@ -1632,12 +1637,12 @@ select{
   background-origin: border-box;
 }
 
-.fill-rose-600\/80{
-  fill: rgb(225 29 72 / 0.8);
-}
-
 .fill-transparent{
   fill: transparent;
+}
+
+.fill-rose-600\/80{
+  fill: rgb(225 29 72 / 0.8);
 }
 
 .stroke-rose-600\/80{
@@ -1843,6 +1848,18 @@ select{
 
 .pl-1{
   padding-left: 0.25rem;
+}
+
+.pt-24{
+  padding-top: 6rem;
+}
+
+.pt-12{
+  padding-top: 3rem;
+}
+
+.pt-20{
+  padding-top: 5rem;
 }
 
 .text-left{
@@ -2087,6 +2104,11 @@ select{
   color: rgb(79 70 229 / var(--tw-text-opacity));
 }
 
+.text-indigo-300{
+  --tw-text-opacity: 1;
+  color: rgb(165 180 252 / var(--tw-text-opacity));
+}
+
 .text-emerald-800{
   --tw-text-opacity: 1;
   color: rgb(6 95 70 / var(--tw-text-opacity));
@@ -2119,6 +2141,20 @@ select{
 .underline{
   -webkit-text-decoration-line: underline;
           text-decoration-line: underline;
+}
+
+.decoration-indigo-700{
+  -webkit-text-decoration-color: #4338ca;
+          text-decoration-color: #4338ca;
+}
+
+.decoration-indigo-500{
+  -webkit-text-decoration-color: #6366f1;
+          text-decoration-color: #6366f1;
+}
+
+.decoration-2{
+  text-decoration-thickness: 2px;
 }
 
 .underline-offset-2{
@@ -2766,11 +2802,6 @@ select{
   .lg\:-mx-8{
     margin-left: -2rem;
     margin-right: -2rem;
-  }
-
-  .lg\:mx-auto{
-    margin-left: auto;
-    margin-right: auto;
   }
 
   .lg\:mt-0{
