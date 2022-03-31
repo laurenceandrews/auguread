@@ -43,9 +43,9 @@
         <div class="pt-4 font-semibold text-gray-700 text-center">
           <!-- Converts book_rating string into int -->
           {% if book_rating|add:"0" >= 5 %}
-            <p class="font-bold font-manrope border-emerald-400 text-emerald-700 border-2 rounded-full bg-transparent p-2">{{book_rating}}</p>
+            <p class="font-bold font-manrope border-emerald-400/80 text-emerald-700 border-2 rounded-full p-2">{{book_rating}}</p>
           {% else %}
-            <p class="font-bold font-manrope border-rose-300 text-rose-700 border-2 rounded-full p-2">{{book_rating}}</p>
+            <p class="font-bold font-manrope border-rose-400/80 text-rose-700 border-2 rounded-full p-2">{{book_rating}}</p>
           {% endif %}
         </div>
         {% else %}
@@ -70,7 +70,7 @@
       {% csrf_token %}
       {% include 'partials/bootstrap_form.html' with form=book_rating_form %}
       <div class="pt-2">
-        <button type="submit" class="font-semibold border-blue-400/40 border bg-blue-500 hover:bg-blue-700 text-blue-50 py-2 px-4 rounded">
+        <button type="submit" class="font-semibold border-blue-400/40 border bg-blue-700/80 hover:bg-blue-800/90 text-blue-50 py-2 px-4 rounded">
           {% if rating_exists == True %}
           Update Rating
           {% else %}
@@ -88,7 +88,7 @@
         <div>
             {{ user_book_history_form }}
             <!-- TODO: What's the use case for this? I.e. When would you set again? -->
-            <button type="submit" class="font-semibold border-blue-400/40 border bg-white hover:bg-blue-50 text-blue-600 py-2 px-4 rounded">
+            <button type="submit" class="font-semibold border-blue-400/40 border bg-white/80 hover:bg-blue-100/80 text-blue-600 py-2 px-4 rounded">
               {% if user_book_history_exists == True %}
               Set as your currently reading again
               {% else %}
