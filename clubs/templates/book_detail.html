@@ -40,7 +40,7 @@
           {% endif %}
         </button>
         {% if rating_exists == True %}
-        <div class="font-semibold text-gray-700 text-center">
+        <div class="pt-4 font-semibold text-gray-700 text-center">
           <!-- Converts book_rating string into int -->
           {% if book_rating|add:"0" >= 5 %}
             <p class="font-bold font-manrope border-emerald-400 text-emerald-700 border-2 rounded-full bg-transparent p-2">{{book_rating}}</p>
@@ -49,7 +49,7 @@
           {% endif %}
         </div>
         {% else %}
-        <div class="font-semibold text-gray-700 text-center">
+        <div class="pt-4 font-semibold text-gray-700 text-center">
           <p class="font-extrabold font-manrope border-gray-400 text-gray-800 border-2 rounded-full bg-transparent p-2">--</p>
         </div>
         {% endif %}
