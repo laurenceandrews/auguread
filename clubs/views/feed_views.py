@@ -107,5 +107,5 @@ class PostCommentsCreateView(LoginRequiredMixin, ClubMemberOrOwnerRequiredMixin,
 
         comment_post = PostComment.objects.create(post=post, comment=comment)
 
-        messages.add_message(self.request, messages.SUCCESS, "comment created!")
+        messages.add_message(self.request, messages.SUCCESS, "Comment created!")
         return redirect('club_feed_post', club_id=club.id, post_id=post.id)
