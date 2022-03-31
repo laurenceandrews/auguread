@@ -15,6 +15,8 @@
       <span class="whitespace-nowrap font-light text-gray-600"> {{ post.created_at|naturaltime }} </span>
     </p>
     <p class="text-lg">{{ post.text }}</p>
-    <a href="{%url 'club_feed_post' club.id post.id %}" class="text-indigo-600 hover:text-indigo-900">View comments</a>
+    <a href="{%url 'club_feed_post' club.id post.id %}" class="text-indigo-600 hover:text-indigo-900">
+      View comments <span>({{post.comments.count}})</span>
+    </a>
   </div>
 </div>

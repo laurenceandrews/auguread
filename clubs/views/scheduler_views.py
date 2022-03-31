@@ -14,6 +14,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import (CreateView, DeleteView, FormView,
                                        UpdateView)
 from schedule.models import Calendar, Event, Rule
+
 from .helpers import login_prohibited
 from .mixins import ClubOwnerRequiredSchedulerMixin, LoginProhibitedMixin
 
@@ -256,7 +257,7 @@ class CreateAddressView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, Cre
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
-        return redirect('full_calendar', calendar_slug=calendar.slug)
+        return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
