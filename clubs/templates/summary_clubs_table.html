@@ -1,6 +1,6 @@
-{% extends "user_summary.html" %}
+{% extends "base_content.html" %}
 {% load bootstrap_pagination %}
-{% block summary_content %}
+{% block content %}
 <style>
 
   a#continue-btn-disabled {
@@ -134,6 +134,19 @@
 </title>
 
 <div class="px-4 sm:px-6 lg:px-8">
+  {%if role_num == '1'%}
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+      <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-50">Your Applications</h2>
+    </div>
+  {%elif role_num == '2'%}
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+      <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-50">Clubs you are in</h2>
+    </div>
+  {%elif role_num == '4'%}
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+      <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-50">Clubs you own</h2>
+    </div>
+  {% endif %}
 
 
   <div class="mt-4 sm:flex sm:items-center">
