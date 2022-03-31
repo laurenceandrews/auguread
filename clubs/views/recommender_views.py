@@ -1,9 +1,17 @@
 """Views related to the recommender."""
 from statistics import mean
 
-from clubs.book_to_user_recommender.book_to_user import BookToUserRecommender
+from clubs.book_to_club_recommender.book_to_club_recommender_age import \
+    ClubBookAgeRecommender
+from clubs.book_to_club_recommender.book_to_club_recommender_author import \
+    ClubBookAuthorRecommender
+from clubs.book_to_user_recommender.book_to_user_knn import BookToUserRecommender
+
+
+
 from clubs.club_to_user_recommender.club_to_user_recommender import \
     ClubUserRecommender
+
 from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
                          ClubRecommenderForm, CreateEventForm, LogInForm,
                          MeetingAddressForm, MeetingLinkForm, NewClubForm,
@@ -156,9 +164,12 @@ class RecommendationsView(LoginRequiredMixin, View):
         """Display template."""
         current_user = self.request.user
 
+        current_user = self.request.user
         # returns the collaborative filtering of ratings between users
-        user_rec_book_ids = BookToUserRecommender().get_collaborative_filtering()
-        self.user_rec_books = Book.objects.filter(id__in=user_rec_book_ids)[0:15]
+
+        user_rec_book_ids = BookToUserRecommender(user_id_to_query=current_user.id).build_dictionary()
+        self.user_rec_books = Book.objects.filter(id__in=user_rec_book_ids)
+
 
         club_favourites = Club_Books.objects.exclude(club__in=current_user.clubs_attended()).order_by('-id')
 

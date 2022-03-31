@@ -19,7 +19,7 @@ class BookToUserEvaluator:
 
         # Load in the book ratings as a dataset
         reader = Reader(line_format='user item rating', sep=';', skip_lines=1)
-        self.ratings_dataset = Dataset.load_from_file('ratings_no_quotes_smallest.csv', reader=reader)
+        self.ratings_dataset = Dataset.load_from_file('ratings_no_quotes_small_no_0.csv', reader=reader)
 
         # Lookup a book's name with it's bookID as key
         self.bookID_to_name = {}
