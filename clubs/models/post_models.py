@@ -22,6 +22,11 @@ class Post(models.Model):
         app_label = "clubs"
         ordering = ['-created_at']
 
+    def comments(self):
+        comment_ids = PostComment.objects.filter(post=self).values_list('comment', flat=True)
+        comments = Post.objects.filter(id__in=comment_ids)
+        return comments
+
 
 class ClubFeedPost(models.Model):
     """ClubFeed model used for recording posts made for a club's feed."""

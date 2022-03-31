@@ -74,9 +74,7 @@ class PostCommentsView(LoginRequiredMixin, ClubMemberOrOwnerRequiredMixin, ListV
         """Return the club's feed."""
         current_user = self.request.user
         post = Post.objects.get(id=self.kwargs['post_id'])
-        comment_ids = PostComment.objects.filter(post=post).values_list('comment', flat=True)
-        comments = Post.objects.filter(id__in=comment_ids)
-        return comments
+        return post.comments()
 
     def get_context_data(self, **kwargs):
         """Return context data, including new post form."""
