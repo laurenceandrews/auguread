@@ -1,7 +1,12 @@
 """Views related to the clubs."""
+from clubs.book_to_club_recommender.book_to_club_recommender_age import \
+    ClubBookAgeRecommender
+from clubs.book_to_club_recommender.book_to_club_recommender_author import \
+    ClubBookAuthorRecommender
 from clubs.forms import (BookRatingForm, ClubUpdateForm, CreateClubUserForm,
                          NewClubForm)
-from clubs.models import Club, Club_Users, Post, User
+from clubs.models import (Book, Club, Club_Users, ClubBookRecommendation, Post,
+                          User)
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -59,6 +64,20 @@ class CreateClubView(LoginRequiredMixin, CreateView):
 
         Club_Users.objects.create(user=current_user, club=club, role_num=4)
 
+        # populate the club book recommendations database
+        book_ids = ClubBookAgeRecommender(club.id).get_recommended_books()
+
+        if not ClubBookAuthorRecommender(club.id).author_books_is_empty():
+            book_ids_from_author_rec = ClubBookAuthorRecommender(club.id).get_recommended_books()
+            if(len(book_ids_from_author_rec) > len(book_ids)):
+                book_ids = book_ids_from_author_rec
+            books = Book.objects.filter(id__in=book_ids)
+        else:
+            books = Book.objects.filter(id__in=book_ids)
+
+        for book in books:
+            ClubBookRecommendation.objects.create(club=club, book=book)
+
         return redirect('club_detail', club.id)
 
     def get_success_url(self):
@@ -75,7 +94,7 @@ class ClubUpdateView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
     """ View that handles club edit requests. """
 
     model = Club
-    template_name = 'club_update_view.html'
+    template_name = 'club_update.html'
     form_class = ClubUpdateForm
     pk_url_kwarg = "club_id"
 

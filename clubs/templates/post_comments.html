@@ -114,25 +114,43 @@
     border: solid 1px #352fa9;
     vertical-align: middle;
     border-radius: 5px;
-    height: 40px;
     width: 30%;
   }
 
+  .shadow-sm {
+    vertical-align: middle;
+    -moz-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+  }
 </style>
 
-<h1 class="text-4xl tracking-tight text-center mt-12 mt font-semibold text-gray-700">Message Board For <span class="text-indigo-600 font-bold">{{club.name}}</span></h1>
-<div class="max-w-xl mx-auto lg:mx-0 lg:flex lg:max-w-none mt-4 p-4 lg:p-0">
-  <div class="lg:flex-auto lg:relative lg:mx-8">
-    <!-- New post form -->
-    <div class="lg:absolute lg:right-0 lg:max-w-sm">
-      <form action="{% url 'club_feed_create' club.id %}" method="post" class="">
+<div class="max-w-xl mx-auto lg:mx-0 lg:max-w-none">
+  <h1 class="text-center lg:hidden text-gray-500 text-4xl tracking-tight font-medium mt-8">Comments on:</h1>
+  <div class="lg:flex lg:max-w-none pb-4 px-4 lg:p-0 lg:mt-4">
+    <div class="lg:flex-auto lg:relative lg:mx-8 rounded-lg">
+      <div class="lg:absolute lg:right-0 lg:max-w-sm lg:pb-2 lg:rounded">
+        <h1 class="text-center hidden lg:block text-gray-500 text-4xl tracking-tight font-medium mt-4">Comments on:</h1>
+
+          <!-- Original post -->
+          <!-- Send with comments and a Truth value to is_original_post -->
+        {% include 'partials/original_comment.html' with comments=original_post %}
+        
+      </div>
+    </div>
+    
+    <div class="mt-6 lg:mt-0 lg:flex-auto lg:max-w-lg lg:pt-2">
+
+      <!-- New comment form -->
+      <form action="{% url 'club_feed_post_create' club.id post.id%}" method="post" class="">
         {% for field in form %}
         <div class="">
           <label class="block text-sm font-medium text-gray-700  dark:text-gray-50">
             {{ field.label_tag }}
           </label>
           <div class="mt-1">
-            {{ field|add_class:"w-full h-24 block px-3 py-2 shadow-sm border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"}}
+            {{ field|add_class:"appearance-none block w-full h-24 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"}}
             {{ field.errors }}
             {% if field.help_text %}
             <p class="help">{{ field.help_text|safe }}</p>
@@ -141,33 +159,33 @@
         </div>
         {% endfor %}
         {% csrf_token %}
-        <button type="submit" class="mt-4 w-32 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Post</button>
+        <button type="submit" class="mt-4 w-32 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Comment</button>
       </form>
-    </div>
-  </div>
+      
+      <div class="mt-8">
+        {% if not comments %}
+        <h1 style="text-align:center">
+          No comments made yet!
+        </h1>
+        
+        {% else %}
+        <div class="">
+          <!-- List of post comments -->
+          {% include 'partials/comments.html' with comments=comments %}
+          
+          <!-- Pagination  -->
+        </div>
+        {% endif %}
+      </div>
 
-  <div class="mt-12 lg:mt-0 lg:flex-auto lg:max-w-lg lg:pt-2">
-    {% if not posts %}
-    <h1 class="text-center">
-      No posts made yet!
-    </h1>
-
-    {% else %}
-    <div class="">
-      <!-- List of club posts -->
-      {% include 'partials/posts.html' with posts=posts %}
-      <!-- Pagination  -->
     </div>
-    {% endif %}
-    
+
+    <div class="lg:flex-auto lg:w--[24rem]"></div>
   </div>
-  
-  <div class="lg:flex-auto lg:w--[24rem]"></div>
 </div>
 
 <div class="block mx-auto max-w-fit">
   {% bootstrap_paginate page_obj previous_label="Prev" next_label="Next" show_first_last="true" range="10"%}
 </div>
-  
+
 {% endblock %}
-  

@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views import View
+
 from .helpers import login_prohibited
 from .mixins import LoginProhibitedMixin
 
@@ -34,14 +35,14 @@ def user_current_book(request):
     if user_book_history_exists:
         current_book = User_Book_History.objects.filter(user=user).last().book
 
-        return render(request, "partials/books_table.html",
+        return render(request, "user_current_book.html",
                       {
                           'user': user,
                           'books': [current_book],
                           'single_book': True,
                       })
     else:
-        return render(request, "partials/books_table.html",
+        return render(request, "user_current_book.html",
                       {
                           'user': user,
                           'single_book': True,
@@ -66,7 +67,7 @@ def user_favourite_books(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, "partials/books_table.html",
+    return render(request, "user_favourite_books.html",
                   {
                       'user': user,
                       'books': books,
@@ -97,7 +98,7 @@ def user_clubs_books(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, "partials/books_table.html",
+    return render(request, "user_clubs_books.html",
                   {
                       'user': user,
                       'books': books,

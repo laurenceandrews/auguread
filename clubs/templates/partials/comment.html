@@ -1,0 +1,20 @@
+{% load humanize %}
+
+<div class="flex py-4">
+  <div class="flex-shrink-0">
+    <img
+      src="{{comment.author.mini_gravatar}}"
+      alt="Gravatar of author {{ comment.author.username }}"
+      class="rounded"
+    />
+  </div>
+  <div class="p-2">
+    <p class="text-sm">
+      <span class="italic"> {{ comment.author.full_name }} </span>
+      <a class="text-indigo-400" href="{% url 'user_detail' comment.author.id %}"> {{ comment.author.username }} </a>
+      &nbsp;&middot;&nbsp;
+      <span class="whitespace-nowrap font-light text-gray-600"> {{ comment.created_at|naturaltime }} </span>
+    </p>
+    <p class="text-lg">{{ comment.text }}</p>
+  </div>
+</div>

@@ -1,0 +1,30 @@
+{% extends "base_content.html" %}
+{% load bootstrap_pagination %}
+{% block content %}
+
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+    <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-50">Your current book</h2>
+  </div>
+
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-xl font-semibold text-gray-900"></h1>
+      <p class="mt-2 text-sm text-gray-700"></p>
+    </div>
+    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+      <div class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
+        <a href='{%url 'rec' %}' class="">Get book recommendations</a>
+      </div>
+    </div>
+  </div>
+
+  {% include "partials/books_table.html" with user=user books=books single_book=single_book %}
+
+</div>
+
+
+
+
+
+{% endblock %}
