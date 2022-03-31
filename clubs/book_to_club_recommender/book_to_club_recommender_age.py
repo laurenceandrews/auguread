@@ -36,7 +36,7 @@ class ClubBookAgeRecommender:
     def find_closest_clubs_in_age(self):
         # Find the club(s) with the closest average age to our selected club
         df_club_avg_ages = self.club_age_diff()
-        df_closest_club_in_age = df_club_avg_ages['club_id'].iloc[0:2]
+        df_closest_club_in_age = df_club_avg_ages['club_id'].iloc[0:10]
         closest_age_clubs_df = df_closest_club_in_age.reset_index().rename(columns={'club_id': 'id'})
         return closest_age_clubs_df
 
