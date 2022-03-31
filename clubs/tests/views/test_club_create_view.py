@@ -9,7 +9,13 @@ class NewClubTest(TestCase):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/other_users.json'
+        'clubs/tests/fixtures/other_users.json',
+        'clubs/tests/fixtures/default_calendar.json',
+        'clubs/tests/fixtures/default_club.json',
+        'clubs/tests/fixtures/default_book.json',
+        'clubs/tests/fixtures/default_rating.json',
+        'clubs/tests/fixtures/default_club_book.json',
+        'clubs/tests/fixtures/default_club_user.json'
     ]
 
     def setUp(self):
@@ -103,11 +109,19 @@ class NewClubTest(TestCase):
     def test_cannot_create_club_for_other_user(self):
         self.client.login(email="johndoe@example.org",
                           password='Password123')
-        other_user = User.objects.get(email="janedoe@example.org",)
+        other_user = User.objects.get(email="janedoe@example.org")
+        self.data = {
+            'name': 'A club for Jane',
+            'city': self.club_city,
+            'country': self.club_country,
+            'description': 'A book club that is fun.',
+            'calendar_name': 'Fun Reading Clubs Calendar',
+            'meeting_type': 'ONL'
+        }
         self.data['owner'] = other_user.id
         club_count_before = Club.objects.count()
         response = self.client.post(self.url, self.data, follow=True)
         club_count_after = Club.objects.count()
-        new_club = Club.objects.get(id=Club.objects.count())
+        new_club = Club.objects.get(name=self.data['name'])
         self.assertEqual(club_count_after, club_count_before + 1)
         self.assertEqual(self.user, new_club.owner)
