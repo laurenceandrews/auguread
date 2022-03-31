@@ -424,6 +424,7 @@ class User_Books(models.Model):
         verbose_name = "User Favourite Book"
         verbose_name_plural = "User Favourite Books"
 
+
 class User_Clubs(models.Model):
     user = models.ForeignKey(
         User,

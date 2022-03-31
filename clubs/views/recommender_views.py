@@ -13,8 +13,9 @@ from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
                          MeetingAddressForm, MeetingLinkForm, NewClubForm,
                          PasswordForm, PostForm, SignUpForm)
 from clubs.models import (Address, Book, Book_Rating, Club, Club_Book_History,
-                          Club_Books, Club_Users, MeetingAddress, MeetingLink,
-                          Post, User, User_Book_History, User_Books)
+                          Club_Books, Club_Users, ClubBookRecommendation,
+                          MeetingAddress, MeetingLink, Post, User,
+                          User_Book_History, User_Books)
 from clubs.views.mixins import TenPosRatingsRequiredMixin
 from django.conf import settings
 from django.contrib import messages
@@ -96,15 +97,31 @@ class RecommendedClubBookListView(LoginRequiredMixin, View):
         club_id = self.kwargs['club_id']
         self.club = Club.objects.get(id=club_id)
 
-        book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
-
-        if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
-            book_ids_from_author_rec = ClubBookAuthorRecommender(club_id).get_recommended_books()
-            if(len(book_ids_from_author_rec) > len(book_ids)):
-                book_ids = book_ids_from_author_rec
-            self.books = Book.objects.filter(id__in=book_ids)
+        # get the club's book recommendations
+        club_book_recommendations = ClubBookRecommendation.objects.filter(club=self.club)
+        if club_book_recommendations.exists():
+            book_ids = ClubBookRecommendation.objects.filter(club=self.club).values_list('book', flat=True)
+            books = Book.objects.filter(id__in=book_ids)
         else:
-            self.books = Book.objects.filter(id__in=book_ids)
+            # populate databse
+            book_ids = ClubBookAgeRecommender(self.club.id).get_recommended_books()
+
+            if not ClubBookAuthorRecommender(self.club.id).author_books_is_empty():
+                book_ids_from_author_rec = ClubBookAuthorRecommender(self.club.id).get_recommended_books()
+                if(len(book_ids_from_author_rec) > len(book_ids)):
+                    book_ids = book_ids_from_author_rec
+                books = Book.objects.filter(id__in=book_ids)
+            else:
+                books = Book.objects.filter(id__in=book_ids)
+
+            for book in books:
+                ClubBookRecommendation.objects.create(club=self.club, book=book)
+
+        self.books = books.distinct()
+
+        paginator = Paginator(books, settings.NUMBER_PER_PAGE)
+        page_number = request.GET.get('page')
+        self.page_obj = paginator.get_page(page_number)
 
         return self.render()
 
@@ -113,7 +130,8 @@ class RecommendedClubBookListView(LoginRequiredMixin, View):
 
         return render(self.request, 'recommended_books_for_club_list.html', {
             'books': self.books,
-            'club': self.club
+            'club': self.club,
+            'page_obj': self.page_obj
         })
 
 
