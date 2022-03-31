@@ -1,8 +1,7 @@
-{% extends 'user_summary.html' %}
 {% load i18n %}
 {% load widget_tweaks %}
 {% load bootstrap_pagination %}
-{% block summary_content%}
+{% block content%}
 
 <style>
 
@@ -132,17 +131,6 @@
 </style>
 
 <div class="px-4 sm:px-6 lg:px-8">
-  <div class="sm:flex sm:items-center">
-    <div class="sm:flex-auto">
-      <h1 class="text-xl font-semibold text-gray-900"></h1>
-      <p class="mt-2 text-sm text-gray-700"></p>
-    </div>
-    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-      <div class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-        <a href='{%url 'rec' %}' class="">Get book recommendations</a>
-      </div>
-    </div>
-  </div>
 
   {% if not single_book %}
   <form method="GET" >
