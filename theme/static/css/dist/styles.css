@@ -1843,6 +1843,14 @@ select{
   padding-left: 0.25rem;
 }
 
+.pb-12{
+  padding-bottom: 3rem;
+}
+
+.pb-24{
+  padding-bottom: 6rem;
+}
+
 .text-left{
   text-align: left;
 }
