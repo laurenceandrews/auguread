@@ -125,7 +125,7 @@ def club_book_select_view(request, club_id, book_id):
         book = Book.objects.get(id=book_id)
     except ObjectDoesNotExist:
         messages.add_message(request, messages.ERROR, "Invalid club or book!")
-        return redirect('user_summary')
+        return redirect('rec')
 
     lastBookRead = Club_Book_History.objects.last()
     if lastBookRead:
