@@ -10,20 +10,19 @@
 
 
     <div class="bg-white">
-      <div class="mx-auto py-4 px-4 sm:py-6 sm:px-6 lg:px-8">
-
-         <h2 class="text-2xl font-extrabold tracking-tight text-gray-900">
-           <a id="we_think_youll_like">We think you'll like...</a>
-         </h2>
-         {% if club_favourites_exist is True %}
-         <div class="snap-x snap-proximity h-[24rem] md:h-[30rem] overflow-x-scroll overflow-y-hidden mt-6 flex space-x-8 md:space-x-12">
-             {% include 'partials/books_as_list.html' with books=user_rec_books %}
-         </div>
-         {% else %}
-           <div class="max-h-[24rem] overflow-x-scroll mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-             <p>There are currently no recommendations for you. Check back later.</p>
-           </div>
-         {% endif %}
+      <div class="max-w-2xl mx-auto py-4 px-4 sm:py-6 sm:px-6 lg:px-8 lg:max-w-7xl">
+        <h2 class="text-2xl font-extrabold tracking-tight text-gray-900">
+          <a id="we_think_youll_like">We think you'll like...</a>
+        </h2>
+        {% if club_favourites_exist is True %}
+        <div class="snap-x snap-proximity h-[24rem] md:h-[30rem] overflow-x-scroll overflow-y-hidden mt-6 flex space-x-8 md:space-x-12">
+            {% include 'partials/books_as_list.html' with books=user_rec_books %}
+        </div>
+        {% else %}
+          <div class="max-h-[24rem] overflow-x-scroll mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+            <p>There are currently no recommendations for you. Check back later.</p>
+          </div>
+        {% endif %}
       </div>
 
       <div class="max-w-2xl mx-auto py-4 px-4 sm:py-6 sm:px-6 lg:max-w-7xl lg:px-8">
