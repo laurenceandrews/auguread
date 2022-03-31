@@ -32,7 +32,7 @@ urlpatterns = [
 
     path('rec/', views.RecommendationsView.as_view(), name='rec'),
     path('book_preferences/', views.BookPreferencesView.as_view(), name='book_preferences'),
-    path('club_recommender/', ClubRecommenderView.as_view(), name='club_recommender'),
+    path('club_recommender/', views.ClubRecommenderView.as_view(), name='club_recommender'),
     url(r"^club/book/recommendations/(?P<club_id>\d+)/$", views.RecommendedClubBookListView.as_view(), name='club_book_recommendations'),
     url(r"^club/(?P<club_id>\d+)/book/(?P<book_id>\d+)/select/$", views.club_book_select_view, name='club_book_select'),
 
@@ -64,6 +64,10 @@ urlpatterns = [
     path('follow_toggle/<int:user_id>', views.follow_toggle, name='follow_toggle'),
     path('club/<int:club_id>/feed/create', views.ClubFeedPostCreateView.as_view(), name='club_feed_create'),
     path('club/<int:club_id>/feed/', views.ClubFeedView.as_view(), name='club_feed'),
+    path('club/<int:club_id>/feed/post/<int:post_id>', views.PostCommentsView.as_view(), name='club_feed_post'),
+    path('club/<int:club_id>/feed/post/<int:post_id>/create', views.PostCommentsCreateView.as_view(), name='club_feed_post_create'),
+
+
 
 
 

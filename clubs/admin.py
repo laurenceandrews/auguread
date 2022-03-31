@@ -2,7 +2,8 @@ from django.contrib import admin
 
 from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
                      Club_Books, Club_Users, ClubFeedPost, MeetingAddress,
-                     MeetingLink, Post, User, User_Book_History, User_Books)
+                     MeetingLink, Post, PostComment, User, User_Book_History,
+                     User_Books)
 
 
 @admin.register(User)
@@ -75,6 +76,23 @@ class PostAdmin(admin.ModelAdmin):
     def get_author(self, post):
         """Return the author of a given post."""
         return post.author.username
+
+
+@admin.register(PostComment)
+class PostCommentAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for post comments."""
+
+    list_display = [
+        'post_text', 'comment_text'
+    ]
+
+    def post_text(self, post_comment):
+        """Return the text of a given post."""
+        return post_comment.post.text
+
+    def comment_text(self, post_comment):
+        """Return the text of a given comment."""
+        return post_comment.comment.text
 
 
 @admin.register(ClubFeedPost)

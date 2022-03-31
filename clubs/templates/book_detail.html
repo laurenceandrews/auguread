@@ -1,90 +1,105 @@
 {% extends 'base_content.html' %}
 {% load i18n %}
 {% block content%}
-<div class="h-screen flex items-center justify-center">
 
-  <card class="flex flex-col rounded-lg shadow-lg w-1/2 p-10 bg-violet-100">
+<div class="border-gray-400/20 border z-10 shadow-lg bg-transparent rounded-xl overflow-hidden max-w-2xl sm:m-8 sm:mx-auto">
+  <!-- Book Image Background -->
+  <div class="-z-10 relative pointer-events-none">
+    <img class="absolute opacity-10 bg-cover bg-origin-border w-full blur-sm" src="{{book.image_large}}" alt="Book cover of {{book.title}}.">
+  </div>
 
-    <!-- Title -->
-    <p class="text-center text-gray-800 text-4xl mt-8">{{book.title}}</p>
-
-    <!-- Description -->
-    <div class="text-gray-700 font-light mt-5">
-      <p>Authon: {{book.author}}</p>
-      <p>Publisher: {{book.publisher}}</p>
-      <p>Publication year: {{book.publication_year}}</p>
-      <p>ISBN: {{book.ISBN}}</p>
-      {% if rating_exists == True %}
-        <p>Rating: {{book_rating}}</p>
-      {% else %}
-        <p>Rating: You haven't rated this book yet.</p>
-      {% endif %}
-
-      {% if rating_exists == True %}
-      <br />
-      <form action="{% url 'rate_book' book.id%}" method="post">
-        {% csrf_token %}
-        <div class = "rating">
-            {{ book_rating_form }}
-            <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Change your rating</button>
+  <div class="p-8">
+    <!-- Book Content -->
+    <div class="flex justify-between">
+      <div>
+        <div class="sm:flex sm:space-x-4">
+          <h1 class="text-3xl font-semibold font-roboto max-w-md">{{book.title}}</h1>
+          <p class="underline text-gray-600 underline-offset-2 font-nunito">{{book.publication_year}}</p>
         </div>
-      </form>
+        <p class=" text-2xl">{{book.author}}</p>
+      </div>
+      <!-- Favourtie Button -->
+
+      {% if user_books_exists == False %}
+      <form action="{% url 'create_user_book_favourite' user_id=user.id book_id=book.id%}" method="post">
       {% else %}
-      <br />
-      <form action="{% url 'rate_book' book.id%}" method="post">
-        {% csrf_token %}
-        <div class = "rating">
-            {{ book_rating_form }}
-            <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Rate book</button>
-        </div>
-      </form>
+      <form action="{% url 'delete_user_book_favourite' user_id=user.id book_id=book.id%}" method="post">
       {% endif %}
+        {% csrf_token %}
+        {{ user_book_form }}
+        <button type="submit">
+          {% if user_books_exists == False %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-rose-600/50 hover:text-rose-600 hover:cursor-pointer" fill-opacity=0.5 fill="white" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>    
+          {% else %}
+          <svg type="submit" xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-rose-400 hover:text-rose-600 hover:cursor-pointer" fill-opacity=0.5 fill="red" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>    
+          {% endif %}
+        </button>
+      </form>
+    </div>
+      
+    <div class="inline-grid grid-cols-2 pt-8 gap-x-0">
+      <span class="text-gray-500">Publisher</span>
+      <span>{{book.publisher}}</span>
+      <span class="text-gray-500">ISBN</span>
+      <span>{{book.ISBN}}</span>
     </div>
 
+    {% if rating_exists == True %}
+    <div class="items-center flex font-semibold space-x-8 text-gray-700 pt-8">
+      <span class="">Rating</span>
+      <!-- Converts book_rating string into int -->
+      {% if book_rating|add:"0" >= 5 %}
+        <span class="font-bold font-manrope border-emerald-300/50 text-emerald-700 border-2 rounded-full bg-transparent px-4 py-2">{{book_rating}}</span>
+      {% else %}
+        <span class="font-bold font-manrope border-rose-300/50 text-rose-700 border-2 rounded-full px-4 py-2">{{book_rating}}</span>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="pt-8 space-x-8">
+      <span class="font-semibold text-gray-700">Rating</span> 
+      <span>Rate this book below</span>
+    </div>
+    {% endif %}
 
+    <!-- Form Rating -->
+    <form class="" action="{% url 'rate_book' book.id %}" method="post">
+      {% csrf_token %}
+      {% include 'partials/bootstrap_form.html' with form=book_rating_form %}
+      <div class="pt-2">
+        <button type="submit" class="font-semibold border-blue-400/40 border bg-blue-500 hover:bg-blue-700 text-blue-50 py-2 px-4 rounded">
+          {% if rating_exists == True %}
+          Update Rating
+          {% else %}
+          Rate Book
+          {% endif %}
+        </button>
+      </div>
 
-    <!-- Buttons -->
-    <div class="flex flex-row-reverse mt-14 items-end gap-5">
+    </form>
 
-      <div>
-        <form action="{% url 'create_user_book_history' user_id=user.id book_id=book.id%}" method="post">
-          {% csrf_token %}
-          <div class = "rating">
-              {{ user_book_history_form }}
+    <!-- Currently Reading -->
+    <div class="pt-8">
+      <form action="{% url 'create_user_book_history' user_id=user.id book_id=book.id%}" method="post">
+        {% csrf_token %}
+        <div>
+            {{ user_book_history_form }}
+            <!-- TODO: What's the use case for this? I.e. When would you set again? -->
+            <button type="submit" class="font-semibold border-blue-400/40 border bg-white hover:bg-blue-50 text-blue-600 py-2 px-4 rounded">
               {% if user_book_history_exists == True %}
-              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Set as your currently reading (again)</button>
+              Set as your currently reading again
               {% else %}
-              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Set as your currently reading</button>
+              Set as your currently reading
               {% endif %}
-          </div>
-        </form>
-      </div>
-
-      <div>
-        {% if user_books_exists == False %}
-        <form action="{% url 'create_user_book_favourite' user_id=user.id book_id=book.id%}" method="post">
-          {% csrf_token %}
-          <div class = "rating">
-              {{ user_book_form }}
-              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add to favourites</button>
-          </div>
-        </form>
-        {% else %}
-        <form action="{% url 'delete_user_book_favourite' user_id=user.id book_id=book.id%}" method="post">
-          {% csrf_token %}
-          <div class = "rating">
-              {{ user_book_form }}
-              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Remove from favourites</button>
-          </div>
-        </form>
-        {% endif %}
-      </div>
-
-
-
+            </button>
+        </div>
+      </form>
     </div>
-
-  </card>
-
+  </div>
 </div>
+
+
 {% endblock %}
