@@ -13,7 +13,7 @@
         <h2 class="text-2xl font-extrabold tracking-tight text-gray-900">
           <a id="we_think_youll_like">We think you'll like...</a>
         </h2>
-        {% if club_favourites_exist is True %}
+        {% if user_rec_books_exists is True %}
         <div class="snap-x snap-proximity h-[24rem] md:h-[30rem] overflow-x-scroll overflow-y-hidden mt-6 flex space-x-8 md:space-x-12">
             {% include 'partials/books_as_list.html' with books=user_rec_books %}
         </div>
