@@ -2,13 +2,12 @@
 {% load i18n %}
 {% block content%}
 
-<div class="lg:text-center">
-  <h2 class="text-base text-indigo-600 font-semibold tracking-wide uppercase">Our system will recommend only the best books for your club.</h2>
+<div class="text-center pt-8">
+  <h2 class="text-base text-indigo-500 font-semibold tracking-wide uppercase">Here's some books we <span class="font-extrabold">know</span> your club's going to love</h2>
   <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">{{club.name}}'s Book Recommendations</p>
-  <p class="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">Scroll through the recommendations and click on a book for more details.</p>
 </div>
 
-<ul role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+<ul role="list" class="p-12 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 pt-8">
   {% for book in books%}
     {% include "partials/recommended_book_as_list_item.html" with book=book club=club form=form%}
   {% endfor %}
