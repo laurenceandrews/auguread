@@ -1,4 +1,5 @@
 {% extends 'base_content.html' %}
+
 {% load i18n %}
 {% block content%}
 
@@ -8,8 +9,10 @@
 </div>
 
 <ul role="list" class="p-12 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 pt-8">
-  {% for book in books%}
-    {% include "partials/recommended_book_as_list_item.html" with book=book club=club form=form%}
-  {% endfor %}
+  {%for book in books%}
+  {% include "partials/recommended_book_as_list_item.html" with book=book club=club form=form%}
+  {%endfor%}
 </ul>
+
+
 {%endblock%}

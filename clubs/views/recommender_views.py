@@ -1,10 +1,6 @@
 """Views related to the recommender."""
 from statistics import mean
 
-from clubs.book_to_club_recommender.book_to_club_recommender_age import \
-    ClubBookAgeRecommender
-from clubs.book_to_club_recommender.book_to_club_recommender_author import \
-    ClubBookAuthorRecommender
 from clubs.book_to_user_recommender.book_to_user import BookToUserRecommender
 from clubs.club_to_user_recommender.club_to_user_recommender import \
     ClubUserRecommender
@@ -13,8 +9,9 @@ from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
                          MeetingAddressForm, MeetingLinkForm, NewClubForm,
                          PasswordForm, PostForm, SignUpForm)
 from clubs.models import (Address, Book, Book_Rating, Club, Club_Book_History,
-                          Club_Books, Club_Users, MeetingAddress, MeetingLink,
-                          Post, User, User_Book_History, User_Books)
+                          Club_Books, Club_Users, ClubBookRecommendation,
+                          MeetingAddress, MeetingLink, Post, User,
+                          User_Book_History, User_Books)
 from clubs.views.mixins import TenPosRatingsRequiredMixin
 from django.conf import settings
 from django.contrib import messages
@@ -96,15 +93,9 @@ class RecommendedClubBookListView(LoginRequiredMixin, View):
         club_id = self.kwargs['club_id']
         self.club = Club.objects.get(id=club_id)
 
-        book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
-
-        if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
-            book_ids_from_author_rec = ClubBookAuthorRecommender(club_id).get_recommended_books()
-            if(len(book_ids_from_author_rec) > len(book_ids)):
-                book_ids = book_ids_from_author_rec
-            self.books = Book.objects.filter(id__in=book_ids)
-        else:
-            self.books = Book.objects.filter(id__in=book_ids)
+        # get the club's book recommendations
+        book_ids = ClubBookRecommendation.objects.filter(club=self.club).values_list('book', flat=True)
+        self.books = Book.objects.filter(id__in=book_ids)
 
         return self.render()
 
