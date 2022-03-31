@@ -96,14 +96,15 @@ class RecommendedClubBookListView(LoginRequiredMixin, View):
         club_id = self.kwargs['club_id']
         self.club = Club.objects.get(id=club_id)
 
-        if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
-            book_ids = ClubBookAuthorRecommender(club_id).get_recommended_books()
-            if(len(book_ids) < 6):
-                book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
-        else:
-            book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
+        book_ids = ClubBookAgeRecommender(club_id).get_recommended_books()
 
-        self.books = Book.objects.filter(id__in=book_ids)
+        if not ClubBookAuthorRecommender(club_id).author_books_is_empty():
+            book_ids_from_author_rec = ClubBookAuthorRecommender(club_id).get_recommended_books()
+            if(len(book_ids_from_author_rec) > len(book_ids)):
+                book_ids = book_ids_from_author_rec
+            self.books = Book.objects.filter(id__in=book_ids)
+        else:
+            self.books = Book.objects.filter(id__in=book_ids)
 
         return self.render()
 
