@@ -154,16 +154,8 @@ class RecommendationsView(LoginRequiredMixin, View):
         current_user = self.request.user
 
         # returns the collaborative filtering of ratings between users
-        user_rec_books = UserBookRecommendation.objects.filter(user=current_user)
-        if user_rec_books.exists():
-            user_rec_books_ids = UserBookRecommendation.objects.filter(user=current_user).values_list('book', flat=True)
-            self.user_rec_books = Book.objects.filter(id__in=user_rec_books_ids)
-        else:
-            # populate the databse
-            user_rec_books_ids = BookToUserRecommender(user_id_to_query=current_user.id).build_dictionary()
-            self.user_rec_books = Book.objects.filter(id__in=user_rec_books_ids)
-            for book in self.user_rec_books:
-                UserBookRecommendation.objects.create(book=book, user=current_user)
+        user_rec_book_ids = BookToUserRecommender(user_id_to_query=current_user.id).build_dictionary()
+        self.user_rec_books = Book.objects.filter(id__in=user_rec_book_ids)
 
         club_favourites = Club_Books.objects.exclude(club__in=current_user.clubs_attended()).order_by('-id')
         self.club_favourites_book_ids = club_favourites.values('book')[0:15]
