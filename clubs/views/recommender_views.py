@@ -150,6 +150,8 @@ def club_book_select_view(request, club_id, book_id):
         book=book,
         average_rating=1
     )
+
+    messages.add_message(request, messages.SUCCESS, f"{book.title} selected!")
     return redirect('club_detail', club.id)
 
 
