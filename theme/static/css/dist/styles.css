@@ -1632,16 +1632,16 @@ select{
   background-origin: border-box;
 }
 
+.fill-rose-600\/80{
+  fill: rgb(225 29 72 / 0.8);
+}
+
 .fill-transparent{
   fill: transparent;
 }
 
-.fill-rose-600{
-  fill: #e11d48;
-}
-
-.stroke-rose-600{
-  stroke: #e11d48;
+.stroke-rose-600\/80{
+  stroke: rgb(225 29 72 / 0.8);
 }
 
 .object-cover{
@@ -2318,8 +2318,8 @@ select{
   background-color: rgb(238 242 255 / var(--tw-bg-opacity));
 }
 
-.hover\:fill-rose-600:hover{
-  fill: #e11d48;
+.hover\:fill-rose-600\/80:hover{
+  fill: rgb(225 29 72 / 0.8);
 }
 
 .hover\:fill-transparent:hover{
