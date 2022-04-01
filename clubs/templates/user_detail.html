@@ -2,115 +2,104 @@
 {% load i18n %}
 {% load bootstrap_pagination %}
 {% block content%}
-<div class="text-2xl">
-  <img
-  src="{{ user.gravatar }}"
-  alt="Gravatar of {{ user.username }}"
-  class="rounded h-full bg-cover mx-auto mt-8"
-  />
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="text-2xl">
+    <img
+    src="{{ user.gravatar }}"
+    alt="Gravatar of {{ user.username }}"
+    class="rounded h-full bg-cover mx-auto mt-8"
+    />
 
-  <div class="mx-auto text-center mt-2">
-    <span class="inline-flex space-x-2 items-center px-3 py-0.5 rounded-full text-sm font-medium bg-emerald-50 text-emerald-800">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-      <span>{{ user.location }}</span>
-    </span>
-  </div>
-
-  <p class="mx-auto text-center text-3xl font-bold text-gray-700 mt-4">{{ user.full_name }}</h3>
-  <p class="mx-auto text-center text-indigo-500 text-xl mt-1">{{ user.username }}</p>
-
-  <!-- Only show email when showing logged in user -->
-  {% if user_profile %}
-    <p class="mx-auto text-center to-gray-700 pt-3">{{ user.email }}</h3>
-  {% endif %}
-
-  <p class="relative mx-auto w-3/4 sm:w-2/5 pt-4" >
-    <span class="absolute -left-4 pr-4 text-indigo-500/40 text-5xl font-overpass italic font-extrabold -z-10">"</span>
-    <span class="text-gray-500 font-bitter font-semibold">{{ user.bio }}</span>
-  </p>
-
-  {% if not user_profile %}
-  <div class="mx-auto text-center mt-4">
-    {% if current_user_is_following_user == True %}
-    <button onclick="location.href='{%url 'follow_toggle' user.id %}';" class="mt-4 w-32 py-2 border border-indigo-600/50 rounded-md shadow-sm text-sm font-semibold text-indigo-700 bg-transparent hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Unfollow</button>
-    {% else %}
-    <button onclick="location.href='{%url 'follow_toggle' user.id %}';" class="mt-4 w-32 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Follow</button>
-    {% endif %}
-  </div>
-  {% endif %}
-</div>
-
-
-<div>
-  <!-- Clubs -->
-  {%if clubs%}
-  <div class="py-8 mx-8 mt-8 flex flex-col">
-    <div class="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
-      <div class="inline-block min-w-full py-2 align-middle">
-        <div class="shadow-sm ring-1 ring-black ring-opacity-5">
-          {% if user_profile %}
-          <h1 class="text-xl font-semibold text-gray-900">Your clubs</h1>
-          {% else %}
-          <h1 class="text-xl font-semibold text-gray-900">Clubs {{user.full_name}} is in</h1>
-          {% endif %}
-
-          {% include "partials/clubs_table.html" with clubs=clubs %}
-
-        </div>
-      </div>
-
+    <div class="mx-auto text-center mt-2">
+      <span class="inline-flex space-x-2 items-center px-3 py-0.5 rounded-full text-sm font-medium bg-emerald-50 text-emerald-800">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <span>{{ user.location }}</span>
+      </span>
     </div>
-  </div>
-  {%else%}
+
+    <p class="mx-auto text-center text-3xl font-bold text-gray-700 mt-4">{{ user.full_name }}</h3>
+    <p class="mx-auto text-center text-indigo-500 text-xl mt-1">{{ user.username }}</p>
+
+    <!-- Only show email when showing logged in user -->
     {% if user_profile %}
-    <h1 class="text-xl font-semibold text-gray-900">Your clubs</h1>
-    {% else %}
-    <h1 class="text-xl font-semibold text-gray-900">Clubs {{user.full_name}} is in</h1>
+      <p class="mx-auto text-center to-gray-700 pt-3">{{ user.email }}</h3>
     {% endif %}
-  <p>{{user.full_name}} is not in any clubs.</p>
-  {%endif%}
-</div>
 
+    <p class="relative mx-auto w-3/4 sm:w-2/5 pt-4" >
+      <span class="absolute -left-4 pr-4 text-indigo-500/40 text-5xl font-overpass italic font-extrabold -z-10">"</span>
+      <span class="text-gray-500 font-bitter font-semibold">{{ user.bio }}</span>
+    </p>
 
-<br />
-<br />
-<br />
-<br />
+    {% if not user_profile %}
+    <div class="mx-auto text-center mt-4">
+      {% if current_user_is_following_user == True %}
+      <button onclick="location.href='{%url 'follow_toggle' user.id %}';" class="mt-4 w-32 py-2 border border-indigo-600/50 rounded-md shadow-sm text-sm font-semibold text-indigo-700 bg-transparent hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Unfollow</button>
+      {% else %}
+      <button onclick="location.href='{%url 'follow_toggle' user.id %}';" class="mt-4 w-32 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Follow</button>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
 
+  <div class="mx-auto mt-8">
+    {%if clubs%}
+    <div class="mt-8 flex flex-col">
+      <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+            {% if user_profile %}
+            <div class="text-indigo-400 text-2xl mx-auto text-center font-poppins">Your clubs</div>
+            {% else %}
+            <div class="text-indigo-400 text-2xl mx-auto text-center font-poppins">Clubs {{user.full_name}} is in</div>
+            {% endif %}
 
-<div>
-  <!-- Friends -->
-  {%if friends%}
-  <div class="py-8 mx-8 mt-8 flex flex-col">
-    <div class="-my-2 -mx-4 sm:-mx-6 lg:-mx-8">
-      <div class="inline-block min-w-full py-2 align-middle">
-        <div class="mt-8 shadow-sm ring-1 ring-black ring-opacity-5">
-          {% if user_profile %}
-          <h1 class="mt-8 text-xl font-semibold text-gray-900">Your friends</h1>
-          <p class="mt-1 max-w-2xl text-sm text-gray-500">You have {{friends.count}} friends.</p>
-          {% else %}
-          <h1 class="mt-8 text-xl font-semibold text-gray-900">{{user.full_name}}'s friends</h1>
-          <p class="mt-1 max-w-2xl text-sm text-gray-500">{{user.full_name}}'s has {{friends.count}} friends.</p>
-          {% endif %}
-
-          {% include "partials/users_table.html" with users=friends %}
-
+            {% include "partials/clubs_table.html" with clubs=clubs %}
+          </div>
         </div>
       </div>
-
     </div>
+    {%else%}
+      {% if user_profile %}
+      <div class="text-indigo-400 text-2xl mx-auto text-center font-poppins">Your clubs</div>
+      {% else %}
+      <div class="text-indigo-400 text-2xl mx-auto text-center font-poppins">Clubs {{user.full_name}} is in</div>
+      {% endif %}
+    <p>{{user.full_name}} is not in any clubs.</p>
+    {%endif%}
   </div>
-  {%else%}
-  {% if user_profile %}
-    <h1 class="mt-8 text-xl font-semibold text-gray-900">Your friends</h1>
-    {% else %}
-    <h1 class="mt-8 text-xl font-semibold text-gray-900">{{user.full_name}}'s friends</h1>
-    {% endif %}
-  <p>{{user.full_name}} has not followed any friends yet.</p>
-  {%endif%}
+
+  <div class="mx-auto mt-8">
+    {%if friends%}
+    <div class="mt-8 flex flex-col">
+      <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+            {% if user_profile %}
+            <div class="text-indigo-400 text-2xl mx-auto text-center font-poppins">Your friends</div>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">You have {{friends.count}} friends.</p>
+            {% else %}
+            <div class="text-indigo-400 text-2xl mx-auto text-center font-poppins">{{user.full_name}}'s friends</div>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">{{user.full_name}}'s has {{friends.count}} friends.</p>
+            {% endif %}
+
+            {% include "partials/users_table.html" with users=friends %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {%else%}
+      {% if user_profile %}
+      <div class="text-indigo-400 text-2xl mx-auto text-center font-poppins">Your friends</div>
+      {% else %}
+      <div class="text-indigo-400 text-2xl mx-auto text-center font-poppins">{{user.full_name}}'s friends</div>
+      {% endif %}
+    <p>{{user.full_name}} has not followed any friends yet.</p>
+    {%endif%}
+  </div>
+
 </div>
 
 {% endblock %}
