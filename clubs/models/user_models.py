@@ -299,6 +299,24 @@ class Club(models.Model):
         return currently_reading
 
 
+class UserBookRecommendation(models.Model):
+    """Recommended book for a user."""
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        """Model options."""
+        verbose_name = "User Book Recommendation"
+        verbose_name_plural = "User Book Recommendations"
+
+
 class Club_Users(models.Model):
     club = models.ForeignKey(
         Club,

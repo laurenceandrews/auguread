@@ -3,7 +3,8 @@ from django.contrib import admin
 from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
                      Club_Books, Club_Users, ClubBookRecommendation,
                      ClubFeedPost, MeetingAddress, MeetingLink, Post,
-                     PostComment, User, User_Book_History, User_Books)
+                     PostComment, User, User_Book_History, User_Books,
+                     UserBookRecommendation)
 
 
 @admin.register(User)
@@ -45,6 +46,15 @@ class ClubBookRecommendationAdmin(admin.ModelAdmin):
 
     list_display = [
         'club', 'book'
+    ]
+
+
+@admin.register(UserBookRecommendation)
+class UserBookRecommendationAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for user book recommendations."""
+
+    list_display = [
+        'user', 'book'
     ]
 
 

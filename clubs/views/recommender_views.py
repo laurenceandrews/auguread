@@ -1,17 +1,14 @@
 """Views related to the recommender."""
 from statistics import mean
 
-from clubs.book_to_user_recommender.book_to_user import BookToUserRecommender
+from clubs.book_to_user_recommender.book_to_user_knn import \
+    BookToUserRecommender
 from clubs.club_to_user_recommender.club_to_user_recommender import \
     ClubUserRecommender
-from clubs.forms import (AddressForm, BookRatingForm, CalendarPickerForm,
-                         ClubRecommenderForm, CreateEventForm, LogInForm,
-                         MeetingAddressForm, MeetingLinkForm, NewClubForm,
-                         PasswordForm, PostForm, SignUpForm)
-from clubs.models import (Address, Book, Book_Rating, Club, Club_Book_History,
-                          Club_Books, Club_Users, ClubBookRecommendation,
-                          MeetingAddress, MeetingLink, Post, User,
-                          User_Book_History, User_Books)
+from clubs.models import (Book, Book_Rating, Club, Club_Book_History,
+                          Club_Books, Club_Users, ClubBookRecommendation, Post,
+                          User, User_Book_History, User_Books,
+                          UserBookRecommendation)
 from clubs.views.mixins import TenPosRatingsRequiredMixin
 from django.conf import settings
 from django.contrib import messages
@@ -157,16 +154,18 @@ class RecommendationsView(LoginRequiredMixin, View):
         current_user = self.request.user
 
         # returns the collaborative filtering of ratings between users
-        user_rec_book_ids = BookToUserRecommender().get_collaborative_filtering()
-        self.user_rec_books = Book.objects.filter(id__in=user_rec_book_ids)[0:15]
+        user_rec_books = UserBookRecommendation.objects.filter(user=current_user)
+        if user_rec_books.exists():
+            user_rec_books_ids = UserBookRecommendation.objects.filter(user=current_user).values_list('book', flat=True)
+            self.user_rec_books = Book.objects.filter(id__in=user_rec_books_ids)
+        else:
+            # populate the databse
+            user_rec_books_ids = BookToUserRecommender(user_id_to_query=current_user.id).build_dictionary()
+            self.user_rec_books = Book.objects.filter(id__in=user_rec_books_ids)
+            for book in self.user_rec_books:
+                UserBookRecommendation.objects.create(book=book, user=current_user)
 
         club_favourites = Club_Books.objects.exclude(club__in=current_user.clubs_attended()).order_by('-id')
-
-        if club_favourites.count() == 0:
-            self.club_favourites_exist = False
-        else:
-            self.club_favourites_exist = True
-
         self.club_favourites_book_ids = club_favourites.values('book')[0:15]
         self.club_favourites = Book.objects.filter(id__in=self.club_favourites_book_ids)
 
@@ -184,7 +183,7 @@ class RecommendationsView(LoginRequiredMixin, View):
                       {
                           'user_rec_books_exists': self.user_rec_books.exists(),
                           'user_rec_books': self.user_rec_books,
-                          'club_favourites_exist': self.club_favourites_exist,
+                          'club_favourites_exist': self.club_favourites.exists(),
                           'club_favourites': self.club_favourites,
                           'friends_favourites_exists': self.user_favourites.exists(),
                           'friends_favourites': self.user_favourites
