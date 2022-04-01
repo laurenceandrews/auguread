@@ -2,14 +2,15 @@
 # coding: utf-8
 # converted from a Jupyter notebook
 
-import numpy as np # linear algebra (not needed)
+import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-import scipy.sparse.linalg as spla # (not used)
+import scipy.sparse.linalg as spla
 from fuzzywuzzy import fuzz
-from fuzzywuzzy import process #(not used)
+from fuzzywuzzy import process
 from clubs.models import User, Club, Club_Users, Club_Books, Book, User_Books
 
 pd.options.mode.chained_assignment = None  # default='warn'
+
 class ClubUserRecommender:
 
     def __init__(self, user_id):
@@ -25,7 +26,6 @@ class ClubUserRecommender:
     def get_user(self):
         current_user = User.objects.get(pk=self.user_id)
         return current_user
-
 
     # Merge club_user junction table with user table to get ages of all users
     def get_user_age_df(self):
@@ -67,117 +67,152 @@ class ClubUserRecommender:
 
     # Return clubs with matching location (using fuzzy search)
     def get_clubs_with_matching_loc_fuzzy(self):
-        club_locations_df = self.get_club_locations_df()
-        closest_club_location_fuzzy_df = pd.DataFrame()
-        location_matches_df = pd.DataFrame()
-        location_matches_df['matching_location'] = club_locations_df['location']
-        user_location = str(self.get_user().city) + ', ' + str(self.get_user().country)
-        match_values = []
+        user_location = "Tokyo, Japan"
+        user_id = self.user_id
 
-        for location in club_locations_df['location']:
-            match_value = int(fuzz.token_sort_ratio(user_location, location))
-            if match_value > 50:
-                match_values.append(match_value)
+        club_user_location_df['location_match_score'] = np.nan
+        club_user_location_df
 
-        matching_locations = pd.DataFrame()
-        matching_locations['match_score'] = match_values
+        no_of_rows = club_user_location_df.shape[0]
 
-        club_recs = pd.concat([location_matches_df, club_locations_df], axis=1).drop('location', axis=1)
+        for i in range(no_of_rows):
+            match_value = int(fuzz.token_sort_ratio(user_location, club_user_location_df.iloc[i]['location']))
+            if (user_id != club_user_location_df.iloc[i]['user_id']):
+                club_user_location_df.iat[i,4] = match_value
+            else:
+                club_user_location_df.drop(i)
 
-        closest_club_location_fuzzy_df = pd.concat([club_recs, matching_locations], axis=1)
-        closest_club_location_fuzzy_df = closest_club_location_fuzzy_df.sort_values('match_score', ascending=False).dropna(how='any',axis=0)
+        club_user_location_df = club_user_location_df.sort_values('location_match_score', ascending=False).dropna(how='any',axis=0)
+        club_user_location_df = club_user_location_df.drop('club_user_id', axis = 1).groupby(['club_id', 'location', 'location_match_score']).agg(list).reset_index()
+        club_user_location_df = club_user_location_df[club_user_location_df['location_match_score'] > 80]
 
-        return closest_club_location_fuzzy_df
+        return club_user_location_df
 
 
     # Perform a many-to-many merge to get the favourite books of each club
     def get_club_favourite_books(self):
-        club_favourite_books_df = pd.merge(pd.merge(self.club_df, self.club_book_df, left_on='id', right_on='club_id'),
-                            pd.merge(self.book_df, self.club_book_df, left_on='id', right_on='book_id'), on='book_id', how = 'inner') \
-                            .groupby(['club_id_x', 'name', 'ISBN'])['title', 'author'].agg(list).reset_index()
+        club_favourite_books_df = pd.merge(pd.merge(self.club_df, self.club_book_df, left_on='id', right_on='club_id'), 
+                    pd.merge(self.book_df, self.club_book_df, left_on='id', right_on='book_id'), on='book_id', how = 'inner') \
+                        .groupby(['club_id_x', 'name', 'ISBN'])['title', 'author'].agg(list).reset_index()
 
         club_favourite_books_df = club_favourite_books_df.rename(columns={'club_id_x':'club_id'})
+
         club_favourite_books_df['title'] = club_favourite_books_df['title'].str[0]
         club_favourite_books_df['author'] = club_favourite_books_df['author'].str[0]
+
         return club_favourite_books_df
 
     # Perform a many-to-many merge to get the favourite books of each user
-    def get_user_favourite_books(self):
-        user_favourite_books_df = pd.merge(pd.merge(self.user_df, self.user_book_df, left_on='id', right_on='user_id'),
-                            pd.merge(self.book_df, self.user_book_df, left_on='id', right_on='book_id'), on='book_id', how = 'inner') \
-                                .groupby(['user_id_x', 'first_name','last_name', 'ISBN', 'title', 'author'])['title', 'author'].agg(list).reset_index()
+    def get_user_club_favourite_books(self):
+        user_favourite_books_df = pd.merge(pd.merge(self.user_df, self.user_book_df, left_on='id', right_on='user_id'), 
+                    pd.merge(self.book_df, self.user_book_df, left_on='id', right_on='book_id'), on='book_id', how = 'inner') \
+                       .groupby(['user_id_x', 'first_name','last_name', 'ISBN', 'title', 'author'])['title', 'author'].agg(list).reset_index()
+
         user_favourite_books_df = user_favourite_books_df.rename(columns={'user_id_x':'user_id'}).drop(0, 1)
-        return user_favourite_books_df
+        user_favourite_books_df
+        user_club_favourite_books_df = pd.merge(user_favourite_books_df, self.club_user_df, left_on="user_id", right_on="user_id", how="inner")
+        user_club_favourite_books_df = user_club_favourite_books_df[['club_id', 'user_id', 'title', 'author']]
+        user_club_favourite_books_df = user_club_favourite_books_df.sort_values('user_id', ascending=True)
+        user_club_favourite_books_df = user_club_favourite_books_df.groupby(['user_id', 'title', 'author']).agg(list).reset_index()
+        return user_club_favourite_books_df
 
     # Get the favourite books and authors of one user (me)
     def get_fav_books_and_authors_per_user(self):
-        current_user_id = self.user_id
-        user_favourite_books_df = self.get_user_favourite_books()
-        my_favourite_books_df = user_favourite_books_df.loc[user_favourite_books_df['user_id'] == current_user_id]
+        my_id = self.user_id
+        my_favourite_books_df = self.get_user_club_favourite_books().loc[self.get_user_club_favourite_books()['user_id'] == my_id]
         return my_favourite_books_df
+
+    def get_club_user_favourite_books(self):
+        club_user_favourite_books_df = pd.merge(self.get_club_favourite_books(), self.club_user_df, left_on='club_id', right_on='club_id', how='inner')
+        club_user_favourite_books_df = club_user_favourite_books_df.drop('id', axis=1).drop('role_num', axis=1)
+        club_user_favourite_books_df = club_user_favourite_books_df.groupby(['club_id', 'user_id', 'title', 'name', 'ISBN']).agg(list).reset_index()
+        return club_user_favourite_books_df
 
     # Return all matching favourite books between a single user and multiple clubs (using fuzzy search)
 
     def get_all_favourite_book_matches_fuzzy(self):
-        club_favourite_books_df = self.get_club_favourite_books()
-        user_favourite_books = self.get_fav_books_and_authors_per_user()
-        book_matches_df = pd.DataFrame()
-        book_matches_df['book_title'] = club_favourite_books_df['title']
-        all_book_matches_df = pd.DataFrame()
-        match_values = []
+        no_of_user_favourite_books = self.get_fav_books_and_authors_per_user().shape[0]
+        no_of_club_favourite_books = self.get_club_user_favourite_books().shape[0]
+        club_user_title_matches_df = self.get_club_user_favourite_books()
 
-        for i in range(len(user_favourite_books['title'])):
-            my_favourite_book = user_favourite_books.iloc[[i], user_favourite_books['title'][i]]
+        club_user_title_matches_df['title_match_score'] = np.nan
+        club_user_title_matches_df
 
-            for title in club_favourite_books_df['title']:
-                match_value = int(fuzz.token_sort_ratio(my_favourite_book, title))
-                if match_value > 50:
-                    match_values.append(match_value)
-            
-        matching_books = pd.DataFrame()
-        matching_books['match_score'] = match_values
+        for i in range(no_of_user_favourite_books):
+            my_favourite_book = self.get_fav_books_and_authors_per_user().iloc[i]
 
-        club_recs = pd.concat([book_matches_df, club_favourite_books_df], axis=1).drop('title', axis=1)
-            
-        all_book_matches_df = pd.concat([club_recs, matching_books], axis = 1)
-        all_book_matches_df = all_book_matches_df.sort_values('match_score', ascending=False).dropna(how='any',axis=0)
+            for j in range(no_of_club_favourite_books):
+                club_favourite_book = club_user_title_matches_df.iloc[j]
 
-        return all_book_matches_df
+                match_value = int(fuzz.token_sort_ratio(my_favourite_book['title'], club_favourite_book['title']))
+                club_user_title_matches_df.iat[j,6] = match_value
+
+                if (self.user_id != club_user_title_matches_df.iloc[j]['user_id']):
+                    club_user_title_matches_df.iat[j,6] = match_value
+                else:
+                    club_user_title_matches_df.drop(j)
+
+
+        club_average_title_match_df = club_user_title_matches_df[['club_id', 'title_match_score', 'title', 'name', 'ISBN']]
+        club_user_title_matches_df = club_user_title_matches_df.drop('user_id',axis=1)
+        club_user_title_matches_df = club_user_title_matches_df.groupby(['club_id', 'title_match_score', 'title', 'name', 'ISBN']).agg(list).reset_index()
+        club_user_title_matches_df = club_user_title_matches_df.sort_values('title_match_score', ascending=False).dropna(how='any',axis=0)
+        club_user_title_matches_df = club_user_title_matches_df[club_user_title_matches_df['title_match_score'] > 40]
+
+        return club_user_title_matches_df
 
     # Return a list of clubs in order of which have the most matching favourite books with the user
     def get_average_book_match_df(self):
-        club_average_book_match_df = self.get_all_favourite_book_matches_fuzzy().groupby(['club_id', 'name'])['match_score'].count().reset_index(name = 'book_match_count').sort_values('book_match_count', ascending=False).rename(columns={'name':'club_book_name'})
+        club_average_book_match_df = self.get_all_favourite_book_matches_fuzzy().groupby(['club_id', 'name', 'title_match_score'])['title_match_score'] \
+            .count().reset_index(name = 'book_match_count') \
+            .sort_values('book_match_count', ascending=False) \
+            .rename(columns={'name':'club_book_name'})
 
         return club_average_book_match_df
 
+
+    def get_club_user_favourite_books_df_2(self):
+        club_user_favourite_books_df_2 = pd.merge(self.get_club_favourite_books(), self.club_user_df, left_on='club_id', right_on='club_id', how='inner')
+        club_user_favourite_books_df_2 = club_user_favourite_books_df_2.drop('id', axis=1).drop('role_num', axis=1)
+        club_user_favourite_books_df_2 = club_user_favourite_books_df_2.groupby(['club_id', 'user_id', 'author', 'name', 'ISBN']).agg(list).reset_index()
+        club_user_favourite_books_df_2
+
     # Return all matching favourite authors between a single user and multiple clubs (using fuzzy search)
     # This works by checking the authors of all of a club's favourite books agains the authors of all of a user's favourite books
-
     def get_all_favourite_author_matches_fuzzy(self):
-        club_favourite_authors_df = self.get_club_favourite_books()
-        user_favourite_books = self.get_fav_books_and_authors_per_user()
-        author_match_df = pd.DataFrame()
-        author_match_df['author'] = club_favourite_authors_df['author']
-        all_author_matches_df = pd.DataFrame()
-        match_values = []
+        user_id = self.user_id
 
-        for i in range(len(user_favourite_books['author'])):
-            my_favourite_author = user_favourite_books.iloc[[i], user_favourite_books['author'][i]]
+        no_of_user_favourite_books = self.get_fav_books_and_authors_per_user().shape[0]
+        no_of_club_favourite_books = self.get_club_user_favourite_books_df_2().shape[0]
+        club_user_author_matches_df = self.get_club_user_favourite_books_df_2()
 
-            for author in club_favourite_authors_df['author']:
-                match_value = int(fuzz.token_sort_ratio(my_favourite_author, author))
-                if match_value > 50:
-                    match_values.append(match_value)
+        club_user_author_matches_df['author_match_score'] = np.nan
+
+        for i in range(no_of_user_favourite_books):
+            my_favourite_book = self.get_fav_books_and_authors_per_user().iloc[i]
             
-        matching_authors = pd.DataFrame()
-        matching_authors['match_score'] = match_values
 
-        club_recs = pd.concat([author_match_df, club_favourite_authors_df], axis=1).drop('author', axis=1)
+            for j in range(no_of_club_favourite_books):
+                club_favourite_book = club_user_author_matches_df.iloc[j]
+                
+                match_value = int(fuzz.token_sort_ratio(my_favourite_book['author'], club_favourite_book['author']))
+                # match_value
+                club_user_author_matches_df.iat[j,6] = match_value
 
-        all_author_matches_df = pd.concat([club_recs, matching_authors], axis=1) 
-        all_author_matches_df = all_author_matches_df.sort_values('match_score', ascending=False).dropna(how='any',axis=0)
 
-        return all_author_matches_df
+                # if (user_id != club_user_author_matches_df.iloc[j]['user_id']):
+                #     club_user_author_matches_df.iat[j,7] = match_value
+                # else:
+                #     club_user_author_matches_df.drop(j)
+
+
+        club_average_author_match_df = club_user_author_matches_df[['club_id', 'author_match_score', 'author', 'name', 'ISBN']]
+        club_user_author_matches_df = club_user_author_matches_df.drop('user_id',axis=1)
+        club_user_author_matches_df = club_user_author_matches_df.groupby(['club_id', 'author_match_score', 'author', 'name', 'ISBN']).agg(list).reset_index()
+        club_user_author_matches_df = club_user_author_matches_df.sort_values('author_match_score', ascending=False).dropna(how='any',axis=0)
+        club_user_author_matches_df = club_user_author_matches_df[club_user_author_matches_df['author_match_score'] > 40]
+
+        return club_user_author_matches_df
 
     # Return a list of clubs in order of which have the most matching favourite authors with the user
 
