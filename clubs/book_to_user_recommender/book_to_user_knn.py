@@ -1,28 +1,19 @@
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-
-from surprise import SVD
-from surprise import KNNBasic
-from surprise import BaselineOnly
-from surprise import NormalPredictor
-
-from surprise import Dataset
-from surprise import Reader
-from surprise.model_selection import cross_validate
-
+import csv
+import heapq
+import os
 from collections import defaultdict
 from operator import itemgetter
-import heapq
 
-import os
-import csv
-
-from clubs.models import Book, User, Book_Rating
+import numpy as np  # linear algebra
+import pandas as pd  # data processing, CSV file I/O (e.g. pd.read_csv)
+from clubs.models import Book, Book_Rating, User
+from surprise import (SVD, BaselineOnly, Dataset, KNNBasic, NormalPredictor,
+                      Reader)
+from surprise.model_selection import cross_validate
 
 
 class BookToUserRecommender:
     def __init__(self, user_id_to_query):
-
 
         self.df_books = pd.DataFrame(list(Book.objects.all().values()))
         self.df_users = pd.DataFrame(list(User.objects.all().values()))
@@ -59,8 +50,8 @@ class BookToUserRecommender:
         # .compute_similarities()
 
         similarity_matrix = KNNBasic()\
-        .fit(self.trainset)\
-        .compute_similarities()
+            .fit(self.trainset)\
+            .compute_similarities()
 
         return similarity_matrix
 
@@ -98,7 +89,7 @@ class BookToUserRecommender:
                     candidates[innerID] += score * (rating / 5.0)
             except:
                 continue
-        return candidates  
+        return candidates
 
     def build_dictionary(self):
 
@@ -118,8 +109,9 @@ class BookToUserRecommender:
         position = 0
         for self.itemID, self.rating_sum in sorted(candidates.items(), key=itemgetter(1), reverse=True):
             if not self.itemID in read:
-                recommendations.append(self.itemID) # Adding the book id to the rec list
+                recommendations.append(self.trainset.to_raw_iid(self.itemID))  # Adding the book id to the rec list
                 position += 1
-                if (position > 10): break # We only want top 10
+                if (position > 10):
+                    break  # We only want top 10
 
         return recommendations
