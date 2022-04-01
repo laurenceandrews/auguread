@@ -25,25 +25,13 @@
   }
 
   .book-card {
-    width: 30%;
-    display: inline-block;
-    background-size: cover;
-    border-radius: 5px;
-    color: #fff;
-    background: #352fa9;
     height: 328px;
     width: 240px;
     margin: 5px 5px;
-    position: relative;
-    background-size: contain;
     filter: drop-shadow(5px 5px 4px rgba(68, 68, 221, 0.3));
   }
 
   .book-info {
-    background-size: cover;
-    color: #fff;
-    vertical-align: top;
-    position: absolute;
     padding: 20px;
     width: 240px;
     background: rgba(66, 59, 210, 0.87);
@@ -52,10 +40,6 @@
   }
 
   .book-title {
-    font-weight: 800;
-    font-size: 25px;
-    line-height: 32px;
-    margin-bottom: 15px;
     -webkit-box-orient: vertical;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -65,7 +49,6 @@
   }
 
   .book-author {
-    position: absolute;
     bottom: 15px;
   }
 
@@ -229,11 +212,11 @@
           {% csrf_token %}
           {% for book in books_paginated %}
             <div class = "row">
-              <div class = "book-card" style = "background-image: url({{ book.image_large }})">
+              <div class = "book-card w-56 inline-block bg-contain rounded text-white bg-indigo-800 relative" style = "background-image: url({{ book.image_large }})">
 
-                <div class = "book-info sm:text-left md text-left lg:text-left" >
-                  <p class = "book-title">{{ book.title }}</p>
-                  <p class = "book-author">By {{ book.author }}</p>
+                <div class = "book-info sm:text-left md text-left lg:text-left bg-cover text-white align-top absolute p-5 w-56 rounded h-56" >
+                  <p class = "book-title font-extrabold text-2xl leading-8 mb-4 overflow-hidden">{{ book.title }}</p>
+                  <p class = "book-author absolute">By {{ book.author }}</p>
                 </div>
 
                 {% if forloop.first %}
