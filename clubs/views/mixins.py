@@ -119,4 +119,5 @@ class TenPosRatingsRequiredMixin:
 
     def handle_less_than_ten_pos_ratings(self, *args, **kwargs):
         url = self.redirect_when_less_than_ten_pos_ratings_url
+        messages.add_message(self.request, messages.ERROR, "Please create at least 10 positive ratings (6 or higher) to continue!")
         return redirect(url)
