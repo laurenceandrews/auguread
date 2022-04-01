@@ -163,10 +163,6 @@
   }
 
   input[type="text"] {
-    border: solid 1px #352fa9;
-    vertical-align: middle;
-    border-radius: 5px;
-    height: 40px;
     width: 30%;
   }
 
@@ -194,7 +190,7 @@
 
         <form method="GET">
           <div class="input-field">
-              <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Enter book title or author" class="">
+              <input type="text" class = "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"  name="q" value="{{ request.GET.q }}" placeholder="Enter book title or author" class="">
               <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-md font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Search</button>
           </div>
         </form>
