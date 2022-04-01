@@ -27,7 +27,7 @@ class UserCurrentBookViewTestCase(TestCase):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'partials/books_table.html')
+        self.assertTemplateUsed(response, 'user_current_book.html')
 
     def test_get_user_current_book_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
@@ -39,7 +39,7 @@ class UserCurrentBookViewTestCase(TestCase):
         User_Book_History.objects.create(user=self.user, book=self.first_book)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'partials/books_table.html')
+        self.assertTemplateUsed(response, 'user_current_book.html')
         self.assertContains(response, f'{self.first_book.title}', status_code=200)
 
     def test_user_current_book_shows_current_book_when_user_has_multiple_user_book_history(self):
@@ -48,7 +48,7 @@ class UserCurrentBookViewTestCase(TestCase):
         User_Book_History.objects.create(user=self.user, book=self.second_book)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'partials/books_table.html')
+        self.assertTemplateUsed(response, 'user_current_book.html')
         self.assertNotContains(response, f'{self.first_book.title}', status_code=200)
         self.assertContains(response, f'{self.second_book.title}', status_code=200)
 
@@ -56,7 +56,7 @@ class UserCurrentBookViewTestCase(TestCase):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'partials/books_table.html')
-        self.assertContains(response, '<p>No books to show.</p>', status_code=200)
+        self.assertTemplateUsed(response, 'user_current_book.html')
+        self.assertContains(response, "<p>You haven't set any books as currently reading yet.</p>", status_code=200)
         self.assertNotContains(response, f'{self.first_book.title}', status_code=200)
         self.assertNotContains(response, f'{self.second_book.title}', status_code=200)

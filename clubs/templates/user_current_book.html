@@ -18,8 +18,11 @@
       </div>
     </div>
   </div>
-
-  {% include "partials/books_table.html" with user=user books=books single_book=single_book %}
+  {% if book %}
+    {% include "partials/book_detail_as_item.html" %}
+  {% else %}
+    <p>You haven't set any books as currently reading yet.</p>
+  {% endif %}
 
 </div>
 
