@@ -25,25 +25,13 @@
   }
 
   .book-card {
-    width: 30%;
-    display: inline-block;
-    background-size: cover;
-    border-radius: 5px;
-    color: #fff;
-    background: #352fa9;
     height: 328px;
     width: 240px;
     margin: 5px 5px;
-    position: relative;
-    background-size: contain;
     filter: drop-shadow(5px 5px 4px rgba(68, 68, 221, 0.3));
   }
 
   .book-info {
-    background-size: cover;
-    color: #fff;
-    vertical-align: top;
-    position: absolute;
     padding: 20px;
     width: 240px;
     background: rgba(66, 59, 210, 0.87);
@@ -52,10 +40,6 @@
   }
 
   .book-title {
-    font-weight: 800;
-    font-size: 25px;
-    line-height: 32px;
-    margin-bottom: 15px;
     -webkit-box-orient: vertical;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -65,19 +49,11 @@
   }
 
   .book-author {
-    position: absolute;
     bottom: 15px;
   }
 
   .rating {
-    vertical-align: bottom;
-    padding-top: 8px;
-    padding-bottom: 13px;
-    bottom: 0px;
-    position: absolute;
     width: 240px;
-    font-weight: 800;
-    background: #352fa9;
     border-radius: 0px 0px 5px 5px;
   }
 
@@ -187,10 +163,6 @@
   }
 
   input[type="text"] {
-    border: solid 1px #352fa9;
-    vertical-align: middle;
-    border-radius: 5px;
-    height: 40px;
     width: 30%;
   }
 
@@ -218,7 +190,7 @@
 
         <form method="GET">
           <div class="input-field">
-              <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Enter book title or author" class="">
+              <input type="text" class = "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"  name="q" value="{{ request.GET.q }}" placeholder="Enter book title or author" class="">
               <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-md font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Search</button>
           </div>
         </form>
@@ -229,17 +201,17 @@
           {% csrf_token %}
           {% for book in books_paginated %}
             <div class = "row">
-              <div class = "book-card" style = "background-image: url({{ book.image_large }})">
+              <div class = "book-card w-56 inline-block bg-contain rounded text-white bg-indigo-800 relative" style = "background-image: url({{ book.image_large }})">
 
-                <div class = "book-info sm:text-left md text-left lg:text-left" >
-                  <p class = "book-title">{{ book.title }}</p>
-                  <p class = "book-author">By {{ book.author }}</p>
+                <div class = "book-info sm:text-left md text-left lg:text-left bg-cover text-white align-top absolute p-5 w-56 rounded h-56" >
+                  <p class = "book-title font-extrabold text-2xl leading-8 mb-4 overflow-hidden">{{ book.title }}</p>
+                  <p class = "book-author absolute">By {{ book.author }}</p>
                 </div>
 
                 {% if forloop.first %}
                   <form action="{% url 'rate_book' book.id%}" method="post">
                     {% csrf_token %}
-                    <div class = "rating">
+                    <div class = "rating align-bottom pt-2 pb-3 bottom-0 absolute w-56 font-extrabold bg-indigo-800">
                         <p>{% book_rated book user%}</p>
                         {{ innerForm }}
                         <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
@@ -249,7 +221,7 @@
 
                 <form action="{% url 'rate_book' book.id%}" method="post">
                   {% csrf_token %}
-                  <div class = "rating">
+                  <div class = "rating align-bottom pt-2 pb-3 bottom-0 absolute w-56 font-extrabold bg-indigo-800">
                       <p>{% book_rated book user%}</p>
                       {{ innerForm }}
                       <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
