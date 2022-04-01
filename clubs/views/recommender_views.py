@@ -1,6 +1,10 @@
 """Views related to the recommender."""
 from statistics import mean
 
+from clubs.book_to_club_recommender.book_to_club_recommender_age import \
+    ClubBookAgeRecommender
+from clubs.book_to_club_recommender.book_to_club_recommender_author import \
+    ClubBookAuthorRecommender
 from clubs.book_to_user_recommender.book_to_user_knn import \
     BookToUserRecommender
 from clubs.club_to_user_recommender.club_to_user_recommender import \
@@ -91,8 +95,30 @@ class RecommendedClubBookListView(LoginRequiredMixin, View):
         self.club = Club.objects.get(id=club_id)
 
         # get the club's book recommendations
-        book_ids = ClubBookRecommendation.objects.filter(club=self.club).values_list('book', flat=True)
-        self.books = Book.objects.filter(id__in=book_ids)
+        club_book_recommendations = ClubBookRecommendation.objects.filter(club=self.club)
+        if club_book_recommendations.exists():
+            book_ids = ClubBookRecommendation.objects.filter(club=self.club).values_list('book', flat=True)
+            books = Book.objects.filter(id__in=book_ids)
+        else:
+            # populate databse
+            book_ids = ClubBookAgeRecommender(self.club.id).get_recommended_books()
+
+            if not ClubBookAuthorRecommender(self.club.id).author_books_is_empty():
+                book_ids_from_author_rec = ClubBookAuthorRecommender(self.club.id).get_recommended_books()
+                if(len(book_ids_from_author_rec) > len(book_ids)):
+                    book_ids = book_ids_from_author_rec
+                books = Book.objects.filter(id__in=book_ids)
+            else:
+                books = Book.objects.filter(id__in=book_ids)
+
+            for book in books:
+                ClubBookRecommendation.objects.create(club=self.club, book=book)
+
+        self.books = books.distinct()
+
+        paginator = Paginator(books, settings.NUMBER_PER_PAGE)
+        page_number = request.GET.get('page')
+        self.page_obj = paginator.get_page(page_number)
 
         return self.render()
 
@@ -101,7 +127,8 @@ class RecommendedClubBookListView(LoginRequiredMixin, View):
 
         return render(self.request, 'recommended_books_for_club_list.html', {
             'books': self.books,
-            'club': self.club
+            'club': self.club,
+            'page_obj': self.page_obj
         })
 
 
