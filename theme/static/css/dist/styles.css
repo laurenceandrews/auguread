@@ -750,6 +750,10 @@ select{
   top: 2rem;
 }
 
+.bottom-0{
+  bottom: 0px;
+}
+
 .z-10{
   z-index: 10;
 }
@@ -1856,6 +1860,10 @@ select{
   padding-left: 0.25rem;
 }
 
+.pb-3{
+  padding-bottom: 0.75rem;
+}
+
 .text-left{
   text-align: left;
 }
@@ -1874,6 +1882,10 @@ select{
 
 .align-middle{
   vertical-align: middle;
+}
+
+.align-bottom{
+  vertical-align: bottom;
 }
 
 .font-serif{
