@@ -178,23 +178,6 @@ class ClubUpdateForm(forms.ModelForm):
             'description': forms.Textarea()
         }
 
-    # city = forms.CharField(
-    #     label="City",
-    #     max_length=250
-    # )
-    #
-    # country = CountryField(blank_label='(Select country)').formfield()
-    #
-    # def __init__(self, *args, **kwargs):
-    #     """Pre fill the city and country fields."""
-    #     club_id = kwargs.pop('club_id', [])
-    #     super(ClubUpdateForm, self).__init__(*args, **kwargs)
-    #     club_exists = Club.objects.filter(id=club_id)
-    #     if club_exists:
-    #         club = Club.objects.get(id=club_id)
-    #         self.fields['city'].initial = club.city
-    #         self.fields['country'].initial = club.country
-
 
 class NewClubForm(forms.ModelForm):
     """Form for creating a new book club."""
@@ -232,6 +215,8 @@ class NewClubForm(forms.ModelForm):
 
 
 class MeetingAddressForm(forms.ModelForm):
+    """Form enabling users to create and update meeting address objects for events."""
+
     class Meta:
         model = MeetingAddress
         fields = ['address']
@@ -262,6 +247,8 @@ class MeetingAddressForm(forms.ModelForm):
 
 
 class AddressForm(forms.ModelForm):
+    """Form enabling users to create and update address objects for meeting addresses."""
+
     class Meta:
         model = Address
         fields = ['name', 'address1', 'address2', 'zip_code', 'city']
@@ -270,12 +257,16 @@ class AddressForm(forms.ModelForm):
 
 
 class MeetingLinkForm(forms.ModelForm):
+    """Form enabling users to create and update meeting link objects for events."""
+
     class Meta:
         model = MeetingLink
         fields = ['meeting_link']
 
 
 class CreateEventForm(forms.ModelForm):
+    """Form enabling users to create and update event objects for club calendars."""
+
     class Meta:
         model = Event
         fields = ['title']
@@ -303,6 +294,8 @@ class CreateEventForm(forms.ModelForm):
 
 
 class CalendarPickerForm(forms.Form):
+    """Form enabling users to select a calendar from their clubs' calendars to view."""
+
     calendar = forms.ModelChoiceField(
         queryset=Calendar.objects.all().order_by('name'))
 
@@ -318,43 +311,24 @@ class CalendarPickerForm(forms.Form):
 
 
 class CreateClubUserForm(forms.ModelForm):
+    """Form to handle creating and updating a club user."""
+
     class Meta:
         model = Club_Users
         fields = []
 
 
 class ClubRecommenderForm(forms.ModelForm):
+
     class Meta:
         model = User_Clubs
         fields = []
-        # fields = ['name', 'location', 'description']
 
     online = forms.BooleanField(
         label='Online only',
         required=False,
         disabled=False,
         widget=forms.widgets.CheckboxInput(attrs={'class': 'checkbox-inline'}),)
-
-    # def __init__(self, *args, **kwargs):
-    #     user_id = kwargs.pop('id')
-    #     super(ClubRecommenderForm, self).__init__(*args, **kwargs)
-
-    #     if not self.online:
-    #         club_ids = ClubUserRecommender(user_id).get_best_clubs_in_person()
-    #     else:
-    #         club_ids = ClubUserRecommender(user_id).get_best_clubs_online()
-    #     clubs = Club.objects.filter(id__in=club_ids)
-    #     self.fields['club'].queryset = clubs
-
-
-class BookRatingForm(forms.Form):
-    # user = forms.ForeignKey(User, on_delete=forms.CASCADE)
-    rating = forms.ChoiceField(
-        required=False,
-        label='Rate book',
-        error_messages={},
-        choices=[("*", "No rating")] + [(x, x) for x in range(1, 11)],
-    )
 
 
 class UserDeleteForm(forms.ModelForm):
@@ -365,24 +339,32 @@ class UserDeleteForm(forms.ModelForm):
 
 
 class BookRatingForm(forms.ModelForm):
+    """Form to handle creating and updating a book rating."""
+
     class Meta:
         model = Book_Rating
         fields = ['rating']
 
 
 class ClubBookHistoryForm(forms.ModelForm):
+    """Form to handle creating and updating a club's book history object."""
+
     class Meta:
         model = Club_Book_History
         fields = []
 
 
 class UserBookHistoryForm(forms.ModelForm):
+    """Form to handle creating and updating a user's book history object."""
+
     class Meta:
         model = User_Book_History
         fields = []
 
 
 class UserBooksForm(forms.ModelForm):
+    """Form to handle creating and updating a users's book favourites object."""
+
     class Meta:
         model = User_Books
         fields = []
