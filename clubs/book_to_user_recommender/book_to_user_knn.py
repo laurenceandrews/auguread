@@ -36,6 +36,9 @@ class BookToUserRecommender:
         # Set no of items to recommend
         self.k = 10
 
+        self.recommendations = []
+        self.test_subject_iid = 0
+
     def create_similarity_matrix(self):
         # similarity_matrix = BaselineOnly()\
         # .fit(self.trainset)\
@@ -104,14 +107,17 @@ class BookToUserRecommender:
         # Add items to list of user's recommendations
         # If they are similar to their favorite books,
         # AND have not already been read.
-        recommendations = []
+        self.recommendations = []
 
         position = 0
         for self.itemID, self.rating_sum in sorted(candidates.items(), key=itemgetter(1), reverse=True):
             if not self.itemID in read:
-                recommendations.append(self.trainset.to_raw_iid(self.itemID))  # Adding the book id to the rec list
+                self.recommendations.append(self.trainset.to_raw_iid(self.itemID))  # Adding the book id to the rec list
                 position += 1
                 if (position > 10):
                     break  # We only want top 10
 
-        return recommendations
+        return self.recommendations
+
+    def get_recommended_books(self):
+        return self.recommendations
