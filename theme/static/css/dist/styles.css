@@ -1169,6 +1169,10 @@ select{
   width: 1.75rem;
 }
 
+.w-\[4\.25rem\]{
+  width: 4.25rem;
+}
+
 .min-w-full{
   min-width: 100%;
 }
