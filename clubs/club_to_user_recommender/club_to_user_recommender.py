@@ -93,7 +93,7 @@ class ClubUserRecommender:
     def get_club_favourite_books(self):
         club_favourite_books_df = pd.merge(pd.merge(self.club_df, self.club_book_df, left_on='id', right_on='club_id'), 
                     pd.merge(self.book_df, self.club_book_df, left_on='id', right_on='book_id'), on='book_id', how = 'inner') \
-                        .groupby(['club_id_x', 'name', 'ISBN'])['title', 'author'].agg(list).reset_index()
+                        .groupby(['club_id_x', 'name', 'ISBN'])[['title', 'author']].agg(list).reset_index()
 
         club_favourite_books_df = club_favourite_books_df.rename(columns={'club_id_x':'club_id'})
 
@@ -106,10 +106,11 @@ class ClubUserRecommender:
     def get_user_club_favourite_books(self):
         user_favourite_books_df = pd.merge(pd.merge(self.user_df, self.user_book_df, left_on='id', right_on='user_id'), 
                     pd.merge(self.book_df, self.user_book_df, left_on='id', right_on='book_id'), on='book_id', how = 'inner') \
-                       .groupby(['user_id_x', 'first_name','last_name', 'ISBN', 'title', 'author'])['title', 'author'].agg(list).reset_index()
+                       .groupby(['user_id_x', 'first_name','last_name', 'ISBN', 'title', 'author'])[['title', 'author']].agg(list).reset_index()
 
-        user_favourite_books_df = user_favourite_books_df.rename(columns={'user_id_x':'user_id'}).drop(0, 1)
-        user_favourite_books_df
+        print(user_favourite_books_df)
+        user_favourite_books_df = user_favourite_books_df.rename(columns={'user_id_x':'user_id'})
+        user_favourite_books_df = user_favourite_books_df.drop('user_id_x', axis=1)
         user_club_favourite_books_df = pd.merge(user_favourite_books_df, self.club_user_df, left_on="user_id", right_on="user_id", how="inner")
         user_club_favourite_books_df = user_club_favourite_books_df[['club_id', 'user_id', 'title', 'author']]
         user_club_favourite_books_df = user_club_favourite_books_df.sort_values('user_id', ascending=True)
