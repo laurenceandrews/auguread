@@ -54,9 +54,9 @@ function showLoader(){
 </style>
 
 <div class=" fixed inset-x-0 mx-auto backdrop-blur-md bg-white/80 dark:bg-slate-800 z-50">
-  <div class="px-4 sm:px-6">
+  <div class="px-4 sm:px-6 border-b-2 border-gray-300/30">
     <div
-      class="font-semibold flex items-center justify-between border-b-2 border-gray-300/30 py-6 dark:border-gray-700 md:justify-start md:space-x-10"
+      class="font-semibold flex items-center justify-between  py-6 dark:border-gray-700 md:justify-start md:space-x-10"
     >
       <div class="pl-4 sm:pl-0 flex justify-start lg:w-0 lg:flex-1">
         <!-- Load icon logo for light and dark mode -->
@@ -117,7 +117,7 @@ function showLoader(){
             aria-label="Books menu"
             role="menu"
           >
-            <div class="rounded-md bg-white shadow-xl">
+            <div class="rounded-md bg-white shadow-xl divide-y divide-gray-300/30">
               <a
                 href="{% url 'rec' %}"
                 class="flex items-center px-4 py-3 text-sm leading-5 text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-400"
@@ -183,7 +183,7 @@ function showLoader(){
             aria-label="Clubs menu"
             role="menu"
           >
-            <div class="rounded-md bg-white shadow-xl">
+            <div class="rounded-md bg-white shadow-xl divide-y divide-gray-300/30">
               <a
                 href="#" onclick="showLoaderOnClick('{% url 'club_recommender' %}')"
                 class="flex items-center px-4 py-3 text-sm leading-5 text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-400"
@@ -258,7 +258,7 @@ function showLoader(){
             aria-label="User menu"
             role="menu"
           >
-            <div class="rounded-md bg-white shadow-xl">
+            <div class="rounded-md bg-white shadow-xl divide-y divide-gray-300/30">
               <a
                 href="{% url 'user_profile' %}"
                 class="flex items-center px-4 py-3 text-sm leading-5 text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-400"
