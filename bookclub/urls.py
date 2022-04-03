@@ -67,10 +67,6 @@ urlpatterns = [
     path('club/<int:club_id>/feed/post/<int:post_id>', views.PostCommentsView.as_view(), name='club_feed_post'),
     path('club/<int:club_id>/feed/post/<int:post_id>/create', views.PostCommentsCreateView.as_view(), name='club_feed_post_create'),
 
-
-
-
-
     # Club urls
     path('clubs/', views.ClubListView.as_view(), name='club_list'),
     path('new_club/', views.CreateClubView.as_view(), name='new_club'),
