@@ -133,8 +133,8 @@ class User(AbstractUser):
         club_user = Club_Users.objects.get(user=self, club=club)
         if club_user.role_num == "4":
             return 'Owner'
-        elif club_user.role_num == "3":
-            return 'Officer'
+        # elif club_user.role_num == "3":
+        #     return 'Officer'
         elif club_user.role_num == "2":
             return 'Member'
         else:
@@ -245,10 +245,10 @@ class Club(models.Model):
         club_members_ids = Club_Users.objects.filter(club=Club.objects.get(id=self.id), role_num='2').values_list('user', flat=True)
         return User.objects.filter(id__in=club_members_ids)
 
-    def officers(self):
-        """Return all users who are officers of this club."""
-        club_officers_ids = Club_Users.objects.filter(club=Club.objects.get(id=self.id), role_num='3').values_list('user', flat=True)
-        return User.objects.filter(id__in=club_officers_ids)
+    # def officers(self):
+    #     """Return all users who are officers of this club."""
+    #     club_officers_ids = Club_Users.objects.filter(club=Club.objects.get(id=self.id), role_num='3').values_list('user', flat=True)
+    #     return User.objects.filter(id__in=club_officers_ids)
 
     def owners(self):
         """Return all users who are owners of this club."""
@@ -334,12 +334,12 @@ class Club_Users(models.Model):
 
     APPLICANT = '1'
     MEMBER = '2'
-    OFFICER = '3'
+    # OFFICER = '3'
     OWNER = '4'
     ROLE_NUM_CHOICES = [
         (APPLICANT, 'Applicant'),
         (MEMBER, 'Member'),
-        (OFFICER, 'Officer'),
+        # (OFFICER, 'Officer'),
         (OWNER, 'Owner')
     ]
     role_num = models.CharField(
