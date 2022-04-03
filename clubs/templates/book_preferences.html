@@ -15,7 +15,6 @@ function showLoader(){
 </script>
 
 <style>
-
   #loading {
   position: fixed;
   display: flex;
@@ -27,51 +26,23 @@ function showLoader(){
   text-align: center;
   background-color: #f5f3ff;
   z-index: 99;
-}
-
-#loading-inner {
-  margin-top: 10%;
-}
-
-#loading-subheader {
-  font-size: 25px;
-  line-height: 37px;
-  margin-top: 40px;
-  max-width: 55rem;
-}
-
-#loading-image {
-  margin: auto;
-  top: 100px;
-  z-index: 100;
-}
-
-  .loader,
-  .loader:after {
-      border-radius: 50%;
-      width: 10em;
-      height: 10em;
   }
 
-  @-webkit-keyframes load8 {
-      0% {
-          -webkit-transform: rotate(0deg);
-          transform: rotate(0deg);
-      }
-      100% {
-          -webkit-transform: rotate(360deg);
-          transform: rotate(360deg);
-      }
+  #loading-inner {
+    margin-top: 10%;
   }
-  @keyframes load8 {
-      0% {
-          -webkit-transform: rotate(0deg);
-          transform: rotate(0deg);
-      }
-      100% {
-          -webkit-transform: rotate(360deg);
-          transform: rotate(360deg);
-      }
+
+  #loading-subheader {
+    font-size: 25px;
+    line-height: 37px;
+    margin-top: 40px;
+    max-width: 55rem;
+  }
+
+  #loading-image {
+    margin: auto;
+    top: 100px;
+    z-index: 100;
   }
 
   a#continue-btn-disabled {
