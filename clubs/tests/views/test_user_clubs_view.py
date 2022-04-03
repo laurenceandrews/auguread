@@ -47,15 +47,6 @@ class UserClubsViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'partials/clubs_table.html')
         self.assertEqual(len(response.context['clubs']), 1)
 
-    # def test_get_user_clubs_with_role_num_3(self):
-    #     role_num = 3
-    #     url = reverse('user_clubs', kwargs={'role_num': role_num})
-    #     self.client.login(email=self.user.email, password="Password123")
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'summary_clubs_table.html')
-    #     self.assertContains(response, '<p>No clubs to show.</p>', status_code=200)
-
     def test_get_user_clubs__with_role_num_4(self):
         role_num = 4
         url = reverse('user_clubs', kwargs={'role_num': role_num})
