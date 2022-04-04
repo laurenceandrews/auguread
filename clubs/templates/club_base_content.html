@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 {% block body %}
   {% include 'partials/messages.html' %}
-  {% include 'partials/sidebar.html' with club=club %}
+  {% if club %}
+    {% include 'partials/sidebar.html' with club=club %}
+  {% elif calendar %}
+    {% include 'partials/sidebar.html' with club=calendar.club %}
+  {% endif %}
   <div class="ml-16 md:ml-52">
     {% block content %}
     {% endblock %}
