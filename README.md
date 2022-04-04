@@ -3,6 +3,27 @@ Software Engineering Major Group Project
 
 Book Club
 
+## Deployed version
+Link: 
+
+**Access credentials**
+
+Club owner
+Username: 
+Password: 
+
+Club member
+Username: 
+Password: 
+
+Club applicant
+Username: 
+Password: 
+
+Standard user
+Username: 
+Password: 
+
 ## Team Sick Legends
 The authors of the software are:
 - Laurence Andrews
