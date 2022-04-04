@@ -4,25 +4,25 @@ Software Engineering Major Group Project
 Book Club
 
 ## Deployed version
-Link: 
+Link:
 
 **Access credentials**
 
 Club owner
-Username: 
-Password: 
+Username:
+Password:
 
 Club member
-Username: 
-Password: 
+Username:
+Password:
 
 Club applicant
-Username: 
-Password: 
+Username:
+Password:
 
 Standard user
-Username: 
-Password: 
+Username:
+Password:
 
 ## Team Sick Legends
 The authors of the software are:
@@ -70,3 +70,5 @@ $ python3 manage.py test
 The packages used by this application are specified in `requirements.txt`
 
 - [django-scheduler](https://django-scheduler.readthedocs.io/en/latest/), specifically the Calendar, Event and Rule models
+
+For more information, please refer to the Developer's-Manual.md
