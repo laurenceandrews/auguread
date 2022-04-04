@@ -76,4 +76,4 @@ The packages used by this application are specified in `requirements.txt`
 - [django-scheduler](https://django-scheduler.readthedocs.io/en/latest/), specifically the Calendar, Event and Rule models
 
 
-### For more information, please refer to the Developer's-Manual.md file.
+**_For more information, please refer to the [Developer's Manual file](https://github.com/tinybuddha/sick-legends/blob/main/Developer's%20Manual.md)._**
