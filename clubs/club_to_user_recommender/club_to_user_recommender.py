@@ -27,7 +27,7 @@ class ClubUserRecommender:
     def get_user(self):
         current_user = User.objects.get(pk=self.user_id)
         
-        print("Current user:\n", current_user)
+        print("Current user:\n", vars(current_user))
         return current_user
 
     # Merge club_user junction table with user table to get ages of all users
@@ -84,8 +84,9 @@ class ClubUserRecommender:
     # Return clubs with matching location (using fuzzy search)
     def get_clubs_with_matching_loc_fuzzy(self):
         club_user_location_df = self.get_club_locations_df()
-        user_location = "Tokyo, Japan"
         user_id = self.user_id
+        user_location = str(self.get_user().city + ', ' + self.get_user().country)
+        
 
         club_user_location_df['location_match_score'] = np.nan
 
@@ -272,9 +273,9 @@ class ClubUserRecommender:
         #best_clubs_df['title_match_score'] = best_clubs_df['title_match_score'].fillna(0)
         #best_clubs_df['author_match_score'] = best_clubs_df['author_match_score'].fillna(0)
 
-        # # Dirty way of getting name back...
+        # Dirty way of getting name back...
         # best_clubs_df = best_clubs_df.merge(self.get_age_difference_df(), on = 'club_id')
-        # best_clubs_df = best_clubs_df[['club_id', 'name', 'location_x', 'age_difference_y', 'user_count', 'book_match_count', 'author_match_count', 'location_match_score', ]]
+        best_clubs_df = best_clubs_df[['club_id', 'club_author_name', 'age_difference', 'user_count', 'title_match_count', 'author_match_count', 'location_match_score' ]]
         # best_clubs_df = best_clubs_df.rename(columns={'location_x':'location', 'age_difference_y':'age_difference'} )
 
         print ("Best clubs:\n", best_clubs_df)
@@ -289,6 +290,7 @@ class ClubUserRecommender:
         best_clubs_in_person_list = best_clubs_in_person_df['club_id'].tolist()
         
         print("Best clubs in person:\n", best_clubs_in_person_df)
+        print('best clubs in person ids\n', best_clubs_in_person_list)
         return best_clubs_in_person_list
 
     # Order if online only
