@@ -45,9 +45,9 @@ class ClubRecommenderView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         """Display template."""
 
-        user = request.user
-        user_id = user.id
-        self.user = User.objects.get(id=user_id)
+        self.user = request.user
+        user_id = self.user.id
+        #self.user = User.objects.get(id=user_id)
 
         club_ids_in_person = ClubUserRecommender(user_id).get_best_clubs_in_person()
         # club_ids_online = ClubUserRecommender(user_id).get_best_clubs_online()
