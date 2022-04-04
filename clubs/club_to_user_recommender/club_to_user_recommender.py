@@ -41,6 +41,10 @@ class ClubUserRecommender:
         self.club_user_author_matches_df = pd.DataFrame()
         self.club_average_author_match_df = pd.DataFrame()
         self.best_clubs_df = pd.DataFrame()
+        self.best_clubs_in_person_df = pd.DataFrame()
+        self.best_clubs_online_df = pd.DataFrame()
+        self.best_clubs_in_person_list = []
+        self.best_clubs_online_list = []
 
         self.set_user()
         print("Current user:\n", self.current_user)
@@ -81,8 +85,6 @@ class ClubUserRecommender:
         self.set_club_user_favourite_books_df_2()
         print("Club user favourite books 2 wtf:\n", self.club_user_favourite_books_df_2)
 
-        # Stops working here
-
         self.set_all_favourite_book_matches_fuzzy()
         print("All favourite book matches fuzzy:\n", self.club_user_title_matches_df)
 
@@ -97,6 +99,12 @@ class ClubUserRecommender:
 
         self.set_best_clubs_df()
         print ("Best clubs:\n", self.best_clubs_df)
+
+        self.set_best_clubs_in_person_df()
+        print("Best clubs in person\n", self.best_clubs_in_person_df)
+
+        self.set_best_clubs_online_df()
+        print("Best clubs online\n", self.best_clubs_online_df)
 
     def set_user(self):
         current_user = User.objects.get(pk=self.user_id)
@@ -252,7 +260,7 @@ class ClubUserRecommender:
     # Return all matching favourite books between a single user and multiple clubs (using fuzzy search)
 
     def set_all_favourite_book_matches_fuzzy(self):
-        no_of_user_favourite_books = self.club_user_favourite_books_df.shape[0]
+        no_of_user_favourite_books = self.my_favourite_books_df.shape[0]
         no_of_club_favourite_books = self.club_user_favourite_books_df.shape[0]
         club_user_title_matches_df = self.club_user_favourite_books_df
 
@@ -310,9 +318,9 @@ class ClubUserRecommender:
     # Return all matching favourite authors between a single user and multiple clubs (using fuzzy search)
     # This works by checking the authors of all of a club's favourite books agains the authors of all of a user's favourite books
     def set_all_favourite_author_matches_fuzzy(self):
-        user_id = self.user_id
+        #user_id = self.user_id
 
-        no_of_user_favourite_books = self.club_user_favourite_books_df.shape[0]
+        no_of_user_favourite_books = self.my_favourite_books_df.shape[0]
         no_of_club_favourite_books = self.club_user_favourite_books_df_2.shape[0]
         club_user_author_matches_df = self.club_user_favourite_books_df_2
 
@@ -360,7 +368,7 @@ class ClubUserRecommender:
     # Get all columns into one dataframe
 
     def set_best_clubs_df(self):
-        best_clubs_df = self.club_user_count_df.merge(self.club_user_age_df, how = 'left', left_on = 'club_id', right_on = 'club_id')
+        best_clubs_df = self.club_user_count_df.merge(self.average_club_age_difference_df, how = 'left', left_on = 'club_id', right_on = 'club_id')
         best_clubs_df = best_clubs_df.merge(self.club_average_book_match_df, how = 'left', left_on = 'club_id', right_on = 'club_id')
         best_clubs_df = best_clubs_df.merge(self.club_average_author_match_df, how = 'left', left_on = 'club_id', right_on = 'club_id')
         best_clubs_df = best_clubs_df.merge(self.club_user_location_df, how = 'left', left_on = 'club_id', right_on = 'club_id')
@@ -387,21 +395,41 @@ class ClubUserRecommender:
 
     # Order if location matters
 
-    # TO DO: Find a way to convert location to distance
-    def get_best_clubs_in_person(self):
+    def set_best_clubs_in_person_df(self):
+        best_clubs_in_person_df = self.best_clubs_df.sort_values(["location_match_score", "title_match_count", "author_match_count", "age_difference", "user_count"], \
+            axis = 0, ascending = [False, False, False, True, False], kind='quicksort')
+        
+        self.best_clubs_in_person_df = best_clubs_in_person_df
+
+    def get_best_clubs_in_person_df(self):
+        return self.best_clubs_in_person_df
+
+    def set_best_clubs_in_person_list(self):
         best_clubs_in_person_df = self.best_clubs_df.sort_values(["location_match_score", "title_match_count", "author_match_count", "age_difference", "user_count"], \
             axis = 0, ascending = [False, False, False, True, False], kind='quicksort')
         best_clubs_in_person_list = best_clubs_in_person_df['club_id'].tolist()
         
-        print("Best clubs in person:\n", best_clubs_in_person_df)
-        # print('best clubs in person ids\n', best_clubs_in_person_list)
-        return best_clubs_in_person_list
+        self.best_clubs_in_person_list = best_clubs_in_person_list
+    
+    def get_best_clubs_in_person_list(self):
+        return self.best_clubs_in_person_list
 
     # Order if online only
-    def get_best_clubs_online(self):
+    def set_best_clubs_online_df(self):
+        best_clubs_online_df = self.club_user_location_df.sort_values(["title_match_count", "author_match_count", "age_difference", "user_count"], \
+            axis = 0, ascending = [False, False, True, False], kind='quicksort')
+        
+        self.best_clubs_online_df = best_clubs_online_df
+
+    def get_best_clubs_online_df(self):
+        return self.best_clubs_online_df
+
+    def set_best_clubs_online_list(self):
         best_clubs_online_df = self.club_user_location_df.sort_values(["title_match_count", "author_match_count", "age_difference", "user_count"], \
             axis = 0, ascending = [False, False, True, False], kind='quicksort')
         best_clubs_online_list = best_clubs_online_df['club_id'].tolist()
         
-        print("Best clubs online:\n", best_clubs_online_df)
-        return best_clubs_online_list
+        self.best_clubs_online_list = best_clubs_online_list
+
+    def get_best_clubs_online_list(self):
+        return self.best_clubs_online_list
