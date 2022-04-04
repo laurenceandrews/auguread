@@ -106,6 +106,12 @@ class ClubUserRecommender:
         self.set_best_clubs_online_df()
         print("Best clubs online\n", self.best_clubs_online_df)
 
+        self.set_best_clubs_in_person_list()
+        print("Best clubs in person\n", self.best_clubs_in_person_list)
+
+        self.set_best_clubs_online_list()
+        print("Best clubs online\n", self.best_clubs_online_list)
+
     def set_user(self):
         current_user = User.objects.get(pk=self.user_id)
 
@@ -273,7 +279,6 @@ class ClubUserRecommender:
                 club_favourite_book = club_user_title_matches_df.iloc[j]
 
                 match_value = int(fuzz.token_sort_ratio(my_favourite_book['title'], club_favourite_book['title']))
-                club_user_title_matches_df.iat[j,6] = match_value
 
                 if (self.user_id != club_user_title_matches_df.iloc[j]['user_id']):
                     club_user_title_matches_df.iat[j,6] = match_value
@@ -334,12 +339,10 @@ class ClubUserRecommender:
                 
                 match_value = int(fuzz.token_sort_ratio(my_favourite_book['author'], club_favourite_book['author']))
                 # match_value
-                club_user_author_matches_df.iat[j,6] = match_value
-
-                # if (user_id != club_user_author_matches_df.iloc[j]['user_id']):
-                #     club_user_author_matches_df.iat[j,7] = match_value
-                # else:
-                #     club_user_author_matches_df.drop(j)
+                if (self.user_id != club_user_author_matches_df.iloc[j]['user_id']):
+                    club_user_author_matches_df.iat[j,6] = match_value
+                else:
+                    club_user_author_matches_df.drop(j)
 
 
         club_user_author_matches_df = club_user_author_matches_df.drop('user_id',axis=1)
@@ -399,7 +402,7 @@ class ClubUserRecommender:
         best_clubs_in_person_df = self.best_clubs_df.sort_values(["location_match_score", "title_match_count", "author_match_count", "age_difference", "user_count"], \
             axis = 0, ascending = [False, False, False, True, False], kind='quicksort')
         
-        self.best_clubs_in_person_df = best_clubs_in_person_df
+        self.best_clubs_in_person_df = best_clubs_in_person_df.head(9)
 
     def get_best_clubs_in_person_df(self):
         return self.best_clubs_in_person_df
@@ -409,6 +412,7 @@ class ClubUserRecommender:
             axis = 0, ascending = [False, False, False, True, False], kind='quicksort')
         best_clubs_in_person_list = best_clubs_in_person_df['club_id'].tolist()
         
+        best_clubs_in_person_list = best_clubs_in_person_list[:9]
         self.best_clubs_in_person_list = best_clubs_in_person_list
     
     def get_best_clubs_in_person_list(self):
@@ -416,19 +420,20 @@ class ClubUserRecommender:
 
     # Order if online only
     def set_best_clubs_online_df(self):
-        best_clubs_online_df = self.club_user_location_df.sort_values(["title_match_count", "author_match_count", "age_difference", "user_count"], \
+        best_clubs_online_df = self.best_clubs_df.sort_values(["title_match_count", "author_match_count", "age_difference", "user_count"], \
             axis = 0, ascending = [False, False, True, False], kind='quicksort')
         
-        self.best_clubs_online_df = best_clubs_online_df
+        self.best_clubs_online_df = best_clubs_online_df.head(9)
 
     def get_best_clubs_online_df(self):
         return self.best_clubs_online_df
 
     def set_best_clubs_online_list(self):
-        best_clubs_online_df = self.club_user_location_df.sort_values(["title_match_count", "author_match_count", "age_difference", "user_count"], \
+        best_clubs_online_df = self.best_clubs_df.sort_values(["title_match_count", "author_match_count", "age_difference", "user_count"], \
             axis = 0, ascending = [False, False, True, False], kind='quicksort')
         best_clubs_online_list = best_clubs_online_df['club_id'].tolist()
         
+        best_clubs_online_list = best_clubs_online_list[:9]
         self.best_clubs_online_list = best_clubs_online_list
 
     def get_best_clubs_online_list(self):

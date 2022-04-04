@@ -47,14 +47,9 @@ class ClubRecommenderView(LoginRequiredMixin, View):
 
         self.user = request.user
         user_id = self.user.id
-        # user_id = self.kwargs['user_id']
-        # self.club = User.objects.get(id=user_id)
-        # self.user = User.objects.get(id=user_id)
 
-        club_ids_in_person = ClubUserRecommender(user_id).get_best_clubs_in_person()
-        # club_ids_online = ClubUserRecommender(user_id).get_best_clubs_online()
-        self.club_recs_in_person = Club.objects.filter(id__in = club_ids_in_person)
-        # self.club_recs_online = Club.objects.filter(id__in  = club_ids_online)
+        club_ids_in_person = ClubUserRecommender(user_id).get_best_clubs_in_person_list()
+        self.club_recs_in_person = Club.objects.filter(id__in = club_ids_in_person).order_by()
 
         # get all the clubs and sort alphabetcally
         # self.clubs_queryset = Club.objects.all().order_by('name')
