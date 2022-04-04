@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block body %}
+  {% include 'partials/messages.html' %}
+  {% include 'partials/sidebar.html' with club=club %}
+  <div class="ml-16 md:ml-52">
+    {% block content %}
+    {% endblock %}
+  </div>
+{% endblock %}
