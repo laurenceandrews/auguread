@@ -1,4 +1,4 @@
-{% extends "base_content.html" %}
+{% extends "club_base_content.html" %}
 {% load i18n static %}
 {% block extra_head %}
 <link rel='stylesheet' type='text/css' href="{% static 'schedule.css' %}" />
@@ -12,7 +12,6 @@
 {% include 'partials/fullcalendar_menu.html' with calendar=calendar user_is_owner=user_is_owner%}
 
 <div class="flex items-center justify-center">
-
   <card id="calendar" class="flex flex-col rounded-lg w-3/4 p-10 ">
 
 
