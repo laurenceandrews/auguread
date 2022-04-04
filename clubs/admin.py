@@ -4,7 +4,7 @@ from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
                      Club_Books, Club_Users, ClubBookRecommendation,
                      ClubFeedPost, MeetingAddress, MeetingLink, Post,
                      PostComment, User, User_Book_History, User_Books,
-                     UserBookRecommendation)
+                     UserBookRecommendation, UserClubRecommendation)
 
 
 @admin.register(User)
@@ -45,8 +45,12 @@ class ClubBookRecommendationAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for club book recommendations."""
 
     list_display = [
-        'club', 'book'
+        'club_name', 'book'
     ]
+
+    def club_name(self, club):
+        """Return the name of the club of the club_user."""
+        return club.club.name
 
 
 @admin.register(UserBookRecommendation)
@@ -56,6 +60,19 @@ class UserBookRecommendationAdmin(admin.ModelAdmin):
     list_display = [
         'user', 'book'
     ]
+
+
+@admin.register(UserClubRecommendation)
+class UserClubRecommendation(admin.ModelAdmin):
+    """Configuration of the admin interface for user club recommendations."""
+
+    list_display = [
+        'club_name', 'user'
+    ]
+
+    def club_name(self, club):
+        """Return the name of the club of the club_user."""
+        return club.club.name
 
 
 @admin.register(Club_Users)
