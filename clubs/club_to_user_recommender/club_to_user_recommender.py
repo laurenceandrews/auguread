@@ -277,7 +277,7 @@ class ClubUserRecommender:
         # best_clubs_df = best_clubs_df[['club_id', 'name', 'location_x', 'age_difference_y', 'user_count', 'book_match_count', 'author_match_count', 'location_match_score', ]]
         # best_clubs_df = best_clubs_df.rename(columns={'location_x':'location', 'age_difference_y':'age_difference'} )
 
-        #print ("Best clubs:\n", best_clubs_df)
+        print ("Best clubs:\n", best_clubs_df)
         return best_clubs_df
 
     # Order if location matters
@@ -288,7 +288,7 @@ class ClubUserRecommender:
             axis = 0, ascending = [False, False, False, True, False], kind='quicksort')
         best_clubs_in_person_list = best_clubs_in_person_df['club_id'].tolist()
         
-        print("Best clubs in person:\n", best_clubs_in_person_list)
+        print("Best clubs in person:\n", best_clubs_in_person_df)
         return best_clubs_in_person_list
 
     # Order if online only
@@ -297,5 +297,5 @@ class ClubUserRecommender:
             axis = 0, ascending = [False, False, True, False], kind='quicksort')
         best_clubs_online_list = best_clubs_online_df['club_id'].tolist()
         
-        print("Best clubs online:\n", best_clubs_online_list)
+        print("Best clubs online:\n", best_clubs_online_df)
         return best_clubs_online_list
