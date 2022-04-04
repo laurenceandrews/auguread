@@ -3,27 +3,6 @@ Software Engineering Major Group Project
 
 Book Club
 
-## Deployed version
-Link:
-
-**Access credentials**
-
-Club owner
-Username:
-Password:
-
-Club member
-Username:
-Password:
-
-Club applicant
-Username:
-Password:
-
-Standard user
-Username:
-Password:
-
 ## Team Sick Legends
 The authors of the software are:
 - Laurence Andrews
@@ -34,6 +13,35 @@ The authors of the software are:
 - Iki (Niki) Norgren
 - Aria Rub
 - Clara Zard
+
+## Deployed version
+Link:
+
+**Access credentials**
+
+Club Owner
+
+Username:
+
+Password:
+
+Club Member
+
+Username:
+
+Password:
+
+Club Applicant
+
+Username:
+
+Password:
+
+Standard User
+
+Username:
+
+Password:
 
 ## Installation instructions
 To install the software and use it in your local development environment, you must first set up and activate a local development environment.  From the root of the project:
