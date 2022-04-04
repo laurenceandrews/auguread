@@ -21,27 +21,23 @@ Link:
 
 Club Owner
 
-Username:
-
-Password:
+- Email:
+- Password:
 
 Club Member
 
-Username:
-
-Password:
+- Email:
+- Password:
 
 Club Applicant
 
-Username:
-
-Password:
+- Email:
+- Password:
 
 Standard User
 
-Username:
-
-Password:
+- Email:
+- Password:
 
 ## Installation instructions
 To install the software and use it in your local development environment, you must first set up and activate a local development environment.  From the root of the project:
