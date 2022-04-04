@@ -38,14 +38,15 @@ def RecommendationsView(request):
     """View that shows a list of all recommended books."""
     return render(request, 'rec_page.html')
 
-class ClubRecommenderView(LoginRequiredMixin, TenPosRatingsRequiredMixin, View):
+class ClubRecommenderView(LoginRequiredMixin, View):
     """View that handles the club recommendations."""
     http_method_names = ['get', 'post']
 
     def get(self, request, *args, **kwargs):
         """Display template."""
 
-        user_id = self.kwargs['user_id']
+        user = request.user
+        user_id = user.id
         self.user = User.objects.get(id=user_id)
 
         club_ids_in_person = ClubUserRecommender(user_id).get_best_clubs_in_person()
