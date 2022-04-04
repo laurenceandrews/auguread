@@ -16,6 +16,7 @@ $ python3 --version
 
 This should print out a version number.
 Alternatively, python installation instructions can be found at Download Python.
+
 3. Install pip.
 ```
 $ sudo apt-get update
