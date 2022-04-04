@@ -1,8 +1,10 @@
 from django.contrib import admin
 
 from .models import (Address, Book, Book_Rating, Club, Club_Book_History,
-                     Club_Books, Club_Users, ClubFeedPost, MeetingAddress,
-                     MeetingLink, Post, User, User_Book_History, User_Books)
+                     Club_Books, Club_Users, ClubBookRecommendation,
+                     ClubFeedPost, MeetingAddress, MeetingLink, Post,
+                     PostComment, User, User_Book_History, User_Books,
+                     UserBookRecommendation)
 
 
 @admin.register(User)
@@ -36,6 +38,24 @@ class ClubAdmin(admin.ModelAdmin):
     def owners_count(self, club):
         """Return the number of club members."""
         return club.owners().count()
+
+
+@admin.register(ClubBookRecommendation)
+class ClubBookRecommendationAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for club book recommendations."""
+
+    list_display = [
+        'club', 'book'
+    ]
+
+
+@admin.register(UserBookRecommendation)
+class UserBookRecommendationAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for user book recommendations."""
+
+    list_display = [
+        'user', 'book'
+    ]
 
 
 @admin.register(Club_Users)
@@ -75,6 +95,23 @@ class PostAdmin(admin.ModelAdmin):
     def get_author(self, post):
         """Return the author of a given post."""
         return post.author.username
+
+
+@admin.register(PostComment)
+class PostCommentAdmin(admin.ModelAdmin):
+    """Configuration of the admin interface for post comments."""
+
+    list_display = [
+        'post_text', 'comment_text'
+    ]
+
+    def post_text(self, post_comment):
+        """Return the text of a given post."""
+        return post_comment.post.text
+
+    def comment_text(self, post_comment):
+        """Return the text of a given comment."""
+        return post_comment.comment.text
 
 
 @admin.register(ClubFeedPost)

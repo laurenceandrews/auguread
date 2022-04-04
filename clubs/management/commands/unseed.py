@@ -1,7 +1,7 @@
 from clubs.models import (Address, Book, Book_Rating, Club, Club_Book_History,
                           Club_Books, Club_Users, ClubFeedPost, MeetingAddress,
-                          MeetingLink, Post, User, User_Book_History,
-                          User_Books)
+                          MeetingLink, Post, PostComment, User,
+                          User_Book_History, User_Books)
 from django.core.management.base import BaseCommand, CommandError
 from schedule.models import Calendar, Event, Rule
 
@@ -17,7 +17,8 @@ class Command(BaseCommand):
 
         Post.objects.all().delete()
         ClubFeedPost.objects.all().delete()
-        print("Successfully deleted all posts and club feed posts.")
+        PostComment.objects.all().delete()
+        print("Successfully deleted all posts, club feed posts and post comments.")
 
         Club.objects.all().delete()
         print("Successfully deleted all clubs.")

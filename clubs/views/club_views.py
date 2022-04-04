@@ -75,7 +75,7 @@ class ClubUpdateView(LoginRequiredMixin, ClubOwnerRequiredMixin, UpdateView):
     """ View that handles club edit requests. """
 
     model = Club
-    template_name = 'club_update_view.html'
+    template_name = 'club_update.html'
     form_class = ClubUpdateForm
     pk_url_kwarg = "club_id"
 

@@ -1,0 +1,5 @@
+<div class="divide-y">
+  {% for comment in comments %}
+    {% include 'partials/comment.html' with comment=comment %}
+  {% endfor %}
+</div>

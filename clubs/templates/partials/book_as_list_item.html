@@ -1,6 +1,11 @@
+{% load static %}
+
 <div class="cursor-pointer snap-center hover:opacity-90" onclick="location.href='{%url 'book_detail' book_id=book.id %}';">
-  <div class="bg-gray-200 rounded-md overflow-hidden h-56 w-36 md:h-80 md:w-56">
-    <img src="{{book.image_large}}" alt="Book cover of {{book.title}}." class="object-cover w-full h-full">
+  <div 
+    style="background-image: url({% static 'missing_image.png' %});" 
+    class="rounded-md overflow-hidden h-56 w-36 md:h-80 md:w-56 bg-cover bg-center"
+  >
+    <img class="w-full h-full" src="{{book.image_large}}" alt="Book cover of {{book.title}}." class="object-cover w-full h-full">
   </div>
   <div class="mt-4 h-20">
     <h3 class="text-sm text-gray-700">

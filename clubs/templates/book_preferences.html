@@ -3,7 +3,58 @@
 {% block body %}
 {% load book_rated %}
 {% load ratings_complete %}
+
+<script>
+  function showLoaderOnClick(url) {
+      showLoader();
+      window.location=url;
+  }
+  function showLoader(){
+    $('body').append(
+      `<div style="" id="loading">
+        <div id="loading-inner" class="text-center">
+          <svg class="mx-auto h-24 w-24 animate-spin text-indigo-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <h1 class="mt-8 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-gray-200 sm:text-5xl md:text-6xl">We are just getting your recommendations</h1>
+          <p id="loading-subheader" class="lg:mx-50 font-nunito mt-3 text-base text-gray-500 dark:text-gray-300 sm:mx-auto sm:mt-5 sm:max-w-xl sm:text-lg md:mt-5 md:text-xl">Our recommenders can take up to a minute to figure you out. Fear not, this normally only happens on your first time.</p>
+        </div>
+      </div>`
+    );
+  }
+</script>
+
 <style>
+  #loading {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  text-align: center;
+  background-color: #f5f3ff;
+  z-index: 99;
+  }
+
+  #loading-inner {
+    margin-top: 10%;
+  }
+
+  #loading-subheader {
+    font-size: 25px;
+    line-height: 37px;
+    margin-top: 40px;
+    max-width: 55rem;
+  }
+
+  #loading-image {
+    margin: auto;
+    top: 100px;
+    z-index: 100;
+  }
 
   a#continue-btn-disabled {
       pointer-events: none;
@@ -263,7 +314,7 @@
           <div class="pt-16">
             {% ratings_complete user as ratings_good %}
             {% if ratings_good %}
-              <a id = "continue-btn" class="justify-center py-4 px-8 text-lg border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{% url 'club_recommender' %}">Continue to club recommender</a>
+              <a id = "continue-btn" class="justify-center py-4 px-8 text-lg border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="#" onclick="showLoaderOnClick('{% url 'club_recommender' %}')">Continue to club recommender</a>
             {% else %}
               <a id = "continue-btn-disabled" class="justify-center py-4 px-8 text-lg border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{% url 'club_recommender' %}">More positive ratings required</a>
             {% endif %}
@@ -277,4 +328,5 @@
     </div>
   </div>
 </div>
+
 {% endblock %}

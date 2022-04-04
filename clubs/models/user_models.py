@@ -133,8 +133,6 @@ class User(AbstractUser):
         club_user = Club_Users.objects.get(user=self, club=club)
         if club_user.role_num == "4":
             return 'Owner'
-        elif club_user.role_num == "3":
-            return 'Officer'
         elif club_user.role_num == "2":
             return 'Member'
         else:
@@ -245,11 +243,6 @@ class Club(models.Model):
         club_members_ids = Club_Users.objects.filter(club=Club.objects.get(id=self.id), role_num='2').values_list('user', flat=True)
         return User.objects.filter(id__in=club_members_ids)
 
-    def officers(self):
-        """Return all users who are officers of this club."""
-        club_officers_ids = Club_Users.objects.filter(club=Club.objects.get(id=self.id), role_num='3').values_list('user', flat=True)
-        return User.objects.filter(id__in=club_officers_ids)
-
     def owners(self):
         """Return all users who are owners of this club."""
         club_owners_ids = Club_Users.objects.filter(club=Club.objects.get(id=self.id), role_num='4').values_list('user', flat=True)
@@ -299,6 +292,24 @@ class Club(models.Model):
         return currently_reading
 
 
+class UserBookRecommendation(models.Model):
+    """Recommended book for a user."""
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        """Model options."""
+        verbose_name = "User Book Recommendation"
+        verbose_name_plural = "User Book Recommendations"
+
+
 class Club_Users(models.Model):
     club = models.ForeignKey(
         Club,
@@ -316,12 +327,10 @@ class Club_Users(models.Model):
 
     APPLICANT = '1'
     MEMBER = '2'
-    OFFICER = '3'
     OWNER = '4'
     ROLE_NUM_CHOICES = [
         (APPLICANT, 'Applicant'),
         (MEMBER, 'Member'),
-        (OFFICER, 'Officer'),
         (OWNER, 'Owner')
     ]
     role_num = models.CharField(
@@ -423,6 +432,7 @@ class User_Books(models.Model):
         app_label = "clubs"
         verbose_name = "User Favourite Book"
         verbose_name_plural = "User Favourite Books"
+
 
 class User_Clubs(models.Model):
     user = models.ForeignKey(

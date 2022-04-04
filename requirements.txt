@@ -17,6 +17,7 @@ django-tailwind==3.1.1
 django-widget-tweaks==1.4.12
 django-with-asserts==0.0.1
 Faker==11.3.0
+fuzzywuzzy==0.18.0
 humanize==3.14.0
 icalendar==4.0.9
 idna==3.3
@@ -31,11 +32,13 @@ pandas==1.4.0
 Pillow==9.0.1
 poyo==0.5.0
 python-dateutil==2.8.2
+python-Levenshtein==0.12.2
 python-slugify==5.0.2
 pytz==2021.3
 pyuca==1.2
 rapidfuzz==2.0.7
 requests==2.27.1
+scikit-surprise==1.1.1
 scikit-learn==1.0.2
 tensorflow==2.8.0
 scipy==1.8.0
