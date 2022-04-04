@@ -26,6 +26,7 @@ $ pip3 --version
 
 If the installation was successful, this should return the version number of pip3.
 Alternative installation instructions can be found at Installation - pip documentation v22.1.dev0.
+
 4. Install Virtualenv.
 ```
 $ sudo pip3 install virtualenv
@@ -33,6 +34,7 @@ $ virtualenv --version
 ```
 
 If the installation was successful, this should return the version number of Virtualenv.
+
 5. Install Git.
 ```
 $ sudo apt-get update
@@ -51,6 +53,7 @@ $ git config --list
 ```
 
 Alternative installation instructions can be found at Install Git | Atlassian Git Tutorial.  
+
 6. Install django.
 ```
 $ python -m pip install Django
@@ -66,6 +69,7 @@ $ git clone https://github.com/tinybuddha/sick-legends
 ```
 
 The code base can be accessed at https://github.com/tinybuddha/sick-legends.
+
 2. Set up and activate a local development environment. From the root of the project:
 ```
 $ virtualenv venv
