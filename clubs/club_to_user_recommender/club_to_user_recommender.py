@@ -85,7 +85,7 @@ class ClubUserRecommender:
     def get_clubs_with_matching_loc_fuzzy(self):
         club_user_location_df = self.get_club_locations_df()
         user_id = self.user_id
-        user_location = str(self.get_user().city + ', ' + self.get_user().country)
+        user_location = str(self.get_user().city) + ', ' + str(self.get_user().country)
         
 
         club_user_location_df['location_match_score'] = np.nan
@@ -178,12 +178,14 @@ class ClubUserRecommender:
                     club_user_title_matches_df.drop(j)
 
 
-        club_average_title_match_df = club_user_title_matches_df[['club_id', 'title_match_score', 'title', 'name', 'ISBN']]
         club_user_title_matches_df = club_user_title_matches_df.drop('user_id',axis=1)
-        club_user_title_matches_df = club_user_title_matches_df.groupby(['club_id', 'title_match_score', 'title', 'name', 'ISBN']).agg(list).reset_index(drop=True)
-        club_user_title_matches_df = club_user_title_matches_df.sort_values('title_match_score', ascending=False).dropna(how='any',axis=0)
-        club_user_title_matches_df = club_user_title_matches_df[club_user_title_matches_df['title_match_score'] > 80]
+        club_user_title_matches_df = club_user_title_matches_df.groupby(['club_id', 'title_match_score', 'title', 'name', 'ISBN']).agg(list).reset_index(drop=False)
+        # print("All favourite book matches fuzzy:\n", club_user_title_matches_df)
 
+        club_user_title_matches_df = club_user_title_matches_df.sort_values('title_match_score', ascending=False).dropna(how='any',axis=0)
+
+        club_user_title_matches_df = club_user_title_matches_df[club_user_title_matches_df['title_match_score'] > 80]
+    
         print("All favourite book matches fuzzy:\n", club_user_title_matches_df)
         return club_user_title_matches_df
 
@@ -235,9 +237,8 @@ class ClubUserRecommender:
                 #     club_user_author_matches_df.drop(j)
 
 
-        club_average_author_match_df = club_user_author_matches_df[['club_id', 'author_match_score', 'author', 'name', 'ISBN']]
         club_user_author_matches_df = club_user_author_matches_df.drop('user_id',axis=1)
-        club_user_author_matches_df = club_user_author_matches_df.groupby(['club_id', 'author_match_score', 'author', 'name', 'ISBN']).agg(list).reset_index(drop=True)
+        club_user_author_matches_df = club_user_author_matches_df.groupby(['club_id', 'author_match_score', 'author', 'name', 'ISBN']).agg(list).reset_index(drop=False)
         club_user_author_matches_df = club_user_author_matches_df.sort_values('author_match_score', ascending=False).dropna(how='any',axis=0)
         club_user_author_matches_df = club_user_author_matches_df[club_user_author_matches_df['author_match_score'] > 80]
 
@@ -263,8 +264,8 @@ class ClubUserRecommender:
         best_clubs_df = best_clubs_df.merge(self.get_club_average_author_match_df(), how = 'left', left_on = 'club_id', right_on = 'club_id')
         best_clubs_df = best_clubs_df.merge(self.get_clubs_with_matching_loc_fuzzy(), how = 'left', left_on = 'club_id', right_on = 'club_id')
 
-        best_clubs_df = best_clubs_df[['club_id', 'club_author_name', 'location_match_score', 'title_match_score', 'author_match_score', 'age_difference', 'user_count', 'book_match_count', 'author_match_count']]
-        best_clubs_df = best_clubs_df.rename(columns={'club_author_name':'club_name'})
+        best_clubs_df = best_clubs_df[['club_id', 'location_match_score', 'title_match_score', 'author_match_score', 'age_difference', 'user_count', 'book_match_count', 'author_match_count']]
+        # best_clubs_df = best_clubs_df.rename(columns={'name':'club_name'})
         best_clubs_df = best_clubs_df.drop('title_match_score',axis=1).drop('author_match_score',axis=1)
 
         best_clubs_df['title_match_count'] = best_clubs_df['book_match_count'].fillna(0)
@@ -275,7 +276,7 @@ class ClubUserRecommender:
 
         # Dirty way of getting name back...
         # best_clubs_df = best_clubs_df.merge(self.get_age_difference_df(), on = 'club_id')
-        best_clubs_df = best_clubs_df[['club_id', 'club_author_name', 'age_difference', 'user_count', 'title_match_count', 'author_match_count', 'location_match_score' ]]
+        best_clubs_df = best_clubs_df[['club_id', 'age_difference', 'user_count', 'title_match_count', 'author_match_count', 'location_match_score' ]]
         # best_clubs_df = best_clubs_df.rename(columns={'location_x':'location', 'age_difference_y':'age_difference'} )
 
         print ("Best clubs:\n", best_clubs_df)
@@ -290,7 +291,7 @@ class ClubUserRecommender:
         best_clubs_in_person_list = best_clubs_in_person_df['club_id'].tolist()
         
         print("Best clubs in person:\n", best_clubs_in_person_df)
-        print('best clubs in person ids\n', best_clubs_in_person_list)
+        # print('best clubs in person ids\n', best_clubs_in_person_list)
         return best_clubs_in_person_list
 
     # Order if online only

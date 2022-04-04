@@ -47,7 +47,9 @@ class ClubRecommenderView(LoginRequiredMixin, View):
 
         self.user = request.user
         user_id = self.user.id
-        #self.user = User.objects.get(id=user_id)
+        # user_id = self.kwargs['user_id']
+        # self.club = User.objects.get(id=user_id)
+        # self.user = User.objects.get(id=user_id)
 
         club_ids_in_person = ClubUserRecommender(user_id).get_best_clubs_in_person()
         # club_ids_online = ClubUserRecommender(user_id).get_best_clubs_online()
