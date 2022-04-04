@@ -7,7 +7,7 @@ Team Sick Legends
 
 ## Required Software Installation Instructions  
 The following instructions are tailored to the Linux OS. All commands should be run in a Terminal window.
-1. Install a code editor. Atom can be installed from Ubuntu Software. Alternative installation instructions can be found at Installing Atom.
+1. Install a code editor. Atom can be installed from Ubuntu Software. Alternative installation instructions can be found at [Installing Atom](https://flight-manual.atom.io/getting-started/sections/installing-atom/).
 2. Install python. Ubuntu 20.04 comes with Python 3 preinstalled.
 To verify this, enter the following command:
 ```
@@ -15,7 +15,7 @@ $ python3 --version
 ```
 
 This should print out a version number.
-Alternatively, python installation instructions can be found at Download Python.
+Alternatively, python installation instructions can be found at [Download Python](https://www.python.org/downloads/).
 
 3. Install pip.
 ```
@@ -25,7 +25,7 @@ $ pip3 --version
 ```
 
 If the installation was successful, this should return the version number of pip3.
-Alternative installation instructions can be found at Installation - pip documentation v22.1.dev0.
+Alternative installation instructions can be found at [Installation - pip documentation v22.1.dev0](https://pip.pypa.io/en/latest/installation/).
 
 4. Install Virtualenv.
 ```
@@ -52,14 +52,14 @@ You can verify your current configuration with the command:
 $ git config --list
 ```
 
-Alternative installation instructions can be found at Install Git | Atlassian Git Tutorial.  
+Alternative installation instructions can be found at [Install Git | Atlassian Git Tutorial](https://www.atlassian.com/git/tutorials/install-git).  
 
 6. Install django.
 ```
 $ python -m pip install Django
 ```
 
-Alternative installation instructions can be found at Quick install guide | Django documentation.  
+Alternative installation instructions can be found at [Quick install guide | Django documentation](https://docs.djangoproject.com/en/4.0/intro/install/).  
 
 ## Project Installation Instructions
 The following instructions are tailored to the Linux OS. To install and run the software in its current state, the following steps should be carried out.
@@ -161,7 +161,7 @@ $ pip3 install -r requirements.txt
 
 Django Scheduler relies on jQuery to provide its user interface.  All requirements for DjangoSchedule have been included in the static files.
 
-The Auguread site allows club owners to create one-time events. DjangoSchedule provides support for recurring events. To enable this and other features, please use the guidance found in DjangoSchedule's documentation.
+The Auguread site allows club owners to create one-time events. DjangoSchedule provides support for recurring events. To enable this and other features, please use the guidance found in [DjangoSchedule's documentation](https://django-scheduler.readthedocs.io/en/latest/index.html).
 
 ## Recommender Evaluation
 To evaluate the book-to-user recommender:
