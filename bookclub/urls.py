@@ -15,7 +15,6 @@ Including another URLconf
 """
 
 from clubs import views
-from clubs.views.recommender_views import ClubRecommenderView
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
