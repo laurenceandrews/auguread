@@ -246,7 +246,7 @@ class ClubUserRecommender:
     # Get the favourite books and authors of one user (me)
     def set_fav_books_and_authors_per_user(self):
         my_id = self.user_id
-        my_favourite_books_df = self.user_club_favourite_books_df.loc[self.user_club_favourite_books_df['user_id'] == my_id]
+        my_favourite_books_df = self.user_club_favourite_books_df.loc[self.user_club_favourite_books_df['user_id'] == my_id].tail(5)
         
         self.my_favourite_books_df = my_favourite_books_df
 
@@ -273,7 +273,8 @@ class ClubUserRecommender:
         club_user_title_matches_df['title_match_score'] = np.nan
 
         for i in range(no_of_user_favourite_books):
-            my_favourite_book = self.club_user_favourite_books_df.iloc[i]
+            my_favourite_book = self.my_favourite_books_df.iloc[i]
+            print(my_favourite_book)
 
             for j in range(no_of_club_favourite_books):
                 club_favourite_book = club_user_title_matches_df.iloc[j]
@@ -290,7 +291,6 @@ class ClubUserRecommender:
         # print("All favourite book matches fuzzy:\n", club_user_title_matches_df)
 
         club_user_title_matches_df = club_user_title_matches_df.sort_values('title_match_score', ascending=False).dropna(how='any',axis=0)
-
         club_user_title_matches_df = club_user_title_matches_df[club_user_title_matches_df['title_match_score'] > 80]
     
         self.club_user_title_matches_df = club_user_title_matches_df
@@ -332,7 +332,7 @@ class ClubUserRecommender:
         club_user_author_matches_df['author_match_score'] = np.nan
 
         for i in range(no_of_user_favourite_books):
-            my_favourite_book = self.club_user_favourite_books_df.iloc[i]
+            my_favourite_book = self.my_favourite_books_df.iloc[i]
 
             for j in range(no_of_club_favourite_books):
                 club_favourite_book = club_user_author_matches_df.iloc[j]
@@ -402,7 +402,7 @@ class ClubUserRecommender:
         best_clubs_in_person_df = self.best_clubs_df.sort_values(["location_match_score", "title_match_count", "author_match_count", "age_difference", "user_count"], \
             axis = 0, ascending = [False, False, False, True, False], kind='quicksort')
         
-        self.best_clubs_in_person_df = best_clubs_in_person_df.head(9)
+        self.best_clubs_in_person_df = best_clubs_in_person_df.head(18)
 
     def get_best_clubs_in_person_df(self):
         return self.best_clubs_in_person_df
@@ -412,7 +412,7 @@ class ClubUserRecommender:
             axis = 0, ascending = [False, False, False, True, False], kind='quicksort')
         best_clubs_in_person_list = best_clubs_in_person_df['club_id'].tolist()
         
-        best_clubs_in_person_list = best_clubs_in_person_list[:9]
+        best_clubs_in_person_list = best_clubs_in_person_list[:18]
         self.best_clubs_in_person_list = best_clubs_in_person_list
     
     def get_best_clubs_in_person_list(self):
@@ -423,7 +423,7 @@ class ClubUserRecommender:
         best_clubs_online_df = self.best_clubs_df.sort_values(["title_match_count", "author_match_count", "age_difference", "user_count"], \
             axis = 0, ascending = [False, False, True, False], kind='quicksort')
         
-        self.best_clubs_online_df = best_clubs_online_df.head(9)
+        self.best_clubs_online_df = best_clubs_online_df.head(18)
 
     def get_best_clubs_online_df(self):
         return self.best_clubs_online_df
@@ -433,7 +433,7 @@ class ClubUserRecommender:
             axis = 0, ascending = [False, False, True, False], kind='quicksort')
         best_clubs_online_list = best_clubs_online_df['club_id'].tolist()
         
-        best_clubs_online_list = best_clubs_online_list[:9]
+        best_clubs_online_list = best_clubs_online_list[:18]
         self.best_clubs_online_list = best_clubs_online_list
 
     def get_best_clubs_online_list(self):

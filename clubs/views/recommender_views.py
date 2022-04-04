@@ -54,13 +54,6 @@ class ClubRecommenderView(LoginRequiredMixin, View):
         # get all the clubs and sort alphabetcally
         # self.clubs_queryset = Club.objects.all().order_by('name')
 
-        # query the list of clubs by name or location
-        query = request.GET.get('q')
-        if query:
-            self.club_recs_in_person = Club.objects.filter(
-                Q(name__icontains=query) | Q(location__icontains=query)
-            ).distinct()
-
         paginator = Paginator(self.club_recs_in_person, settings.CLUBS_PER_PAGE)
         page_number = request.GET.get('page')
         self.clubs_paginated = paginator.get_page(page_number)
