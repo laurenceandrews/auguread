@@ -5,8 +5,8 @@
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 import scipy.sparse.linalg as spla
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
+#from fuzzywuzzy import process, fuzz
+from rapidfuzz import process, fuzz
 from clubs.models import User, Club, Club_Users, Club_Books, Book, User_Books
 
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -288,7 +288,6 @@ class ClubUserRecommender:
 
         club_user_title_matches_df = club_user_title_matches_df.drop('user_id',axis=1)
         club_user_title_matches_df = club_user_title_matches_df.groupby(['club_id', 'title_match_score', 'title', 'name', 'ISBN']).agg(list).reset_index(drop=False)
-        # print("All favourite book matches fuzzy:\n", club_user_title_matches_df)
 
         club_user_title_matches_df = club_user_title_matches_df.sort_values('title_match_score', ascending=False).dropna(how='any',axis=0)
         club_user_title_matches_df = club_user_title_matches_df[club_user_title_matches_df['title_match_score'] > 80]
