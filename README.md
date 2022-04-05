@@ -17,6 +17,8 @@ The authors of the software are:
 ## Deployed version
 Link (will be deployed by 15th April): https://auguread.herokuapp.com/
 
+The deployed site can be accessed at: [https://pure-bastion-32742.herokuapp.com/](https://pure-bastion-32742.herokuapp.com/).
+
 **Access credentials**
 
 Example users will be provided by 15th April alongside the working deployed website.
