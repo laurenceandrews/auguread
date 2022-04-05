@@ -123,12 +123,12 @@
         {%if role_num == '1'%}
         <div class="w-1/2 mx-auto inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
           <div class="text-lg bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-            <a href='{% url 'delete_club_user' club.id %}' class="">Withdraw Application</a>
+            <a href='{% url 'delete_club_user' club_user_id %}' class="">Withdraw Application</a>
           </div>
         </div>
         {%endif%}
         
-        {%if club.currently_reading is not None%}
+        {%if club.currently_reading is not None and role_num != None and role_num != '1' %}
           <dt class="text-base font-normal text-gray-900 text-center pt-4">{{club.name}}'s currently reading</dt>
           <div class=" border-gray-400/20 border z-10 shadow-lg bg-transparent rounded-xl overflow-hidden max-w-2xl mt-2 mx-auto">
             <!-- Book Image Background -->
@@ -185,7 +185,7 @@
         <div class="mt-6 border-t-2 pt-6">
           <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
             <div class="bg-rose-100 hover:bg-rose-200 text-rose-600 border border-rose-600 font-bold py-2 px-4 rounded" style="cursor: pointer;">
-              <a href='{% url 'club_delete' club.id %}' class="">Leave club</a>
+              <a href='{% url 'delete_club_user' club_user_id %}' class="">Leave club</a>
             </div>
           </div>
         </div>

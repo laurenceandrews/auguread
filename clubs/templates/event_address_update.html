@@ -3,22 +3,44 @@
 {% load static %}
 {% load widget_tweaks %}
 {% block content%}
-<div class="min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 dark:bg-slate-800 font-poppins">
+<div class=" flex-col justify-center py-12 sm:px-6 lg:px-8 dark:bg-slate-800 font-poppins max-w-5xl mx-auto">
 
   <div class="sm:mx-auto sm:w-full sm:max-w-md">
     <div class="text-indigo-400 text-2xl mx-auto text-center font-poppins">{{event.title}}</div>
     <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-50">Update Meeting Address</h2>
   </div>
 
-  <div class="px-4 py-5 sm:px-6">
-    <p class="mt-1 max-w-2xl text-sm text-gray-500">This meeting address will be set for event: {{event.title}}.</p>
+  <div class="px-4 py-5 sm:px-6 space-y-2">
+    <div class="flex space-x-2 ">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+      </svg>
+      <div class="font-medium w-[80%]">
+        {{event.title}}
+      </div>
+    </div>   
 
     {% if meeting_address %}
-    <p class="mt-1 max-w-2xl text-sm text-gray-500">This current meeting address set for the event: {{meeting_address.address.full_address}}.</p>
+    <div class="flex space-x-2 ">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      <div class="font-medium w-[80%]">
+        {{meeting_address.address.full_address}}
+      </div>
+    </div>    
     {%else%}
-    <p class="mt-1 max-w-2xl text-sm text-gray-500">There is currently no meeting address set for the event.</p>
+    <div class="flex space-x-2 ">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      <div class="font-medium w-[80%]">
+        No Address
+      </div>
+    </div>    
     {% endif %}
-
   </div>
 
   <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md lg:max-w-lg">

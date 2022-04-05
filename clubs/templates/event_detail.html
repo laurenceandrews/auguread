@@ -1,20 +1,54 @@
 {% extends 'club_base_content.html' %}
 {% load i18n %}
 {% block content%}
-<div class="h-screen flex items-center justify-center">
+<div class="h-full flex items-center justify-center">
 
-  <card class="flex flex-col rounded-lg shadow-lg w-1/2 p-10 bg-violet-100">
+  <card class="flex flex-col rounded-lg shadow-lg p-10 m-8 bg-white "/>
 
     <!-- Title -->
-    <p class="text-center text-gray-800 text-4xl mt-8">{{event.title}}</p>
+    <p class="text-center text-indigo-500 font-semibold text-4xl ">{{event.title}}</p>
 
     <!-- Description -->
-    <div class="text-gray-700 font-light mt-5">
-      <p>Start: {{event.start}}</p>
-      <p>End: {{event.end}}</p>
-      <p>Calendar: {{event.calendar}}</p>
-      <p>Event meeting at: {{meeting_at}}</p>
-      <p>Description: {{event.description}}</p>
+    <div class="text-gray-700 font-light mt-8 space-y-2 text-lg">
+      <div class="flex space-x-2 ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          Start <span class=" ml-2 font-semibold">{{event.start}}</span>
+        </div>
+      </div>
+      <div class="flex space-x-2 ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          End <span class="ml-[1.02rem] font-semibold">{{event.end}}</span>
+        </div>
+      </div>
+      <div class="flex space-x-2 ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <div class="font-semibold">
+          {{event.calendar}}
+        </div>
+      </div>
+      <div class="flex space-x-2 ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        <div class="font-semibold w-[80%]">
+          {{meeting_at}}
+        </div>
+      </div>
+      <div class="pt-2">
+        <p class="relative mx-auto" >
+          <span class="absolute -left-4 pr-4 text-indigo-500/40 text-5xl font-overpass italic font-extrabold -z-10">"</span>
+          <span class="text-gray-500 font-bitter font-semibold">{{ club.description }}</span>
+        </p>
+      </div>
     </div>
 
     <!-- Buttons -->

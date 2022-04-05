@@ -1,26 +1,12 @@
 {% extends "base_content.html" %}
 {% load bootstrap_pagination %}
 {% block content %}
-<div class="px-4 sm:px-6 lg:px-8">
-  <div class="sm:flex sm:items-center">
-    <div class="sm:flex-auto">
-      <h1 class="text-xl font-semibold text-gray-900">Clubs</h1>
-      <p class="mt-2 text-sm text-gray-700">A list of all existing clubs.</p>
-    </div>
-    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-      <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-        <a href='{% url 'club_recommender' %}' class="">Get club recommendations</a>
-      </div>
-    </div>
-    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-      <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-        <a href='{% url 'new_club' %}' class="">Create a new club</a>
-      </div>
-    </div>
+<div class="px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto m-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-md mt-12">
+    <h2 class="mt-2 text-center text-3xl font-extrabold text-indigo-900 dark:text-gray-50">All Clubs</h2>
   </div>
-
   <!-- Search... -->
-  <div class="mt-4">
+  <div class="mt-12">
     <form method="GET" >
       <div class="input-field">
           <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Enter club name or location">
