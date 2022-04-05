@@ -29,7 +29,7 @@ from django.urls import reverse
 from django.views import View
 
 
-class ClubRecommenderView(LoginRequiredMixin, PosRatingsRequiredMixin, View):
+class ClubRecommenderView(LoginRequiredMixin, View):
     """View that handles the club recommendations."""
     http_method_names = ['get', 'post']
 
@@ -40,25 +40,32 @@ class ClubRecommenderView(LoginRequiredMixin, PosRatingsRequiredMixin, View):
         user_id = self.user.id
 
         # get the user's club recommendations
-        user_club_recommendations = UserClubRecommendation.objects.filter(user=self.user)
+        user_club_recommendations = UserClubRecommendation.objects.filter(user=self.user).order_by()
         print(user_club_recommendations)
         if user_club_recommendations.exists():
             club_ids = UserClubRecommendation.objects.filter(user=self.user).values_list('club', flat=True)
             clubs = Club.objects.filter(id__in=club_ids)
         else:
             # populate databse
-            club_ids = ClubUserRecommender(self.user.id).get_best_clubs_in_person_list()
-            clubs = Club.objects.filter(id__in=club_ids)
-            for club in clubs:
-                UserClubRecommendation.objects.create(user=self.user, club=club)
+            club_ids_in_person = ClubUserRecommender(self.user.id).get_best_clubs_in_person_list()
+            club_ids_online = ClubUserRecommender(self.user.id).get_best_clubs_online_list()
+
+            club_ids = []
+            club_ids = club_ids_in_person + club_ids_online
 
             clubs = Club.objects.filter(id__in=club_ids)
 
             for club in clubs:
                 UserClubRecommendation.objects.create(user=self.user, club=club)
 
+        # filter by meeting type
+        query = self.request.GET.get('q')
+        if query:
+            clubs = clubs.filter(
+                Q(meeting_type__icontains=query) | Q(location__icontains=query)
+            ).distinct()
 
-        self.clubs_queryset = clubs.distinct().order_by()
+        self.clubs_queryset = clubs.distinct().order_by('name')
 
         paginator = Paginator(self.clubs_queryset, settings.CLUBS_PER_PAGE)
         page_number = request.GET.get('page')
@@ -78,6 +85,7 @@ class ClubRecommenderView(LoginRequiredMixin, PosRatingsRequiredMixin, View):
                 'user': self.user
             }
         )
+
 
 
 class RecommendedClubBookListView(LoginRequiredMixin, PosRatingsRequiredMixin, View):
