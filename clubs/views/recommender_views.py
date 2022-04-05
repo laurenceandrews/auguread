@@ -40,7 +40,7 @@ class ClubRecommenderView(LoginRequiredMixin, View):
         user_id = self.user.id
 
         # get the user's club recommendations
-        user_club_recommendations = UserClubRecommendation.objects.filter(user=self.user)
+        user_club_recommendations = UserClubRecommendation.objects.filter(user=self.user).order_by()
         print(user_club_recommendations)
         if user_club_recommendations.exists():
             club_ids = UserClubRecommendation.objects.filter(user=self.user).values_list('club', flat=True)
@@ -51,8 +51,7 @@ class ClubRecommenderView(LoginRequiredMixin, View):
             club_ids_online = ClubUserRecommender(self.user.id).get_best_clubs_online_list()
 
             club_ids = []
-            club_ids.append(club_ids_in_person)
-            club_ids.append(club_ids_online)
+            club_ids = club_ids_in_person + club_ids_online
 
             clubs = Club.objects.filter(id__in=club_ids)
 
