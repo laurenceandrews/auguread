@@ -61,5 +61,23 @@
         "book" : 25,
         "rating" : "8"
       }
+    },
+    {
+      "model": "clubs.Book_Rating",
+      "pk": 13,
+      "fields": {
+        "user" : 1,
+        "book" : 29,
+        "rating" : "8"
+      }
+    },
+    {
+      "model": "clubs.Book_Rating",
+      "pk": 14,
+      "fields": {
+        "user" : 1,
+        "book" : 30,
+        "rating" : "8"
+      }
     }
   ]

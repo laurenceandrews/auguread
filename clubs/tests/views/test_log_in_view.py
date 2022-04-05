@@ -18,7 +18,9 @@ class LogInViewTestCase(TestCase, LogInTester, MenuTesterMixin):
         'clubs/tests/fixtures/default_book.json',
         'clubs/tests/fixtures/default_rating.json',
         'clubs/tests/fixtures/default_club_book.json',
-        'clubs/tests/fixtures/default_club_user.json'
+        'clubs/tests/fixtures/default_club_user.json',
+        'clubs/tests/fixtures/other_books.json',
+        'clubs/tests/fixtures/seven_pos_ratings.json'
     ]
 
     def setUp(self):

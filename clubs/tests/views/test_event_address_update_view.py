@@ -20,7 +20,10 @@ class EventAddressUpdateViewTest(TestCase):
         'clubs/tests/fixtures/default_club.json',
         'clubs/tests/fixtures/other_clubs.json',
         'clubs/tests/fixtures/default_address.json',
-        'clubs/tests/fixtures/other_addresses.json'
+        'clubs/tests/fixtures/other_addresses.json',
+        'clubs/tests/fixtures/default_book.json',
+        'clubs/tests/fixtures/other_books.json',
+        'clubs/tests/fixtures/seven_pos_ratings.json'
     ]
 
     def setUp(self):
