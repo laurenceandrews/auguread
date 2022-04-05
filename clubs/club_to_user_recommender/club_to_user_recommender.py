@@ -153,7 +153,6 @@ class ClubUserRecommender:
 
     # Add column for age difference and return clubs in ascending order of difference from my age
     def set_age_difference_df(self):
-        print(self.get_user())
         my_age = float(self.current_user.age)
         average_club_age_df = self.average_club_age_df
         average_club_age_df['age_difference'] = pd.DataFrame(abs(average_club_age_df['average_age'] - my_age))
@@ -232,8 +231,6 @@ class ClubUserRecommender:
                        .groupby(['user_id_x', 'first_name','last_name', 'ISBN', 'title', 'author'])[['title', 'author']].agg(list).reset_index()
 
         user_favourite_books_df = user_favourite_books_df.rename(columns={'user_id_x':'user_id'})
-        #print("HELLO\n",user_favourite_books_df)
-        # user_favourite_books_df = user_favourite_books_df.drop('user_id_x', axis=1)
         user_club_favourite_books_df = pd.merge(user_favourite_books_df, self.club_user_df, left_on="user_id", right_on="user_id", how="inner")
         user_club_favourite_books_df = user_club_favourite_books_df[['club_id', 'user_id', 'title', 'author']]
         user_club_favourite_books_df = user_club_favourite_books_df.sort_values('user_id', ascending=True)
@@ -247,13 +244,11 @@ class ClubUserRecommender:
     # Get the favourite books and authors of one user (me)
     def set_fav_books_and_authors_per_user(self):
         my_favourite_books_df = self.user_book_df.tail(2)
-        print(my_favourite_books_df)
 
         book_info_df = pd.merge(my_favourite_books_df, self.book_df, left_on='book_id', right_on='id')
         book_info_df = book_info_df[['user_id', 'title', 'author']]
         book_info_df = book_info_df.sort_values('user_id', ascending=True)
-        #book_info_df = book_info_df.groupby(['user_id', 'title', 'author']).agg(list).reset_index()
-        print(book_info_df)
+ 
         
         self.my_favourite_books_df = book_info_df
         
