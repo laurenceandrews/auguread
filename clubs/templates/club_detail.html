@@ -64,7 +64,7 @@
 <div class="flex items-center justify-center flex-grow">
   
   
-  <card class="flex flex-col p-5 m-5 ">
+  <card class="flex flex-col p-5 m-5 flex-grow max-w-5xl mx-auto">
       
     <!-- Title -->
     <p class="text-center text-gray-800 text-4xl mt-8">{{club.name}}</p>
@@ -130,7 +130,7 @@
         
         {%if club.currently_reading is not None and role_num != None and role_num != '1' %}
           <dt class="text-base font-normal text-gray-900 text-center pt-4">{{club.name}}'s currently reading</dt>
-          <div class=" border-gray-400/20 border z-10 shadow-lg bg-transparent rounded-xl overflow-hidden max-w-2xl mt-2 mx-auto">
+          <div class=" border-gray-400/20 border z-10 shadow-lg bg-transparent rounded-xl overflow-hidden max-w-5xl mt-2 mx-auto">
             <!-- Book Image Background -->
             <div class="-z-10 relative pointer-events-none">
               <img style="background-image: url({% static 'missing_image.png' %})" class="scale-[1.5] absolute opacity-40 bg-center bg-origin-border w-full blur-[5px] sm:bg-cover" src="{{club.currently_reading.image_large}}" alt="Book cover of {{club.currently_reading.title}}.">
@@ -141,7 +141,7 @@
               <div class="flex justify-between p-4 items-start bg-white/50">
                 <div>
                   <div class="sm:flex sm:space-x-4">
-                    <h1 class="text-xl  font-semibold font-roboto max-w-md">{{club.currently_reading.title}}</h1>
+                    <h1 class="text-xl  font-semibold font-roboto max-w-5xl">{{club.currently_reading.title}}</h1>
                     <p class="underline text-gray-600 underline-offset-2 font-nunito">{{club.currently_reading.publication_year}}</p>
                   </div>
                   <p class="text-lg">{{club.currently_reading.author}}</p>
