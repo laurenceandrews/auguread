@@ -1,6 +1,6 @@
 """Views related to the Feed."""
 from clubs.forms import PostForm
-from clubs.models import Club, ClubFeedPost, Post, User
+from clubs.models import Club, ClubFeedPost, Post, PostComment, User
 from clubs.views.mixins import ClubMemberOrOwnerRequiredMixin
 from django.conf import settings
 from django.contrib import messages
@@ -60,3 +60,52 @@ class ClubFeedView(LoginRequiredMixin, ClubMemberOrOwnerRequiredMixin, ListView)
         club = Club.objects.get(id=self.kwargs['club_id'])
         context['club'] = club
         return context
+
+
+class PostCommentsView(LoginRequiredMixin, ClubMemberOrOwnerRequiredMixin, ListView):
+    """Class-based generic view for displaying a club's feed."""
+
+    model = Post
+    template_name = "post_comments.html"
+    context_object_name = 'comments'
+    paginate_by = settings.POSTS_PER_PAGE
+
+    def get_queryset(self):
+        """Return the club's feed."""
+        current_user = self.request.user
+        post = Post.objects.get(id=self.kwargs['post_id'])
+        return post.comments().order_by('created_at')
+
+    def get_context_data(self, **kwargs):
+        """Return context data, including new post form."""
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['form'] = PostForm()
+        club = Club.objects.get(id=self.kwargs['club_id'])
+        context['club'] = club
+        post = Post.objects.get(id=self.kwargs['post_id'])
+        context['post'] = post
+        context['original_post'] = [post]
+        return context
+
+
+class PostCommentsCreateView(LoginRequiredMixin, ClubMemberOrOwnerRequiredMixin, CreateView):
+    model = PostComment
+    template_name = 'post_comments.html'
+    form_class = PostForm
+
+    def form_valid(self, form):
+        """Process a valid form."""
+
+        club = Club.objects.get(id=self.kwargs['club_id'])
+        post = Post.objects.get(id=self.kwargs['post_id'])
+
+        text = form.cleaned_data.get('text')
+        author = self.request.user
+
+        comment = Post.objects.create(author=author, text=text)
+
+        comment_post = PostComment.objects.create(post=post, comment=comment)
+
+        messages.add_message(self.request, messages.SUCCESS, "Comment created!")
+        return redirect('club_feed_post', club_id=club.id, post_id=post.id)

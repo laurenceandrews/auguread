@@ -14,6 +14,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import (CreateView, DeleteView, FormView,
                                        UpdateView)
 from schedule.models import Calendar, Event, Rule
+
 from .helpers import login_prohibited
 from .mixins import ClubOwnerRequiredSchedulerMixin, LoginProhibitedMixin
 
@@ -43,17 +44,19 @@ def full_calendar(request, calendar_slug):
     user = request.user
     club_user_exists = Club_Users.objects.filter(club=club, user=user).exists()
     if club_user_exists:
-        club_user_role_num = Club_Users.objects.get(club=club, user=user).role_num
+        club_user_role_num = Club_Users.objects.get(
+            club=club, user=user).role_num
         if club_user_role_num == '4':
             user_is_owner = True
 
-    return render(request, 'fullcalendar.html', {'calendar': calendar, 'user_is_owner': user_is_owner})
+    return render(request, 'fullcalendar.html', {'calendar': calendar, 'user_is_owner': user_is_owner, 'club': club})
 
 
 @ login_required
 def events_list(request, calendar_id):
     """ View to display a calendar's event list. """
     calendar = Calendar.objects.get(id=calendar_id)
+    club = Club.objects.get(calendar=calendar)
     events = calendar.event_set.all()
 
     query = request.GET.get('q')
@@ -72,7 +75,9 @@ def events_list(request, calendar_id):
                   {
                       'calendar': calendar,
                       'events': events,
-                      'page_obj': page_obj
+                      'page_obj': page_obj,
+                      'club': club,
+
                   })
 
 
@@ -92,10 +97,13 @@ class CreateEventView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, Creat
         start = form.cleaned_data.get('start')
         end = form.cleaned_data.get('end')
 
-        club_book_history_exists = Club_Book_History.objects.filter(club=club).exists()
+        club_book_history_exists = Club_Book_History.objects.filter(
+            club=club).exists()
         if club_book_history_exists:
-            club_book_history_latest = Club_Book_History.objects.filter(club=club).last()
-            description_text = 'This club is currently reading ' + club_book_history_latest.book.title + '.'
+            club_book_history_latest = Club_Book_History.objects.filter(
+                club=club).last()
+            description_text = 'This club is currently reading ' + \
+                club_book_history_latest.book.title + '.'
         else:
             description_text = 'This club has no books. When a book is selected, it will show here.'
 
@@ -159,6 +167,7 @@ class CreateEventLinkView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, C
         context = super().get_context_data(**kwargs)
         event = Event.objects.get(id=self.kwargs['event_id'])
         context['event'] = event
+        context['calendar'] = event.calendar
 
         return context
 
@@ -256,7 +265,7 @@ class CreateAddressView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, Cre
     def get_success_url(self):
         """Return URL to redirect the user too after valid form handling."""
         calendar = Calendar.objects.get(slug=self.kwargs['calendar_slug'])
-        return redirect('full_calendar', calendar_slug=calendar.slug)
+        return reverse('full_calendar', kwargs={'calendar_slug': calendar.slug})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -322,13 +331,15 @@ class EditEventLinkView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, Upd
 
         meeting_link = form.cleaned_data.get('meeting_link')
 
-        meeting_link_object_exists = MeetingLink.objects.filter(event=event).exists()
+        meeting_link_object_exists = MeetingLink.objects.filter(
+            event=event).exists()
         if meeting_link_object_exists:
             meeting_link_object = MeetingLink.objects.get(event=event)
             meeting_link_object.meeting_link = meeting_link
             meeting_link_object.save()
         else:
-            meeting_link_object = MeetingLink.objects.create(event=event, meeting_link=meeting_link)
+            meeting_link_object = MeetingLink.objects.create(
+                event=event, meeting_link=meeting_link)
 
         return redirect('full_calendar', calendar_slug=calendar.slug)
 
@@ -375,13 +386,15 @@ class EditEventAddressView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, 
 
         address = form.cleaned_data.get('address')
 
-        meeting_address_object_exists = MeetingAddress.objects.filter(event=event).exists()
+        meeting_address_object_exists = MeetingAddress.objects.filter(
+            event=event).exists()
         if meeting_address_object_exists:
             meeting_address_object = MeetingAddress.objects.get(event=event)
             meeting_address_object.address = address
             meeting_address_object.save()
         else:
-            meeting_address_object = MeetingAddress.objects.create(event=event, address=address)
+            meeting_address_object = MeetingAddress.objects.create(
+                event=event, address=address)
         return redirect('full_calendar', calendar_slug=calendar.slug)
 
     def get_success_url(self):
@@ -406,7 +419,8 @@ class EditEventAddressView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, 
 
         meeting_address_object = MeetingAddress.objects.filter(event=event)
         if meeting_address_object.exists():
-            context['meeting_address'] = MeetingAddress.objects.get(event=event)
+            context['meeting_address'] = MeetingAddress.objects.get(
+                event=event)
 
         return context
 
@@ -439,6 +453,7 @@ class DeleteEventView(LoginRequiredMixin, ClubOwnerRequiredSchedulerMixin, Delet
         context['calendar_name'] = calendar.name
         context['user'] = self.request.user
         context['event_title'] = event.title
+        context['club'] = calendar.club
 
         return context
 
@@ -461,22 +476,27 @@ class EventDetailView(LoginRequiredMixin, DetailView):
         context['calendar_name'] = calendar.name
         context['event_name'] = event.title
         context['user'] = self.request.user
+        context['club'] = club
 
         context['meeting_at'] = 'Not set.'
         if club.meeting_type == 'ONL':
             meeting_link_object = MeetingLink.objects.filter(event=event)
             if meeting_link_object.exists():
-                context['meeting_at'] = MeetingLink.objects.get(event=event).meeting_link
+                context['meeting_at'] = MeetingLink.objects.get(
+                    event=event).meeting_link
         elif club.meeting_type == 'INP':
             meeting_address_object = MeetingAddress.objects.filter(event=event)
             if meeting_address_object.exists():
-                context['meeting_at'] = MeetingAddress.objects.get(event=event).address.full_address
+                context['meeting_at'] = MeetingAddress.objects.get(
+                    event=event).address.full_address
 
         user_is_owner = False
         user = self.request.user
-        club_user_exists = Club_Users.objects.filter(club=club, user=user).exists()
+        club_user_exists = Club_Users.objects.filter(
+            club=club, user=user).exists()
         if club_user_exists:
-            club_user_role_num = Club_Users.objects.get(club=club, user=user).role_num
+            club_user_role_num = Club_Users.objects.get(
+                club=club, user=user).role_num
             if club_user_role_num == '4':
                 user_is_owner = True
         context['user_is_owner'] = user_is_owner

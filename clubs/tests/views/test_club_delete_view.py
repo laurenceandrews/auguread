@@ -75,4 +75,4 @@ class DeleteClubViewTest(TestCase):
     def test_post_delete_club(self):
         self.client.login(email=self.user.email, password="Password123")
         post_response = self.client.post(self.url, follow=True)
-        self.assertTemplateUsed(post_response, 'user_summary.html')
+        self.assertTemplateUsed(post_response, 'summary_clubs_table.html')

@@ -1,0 +1,102 @@
+
+{% load i18n %}
+
+{% load static %}
+
+<div class=" border-gray-400/20 border z-10 shadow-lg bg-transparent rounded-xl overflow-hidden max-w-2xl sm:m-8 sm:mx-auto">
+  <!-- Book Image Background -->
+  <div class="-z-10 relative pointer-events-none">
+    <img style="background-image: url({% static 'missing_image.png' %})" class="scale-[1.5] absolute opacity-40 bg-center bg-origin-border w-full blur-[5px] sm:bg-cover" src="{{book.image_large}}" alt="Book cover of {{book.title}}.">
+  </div>
+
+  <div class="p-8">
+    <!-- Book Content -->
+    <div class="flex justify-between bg-white/50 p-4 rounded">
+      <div>
+        <div class="sm:flex sm:space-x-4">
+          <h1 class="text-3xl font-semibold font-roboto max-w-md">{{book.title}}</h1>
+          <p class="underline text-gray-600 underline-offset-2 font-nunito">{{book.publication_year}}</p>
+        </div>
+        <p class=" text-2xl">{{book.author}}</p>
+      </div>
+      <!-- Favourtie Button -->
+
+      {% if user_books_exists == False %}
+      <form class="flex flex-col justify-between" action="{% url 'create_user_book_favourite' user_id=user.id book_id=book.id%}" method="post">
+      {% else %}
+      <form class="flex flex-col justify-between" action="{% url 'delete_user_book_favourite' user_id=user.id book_id=book.id%}" method="post">
+      {% endif %}
+        {% csrf_token %}
+        {{ user_book_form }}
+        <button type="submit">
+          {% if user_books_exists == False %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="transition-all h-12 w-12  stroke-rose-600/80 fill-transparent hover:fill-rose-600/80 hover:cursor-pointer" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+          {% else %}
+          <svg type="submit" xmlns="http://www.w3.org/2000/svg" class="transition-all h-12 w-12 stroke-rose-600/80 fill-rose-600/80 hover:fill-transparent hover:cursor-pointer" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+          {% endif %}
+        </button>
+        {% if rating_exists == True %}
+        <div class="pt-4 font-semibold text-gray-700 text-center">
+          <!-- Converts book_rating string into int -->
+          {% if book_rating|add:"0" >= 5 %}
+            <p class="font-bold font-manrope border-emerald-400/80 text-emerald-700 border-2 rounded-full p-2">{{book_rating}}</p>
+          {% else %}
+            <p class="font-bold font-manrope border-rose-400/80 text-rose-700 border-2 rounded-full p-2">{{book_rating}}</p>
+          {% endif %}
+        </div>
+        {% else %}
+        <div class="pt-4 font-semibold text-gray-700 text-center">
+          <p class="font-extrabold font-manrope border-gray-400 text-gray-800 border-2 rounded-full bg-transparent p-2">--</p>
+        </div>
+        {% endif %}
+
+      </form>
+
+    </div>
+
+    <div class="inline-grid grid-cols-2 pt-8 gap-x-0">
+      <span class="text-gray-500">Publisher</span>
+      <span>{{book.publisher}}</span>
+      <span class="text-gray-500">ISBN</span>
+      <span>{{book.ISBN}}</span>
+    </div>
+
+    <!-- Form Rating -->
+    <form class="" action="{% url 'rate_book' book.id %}" method="post">
+      {% csrf_token %}
+      {% include 'partials/bootstrap_form.html' with form=book_rating_form %}
+      <div class="pt-2">
+        <button type="submit" class="font-semibold border-blue-400/40 border bg-blue-700/80 hover:bg-blue-800/90 text-blue-50 py-2 px-4 rounded">
+          {% if rating_exists == True %}
+          Update Rating
+          {% else %}
+          Rate Book
+          {% endif %}
+        </button>
+      </div>
+
+    </form>
+
+    <!-- Currently Reading -->
+    <div class="pt-8">
+      <form action="{% url 'create_user_book_history' user_id=user.id book_id=book.id%}" method="post">
+        {% csrf_token %}
+        <div>
+            {{ user_book_history_form }}
+            <!-- TODO: What's the use case for this? I.e. When would you set again? -->
+            <button type="submit" class="font-semibold border-blue-400/40 border bg-white/80 hover:bg-blue-100/80 text-blue-600 py-2 px-4 rounded">
+              {% if user_book_history_exists == True %}
+              Set as your currently reading again
+              {% else %}
+              Set as your currently reading
+              {% endif %}
+            </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

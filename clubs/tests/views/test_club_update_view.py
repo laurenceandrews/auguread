@@ -38,7 +38,7 @@ class ClubUpdateViewTestCase(TestCase):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'club_update_view.html')
+        self.assertTemplateUsed(response, 'club_update.html')
         form = response.context['form']
         self.assertTrue(isinstance(form, ClubUpdateForm))
         self.assertEqual(form.instance, self.club)
@@ -75,7 +75,7 @@ class ClubUpdateViewTestCase(TestCase):
         after_count = Club.objects.count()
         self.assertEqual(after_count, before_count)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "club_update_view.html")
+        self.assertTemplateUsed(response, "club_update.html")
         form = response.context["form"]
         self.assertTrue(isinstance(form, ClubUpdateForm))
         self.assertTrue(form.is_bound)

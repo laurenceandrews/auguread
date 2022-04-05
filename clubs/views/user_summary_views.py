@@ -1,5 +1,7 @@
-from clubs.models import (Book, Club, Club_Book_History, Club_Books,
-                          Club_Users, User, User_Book_History, User_Books)
+from clubs.forms import BookRatingForm, UserBookHistoryForm, UserBooksForm
+from clubs.models import (Book, Book_Rating, Club, Club_Book_History,
+                          Club_Books, Club_Users, User, User_Book_History,
+                          User_Books)
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -7,6 +9,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views import View
+
 from .helpers import login_prohibited
 from .mixins import LoginProhibitedMixin
 
@@ -29,22 +32,42 @@ class UserSummaryView(LoginRequiredMixin, View):
 @login_required
 def user_current_book(request):
     """ View to display the current user's current book. """
+
     user = request.user
+
     user_book_history_exists = User_Book_History.objects.filter(user=user).exists()
     if user_book_history_exists:
-        current_book = User_Book_History.objects.filter(user=user).last().book
+        book = User_Book_History.objects.filter(user=user).last().book
+        rating_exists = Book_Rating.objects.filter(user=user, book=book).exists()
+        if rating_exists:
+            book_rating = Book_Rating.objects.get(user=user, book=book).rating
+        else:
+            book_rating = None
 
-        return render(request, "partials/books_table.html",
+        book_rating_form = BookRatingForm()
+
+        user_book_history_exists = User_Book_History.objects.filter(user=user, book=book).exists()
+        user_book_history_form = UserBookHistoryForm()
+
+        user_books_exists = User_Books.objects.filter(user=user, book=book).exists()
+        user_book_form = UserBooksForm()
+
+        return render(request, "user_current_book.html",
                       {
                           'user': user,
-                          'books': [current_book],
-                          'single_book': True,
+                          'book': book,
+                          'rating_exists': rating_exists,
+                          'book_rating': book_rating,
+                          'book_rating_form': book_rating_form,
+                          'user_book_history_exists': user_book_history_exists,
+                          'user_book_history_form': user_book_history_form,
+                          'user_books_exists': user_books_exists,
+                          'user_book_form': user_book_form
                       })
     else:
-        return render(request, "partials/books_table.html",
+        return render(request, "user_current_book.html",
                       {
-                          'user': user,
-                          'single_book': True,
+                          'user': user
                       })
 
 
@@ -66,7 +89,7 @@ def user_favourite_books(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, "partials/books_table.html",
+    return render(request, "user_favourite_books.html",
                   {
                       'user': user,
                       'books': books,
@@ -97,7 +120,7 @@ def user_clubs_books(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, "partials/books_table.html",
+    return render(request, "user_clubs_books.html",
                   {
                       'user': user,
                       'books': books,

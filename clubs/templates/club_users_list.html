@@ -1,4 +1,4 @@
-{% extends 'base_content.html' %}
+{% extends 'club_base_content.html' %}
 {% load bootstrap_pagination %}
 {% block content %}
 <style>
@@ -128,11 +128,11 @@
   }
 </style>
 
-<div class="container">
-  <div class="row">
+<div class="">
+  <div class="">
     <!-- Applicants -->
     {% if list_of_applicants == True%}
-    <div class="col-12">
+    <div class="w-full">
       <h1>Pending applications for club: {{club.name}}</h1>
       <div class="mt-1 max-w-2xl text-sm text-gray-500">
         <p>There are {{users.count}} pending applications. Only the owner can approve them.</p>
@@ -160,7 +160,7 @@
 
     <!-- Members -->
     {% if list_of_members == True%}
-    <div class="col-12">
+    <div class="">
       <h1>Members in club: {{club.name}}</h1>
       {% if is_owner == True%}
       <div class="mt-1 max-w-2xl text-sm text-gray-500">
