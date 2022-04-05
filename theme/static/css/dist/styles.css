@@ -882,10 +882,6 @@ select{
   margin-top: 1.25rem;
 }
 
-.mb-32{
-  margin-bottom: 8rem;
-}
-
 .ml-8{
   margin-left: 2rem;
 }
@@ -928,14 +924,6 @@ select{
 
 .mb-3{
   margin-bottom: 0.75rem;
-}
-
-.mt-16{
-  margin-top: 4rem;
-}
-
-.mb-14{
-  margin-bottom: 3.5rem;
 }
 
 .block{
@@ -1084,12 +1072,12 @@ select{
   width: 1.5rem;
 }
 
-.w-32{
-  width: 8rem;
-}
-
 .w-1\/2{
   width: 50%;
+}
+
+.w-32{
+  width: 8rem;
 }
 
 .w-3\/4{
@@ -1349,10 +1337,6 @@ select{
   justify-content: space-between;
 }
 
-.justify-evenly{
-  justify-content: space-evenly;
-}
-
 .gap-5{
   gap: 1.25rem;
 }
@@ -1566,14 +1550,14 @@ select{
   border-color: rgb(243 244 246 / 0.5);
 }
 
-.border-blue-600{
-  --tw-border-opacity: 1;
-  border-color: rgb(37 99 235 / var(--tw-border-opacity));
-}
-
 .border-rose-600{
   --tw-border-opacity: 1;
   border-color: rgb(225 29 72 / var(--tw-border-opacity));
+}
+
+.border-blue-600{
+  --tw-border-opacity: 1;
+  border-color: rgb(37 99 235 / var(--tw-border-opacity));
 }
 
 .border-indigo-500{
@@ -1672,6 +1656,11 @@ select{
   background-color: rgb(147 197 253 / 0.8);
 }
 
+.bg-rose-100{
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 228 230 / var(--tw-bg-opacity));
+}
+
 .bg-blue-200{
   --tw-bg-opacity: 1;
   background-color: rgb(191 219 254 / var(--tw-bg-opacity));
@@ -1709,11 +1698,6 @@ select{
 .bg-green-100{
   --tw-bg-opacity: 1;
   background-color: rgb(220 252 231 / var(--tw-bg-opacity));
-}
-
-.bg-rose-100{
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 228 230 / var(--tw-bg-opacity));
 }
 
 .bg-opacity-75{
@@ -2478,6 +2462,11 @@ select{
   background-color: rgb(96 165 250 / 0.9);
 }
 
+.hover\:bg-rose-200:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 205 211 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-blue-400:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(96 165 250 / var(--tw-bg-opacity));
@@ -2501,11 +2490,6 @@ select{
 .hover\:bg-indigo-50:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(238 242 255 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-rose-200:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(254 205 211 / var(--tw-bg-opacity));
 }
 
 .hover\:fill-rose-600\/80:hover{
@@ -2700,6 +2684,10 @@ select{
     align-items: center;
   }
 
+  .sm\:justify-around{
+    justify-content: space-around;
+  }
+
   .sm\:gap-x-6{
     -moz-column-gap: 1.5rem;
          column-gap: 1.5rem;
@@ -2717,10 +2705,6 @@ select{
 
   .sm\:bg-cover{
     background-size: cover;
-  }
-
-  .sm\:p-6{
-    padding: 1.5rem;
   }
 
   .sm\:px-6{
