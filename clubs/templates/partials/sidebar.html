@@ -1,4 +1,7 @@
+{% load club_user_role_num %}
+{% club_user_role_num club user as role_num %}
 <div class="fixed divide-y divide-gray-300/30 inset-y-0 left-0 mt-[5.1rem] pt-4 bg-white md:w-52 w-16 align-middle border-r-2 border-gray-300/30 ">
+  <!-- Users -->
   <a
     href='{% url 'club_detail' club.id %}'
     class="md:pl-4 py-3 flex items-center text-sm leading-5 text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-400"
@@ -19,6 +22,14 @@
     </svg>
     <span class="flex-grow pl-4 hidden md:block font-semibold">Calendar</span>
   </a>
+
+  <!-- Applicants -->
+  {%if role_num == '1'%}
+  {% endif %}
+
+
+  <!-- Members -->
+  {%if role_num == '2'%}
   <a
     href='{%url 'club_feed' club.id %}'
     class="md:pl-4 py-3 flex items-center text-sm leading-5 text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-400"
@@ -29,6 +40,45 @@
     </svg>
     <span class="flex-grow pl-4 hidden md:block font-semibold">Messages</span>
   </a>
+
+  <a
+    href='{%url 'member_list' club.id %}'
+    class="md:pl-4 py-3 flex items-center text-sm leading-5 text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-400"
+    role="menuitem"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mx-auto md:mx-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+    </svg>
+    <span class="flex-grow pl-4 hidden md:block font-semibold">Members</span>
+  </a>
+  {% endif %}
+
+
+  <!-- Owners -->
+  {%if role_num == '4'%}
+  <a
+    href='{%url 'club_feed' club.id %}'
+    class="md:pl-4 py-3 flex items-center text-sm leading-5 text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-400"
+    role="menuitem"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mx-auto md:mx-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+    </svg>
+    <span class="flex-grow pl-4 hidden md:block font-semibold">Messages</span>
+  </a>
+
+  <a
+    href="#"
+    onclick="showLoaderOnClick('{% url 'club_book_recommendations' club.id %}')"
+    class="md:pl-4 py-3 flex items-center text-sm leading-5 text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-400"
+    role="menuitem"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mx-auto md:mx-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+    </svg>
+    <span class="flex-grow pl-4 hidden md:block font-semibold">Select New Book</span>
+  </a>
+
   <a
     href='{%url 'applicant_list' club.id %}'
     class="md:pl-4 py-3 flex items-center text-sm leading-5 text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-400"
@@ -39,17 +89,7 @@
     </svg>
     <span class="flex-grow pl-4 hidden md:block font-semibold">Applications</span>
   </a>
-  <a
-    href="#" 
-    onclick="showLoaderOnClick('{% url 'club_book_recommendations' club.id %}')"
-    class="md:pl-4 py-3 flex items-center text-sm leading-5 text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-400"
-    role="menuitem"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mx-auto md:mx-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-    </svg>
-    <span class="flex-grow pl-4 hidden md:block font-semibold">Select New Book</span>
-  </a>
+
   <a
     href='{%url 'member_list' club.id %}'
     class="md:pl-4 py-3 flex items-center text-sm leading-5 text-gray-500 hover:bg-indigo-50 hover:text-gray-900 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-400"
@@ -57,7 +97,15 @@
   >
     <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mx-auto md:mx-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
       <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-    </svg>      
+    </svg>
     <span class="flex-grow pl-4 hidden md:block font-semibold">Transfer Ownership</span>
   </a>
+  {% endif %}
+
+
+
+
+
+
+
 </div>

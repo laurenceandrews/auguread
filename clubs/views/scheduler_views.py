@@ -5,6 +5,7 @@ from clubs.models import (Address, Club, Club_Book_History, Club_Users,
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from clubs.views.mixins import PosRatingsRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import Http404

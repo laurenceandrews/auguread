@@ -10,10 +10,10 @@ from clubs.book_to_user_recommender.book_to_user_knn import \
 from clubs.club_to_user_recommender.club_to_user_recommender import \
     ClubUserRecommender
 from clubs.models import (Book, Book_Rating, Club, Club_Book_History,
-                          Club_Books, Club_Users, ClubBookRecommendation, Post,
-                          User, User_Book_History, User_Books,
-                          UserBookRecommendation)
-from clubs.views.mixins import TenPosRatingsRequiredMixin
+                          Club_Books, Club_Users, ClubBookRecommendation,
+                          User_Books, UserBookRecommendation,
+                          UserClubRecommendation)
+from clubs.views.mixins import PosRatingsRequiredMixin
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -29,45 +29,43 @@ from django.urls import reverse
 from django.views import View
 
 
-class ClubRecommenderView(TenPosRatingsRequiredMixin, View):
+class ClubRecommenderView(LoginRequiredMixin, PosRatingsRequiredMixin, View):
     """View that handles the club recommendations."""
     http_method_names = ['get', 'post']
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         """Display template."""
-        user_id = self.request.user.id
 
-        club_ids_in_person = ClubUserRecommender(user_id).get_best_clubs_in_person()
-        # club_ids_online = ClubUserRecommender(user_id).get_best_clubs_online()
-        self.club_recs_in_person = Club.objects.filter(id__in=club_ids_in_person)
-        # self.club_recs_online = Club.objects.filter(id__in  = club_ids_online)
+        self.user = request.user
+        user_id = self.user.id
 
-        # get all the clubs and sort alphabetcally
-        self.clubs_queryset = Club.objects.all().order_by('name')
+        # get the user's club recommendations
+        user_club_recommendations = UserClubRecommendation.objects.filter(user=self.user)
+        print(user_club_recommendations)
+        if user_club_recommendations.exists():
+            club_ids = UserClubRecommendation.objects.filter(user=self.user).values_list('club', flat=True)
+            clubs = Club.objects.filter(id__in=club_ids)
+        else:
+            # populate databse
+            club_ids = ClubUserRecommender(self.user.id).get_best_clubs_in_person_list()
+            clubs = Club.objects.filter(id__in=club_ids)
+            for club in clubs:
+                UserClubRecommendation.objects.create(user=self.user, club=club)
 
-        # query the list of clubs by name or location
-        query = request.GET.get('q')
-        if query:
-            self.clubs_queryset = Club.objects.filter(
-                Q(name__icontains=query) | Q(location__icontains=query)
-            ).distinct()
+            clubs = Club.objects.filter(id__in=club_ids)
 
-        paginator = Paginator(self.club_recs_in_person, settings.CLUBS_PER_PAGE)
+            for club in clubs:
+                UserClubRecommendation.objects.create(user=self.user, club=club)
+
+
+        self.clubs_queryset = clubs.distinct().order_by()
+
+        paginator = Paginator(self.clubs_queryset, settings.CLUBS_PER_PAGE)
         page_number = request.GET.get('page')
         self.clubs_paginated = paginator.get_page(page_number)
 
         self.next = request.GET.get('next') or ''
         return self.render()
-
-    # def form_valid(self, form):
-    #     user = User.objects.get(id = self.kwargs['id'])
-    #     club = form.cleaned_data.get('club')
-    #     return render(self.request, 'club_recommender.html')
-
-    # def get_data(self, **kwargs):
-    #     data = super().get_data(**kwargs)
-    #     user = User.objects.get(id = self.kwargs['id'])
-    #     data['first_name'] = user.first_name
 
     def render(self):
         """Render template with blank form."""
@@ -77,13 +75,12 @@ class ClubRecommenderView(TenPosRatingsRequiredMixin, View):
             {
                 'next': self.next,
                 'clubs_paginated': self.clubs_paginated,
-                'club_recs_in_person': self.club_recs_in_person
-                # 'club_recs_online': self.club_recs_online
+                'user': self.user
             }
         )
 
 
-class RecommendedClubBookListView(LoginRequiredMixin, View):
+class RecommendedClubBookListView(LoginRequiredMixin, PosRatingsRequiredMixin, View):
     """View to display a list of recommended books for clubs."""
 
     http_method_names = ['get', 'post']
@@ -171,7 +168,7 @@ def club_book_select_view(request, club_id, book_id):
     return redirect('club_detail', club.id)
 
 
-class RecommendationsView(LoginRequiredMixin, View):
+class RecommendationsView(LoginRequiredMixin, PosRatingsRequiredMixin, View):
     """View that handles the book recommendations."""
 
     http_method_names = ['get', 'post']

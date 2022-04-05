@@ -22,7 +22,7 @@
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
           <h1 class="mt-8 text-4xl font-extrabold tracking-tight text-gray-900 dark:text-gray-200 sm:text-5xl md:text-6xl">We are just getting your recommendations</h1>
-          <p id="loading-subheader" class="lg:mx-50 font-nunito mt-3 text-base text-gray-500 dark:text-gray-300 sm:mx-auto sm:mt-5 sm:max-w-xl sm:text-lg md:mt-5 md:text-xl">Our recommenders can take up to a minute to figure you out. Fear not, this normally only happens on your first time.</p>
+          <p id="loading-subheader" class="lg:mx-50 font-nunito mt-3 text-base text-gray-500 dark:text-gray-300 sm:mx-auto sm:mt-5 sm:max-w-xl sm:text-lg md:mt-5 md:text-xl">Our recommenders can take a couple of minutes to figure you out.</p>
         </div>
       </div>`
     );
@@ -193,19 +193,22 @@
 
         {% comment %} Club Owner {% endcomment %}
         {%if role_num == '4'%}
-          <div class="w-2/3 sm:w-1/2 flex justify-evenly mx-auto">
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-200 hover:bg-blue-400 text-blue-600 border border-blue-600 font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{% url 'club_update' club.id %}' class="">Edit club</a>
+          <div class="border-t-2 mt-8 pt-6">
+            <div class=" flex justify-between sm:justify-around mx-auto">
+              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
+                <div class="text-sm sm:text-lg bg-blue-200 hover:bg-blue-400 text-blue-600 border border-blue-600 font-bold py-2 px-4 rounded" style="cursor: pointer;">
+                  <a href='{% url 'club_update' club.id %}' class="">Edit club</a>
+                </div>
               </div>
-            </div>
 
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-rose-200 hover:bg-rose-400 text-rose-600 border border-rose-600 font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{% url 'club_delete' club.id %}' class="">Delete club</a>
+              <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
+                <div class="text-sm sm:text-lg bg-rose-200 hover:bg-rose-400 text-rose-600 border border-rose-600 font-bold py-2 px-4 rounded" style="cursor: pointer;">
+                  <a href='{% url 'club_delete' club.id %}' class="">Delete club</a>
+                </div>
               </div>
             </div>
           </div>
+
         {%endif%}
       </dl>
     </div>

@@ -310,6 +310,24 @@ class UserBookRecommendation(models.Model):
         verbose_name_plural = "User Book Recommendations"
 
 
+class UserClubRecommendation(models.Model):
+    """Recommended club for a user."""
+    club = models.ForeignKey(
+        Club,
+        on_delete=models.CASCADE
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        """Model options."""
+        verbose_name = "User Club Recommendation"
+        verbose_name_plural = "User Club Recommendations"
+
+
 class Club_Users(models.Model):
     club = models.ForeignKey(
         Club,

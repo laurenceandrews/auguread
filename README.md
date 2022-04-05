@@ -3,27 +3,6 @@ Software Engineering Major Group Project
 
 Book Club
 
-## Deployed version
-Link: 
-
-**Access credentials**
-
-Club owner
-Username: 
-Password: 
-
-Club member
-Username: 
-Password: 
-
-Club applicant
-Username: 
-Password: 
-
-Standard user
-Username: 
-Password: 
-
 ## Team Sick Legends
 The authors of the software are:
 - Laurence Andrews
@@ -34,6 +13,31 @@ The authors of the software are:
 - Iki (Niki) Norgren
 - Aria Rub
 - Clara Zard
+
+## Deployed version
+Link:
+
+**Access credentials**
+
+Club Owner
+
+- Email:
+- Password:
+
+Club Member
+
+- Email:
+- Password:
+
+Club Applicant
+
+- Email:
+- Password:
+
+Standard User
+
+- Email:
+- Password:
 
 ## Installation instructions
 To install the software and use it in your local development environment, you must first set up and activate a local development environment.  From the root of the project:
@@ -70,3 +74,6 @@ $ python3 manage.py test
 The packages used by this application are specified in `requirements.txt`
 
 - [django-scheduler](https://django-scheduler.readthedocs.io/en/latest/), specifically the Calendar, Event and Rule models
+
+
+**_For more information, please refer to the [Developer's Manual file](https://github.com/tinybuddha/sick-legends/blob/main/Developer's%20Manual.md)._**
