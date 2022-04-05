@@ -14,7 +14,10 @@ class ClubFeedViewTestCase(TestCase):
         'clubs/tests/fixtures/default_calendar.json',
         'clubs/tests/fixtures/default_club.json',
         'clubs/tests/fixtures/other_clubs.json',
-        'clubs/tests/fixtures/other_users.json'
+        'clubs/tests/fixtures/other_users.json',
+        'clubs/tests/fixtures/default_book.json',
+        'clubs/tests/fixtures/other_books.json',
+        'clubs/tests/fixtures/seven_pos_ratings.json'
     ]
 
     def setUp(self):

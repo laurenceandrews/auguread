@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
 
+
 class UserProfileViewTestCase(TestCase):
 
     fixtures = [
@@ -16,7 +17,8 @@ class UserProfileViewTestCase(TestCase):
         'clubs/tests/fixtures/default_book.json',
         'clubs/tests/fixtures/default_rating.json',
         'clubs/tests/fixtures/default_club_book.json',
-        'clubs/tests/fixtures/default_club_user.json'
+        'clubs/tests/fixtures/default_club_user.json',
+        'clubs/tests/fixtures/seven_pos_ratings.json'
     ]
 
     def setUp(self):
