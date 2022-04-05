@@ -194,7 +194,7 @@ class ClubUserRecommender:
         no_of_rows = club_user_location_df.shape[0]
 
         for i in range(no_of_rows):
-            match_value = int(fuzz.token_sort_ratio(user_location, club_user_location_df.iloc[i]['location']))
+            match_value = int(fuzz.ratio(user_location, club_user_location_df.iloc[i]['location']))
             if (user_id != club_user_location_df.iloc[i]['user_id']):
                 club_user_location_df.iat[i,4] = match_value
             else:
@@ -246,7 +246,7 @@ class ClubUserRecommender:
     # Get the favourite books and authors of one user (me)
     def set_fav_books_and_authors_per_user(self):
         my_id = self.user_id
-        my_favourite_books_df = self.user_club_favourite_books_df.loc[self.user_club_favourite_books_df['user_id'] == my_id].tail(5)
+        my_favourite_books_df = self.user_club_favourite_books_df.loc[self.user_club_favourite_books_df['user_id'] == my_id].tail(1)
         
         self.my_favourite_books_df = my_favourite_books_df
 
@@ -279,7 +279,7 @@ class ClubUserRecommender:
             for j in range(no_of_club_favourite_books):
                 club_favourite_book = club_user_title_matches_df.iloc[j]
 
-                match_value = int(fuzz.token_sort_ratio(my_favourite_book['title'], club_favourite_book['title']))
+                match_value = int(fuzz.ratio(my_favourite_book['title'], club_favourite_book['title']))
 
                 if (self.user_id != club_user_title_matches_df.iloc[j]['user_id']):
                     club_user_title_matches_df.iat[j,6] = match_value
@@ -336,7 +336,7 @@ class ClubUserRecommender:
             for j in range(no_of_club_favourite_books):
                 club_favourite_book = club_user_author_matches_df.iloc[j]
                 
-                match_value = int(fuzz.token_sort_ratio(my_favourite_book['author'], club_favourite_book['author']))
+                match_value = int(fuzz.ratio(my_favourite_book['author'], club_favourite_book['author']))
                 # match_value
                 if (self.user_id != club_user_author_matches_df.iloc[j]['user_id']):
                     club_user_author_matches_df.iat[j,6] = match_value
