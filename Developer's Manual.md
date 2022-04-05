@@ -185,13 +185,38 @@ Tailwind is included in the requirements file of the project. To update the styl
 $ pip3 install -r requirements.txt
 ```
 
-Alternatively, activate the virtual environment and install the tailwind package directly:
+Tailwind generates the css classes file on-the-fly in a file at the path:
+```
+> theme/static/css/dist/styles.css
+```
+This file is essentially where Tailwind saves the custom css classes so that users who don’t have Tailwind installed still see all the stylings that Tailwind offers.
+
+In order to generate new classes in the templates, you will need to install the node runtime.
+It is highly recommended to use **nvm** in order to do so.
+
+- For Linux-based users follow the [following guide](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+- For Windows-based users follow the [following guide](https://github.com/coreybutler/nvm-windows#installation--upgrades)
+
+It is recommended to go ahead and install the Latest Version of node and not the LTS (Long Term Support) version
+
+Given node has different paths whether on Windows or Linux developers must change the following variable in settings.py to one of the following
+```
+NPM_BIN_PATH = r"/usr/local/bin/npm" # Linux
+
+# OR
+
+NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd" # Windows
+```
+
+After doing so you can proceed with the following command to install Tailwind in your project
 ```
 $ python manage.py tailwind install
 ```
 
-
-Activate tailwind:
+In order to generate the Tailwind classes, the developer must then start up the tailwind watcher by using the following command
 ```
 $ python manage.py tailwind start
 ```
+
+Note that Tailwind will hot-reload whenever changes are saved.
