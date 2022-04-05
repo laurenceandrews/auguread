@@ -28,67 +28,6 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 
-# class ClubRecommenderView(LoginRequiredMixin, View):
-#     """View that handles the club recommendations."""
-#     http_method_names = ['get', 'post']
-#
-#     def get(self, request, *args, **kwargs):
-#         """Display template."""
-#
-#         self.user = request.user
-#         user_id = self.user.id
-#
-#         # get the user's club recommendations
-#         user_club_recommendations = UserClubRecommendation.objects.filter(user=self.user)
-#         print(user_club_recommendations)
-#         if user_club_recommendations.exists():
-#             club_ids = UserClubRecommendation.objects.filter(user=self.user).values_list('club', flat=True)
-#             clubs = Club.objects.filter(id__in=club_ids)
-#         else:
-#             # populate databse
-#             club_ids = ClubUserRecommender(self.user.id).get_best_clubs_in_person_list()
-#
-#             clubs = Club.objects.filter(id__in=club_ids)
-#
-#             for club in clubs:
-#                 UserClubRecommendation.objects.create(user=self.user, club=club)
-#
-#         self.club_recs_in_person = clubs.distinct()
-#
-#         # get all the clubs and sort alphabetcally
-#         # self.clubs_queryset = Club.objects.all().order_by('name')
-#
-#         paginator = Paginator(self.club_recs_in_person, settings.CLUBS_PER_PAGE)
-#         page_number = request.GET.get('page')
-#         self.clubs_paginated = paginator.get_page(page_number)
-#
-#         self.next = request.GET.get('next') or ''
-#         return self.render()
-#
-#     # def form_valid(self, form):
-#     #     user = User.objects.get(id = self.kwargs['id'])
-#     #     club = form.cleaned_data.get('club')
-#     #     return render(self.request, 'club_recommender.html')
-#
-#     # def get_data(self, **kwargs):
-#     #     data = super().get_data(**kwargs)
-#     #     user = User.objects.get(id = self.kwargs['id'])
-#     #     data['first_name'] = user.first_name
-#
-#     def render(self):
-#         """Render template with blank form."""
-#
-#         return render(
-#             self.request, 'club_recommender.html',
-#             {
-#                 'next': self.next,
-#                 'clubs_paginated': self.clubs_paginated,
-#                 'club_recs_in_person': self.club_recs_in_person,
-#                 'user': self.user
-#                 # 'club_recs_online': self.club_recs_online
-#             }
-#         )
-
 
 class ClubRecommenderView(LoginRequiredMixin, View):
     """View that handles the club recommendations."""
@@ -108,6 +47,13 @@ class ClubRecommenderView(LoginRequiredMixin, View):
             clubs = Club.objects.filter(id__in=club_ids)
         else:
             # populate databse
+            #             club_ids = ClubUserRecommender(self.user.id).get_best_clubs_in_person_list()
+            #
+            #             clubs = Club.objects.filter(id__in=club_ids)
+            #
+            #             for club in clubs:
+            #                 UserClubRecommendation.objects.create(user=self.user, club=club)
+
             # temporarily, I will just send ten random inperson clubs and ten random online clubs
             club_ids = []
             inperson_clubs = Club.objects.filter(meeting_type='INP')[0:10]
