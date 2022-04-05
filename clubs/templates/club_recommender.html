@@ -36,7 +36,7 @@
   .club-name {
     font-weight: 800;
     font-size: 22px;
-    line-height: 32px;
+    line-height: 40px;
     margin-bottom: 15px;
     -webkit-box-orient: vertical;
     text-overflow: ellipsis;
@@ -49,7 +49,7 @@
   .club-location {
     font-weight: 500;
     font-size: 18px;
-    line-height: 18px;
+    line-height: 40px;
     margin-top: 10px;
     -webkit-box-orient: vertical;
     text-overflow: ellipsis;
@@ -87,7 +87,7 @@
 
   }
 
-  
+
 
   .shadow-sm {
     vertical-align: middle;
@@ -100,31 +100,59 @@
   }
 </style>
 
-<div id="loading">
-  <div id="loading-inner" class="sm:text-center lg:text-center">
-    <img id="loading-image" src="/static/spinner-dark-mode.gif" alt="Loading..." />
-    <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl dark:text-gray-200">We're just getting your recommendations</h1>
-    <p id="loading-subheader"class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-50 dark:text-gray-300 font-nunito">Our recommenders can take up to a minute to figure you out. Don't worry, this usually only happens if it's your first time.</p>
-  </div>
-</div>
+<!-- Checkbox...
+<div class="mt-4">
+  <form method="GET" >
+    <div class="input-field">
+      <input type="checkbox" name="q" value="Online">
+      <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Search</button>
+    </div>
+  </form>
+</div> -->
 
 <div class="lg:flex h-full">
   <div class="pt-10 mx-auto max-w-7xl px-4 sm:pt-12 sm:px-6 md:pt-16 lg:pt-20 lg:px-8 xl:pt-35 sm:text-center lg:text-center">
     <div class="sm:text-center lg:text-center">
       <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl dark:text-gray-200">
-        <span class="block lg:inline">We have found the following clubs</span>
+        <span class="block lg:inline">We've found the clubs</span>
         <span class="block text-indigo-600 lg:inline dark:text-indigo-400">for you</span>
       </h1>
 
       <div class="mt-6 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-100 dark:text-gray-300">
-        <div class="pt-4">
+        <div class="pt-4" id="subheading">
           <p>Based on what we know about you, we recommend the following clubs</p>
-          <form action="" method="post">
-            {% csrf_token %}
-            <table>
-              {{ form.as_table }}
-            </table>
-            <p>Click here for online only clubs: <input type="submit" value="Online" class="justify-center py-2 px-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"></p>
+        </div>
+
+        <div class="pt-4">
+          <form method="GET" >
+            <div class="input-field">
+              <span>
+                Click here for online only clubs: <input type="hidden" name="q" value="Onl">
+                <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Go</button>
+              </span>
+            </div>
+          </form>
+        </div>
+
+        <div class="pt-4">
+          <form method="GET" >
+            <div class="input-field">
+              <span>
+                Click here for in person only clubs: <input type="hidden" name="q" value="Inp">
+                <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Go</button>
+              </span>
+            </div>
+          </form>
+        </div>
+
+        <div class="pt-4">
+          <form method="GET" >
+            <div class="input-field">
+              <span>
+                Click here for all your recommended clubs: <input type="hidden" name="q" value="">
+                <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Go</button>
+              </span>
+            </div>
           </form>
         </div>
       </div>
