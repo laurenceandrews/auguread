@@ -133,35 +133,35 @@
   {% endblock %}
 </title>
 
-<div class="px-4 sm:px-6 lg:px-8">
+<div class="px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto mt-12">
   {%if role_num == '1'%}
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
-      <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-50">Your Applications</h2>
+      <h2 class="mt-2 text-center text-3xl font-extrabold text-indigo-900 dark:text-gray-50">Your Applications</h2>
     </div>
   {%elif role_num == '2'%}
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
-      <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-50">Clubs you are in</h2>
+      <h2 class="mt-2 text-center text-3xl font-extrabold text-indigo-900 dark:text-gray-50">Clubs you are in</h2>
     </div>
   {%elif role_num == '4'%}
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
-      <h2 class="mt-2 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-50">Clubs you own</h2>
+      <h2 class="mt-2 text-center text-3xl font-extrabold text-indigo-900 dark:text-gray-50">Clubs you own</h2>
     </div>
   {% endif %}
 
 
-  <div class="mt-4 sm:flex sm:items-center">
-    <div class="sm:flex-auto">
+  <div class="mt-8 sm:flex sm:justify-center sm:space-x-6">
+    <div class="">
       <h1 class="text-xl font-semibold text-gray-900"></h1>
       <p class="mt-2 text-sm text-gray-700"></p>
     </div>
-    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+    <div class="">
       <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-        <a href='{% url 'club_recommender' %}' class="">Get club recommendations</a>
+        <a href='{% url 'club_recommender' %}' class="">Club recommendations</a>
       </div>
     </div>
     {%if role_num == '4'%}
-    <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-      <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
+    <div class="">
+      <div class="bg-blue-200 hover:bg-blue-400 text-blue-700 border border-blue-700/50 font-bold py-2 px-4 rounded" style="cursor: pointer;">
         <a href='{% url 'new_club' %}' class="">Create a new club</a>
       </div>
     </div>
@@ -170,7 +170,7 @@
 
 
   <!-- Search... -->
-  <div class="mt-4">
+  <div class="mt-12">
     <form method="GET" >
       <div class="input-field">
           <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Enter club name or location">

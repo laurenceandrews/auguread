@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from clubs.views.mixins import PosRatingsRequiredMixin
 from django.core.paginator import Paginator
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render
@@ -29,7 +30,7 @@ class UserDetailList(LoginRequiredMixin, ListView):
     paginate_by = settings.USERS_PER_PAGE
 
 
-class UserDetailView(LoginRequiredMixin, DetailView):
+class UserDetailView(LoginRequiredMixin, PosRatingsRequiredMixin, DetailView):
 
     model = User
     template_name = 'user_detail.html'

@@ -16,7 +16,8 @@ class RecommendedClubBookListViewTest(TestCase):
         'clubs/tests/fixtures/default_book.json',
         'clubs/tests/fixtures/default_rating.json',
         'clubs/tests/fixtures/default_club_book.json',
-        'clubs/tests/fixtures/default_club_user.json',
+        'clubs/tests/fixtures/other_books.json',
+        'clubs/tests/fixtures/seven_pos_ratings.json'
     ]
 
     def setUp(self):
@@ -36,13 +37,6 @@ class RecommendedClubBookListViewTest(TestCase):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-
-    def test_get_club_book_rec_list_with_no_recommendations(self):
-        self.client.login(email=self.user.email, password="Password123")
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'recommended_books_for_club_list.html')
-        self.assertEqual(len(response.context['books']), 0)
 
     def test_get_club_book_rec_list_with_recommendations(self):
         ClubBookRecommendation.objects.create(club=self.club, book=self.book)

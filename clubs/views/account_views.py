@@ -1,5 +1,7 @@
 """Views related to the account."""
-from clubs.forms import (LogInForm, PasswordForm, SignUpForm, UserDeleteForm, UserForm)
+from clubs.forms import (LogInForm, PasswordForm, SignUpForm, UserDeleteForm,
+                         UserForm)
+from clubs.views.mixins import PosRatingsRequiredMixin
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -10,6 +12,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 from django.views.generic.edit import FormView, UpdateView
+
 from .helpers import login_prohibited
 from .mixins import LoginProhibitedMixin
 
@@ -48,7 +51,7 @@ class LogInView(LoginProhibitedMixin, View):
         return render(self.request, 'log_in.html', {'form': form, 'next': self.next})
 
 
-class SignUpView(LoginProhibitedMixin, FormView):
+class SignUpView(LoginProhibitedMixin,  FormView):
     """View that signs up user."""
 
     form_class = SignUpForm
@@ -71,7 +74,7 @@ def log_out(request):
     return redirect('home')
 
 
-class PasswordView(LoginRequiredMixin, FormView):
+class PasswordView(LoginRequiredMixin,  FormView):
     """View that handles password change requests."""
 
     template_name = 'password.html'
@@ -103,7 +106,7 @@ class PasswordView(LoginRequiredMixin, FormView):
         return reverse('settings')
 
 
-class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+class ProfileUpdateView(LoginRequiredMixin,  UpdateView):
     """View to update logged-in user's profile."""
 
     model = UserForm

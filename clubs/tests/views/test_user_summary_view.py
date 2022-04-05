@@ -8,7 +8,12 @@ from django.urls import reverse
 class UserSummaryViewTestCase(TestCase):
     """Tests of the user summary view."""
 
-    fixtures = ['clubs/tests/fixtures/default_user.json']
+    fixtures = [
+        'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/default_book.json',
+        'clubs/tests/fixtures/other_books.json',
+        'clubs/tests/fixtures/seven_pos_ratings.json'
+    ]
 
     def setUp(self):
         self.url = reverse('user_summary')

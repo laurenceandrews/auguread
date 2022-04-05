@@ -13,7 +13,7 @@ from clubs.models import (Book, Book_Rating, Club, Club_Book_History,
                           Club_Books, Club_Users, ClubBookRecommendation,
                           User_Books, UserBookRecommendation,
                           UserClubRecommendation)
-from clubs.views.mixins import TenPosRatingsRequiredMixin
+from clubs.views.mixins import PosRatingsRequiredMixin
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -37,11 +37,9 @@ class ClubRecommenderView(LoginRequiredMixin, View):
         """Display template."""
 
         self.user = request.user
-        user_id = self.user.id
 
         # get the user's club recommendations
         user_club_recommendations = UserClubRecommendation.objects.filter(user=self.user).order_by()
-        print(user_club_recommendations)
         if user_club_recommendations.exists():
             club_ids = UserClubRecommendation.objects.filter(user=self.user).values_list('club', flat=True)
             clubs = Club.objects.filter(id__in=club_ids)
@@ -87,7 +85,7 @@ class ClubRecommenderView(LoginRequiredMixin, View):
         )
 
 
-class RecommendedClubBookListView(LoginRequiredMixin, View):
+class RecommendedClubBookListView(LoginRequiredMixin, PosRatingsRequiredMixin, View):
     """View to display a list of recommended books for clubs."""
 
     http_method_names = ['get', 'post']
@@ -175,7 +173,7 @@ def club_book_select_view(request, club_id, book_id):
     return redirect('club_detail', club.id)
 
 
-class RecommendationsView(LoginRequiredMixin, View):
+class RecommendationsView(LoginRequiredMixin, PosRatingsRequiredMixin, View):
     """View that handles the book recommendations."""
 
     http_method_names = ['get', 'post']

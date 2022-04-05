@@ -14,7 +14,7 @@ from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView
 from .helpers import login_prohibited
-from .mixins import LoginProhibitedMixin
+from .mixins import LoginProhibitedMixin, PosRatingsRequiredMixin
 
 
 class BookDetailView(LoginRequiredMixin, DetailView):
@@ -97,6 +97,12 @@ class CreateBookRatingView(LoginRequiredMixin, CreateView):
         book = Book.objects.get(id=self.kwargs['book_id'])
 
         book_rating_exists = Book_Rating.objects.filter(user=current_user, book=book)
+
+        if int(rating) > 5:
+                favourite_book = User_Books.objects.create(
+                    user=current_user,
+                    book=book,
+                )
 
         if book_rating_exists.exists():
             book_rating = Book_Rating.objects.get(

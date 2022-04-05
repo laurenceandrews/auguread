@@ -19,6 +19,6 @@ def book_rated(book, user):
     if book_rating.exists():
         book_rating = Book_Rating.objects.get(book=book, user=user)
         rating = book_rating.rating
-        rated_value = "Current rating: " + rating
+        rated_value = "Current rating: " + str(rating)
 
     return rated_value
