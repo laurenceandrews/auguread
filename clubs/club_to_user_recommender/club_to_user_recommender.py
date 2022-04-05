@@ -246,10 +246,21 @@ class ClubUserRecommender:
 
     # Get the favourite books and authors of one user (me)
     def set_fav_books_and_authors_per_user(self):
-        my_id = self.user_id
-        my_favourite_books_df = self.user_club_favourite_books_df.loc[self.user_club_favourite_books_df['user_id'] == my_id].tail(2)
+        my_favourite_books_df = self.user_book_df.tail(2)
+        print(my_favourite_books_df)
+
+        book_info_df = pd.merge(my_favourite_books_df, self.book_df, left_on='book_id', right_on='id')
+        book_info_df = book_info_df[['user_id', 'title', 'author']]
+        book_info_df = book_info_df.sort_values('user_id', ascending=True)
+        #book_info_df = book_info_df.groupby(['user_id', 'title', 'author']).agg(list).reset_index()
+        print(book_info_df)
         
-        self.my_favourite_books_df = my_favourite_books_df
+        self.my_favourite_books_df = book_info_df
+        
+        # my_id = self.user_id
+        # my_favourite_books_df = self.user_club_favourite_books_df.loc[self.user_club_favourite_books_df['user_id'] == my_id].tail(2)
+        
+        # self.my_favourite_books_df = my_favourite_books_df
 
     def get_fav_books_and_authors_per_user(self):
         return self.my_favourite_books_df
