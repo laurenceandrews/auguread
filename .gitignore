@@ -335,6 +335,8 @@ bower_components
 
 # End of https://www.toptal.com/developers/gitignore/api/bower
 
+assets
+
 # Allow
 !theme/static/css/dist/
 node_modules/

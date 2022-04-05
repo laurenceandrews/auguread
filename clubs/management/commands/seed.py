@@ -262,7 +262,8 @@ class Command(BaseCommand):
                 password='Password123',
                 age=random.randint(1, 150),
                 bio=self.faker.text(max_nb_chars=10),
-                country=self.users_from_file['Location'][rand_choice]
+                city=self.faker.city(),
+                country=self.faker.country_code()
             )
             user.save()
 

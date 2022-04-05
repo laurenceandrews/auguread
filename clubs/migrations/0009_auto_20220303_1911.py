@@ -13,11 +13,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='book',
             name='image_large',
-            field=models.ImageField(default='https://media2.fdncms.com/stranger/imager/u/large/43820816/1591119073-screen_shot_2020-06-02_at_10.30.13_am.png', upload_to=''),
+            field=models.ImageField(default='', upload_to=''),
         ),
         migrations.AddField(
             model_name='book',
             name='image_medium',
-            field=models.ImageField(default='https://media2.fdncms.com/stranger/imager/u/large/43820816/1591119073-screen_shot_2020-06-02_at_10.30.13_am.png', upload_to=''),
+            field=models.ImageField(default='', upload_to=''),
         ),
     ]
