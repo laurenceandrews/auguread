@@ -52,28 +52,13 @@ class ClubRecommenderView(LoginRequiredMixin, PosRatingsRequiredMixin, View):
             for club in clubs:
                 UserClubRecommendation.objects.create(user=self.user, club=club)
 
-            # temporarily, I will just send ten random inperson clubs and ten random online clubs
-            # club_ids = []
-            # inperson_clubs = Club.objects.filter(meeting_type='INP')[0:10]
-            # for club in inperson_clubs:
-            #     club_ids.append(club.id)
-            # online_clubs = Club.objects.filter(meeting_type='ONL')[0:10]
-            # for club in online_clubs:
-            #     club_ids.append(club.id)
-
             clubs = Club.objects.filter(id__in=club_ids)
 
             for club in clubs:
                 UserClubRecommendation.objects.create(user=self.user, club=club)
 
-        # checkbox
-        query = self.request.GET.get('q')
-        if query:
-            clubs = clubs.filter(
-                Q(meeting_type__icontains=query) | Q(location__icontains=query)
-            ).distinct()
 
-        self.clubs_queryset = clubs.distinct().order_by('name')
+        self.clubs_queryset = clubs.distinct().order_by()
 
         paginator = Paginator(self.clubs_queryset, settings.CLUBS_PER_PAGE)
         page_number = request.GET.get('page')
