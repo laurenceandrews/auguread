@@ -98,6 +98,12 @@ class CreateBookRatingView(LoginRequiredMixin, CreateView):
 
         book_rating_exists = Book_Rating.objects.filter(user=current_user, book=book)
 
+        if int(rating) > 5:
+                favourite_book = User_Books.objects.create(
+                    user=current_user,
+                    book=book,
+                )
+
         if book_rating_exists.exists():
             book_rating = Book_Rating.objects.get(
                 user=current_user,
