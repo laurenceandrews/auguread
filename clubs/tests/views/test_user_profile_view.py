@@ -15,6 +15,7 @@ class UserProfileViewTestCase(TestCase):
         'clubs/tests/fixtures/default_calendar.json',
         'clubs/tests/fixtures/default_club.json',
         'clubs/tests/fixtures/default_book.json',
+        'clubs/tests/fixtures/other_books.json',
         'clubs/tests/fixtures/default_rating.json',
         'clubs/tests/fixtures/default_club_book.json',
         'clubs/tests/fixtures/default_club_user.json',

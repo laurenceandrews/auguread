@@ -38,13 +38,6 @@ class RecommendedClubBookListViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
-    def test_get_club_book_rec_list_with_no_recommendations(self):
-        self.client.login(email=self.user.email, password="Password123")
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'recommended_books_for_club_list.html')
-        self.assertEqual(len(response.context['books']), 0)
-
     def test_get_club_book_rec_list_with_recommendations(self):
         ClubBookRecommendation.objects.create(club=self.club, book=self.book)
         self.client.login(email=self.user.email, password="Password123")
