@@ -37,11 +37,9 @@ class ClubRecommenderView(LoginRequiredMixin, View):
         """Display template."""
 
         self.user = request.user
-        user_id = self.user.id
 
         # get the user's club recommendations
         user_club_recommendations = UserClubRecommendation.objects.filter(user=self.user).order_by()
-        print(user_club_recommendations)
         if user_club_recommendations.exists():
             club_ids = UserClubRecommendation.objects.filter(user=self.user).values_list('club', flat=True)
             clubs = Club.objects.filter(id__in=club_ids)
@@ -85,7 +83,6 @@ class ClubRecommenderView(LoginRequiredMixin, View):
                 'user': self.user
             }
         )
-
 
 
 class RecommendedClubBookListView(LoginRequiredMixin, PosRatingsRequiredMixin, View):
