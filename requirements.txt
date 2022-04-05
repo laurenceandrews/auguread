@@ -1,5 +1,5 @@
 arrow==1.2.2
-asgiref==3.5.0
+asgiref==3.4.1
 binaryornot==0.4.4
 certifi==2021.10.8
 chardet==4.0.0
