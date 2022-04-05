@@ -122,6 +122,13 @@ class ClubRecommenderView(LoginRequiredMixin, View):
             for club in clubs:
                 UserClubRecommendation.objects.create(user=self.user, club=club)
 
+        # checkbox
+        query = self.request.GET.get('q')
+        if query:
+            clubs = clubs.filter(
+                Q(meeting_type__icontains=query) | Q(location__icontains=query)
+            ).distinct()
+
         self.clubs_queryset = clubs.distinct().order_by('name')
 
         paginator = Paginator(self.clubs_queryset, settings.CLUBS_PER_PAGE)
@@ -131,16 +138,6 @@ class ClubRecommenderView(LoginRequiredMixin, View):
         self.next = request.GET.get('next') or ''
         return self.render()
 
-    # def form_valid(self, form):
-    #     user = User.objects.get(id = self.kwargs['id'])
-    #     club = form.cleaned_data.get('club')
-    #     return render(self.request, 'club_recommender.html')
-
-    # def get_data(self, **kwargs):
-    #     data = super().get_data(**kwargs)
-    #     user = User.objects.get(id = self.kwargs['id'])
-    #     data['first_name'] = user.first_name
-
     def render(self):
         """Render template with blank form."""
 
@@ -149,9 +146,7 @@ class ClubRecommenderView(LoginRequiredMixin, View):
             {
                 'next': self.next,
                 'clubs_paginated': self.clubs_paginated,
-                'club_recs_in_person': self.clubs_queryset,
                 'user': self.user
-                # 'club_recs_online': self.club_recs_online
             }
         )
 
