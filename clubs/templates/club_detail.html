@@ -4,6 +4,7 @@
 {% load club_user_role_num %}
 {% load book_rated %}
 {% block content%}
+{% load static %}
 {% get_club_user_id club user as club_user_id %}
 {% club_user_role_num club user as role_num %}
 
@@ -62,7 +63,7 @@
 
 <div class="h-auto flex items-center justify-center flex-grow">
 
-  <card class="mt-6 flex flex-col rounded-lg shadow-lg w-2/3 p-10 bg-violet-100">
+  <card class="mt-6 flex flex-col rounded-lg shadow-lg w-2/3 p-10 bg-white">
 
     <!-- Title -->
     <p class="text-center text-gray-800 text-4xl mt-8">{{club.name}}</p>
@@ -85,20 +86,6 @@
       <h3 class="text-lg leading-6 font-medium text-gray-900"></h3>
       <dl class="mt-5 grid grid-cols-1 rounded-lg bg-white overflow-hidden shadow divide-y divide-gray-200 md:grid-cols-1 md:divide-y-0 md:divide-x">
         <!-- Club actions -->
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">Go to club's calendar</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              {{club.calendar}}
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{%url 'full_calendar' club.calendar.slug%}' class="">Calendar</a>
-              </div>
-            </div>
-          </dd>
-        </div>
 
         {%if role_num == None%}
         <div class="px-4 py-5 sm:p-6">
@@ -136,6 +123,7 @@
 
         {%if role_num == '2'%}
           {%if club.currently_reading is not None%}
+
           <div class="px-4 py-5 sm:p-6">
             <dt class="text-base font-normal text-gray-900">{{club.name}}'s currently reading</dt>
             <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
@@ -155,37 +143,7 @@
               </div>
             </dd>
           </div>
-          {% endif %}
-
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s Message Board</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Make and view posts
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{%url 'club_feed' club.id %}' class="">{{club.name}}'s Message Board</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s members</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              View members
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{%url 'member_list' club.id %}' class="">List of members</a>
-              </div>
-            </div>
-          </dd>
-        </div>
+        {% endif %}
 
         <div class="px-4 py-5 sm:p-6">
           <dt class="text-base font-normal text-gray-900">Your membership</dt>
@@ -203,54 +161,68 @@
         </div>
         {%endif%}
 
+        {% comment %} Club Owner {% endcomment %}
         {%if role_num == '4'%}
 
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s Message Board</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Make and view posts
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{%url 'club_feed' club.id %}' class="">{{club.name}}'s Message Board</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s applications</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Approve applications
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{%url 'applicant_list' club.id %}' class="">List of applicants</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s members</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Transfer ownership
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{%url 'member_list' club.id %}' class="">List of members</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-
         {%if club.currently_reading is not None%}
+        
+        <div class=" border-gray-400/20 border z-10 shadow-lg bg-transparent rounded-xl overflow-hidden max-w-2xl sm:m-8 sm:mx-auto">
+          <!-- Book Image Background -->
+          <div class="-z-10 relative pointer-events-none">
+            <img style="background-image: url({% static 'missing_image.png' %})" class="scale-[1.5] absolute opacity-40 bg-center bg-origin-border w-full blur-[5px] sm:bg-cover" src="{{club.currently_reading.image_large}}" alt="Book cover of {{club.currently_reading.title}}.">
+          </div>
+        
+          <div class="p-8">
+            <!-- Book Content -->
+            <div class="flex justify-between bg-white/50 p-4 rounded">
+              <div>
+                <div class="sm:flex sm:space-x-4">
+                  <h1 class="text-3xl font-semibold font-roboto max-w-md">{{club.currently_reading.title}}</h1>
+                  <p class="underline text-gray-600 underline-offset-2 font-nunito">{{club.currently_reading.publication_year}}</p>
+                </div>
+                <p class=" text-2xl">{{club.currently_reading.author}}</p>
+              </div>  
+
+              {% book_rated club.currently_reading user as book_rating %}
+              
+              <div class="pt-4 font-semibold text-gray-700 text-center">
+                <!-- Converts book_rating string into int -->
+                {% if book_rating|make_list|last|add:"0" >= 5 %}
+                  <p class="font-bold font-manrope border-emerald-400/80 text-emerald-700 border-2 rounded-full p-2">{{book_rating|make_list|last|add:"0"}}</p>
+                {% elif book_rating|make_list|last|add:"0" <= 5 %}
+                  <p class="font-bold font-manrope border-rose-400/80 text-rose-700 border-2 rounded-full p-2">{{book_rating|make_list|last|add:"0"}}</p>
+                {% else %}
+                  <div class="pt-4 font-semibold text-gray-700 text-center">
+                    <p class="font-extrabold font-manrope border-gray-400 text-gray-800 border-2 rounded-full bg-transparent p-2">--</p>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+              
+            <div class="inline-grid grid-cols-2 pt-8 gap-x-0">
+              <span class="text-gray-500">Publisher</span>
+              <span>{{club.currently_reading.publisher}}</span>
+              <span class="text-gray-500">ISBN</span>
+              <span>{{club.currently_reading.ISBN}}</span>
+            </div>
+        
+            <!-- Form Rating -->
+            <form class="" action="{% url 'rate_book' club.currently_reading.id%}" method="post">
+              {% csrf_token %}
+              {% include 'partials/bootstrap_form.html' with form=form %}
+              <div class="pt-2">
+                <button type="submit" class="font-semibold border-blue-400/40 border bg-blue-700/80 hover:bg-blue-800/90 text-blue-50 py-2 px-4 rounded">
+                  Rate Book
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+
+
+
+
         <div class="px-4 py-5 sm:p-6">
           <dt class="text-base font-normal text-gray-900">{{club.name}}'s currently reading</dt>
           <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
@@ -271,21 +243,6 @@
           </dd>
         </div>
         {% endif %}
-
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s reading next</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Select new book
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href="#" onclick="showLoaderOnClick('{% url 'club_book_recommendations' club.id %}')">Club's book recommendations</a>
-              </div>
-            </div>
-          </dd>
-        </div>
 
         <div class="px-4 py-5 sm:p-6">
           <dt class="text-base font-normal text-gray-900">{{club.name}}'s Details</dt>
@@ -317,28 +274,9 @@
           </dd>
         </div>
         {%endif%}
-
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">View the list of all clubs on the site</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Club Index
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{% url 'club_list' %}' class="">Club Index</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-
-
       </dl>
     </div>
-
   </card>
-
 </div>
 
 {% endblock %}
