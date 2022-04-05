@@ -38,6 +38,14 @@ class ClubRecommenderViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
+    # def test_get_clubs_recs_list_without_recommendations(self):
+    #     self.client.login(email=self.user.email, password="Password123")
+    #     response = self.client.get(self.url)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, 'club_recommender.html')
+    #     self.assertEqual(len(response.context['clubs_paginated']), 1)
+    #     self.assertTrue(self.club in response.context['clubs_paginated'])
+
     def test_get_clubs_recs_list_with_recommendations(self):
         UserClubRecommendation.objects.create(club=self.club, user=self.user)
         self.client.login(email=self.user.email, password="Password123")
