@@ -20,7 +20,7 @@ from django.views.generic.list import MultipleObjectMixin
 from schedule.models import Calendar, Event, Rule
 
 from .helpers import login_prohibited, member, owner
-from .mixins import ClubOwnerRequiredMixin, LoginProhibitedMixin
+from .mixins import ClubOwnerRequiredMixin, LoginProhibitedMixin, PosRatingsRequiredMixin
 
 
 class CreateClubView(LoginRequiredMixin, CreateView):

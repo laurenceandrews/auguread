@@ -14,7 +14,7 @@ from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, DeleteView
 from .helpers import login_prohibited
-from .mixins import LoginProhibitedMixin
+from .mixins import LoginProhibitedMixin, PosRatingsRequiredMixin
 
 
 class BookDetailView(LoginRequiredMixin, DetailView):

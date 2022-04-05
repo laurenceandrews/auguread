@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from clubs.views.mixins import PosRatingsRequiredMixin
 from django.forms.models import model_to_dict
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -14,7 +15,7 @@ from .helpers import login_prohibited
 from .mixins import LoginProhibitedMixin
 
 
-class LogInView(LoginProhibitedMixin, View):
+class LogInView(LoginProhibitedMixin, PosRatingsRequiredMixin, View):
     """View that handles log in."""
 
     http_method_names = ['get', 'post']
@@ -48,7 +49,7 @@ class LogInView(LoginProhibitedMixin, View):
         return render(self.request, 'log_in.html', {'form': form, 'next': self.next})
 
 
-class SignUpView(LoginProhibitedMixin, FormView):
+class SignUpView(LoginProhibitedMixin, PosRatingsRequiredMixin, FormView):
     """View that signs up user."""
 
     form_class = SignUpForm
@@ -71,7 +72,7 @@ def log_out(request):
     return redirect('home')
 
 
-class PasswordView(LoginRequiredMixin, FormView):
+class PasswordView(LoginRequiredMixin, PosRatingsRequiredMixin, FormView):
     """View that handles password change requests."""
 
     template_name = 'password.html'
@@ -103,7 +104,7 @@ class PasswordView(LoginRequiredMixin, FormView):
         return reverse('settings')
 
 
-class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+class ProfileUpdateView(LoginRequiredMixin, PosRatingsRequiredMixin, UpdateView):
     """View to update logged-in user's profile."""
 
     model = UserForm
