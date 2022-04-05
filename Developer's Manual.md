@@ -93,6 +93,11 @@ $ pip3 freeze
 $ python3 manage.py migrate
 ```
 
+If an error like `django.db.utils.OperationalError: table "{table_name}"
+already exists` occurs, migrate using the command:
+```
+python manage.py migrate --fake clubs
+```
 5. Seed the development database with:
 
 ```
