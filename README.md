@@ -15,9 +15,11 @@ The authors of the software are:
 - Clara Zard
 
 ## Deployed version
-Link:
+Link (will be deployed by 15th April): https://auguread.herokuapp.com/
 
 **Access credentials**
+
+Example users will be provided by 15th April alongside the working deployed website.
 
 Club Owner
 
