@@ -232,6 +232,7 @@ class ClubUserRecommender:
                        .groupby(['user_id_x', 'first_name','last_name', 'ISBN', 'title', 'author'])[['title', 'author']].agg(list).reset_index()
 
         user_favourite_books_df = user_favourite_books_df.rename(columns={'user_id_x':'user_id'})
+        #print("HELLO\n",user_favourite_books_df)
         # user_favourite_books_df = user_favourite_books_df.drop('user_id_x', axis=1)
         user_club_favourite_books_df = pd.merge(user_favourite_books_df, self.club_user_df, left_on="user_id", right_on="user_id", how="inner")
         user_club_favourite_books_df = user_club_favourite_books_df[['club_id', 'user_id', 'title', 'author']]
@@ -246,7 +247,7 @@ class ClubUserRecommender:
     # Get the favourite books and authors of one user (me)
     def set_fav_books_and_authors_per_user(self):
         my_id = self.user_id
-        my_favourite_books_df = self.user_club_favourite_books_df.loc[self.user_club_favourite_books_df['user_id'] == my_id].tail(1)
+        my_favourite_books_df = self.user_club_favourite_books_df.loc[self.user_club_favourite_books_df['user_id'] == my_id].tail(2)
         
         self.my_favourite_books_df = my_favourite_books_df
 
@@ -274,12 +275,12 @@ class ClubUserRecommender:
 
         for i in range(no_of_user_favourite_books):
             my_favourite_book = self.my_favourite_books_df.iloc[i]
-            print(my_favourite_book)
 
             for j in range(no_of_club_favourite_books):
                 club_favourite_book = club_user_title_matches_df.iloc[j]
 
                 match_value = int(fuzz.ratio(my_favourite_book['title'], club_favourite_book['title']))
+                
 
                 if (self.user_id != club_user_title_matches_df.iloc[j]['user_id']):
                     club_user_title_matches_df.iat[j,6] = match_value
@@ -290,7 +291,7 @@ class ClubUserRecommender:
         club_user_title_matches_df = club_user_title_matches_df.groupby(['club_id', 'title_match_score', 'title', 'name', 'ISBN']).agg(list).reset_index(drop=False)
 
         club_user_title_matches_df = club_user_title_matches_df.sort_values('title_match_score', ascending=False).dropna(how='any',axis=0)
-        club_user_title_matches_df = club_user_title_matches_df[club_user_title_matches_df['title_match_score'] > 80]
+        club_user_title_matches_df = club_user_title_matches_df[club_user_title_matches_df['title_match_score'] > 60]
     
         self.club_user_title_matches_df = club_user_title_matches_df
 
