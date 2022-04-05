@@ -102,9 +102,10 @@ class PosRatingsRequiredMixin:
     def dispatch(self, *args, **kwargs):
         """Redirect when ten pos ratings not met, or dispatch as normal otherwise."""
         user = self.request.user
-        if self.has_less_than_required_pos_ratings(user):
-            return self.handle_less_than_required_pos_ratings(*args, **kwargs)
-        return super().dispatch(*args, **kwargs)
+        if user.is_authenticated:
+            if self.has_less_than_required_pos_ratings(user):
+                return self.handle_less_than_required_pos_ratings(*args, **kwargs)
+            return super().dispatch(*args, **kwargs)
 
     def has_less_than_required_pos_ratings(self, user, *args, **kwargs):
         less_than_required_pos_ratings = True
