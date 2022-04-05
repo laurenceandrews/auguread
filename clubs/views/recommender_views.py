@@ -10,9 +10,9 @@ from clubs.book_to_user_recommender.book_to_user_knn import \
 from clubs.club_to_user_recommender.club_to_user_recommender import \
     ClubUserRecommender
 from clubs.models import (Book, Book_Rating, Club, Club_Book_History,
-                          Club_Books, Club_Users, ClubBookRecommendation, Post,
-                          User, User_Book_History, User_Books,
-                          UserBookRecommendation)
+                          Club_Books, Club_Users, ClubBookRecommendation,
+                          User_Books, UserBookRecommendation,
+                          UserClubRecommendation)
 from clubs.views.mixins import TenPosRatingsRequiredMixin
 from django.conf import settings
 from django.contrib import messages
@@ -28,6 +28,67 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
 
+# class ClubRecommenderView(LoginRequiredMixin, View):
+#     """View that handles the club recommendations."""
+#     http_method_names = ['get', 'post']
+#
+#     def get(self, request, *args, **kwargs):
+#         """Display template."""
+#
+#         self.user = request.user
+#         user_id = self.user.id
+#
+#         # get the user's club recommendations
+#         user_club_recommendations = UserClubRecommendation.objects.filter(user=self.user)
+#         print(user_club_recommendations)
+#         if user_club_recommendations.exists():
+#             club_ids = UserClubRecommendation.objects.filter(user=self.user).values_list('club', flat=True)
+#             clubs = Club.objects.filter(id__in=club_ids)
+#         else:
+#             # populate databse
+#             club_ids = ClubUserRecommender(self.user.id).get_best_clubs_in_person_list()
+#
+#             clubs = Club.objects.filter(id__in=club_ids)
+#
+#             for club in clubs:
+#                 UserClubRecommendation.objects.create(user=self.user, club=club)
+#
+#         self.club_recs_in_person = clubs.distinct()
+#
+#         # get all the clubs and sort alphabetcally
+#         # self.clubs_queryset = Club.objects.all().order_by('name')
+#
+#         paginator = Paginator(self.club_recs_in_person, settings.CLUBS_PER_PAGE)
+#         page_number = request.GET.get('page')
+#         self.clubs_paginated = paginator.get_page(page_number)
+#
+#         self.next = request.GET.get('next') or ''
+#         return self.render()
+#
+#     # def form_valid(self, form):
+#     #     user = User.objects.get(id = self.kwargs['id'])
+#     #     club = form.cleaned_data.get('club')
+#     #     return render(self.request, 'club_recommender.html')
+#
+#     # def get_data(self, **kwargs):
+#     #     data = super().get_data(**kwargs)
+#     #     user = User.objects.get(id = self.kwargs['id'])
+#     #     data['first_name'] = user.first_name
+#
+#     def render(self):
+#         """Render template with blank form."""
+#
+#         return render(
+#             self.request, 'club_recommender.html',
+#             {
+#                 'next': self.next,
+#                 'clubs_paginated': self.clubs_paginated,
+#                 'club_recs_in_person': self.club_recs_in_person,
+#                 'user': self.user
+#                 # 'club_recs_online': self.club_recs_online
+#             }
+#         )
+
 
 class ClubRecommenderView(LoginRequiredMixin, View):
     """View that handles the club recommendations."""
@@ -39,13 +100,31 @@ class ClubRecommenderView(LoginRequiredMixin, View):
         self.user = request.user
         user_id = self.user.id
 
-        club_ids_in_person = ClubUserRecommender(user_id).get_best_clubs_in_person_list()
-        self.club_recs_in_person = Club.objects.filter(id__in = club_ids_in_person).order_by()
+        # get the user's club recommendations
+        user_club_recommendations = UserClubRecommendation.objects.filter(user=self.user)
+        print(user_club_recommendations)
+        if user_club_recommendations.exists():
+            club_ids = UserClubRecommendation.objects.filter(user=self.user).values_list('club', flat=True)
+            clubs = Club.objects.filter(id__in=club_ids)
+        else:
+            # populate databse
+            # temporarily, I will just send ten random inperson clubs and ten random online clubs
+            club_ids = []
+            inperson_clubs = Club.objects.filter(meeting_type='INP')[0:10]
+            for club in inperson_clubs:
+                club_ids.append(club.id)
+            online_clubs = Club.objects.filter(meeting_type='ONL')[0:10]
+            for club in online_clubs:
+                club_ids.append(club.id)
 
-        # get all the clubs and sort alphabetcally
-        # self.clubs_queryset = Club.objects.all().order_by('name')
+            clubs = Club.objects.filter(id__in=club_ids)
 
-        paginator = Paginator(self.club_recs_in_person, settings.CLUBS_PER_PAGE)
+            for club in clubs:
+                UserClubRecommendation.objects.create(user=self.user, club=club)
+
+        self.clubs_queryset = clubs.distinct().order_by('name')
+
+        paginator = Paginator(self.clubs_queryset, settings.CLUBS_PER_PAGE)
         page_number = request.GET.get('page')
         self.clubs_paginated = paginator.get_page(page_number)
 
@@ -56,8 +135,8 @@ class ClubRecommenderView(LoginRequiredMixin, View):
     #     user = User.objects.get(id = self.kwargs['id'])
     #     club = form.cleaned_data.get('club')
     #     return render(self.request, 'club_recommender.html')
-    
-    # def get_data(self, **kwargs):  
+
+    # def get_data(self, **kwargs):
     #     data = super().get_data(**kwargs)
     #     user = User.objects.get(id = self.kwargs['id'])
     #     data['first_name'] = user.first_name
@@ -70,7 +149,7 @@ class ClubRecommenderView(LoginRequiredMixin, View):
             {
                 'next': self.next,
                 'clubs_paginated': self.clubs_paginated,
-                'club_recs_in_person': self.club_recs_in_person,
+                'club_recs_in_person': self.clubs_queryset,
                 'user': self.user
                 # 'club_recs_online': self.club_recs_online
             }
