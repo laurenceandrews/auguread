@@ -85,237 +85,138 @@
       <h3 class="text-lg leading-6 font-medium text-gray-900"></h3>
       <dl class="mt-5 grid grid-cols-1 rounded-lg bg-white overflow-hidden shadow divide-y divide-gray-200 md:grid-cols-1 md:divide-y-0 md:divide-x">
         <!-- Club actions -->
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">Go to club's calendar</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              {{club.calendar}}
-            </div>
 
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{%url 'full_calendar' club.calendar.slug%}' class="">Calendar</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-
-        {%if role_num == None%}
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">Your application</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Create application to {{club.name}}
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{% url 'apply' club.id %}' class="">Apply</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-        {%endif%}
-
-        {%if role_num == '1'%}
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">Your application</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Withdraw application to {{club.name}}
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{% url 'delete_club_user' club_user_id %}' class="">Withdraw application</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-        {%endif%}
-
-        {%if role_num == '2'%}
-          {%if club.currently_reading is not None%}
+          <!-- Users -->
+          {%if role_num == None%}
           <div class="px-4 py-5 sm:p-6">
-            <dt class="text-base font-normal text-gray-900">{{club.name}}'s currently reading</dt>
+            <dt class="text-base font-normal text-gray-900">Your application</dt>
             <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
               <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-                {{club.currently_reading}}
+                Create application to {{club.name}}
               </div>
 
               <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-                <form action="{% url 'rate_book' club.currently_reading.id%}" method="post">
-                  {% csrf_token %}
-                  <div class = "rating">
-                      <p>{% book_rated club.currently_reading user%}</p>
-                      {{ form }}
-                      <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
-                  </div>
-                </form>
+                <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
+                  <a href='{% url 'apply' club.id %}' class="">Apply</a>
+                </div>
               </div>
             </dd>
           </div>
-          {% endif %}
+          {%endif%}
 
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s Message Board</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Make and view posts
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{%url 'club_feed' club.id %}' class="">{{club.name}}'s Message Board</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s members</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              View members
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{%url 'member_list' club.id %}' class="">List of members</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">Your membership</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Leave club {{club.name}}
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{% url 'delete_club_user' club_user_id %}' class="">Leave</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-        {%endif%}
-
-        {%if role_num == '4'%}
-
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s Message Board</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Make and view posts
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{%url 'club_feed' club.id %}' class="">{{club.name}}'s Message Board</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s applications</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Approve applications
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{%url 'applicant_list' club.id %}' class="">List of applicants</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s members</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Transfer ownership
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{%url 'member_list' club.id %}' class="">List of members</a>
-              </div>
-            </div>
-          </dd>
-        </div>
-
-        {%if club.currently_reading is not None%}
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s currently reading</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              {{club.currently_reading}}
-            </div>
-
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <form action="{% url 'rate_book' club.currently_reading.id%}" method="post">
-                {% csrf_token %}
-                <div class = "rating">
-                    <p>{% book_rated club.currently_reading user%}</p>
-                    {{ form }}
-                    <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
+          <!-- Applicants -->
+          {%if role_num == '1'%}
+            <div class="px-4 py-5 sm:p-6">
+              <dt class="text-base font-normal text-gray-900">Your application</dt>
+              <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
+                <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+                  Withdraw application to {{club.name}}
                 </div>
-              </form>
-            </div>
-          </dd>
-        </div>
-        {% endif %}
 
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s reading next</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Select new book
+                <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
+                  <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
+                    <a href='{% url 'delete_club_user' club_user_id %}' class="">Withdraw application</a>
+                  </div>
+                </div>
+              </dd>
             </div>
+          {%endif%}
 
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href="#" onclick="showLoaderOnClick('{% url 'club_book_recommendations' club.id %}')">Club's book recommendations</a>
+          <!-- Members -->
+          {%if role_num == '2'%}
+            {%if club.currently_reading is not None%}
+              <div class="px-4 py-5 sm:p-6">
+                <dt class="text-base font-normal text-gray-900">{{club.name}}'s currently reading</dt>
+                <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
+                  <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+                    {{club.currently_reading}}
+                  </div>
+
+                  <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
+                    <form action="{% url 'rate_book' club.currently_reading.id%}" method="post">
+                      {% csrf_token %}
+                      <div class = "rating">
+                          <p>{% book_rated club.currently_reading user%}</p>
+                          {{ form }}
+                          <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
+                      </div>
+                    </form>
+                  </div>
+                </dd>
               </div>
-            </div>
-          </dd>
-        </div>
+            {% endif %}
 
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">{{club.name}}'s Details</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Edit club details
-            </div>
+            <div class="px-4 py-5 sm:p-6">
+              <dt class="text-base font-normal text-gray-900">Your membership</dt>
+              <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
+                <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+                  Leave club {{club.name}}
+                </div>
 
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{% url 'club_update' club.id %}' class="">Edit club</a>
+                <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
+                  <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
+                    <a href='{% url 'delete_club_user' club_user_id %}' class="">Leave</a>
+                  </div>
+                </div>
+              </dd>
+            </div>
+          {%endif%}
+
+          <!-- Owners -->
+          {%if role_num == '4'%}
+
+            {%if club.currently_reading is not None%}
+              <div class="px-4 py-5 sm:p-6">
+                <dt class="text-base font-normal text-gray-900">{{club.name}}'s currently reading</dt>
+                <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
+                  <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+                    {{club.currently_reading}}
+                  </div>
+
+                  <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
+                    <form action="{% url 'rate_book' club.currently_reading.id%}" method="post">
+                      {% csrf_token %}
+                      <div class = "rating">
+                          <p>{% book_rated club.currently_reading user%}</p>
+                          {{ form }}
+                          <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Save</button>
+                      </div>
+                    </form>
+                  </div>
+                </dd>
               </div>
-            </div>
-          </dd>
-        </div>
+            {% endif %}
 
-        <div class="px-4 py-5 sm:p-6">
-          <dt class="text-base font-normal text-gray-900">Delete</dt>
-          <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-            <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
-              Delete {{club.name}}
+
+            <div class="px-4 py-5 sm:p-6">
+              <dt class="text-base font-normal text-gray-900">{{club.name}}'s Details</dt>
+              <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
+                <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+                  Edit club details
+                </div>
+
+                <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
+                  <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
+                    <a href='{% url 'club_update' club.id %}' class="">Edit club</a>
+                  </div>
+                </div>
+              </dd>
             </div>
 
-            <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
-              <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
-                <a href='{% url 'club_delete' club.id %}' class="">Delete club</a>
-              </div>
+            <div class="px-4 py-5 sm:p-6">
+              <dt class="text-base font-normal text-gray-900">Delete</dt>
+              <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
+                <div class="flex items-baseline text-2xl font-semibold text-indigo-600">
+                  Delete {{club.name}}
+                </div>
+
+                <div class="inline-flex items-baseline px-2.5 py-0.5 rounded-full text-sm font-medium  md:mt-2 lg:mt-0">
+                  <div class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style="cursor: pointer;">
+                    <a href='{% url 'club_delete' club.id %}' class="">Delete club</a>
+                  </div>
+                </div>
+              </dd>
             </div>
-          </dd>
-        </div>
         {%endif%}
 
         <div class="px-4 py-5 sm:p-6">
