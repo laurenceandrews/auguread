@@ -47,26 +47,19 @@ class ClubRecommenderView(LoginRequiredMixin, View):
             clubs = Club.objects.filter(id__in=club_ids)
         else:
             # populate databse
-            club_ids = ClubUserRecommender(self.user.id).get_best_clubs_in_person_list()
-            clubs = Club.objects.filter(id__in=club_ids)
-            for club in clubs:
-                UserClubRecommendation.objects.create(user=self.user, club=club)
+            club_ids_in_person = ClubUserRecommender(self.user.id).get_best_clubs_in_person_list()
+            club_ids_online = ClubUserRecommender(self.user.id).get_best_clubs_online_list()
 
-            # temporarily, I will just send ten random inperson clubs and ten random online clubs
-            # club_ids = []
-            # inperson_clubs = Club.objects.filter(meeting_type='INP')[0:10]
-            # for club in inperson_clubs:
-            #     club_ids.append(club.id)
-            # online_clubs = Club.objects.filter(meeting_type='ONL')[0:10]
-            # for club in online_clubs:
-            #     club_ids.append(club.id)
+            club_ids = []
+            club_ids.append(club_ids_in_person)
+            club_ids.append(club_ids_online)
 
             clubs = Club.objects.filter(id__in=club_ids)
 
             for club in clubs:
                 UserClubRecommendation.objects.create(user=self.user, club=club)
 
-        # checkbox
+        # filter by meeting type
         query = self.request.GET.get('q')
         if query:
             clubs = clubs.filter(
