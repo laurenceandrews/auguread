@@ -16,7 +16,7 @@ class RecommendedClubBookListViewTest(TestCase):
         'clubs/tests/fixtures/default_book.json',
         'clubs/tests/fixtures/default_rating.json',
         'clubs/tests/fixtures/default_club_book.json',
-        'clubs/tests/fixtures/default_club_user.json',
+        # 'clubs/tests/fixtures/default_club_user.json',
     ]
 
     def setUp(self):
