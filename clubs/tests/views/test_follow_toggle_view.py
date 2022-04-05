@@ -1,7 +1,8 @@
+from clubs.models import Club, User
+from clubs.tests.helpers import reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
-from clubs.models import User, Club
-from clubs.tests.helpers import reverse_with_next
+
 
 class FollowToggleTest(TestCase):
 
@@ -12,6 +13,9 @@ class FollowToggleTest(TestCase):
         'clubs/tests/fixtures/default_club.json',
         'clubs/tests/fixtures/detailed_club.json',
         'clubs/tests/fixtures/default_rules.json',
+        'clubs/tests/fixtures/default_book.json',
+        'clubs/tests/fixtures/other_books.json',
+        'clubs/tests/fixtures/seven_pos_ratings.json'
     ]
 
     def setUp(self):
@@ -22,7 +26,7 @@ class FollowToggleTest(TestCase):
         self.url = reverse('follow_toggle', kwargs={'user_id': self.followee.id})
 
     def test_follow_toggle_url(self):
-        self.assertEqual(self.url,f'/follow_toggle/{self.followee.id}')
+        self.assertEqual(self.url, f'/follow_toggle/{self.followee.id}')
 
     def test_get_follow_toggle_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
@@ -38,7 +42,7 @@ class FollowToggleTest(TestCase):
         user_followers_after = self.user.follower_count()
         followee_followers_after = self.followee.follower_count()
         self.assertEqual(user_followers_before, user_followers_after)
-        self.assertEqual(followee_followers_before, followee_followers_after+1)
+        self.assertEqual(followee_followers_before, followee_followers_after + 1)
         response_url = reverse('user_detail', kwargs={'user_id': self.followee.id})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'user_detail.html')
@@ -51,14 +55,14 @@ class FollowToggleTest(TestCase):
         user_followers_after = self.user.follower_count()
         followee_followers_after = self.followee.follower_count()
         self.assertEqual(user_followers_before, user_followers_after)
-        self.assertEqual(followee_followers_before+1, followee_followers_after)
+        self.assertEqual(followee_followers_before + 1, followee_followers_after)
         response_url = reverse('user_detail', kwargs={'user_id': self.followee.id})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'user_detail.html')
 
     def test_get_follow_toggle_with_invalid_id(self):
         self.client.login(email=self.user.email, password='Password123')
-        url = reverse('follow_toggle', kwargs={'user_id': self.user.id+9999})
+        url = reverse('follow_toggle', kwargs={'user_id': self.user.id + 9999})
         response = self.client.get(url, follow=True)
         response_url = reverse('user_detail_list')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)

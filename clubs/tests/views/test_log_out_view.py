@@ -1,20 +1,24 @@
 """Tests of the log out view."""
-from django.test import TestCase
-from django.urls import reverse
 from clubs.models import User
 from clubs.tests.helpers import LogInTester
+from django.test import TestCase
+from django.urls import reverse
+
 
 class LogOutViewTestCase(TestCase, LogInTester):
     """Tests of the log out view."""
 
-    fixtures = ['clubs/tests/fixtures/default_user.json']
+    fixtures = ['clubs/tests/fixtures/default_user.json',
+                'clubs/tests/fixtures/default_book.json',
+                'clubs/tests/fixtures/other_books.json',
+                'clubs/tests/fixtures/seven_pos_ratings.json']
 
     def setUp(self):
         self.url = reverse('log_out')
         self.user = User.objects.get(email='johndoe@example.org')
 
     def test_log_out_url(self):
-        self.assertEqual(self.url,'/log_out/')
+        self.assertEqual(self.url, '/log_out/')
 
     def test_get_log_out(self):
         self.client.login(email='johndoe@example.org', password='Password123')

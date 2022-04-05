@@ -94,7 +94,7 @@ class ClubOwnerRequiredSchedulerMixin:
         return redirect(url)
 
 
-class TenPosRatingsRequiredMixin:
+class PosRatingsRequiredMixin:
     """Mixin that redirects when a user has not yet made ten positive book ratings."""
 
     redirect_when_less_than_ten_pos_ratings_url = settings.REDIRECT_URL_WHEN_NOT_ENOUGH_RATINGS
@@ -102,22 +102,23 @@ class TenPosRatingsRequiredMixin:
     def dispatch(self, *args, **kwargs):
         """Redirect when ten pos ratings not met, or dispatch as normal otherwise."""
         user = self.request.user
-        if self.has_less_than_ten_pos_ratings(user):
-            return self.handle_less_than_ten_pos_ratings(*args, **kwargs)
-        return super().dispatch(*args, **kwargs)
+        if user.is_authenticated:
+            if self.has_less_than_required_pos_ratings(user):
+                return self.handle_less_than_required_pos_ratings(*args, **kwargs)
+            return super().dispatch(*args, **kwargs)
 
-    def has_less_than_ten_pos_ratings(self, user, *args, **kwargs):
-        less_than_ten_pos_ratings = True
+    def has_less_than_required_pos_ratings(self, user, *args, **kwargs):
+        less_than_required_pos_ratings = True
 
         POSITIVE_RATINGS = [6, 7, 8, 9, 10]
 
         positive_book_rating_count = Book_Rating.objects.filter(user=user, rating__in=POSITIVE_RATINGS).count()
-        if positive_book_rating_count >= 10:
-            less_than_ten_pos_ratings = False
+        if positive_book_rating_count >= 5:
+            less_than_required_pos_ratings = False
 
-        return less_than_ten_pos_ratings
+        return less_than_required_pos_ratings
 
-    def handle_less_than_ten_pos_ratings(self, *args, **kwargs):
+    def handle_less_than_required_pos_ratings(self, *args, **kwargs):
         url = self.redirect_when_less_than_ten_pos_ratings_url
-        messages.add_message(self.request, messages.ERROR, "Please create at least 10 positive ratings (6 or higher) to continue!")
+        messages.add_message(self.request, messages.ERROR, "Please create at least 5 positive ratings (6 or higher) to continue!")
         return redirect(url)

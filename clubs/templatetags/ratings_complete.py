@@ -14,12 +14,12 @@ def ratings_complete(user):
 
     POSITIVE_RATINGS = [6, 7, 8, 9, 10]
 
-    ten_positive_ratings_complete = False
+    positive_ratings_complete = False
 
     positive_book_rating_count = Book_Rating.objects.filter(user = user, rating__in=POSITIVE_RATINGS).count()
     print(positive_book_rating_count)
 
-    if positive_book_rating_count >= 10:
-        ten_positive_ratings_complete = True
+    if positive_book_rating_count >= 5:
+        positive_ratings_complete = True
 
-    return ten_positive_ratings_complete
+    return positive_ratings_complete

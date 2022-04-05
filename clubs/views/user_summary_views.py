@@ -5,6 +5,7 @@ from clubs.models import (Book, Book_Rating, Club, Club_Book_History,
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from clubs.views.mixins import PosRatingsRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import redirect, render
@@ -14,7 +15,7 @@ from .helpers import login_prohibited
 from .mixins import LoginProhibitedMixin
 
 
-class UserSummaryView(LoginRequiredMixin, View):
+class UserSummaryView(LoginRequiredMixin, PosRatingsRequiredMixin, View):
     """View that renders a page of summary information about the user."""
     http_method_names = ['get', 'post']
 

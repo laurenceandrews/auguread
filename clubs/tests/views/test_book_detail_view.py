@@ -13,7 +13,9 @@ class BookDetailViewTest(TestCase):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/default_book.json'
+        'clubs/tests/fixtures/default_book.json',
+        'clubs/tests/fixtures/other_books.json',
+        'clubs/tests/fixtures/seven_pos_ratings.json'
     ]
 
     def setUp(self):

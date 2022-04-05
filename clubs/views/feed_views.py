@@ -1,7 +1,7 @@
 """Views related to the Feed."""
 from clubs.forms import PostForm
 from clubs.models import Club, ClubFeedPost, Post, PostComment, User
-from clubs.views.mixins import ClubMemberOrOwnerRequiredMixin
+from clubs.views.mixins import ClubMemberOrOwnerRequiredMixin, PosRatingsRequiredMixin
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
