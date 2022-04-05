@@ -201,7 +201,7 @@ class ClubUserRecommender:
 
     # Get the favourite books and authors of the current user
     def set_fav_books_and_authors_per_user(self):
-        my_favourite_books_df = self.user_book_df.tail(2)
+        my_favourite_books_df = self.user_book_df.tail(1)
 
         book_info_df = pd.merge(my_favourite_books_df, self.book_df, left_on='book_id', right_on='id')
         book_info_df = book_info_df[['user_id', 'title', 'author']]
