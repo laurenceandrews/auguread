@@ -159,7 +159,7 @@ class ClubUserRecommender:
                 club_user_location_df.drop(i)
 
         club_user_location_df = club_user_location_df.sort_values('location_match_score', ascending=False).dropna(how='any',axis=0)
-        club_user_location_df = club_user_location_df.drop('club_user_id', axis = 1).groupby(['club_id', 'location', 'location_match_score']).agg(list).reset_index()
+        club_user_location_df = club_user_location_df.drop('club_user_id', axis = 1).groupby(['club_id', 'location', 'location_match_score']).agg(list).reset_index(drop=False)
         club_user_location_df = club_user_location_df[club_user_location_df['location_match_score'] > 60]
         self.club_user_location_df = club_user_location_df
 
