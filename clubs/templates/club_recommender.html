@@ -3,6 +3,11 @@
 {% block body %}
 
 <style>
+
+  div#view-all-clubs-btn{
+      margin-bottom: 80px;
+  }
+
   a#continue-btn-disabled {
       pointer-events: none;
       background-color: #eee;
@@ -135,17 +140,6 @@
             </div>
           </form>
         </div>
-
-        <div class="pt-4">
-          <form method="GET" >
-            <div class="input-field">
-              <span>
-                Click here for all your recommended clubs: <input type="hidden" name="q" value="">
-                <button type="submit" class="justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Go</button>
-              </span>
-            </div>
-          </form>
-        </div>
       </div>
 
       <div class="mt-8 lg:mr-50">
@@ -165,7 +159,7 @@
             {% endfor %}
             <!-- | truncatechars:75 -->
       </div>
-      <div class="pt-16">
+      <div class="pt-16" id = "view-all-clubs-btn">
         <a id = "continue-btn" class="justify-center py-4 px-8 text-lg border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{% url 'club_list' %}">View all clubs</a>
       </div>
     </div>
