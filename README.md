@@ -1,7 +1,5 @@
-# Auguread
+# Auguread Book Club System
 Software Engineering Major Group Project consisting of club and book recommenders using KNN via. SurpriseLib’s machine learning scikit.
-
-Book Club
 
 ## Team Sick Legends
 The authors of the software are:
