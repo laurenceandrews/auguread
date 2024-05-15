@@ -1,5 +1,5 @@
 # Auguread
-Software Engineering Major Group Project
+Software Engineering Major Group Project consisting of club and book recommenders using KNN via. SurpriseLib’s machine learning scikit.
 
 Book Club
 
